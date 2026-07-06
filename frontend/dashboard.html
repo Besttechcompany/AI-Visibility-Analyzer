@@ -2,84 +2,52 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
 
-<meta charset="UTF-8">
-
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>Dashboard</title>
-
-<link rel="stylesheet" href="css/style.css">
-
+    <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body class="dashboard-body">
+<body class="dashboard-page">
 
-<div class="sidebar">
+<div class="dashboard-container">
 
-<h2>AI Visibility</h2>
+    <div class="success-card">
 
-<a href="#">Dashboard</a>
+        <div class="success-icon">🎉</div>
 
-<a href="#">Website Analysis</a>
+        <h1>Login Successful</h1>
 
-<a href="#">Reports</a>
+        <p>
+            Welcome to <strong>AI Visibility Analyzer</strong>.
+        </p>
 
-<a href="#">Profile</a>
+        <p>
+            Your Google account has been authenticated successfully.
+        </p>
 
-<a href="#">Logout</a>
+    </div>
 
-</div>
+    <div class="coming-card">
 
-<div class="main-content">
+        <h2>🚧 Dashboard Coming Soon</h2>
 
-<div class="topbar">
+        <p>Website Analysis</p>
 
-<h2>Dashboard</h2>
+        <p>AI Visibility Reports</p>
 
-<div id="userName">Welcome</div>
+        <p>SEO Insights</p>
 
-</div>
+        <p>Competitor Analysis</p>
 
-<div class="card">
+        <p>User Profile</p>
 
-<h1>Analyze Your Website</h1>
-
-<p>
-
-Check how ChatGPT, Gemini, Claude and other AI platforms understand your website.
-
-</p>
-
-<input
-type="url"
-id="website"
-placeholder="https://example.com">
-
-<button id="analyzeBtn">
-
-Analyze Website
-
-</button>
-
-</div>
-
-<div class="card">
-
-<h2>Results</h2>
-
-<div id="results">
-
-No analysis yet.
-
-</div>
-
-</div>
+    </div>
 
 </div>
 
 <script src="js/dashboard.js"></script>
 
 </body>
-
 </html>
