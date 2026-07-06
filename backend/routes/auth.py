@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Request, Depends
+from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 from auth.google_auth import oauth
 from database import get_db
@@ -44,12 +45,12 @@ async def google_callback(
             "error": "Google user information not found"
         }
 
-    # Check whether the user already exists
+    # Check whether user already exists
     user = db.query(User).filter(
         User.email == user_info["email"]
     ).first()
 
-    # Create a new user if not found
+    # Create user if not exists
     if not user:
 
         user = User(
@@ -64,7 +65,7 @@ async def google_callback(
         db.commit()
         db.refresh(user)
 
-    # Create JWT Access Token
+    # Create JWT Token
     access_token = create_access_token(
         {
             "user_id": user.id,
@@ -72,7 +73,16 @@ async def google_callback(
         }
     )
 
-    # Return response
+    # Frontend URL
+    frontend_url = os.getenv("FRONTEND_URL")
+
+    # If frontend is configured, redirect there
+    if frontend_url:
+        return RedirectResponse(
+            url=f"{frontend_url}/dashboard.html?token={access_token}"
+        )
+
+    # Otherwise return JSON (useful during development)
     return {
         "message": "Google Login Successful",
         "access_token": access_token,
