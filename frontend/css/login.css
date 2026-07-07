@@ -1,0 +1,193 @@
+/* ==================================
+   Global
+================================== */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+
+    background:linear-gradient(135deg,#2563eb,#1d4ed8);
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    min-height:100vh;
+
+}
+
+/* ==================================
+   Login Card
+================================== */
+
+.login-card{
+
+    width:100%;
+    max-width:520px;
+
+    background:#fff;
+
+    border-radius:20px;
+
+    padding:50px 40px;
+
+    text-align:center;
+
+    box-shadow:0 20px 50px rgba(0,0,0,.18);
+
+}
+
+/* ==================================
+   Heading
+================================== */
+
+.login-card h1{
+
+    font-size:46px;
+
+    color:#2563eb;
+
+    margin-bottom:20px;
+
+}
+
+.login-card p{
+
+    color:#666;
+
+    font-size:18px;
+
+    line-height:1.8;
+
+    margin-bottom:40px;
+
+}
+
+/* ==================================
+   Google Button
+================================== */
+
+.login-card a{
+
+    text-decoration:none;
+
+}
+
+.google-btn{
+
+    width:100%;
+
+    height:60px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#2563eb;
+
+    color:#fff;
+
+    font-size:20px;
+
+    font-weight:600;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    gap:15px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.google-btn:hover{
+
+    background:#1d4ed8;
+
+}
+
+.google-btn img{
+
+    width:28px;
+
+    height:28px;
+
+    background:#fff;
+
+    border-radius:50%;
+
+    padding:4px;
+
+}
+
+/* ==================================
+   Back Home
+================================== */
+
+.back-home{
+
+    display:inline-block;
+
+    margin-top:35px;
+
+    text-decoration:none;
+
+    color:#2563eb;
+
+    font-size:18px;
+
+    font-weight:600;
+
+}
+
+.back-home:hover{
+
+    text-decoration:underline;
+
+}
+
+/* ==================================
+   Mobile
+================================== */
+
+@media(max-width:768px){
+
+.login-card{
+
+    width:92%;
+
+    padding:35px 25px;
+
+}
+
+.login-card h1{
+
+    font-size:36px;
+
+}
+
+.login-card p{
+
+    font-size:16px;
+
+}
+
+.google-btn{
+
+    font-size:18px;
+
+}
+
+}
