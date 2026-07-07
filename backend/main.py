@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 
 from database import engine
@@ -13,13 +14,24 @@ app = FastAPI(
     version="1.0"
 )
 
-# Session middleware for Google OAuth
+# Session Middleware
 app.add_middleware(
     SessionMiddleware,
     secret_key="AIVisibilityAnalyzer123456"
 )
 
-# Register routes
+# CORS Middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://ai-visibility-analyzer-coral.vercel.app"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Register Routes
 app.include_router(auth_router)
 
 @app.get("/")
