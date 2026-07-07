@@ -2,20 +2,27 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+
+    <title>Dashboard | AI Visibility Analyzer</title>
 
     <link rel="stylesheet" href="css/style.css">
+
 </head>
 
 <body class="dashboard-page">
 
 <div class="dashboard-container">
 
+    <!-- Left Card -->
+
     <div class="success-card">
 
-        <div class="success-icon">🎉</div>
+        <div class="success-icon">
+            🎉
+        </div>
 
         <h1>Login Successful</h1>
 
@@ -27,21 +34,42 @@
             Your Google account has been authenticated successfully.
         </p>
 
+        <hr>
+
+        <h3>Logged In User</h3>
+
+        <!-- JavaScript will load the user here -->
+        <div id="profile-card">
+
+            <p>Loading profile...</p>
+
+        </div>
+
     </div>
+
+    <!-- Right Card -->
 
     <div class="coming-card">
 
         <h2>🚧 Dashboard Coming Soon</h2>
 
-        <p>Website Analysis</p>
+        <p>🌐 Website Analysis</p>
 
-        <p>AI Visibility Reports</p>
+        <p>🤖 AI Visibility Reports</p>
 
-        <p>SEO Insights</p>
+        <p>📈 SEO Insights</p>
 
-        <p>Competitor Analysis</p>
+        <p>📊 Competitor Analysis</p>
 
-        <p>User Profile</p>
+        <p>👤 User Profile</p>
+
+        <br>
+
+        <button onclick="logout()" class="primary-btn">
+
+            Logout
+
+        </button>
 
     </div>
 
@@ -50,4 +78,5 @@
 <script src="js/dashboard.js"></script>
 
 </body>
+
 </html>
