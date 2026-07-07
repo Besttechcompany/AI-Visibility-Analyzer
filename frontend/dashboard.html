@@ -6,72 +6,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Dashboard | AI Visibility Analyzer</title>
+    <title>AI Visibility Analyzer Dashboard</title>
 
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
 
 </head>
 
-<body class="dashboard-page">
+<body>
 
-<div class="dashboard-container">
+<div class="dashboard">
 
-    <!-- Left Card -->
+    <!-- ================= Sidebar ================= -->
 
-    <div class="success-card">
+    <aside class="sidebar">
 
-        <div class="success-icon">
-            🎉
-        </div>
+        <div class="logo">
 
-        <h1>Login Successful</h1>
-
-        <p>
-            Welcome to <strong>AI Visibility Analyzer</strong>.
-        </p>
-
-        <p>
-            Your Google account has been authenticated successfully.
-        </p>
-
-        <hr>
-
-        <h3>Logged In User</h3>
-
-        <!-- JavaScript will load the user here -->
-        <div id="profile-card">
-
-            <p>Loading profile...</p>
+            <h2>AI Visibility</h2>
 
         </div>
 
-    </div>
+        <ul class="menu">
 
-    <!-- Right Card -->
+            <li class="active">
+                📊 Dashboard
+            </li>
 
-    <div class="coming-card">
+            <li>
+                🌐 Website Analysis
+            </li>
 
-        <h2>🚧 Dashboard Coming Soon</h2>
+            <li>
+                📈 Reports
+            </li>
 
-        <p>🌐 Website Analysis</p>
+            <li>
+                👤 Profile
+            </li>
 
-        <p>🤖 AI Visibility Reports</p>
+            <li onclick="logout()">
+                🚪 Logout
+            </li>
 
-        <p>📈 SEO Insights</p>
+        </ul>
 
-        <p>📊 Competitor Analysis</p>
+    </aside>
 
-        <p>👤 User Profile</p>
+    <!-- ================= Main Content ================= -->
 
-        <br>
+    <main class="main-content">
 
-        <button onclick="logout()" class="primary-btn">
+        <!-- Top Bar -->
 
-            Logout
+        <header class="topbar">
 
-        </button>
+            <h1>Dashboard</h1>
 
-    </div>
+            <div id="profile-card" class="profile-card">
+
+                Loading...
+
+            </div>
+
+        </header>
+
+        <!-- Website Analysis -->
+
+        <section class="card">
+
+            <h2>Analyze Your Website</h2>
+
+            <p>
+
+                Check how ChatGPT, Gemini, Claude and other AI platforms understand your website.
+
+            </p>
+
+            <input
+                type="text"
+                id="website"
+                placeholder="https://example.com">
+
+            <button
+                class="analyze-btn"
+                onclick="analyzeWebsite()">
+
+                Analyze Website
+
+            </button>
+
+        </section>
+
+        <!-- Results -->
+
+        <section class="card">
+
+            <h2>Results</h2>
+
+            <div id="results">
+
+                <div class="empty-results">
+
+                    <h3>No Analysis Yet</h3>
+
+                    <p>
+
+                        Enter a website URL above and click
+                        <strong>Analyze Website</strong>.
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
 
 </div>
 
