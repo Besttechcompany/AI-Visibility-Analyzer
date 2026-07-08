@@ -5,6 +5,7 @@ from starlette.middleware.sessions import SessionMiddleware
 from database import engine
 from models import Base
 from routes.auth import router as auth_router
+from routes.analyze import router as analyze_router
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -33,6 +34,7 @@ app.add_middleware(
 
 # Register Routes
 app.include_router(auth_router)
+app.include_router(analyze_router)
 
 @app.get("/")
 def home():
