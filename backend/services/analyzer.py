@@ -37,6 +37,10 @@ class WebsiteAnalyzer:
 
             soup = BeautifulSoup(response.text, "lxml")
 
+            # -----------------------------
+            # Basic SEO
+            # -----------------------------
+
             title = (
                 soup.title.string.strip()
                 if soup.title and soup.title.string
@@ -101,16 +105,64 @@ class WebsiteAnalyzer:
                 urljoin(url, "/sitemap.xml")
             )
 
-            favicon = soup.find("link", rel=lambda x: x and "icon" in x.lower())
+            favicon = soup.find(
+                "link",
+                rel=lambda x: x and "icon" in x.lower()
+            )
 
             viewport = soup.find(
                 "meta",
                 attrs={"name": "viewport"}
             )
 
-            charset = soup.find("meta", charset=True)
+            charset = soup.find(
+                "meta",
+                charset=True
+            )
 
             ssl = url.startswith("https://")
+
+            # -----------------------------
+            # Image SEO
+            # -----------------------------
+
+            images = soup.find_all("img")
+
+            total_images = len(images)
+
+            missing_alt = 0
+
+            empty_alt = 0
+
+            lazy_loaded = 0
+
+            image_urls = []
+
+            for img in images:
+
+                src = img.get("src", "")
+
+                if src:
+                    image_urls.append(
+                        urljoin(url, src)
+                    )
+
+                if not img.has_attr("alt"):
+                    missing_alt += 1
+
+                elif img.get("alt", "").strip() == "":
+                    empty_alt += 1
+
+                if (
+                    img.get("loading") == "lazy"
+                    or img.has_attr("data-src")
+                    or img.has_attr("data-lazy-src")
+                ):
+                    lazy_loaded += 1
+
+            # -----------------------------
+            # Final Response
+            # -----------------------------
 
             return {
 
@@ -143,6 +195,20 @@ class WebsiteAnalyzer:
                     "viewport": viewport is not None,
 
                     "charset": charset.get("charset") if charset else "Not Found"
+
+                },
+
+                "images": {
+
+                    "total": total_images,
+
+                    "missing_alt": missing_alt,
+
+                    "empty_alt": empty_alt,
+
+                    "lazy_loaded": lazy_loaded,
+
+                    "image_urls": image_urls[:10]
 
                 }
 
