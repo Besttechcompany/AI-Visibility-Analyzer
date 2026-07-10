@@ -1,5 +1,4 @@
 import json
-
 from bs4 import BeautifulSoup
 
 
@@ -19,30 +18,53 @@ class SchemaAnalyzer:
 
             try:
 
+                if not script.string:
+                    continue
+
                 data = json.loads(script.string)
 
-                if isinstance(data, list):
-
-                    for item in data:
-
-                        if "@type" in item:
-                            schema_types.append(item["@type"])
-
-                elif isinstance(data, dict):
+                # Single schema object
+                if isinstance(data, dict):
 
                     if "@type" in data:
                         schema_types.append(data["@type"])
 
+                    # Handle @graph
+                    if "@graph" in data:
+
+                        for item in data["@graph"]:
+
+                            if isinstance(item, dict):
+
+                                if "@type" in item:
+
+                                    t = item["@type"]
+
+                                    if isinstance(t, list):
+                                        schema_types.extend(t)
+                                    else:
+                                        schema_types.append(t)
+
+                # List of schema objects
+                elif isinstance(data, list):
+
+                    for item in data:
+
+                        if isinstance(item, dict):
+
+                            if "@type" in item:
+
+                                t = item["@type"]
+
+                                if isinstance(t, list):
+                                    schema_types.extend(t)
+                                else:
+                                    schema_types.append(t)
+
             except Exception:
-                pass
+                continue
 
-        microdata = len(
-            soup.find_all(attrs={"itemscope": True})
-        )
-
-        rdfa = len(
-            soup.find_all(attrs={"typeof": True})
-        )
+        schema_types = list(set(schema_types))
 
         return {
 
@@ -50,7 +72,7 @@ class SchemaAnalyzer:
 
             "json_ld": len(json_ld_scripts),
 
-            "types": list(set(schema_types)),
+            "types": schema_types,
 
             "organization": "Organization" in schema_types,
 
@@ -70,8 +92,12 @@ class SchemaAnalyzer:
 
             "local_business": "LocalBusiness" in schema_types,
 
-            "microdata": microdata,
+            "microdata": len(
+                soup.find_all(attrs={"itemscope": True})
+            ),
 
-            "rdfa": rdfa
+            "rdfa": len(
+                soup.find_all(attrs={"typeof": True})
+            )
 
         }
