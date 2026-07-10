@@ -6,6 +6,7 @@ from services.chatgpt import ChatGPTAnalyzer
 from services.gemini import GeminiAnalyzer
 from services.claude import ClaudeAnalyzer
 from services.perplexity import PerplexityAnalyzer
+from services.entities import EntityAnalyzer
 
 
 class WebsiteAnalyzer:
@@ -121,6 +122,10 @@ class WebsiteAnalyzer:
                 soup
             )
 
+            entities = EntityAnalyzer.analyze(
+    soup
+)
+
             return {
 
                 "success": True,
@@ -151,7 +156,9 @@ class WebsiteAnalyzer:
 
                 "claude": claude,
 
-                "perplexity": perplexity
+                "perplexity": perplexity,
+
+                "entities": entities
 
             }
 

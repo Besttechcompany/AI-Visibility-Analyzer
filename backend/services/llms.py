@@ -11,7 +11,7 @@ class LLMAnalyzer:
 
         try:
 
-            response = requests.get(
+            r = requests.get(
                 llms_url,
                 timeout=10,
                 headers={
@@ -19,31 +19,21 @@ class LLMAnalyzer:
                 }
             )
 
-            if response.status_code == 200:
+            if r.status_code == 200:
 
                 return {
-
                     "exists": True,
-
                     "url": llms_url,
-
-                    "size": len(response.text),
-
-                    "preview": response.text[:500]
-
+                    "size": len(r.text),
+                    "preview": r.text[:500]
                 }
 
-        except Exception:
+        except:
             pass
 
         return {
-
             "exists": False,
-
             "url": llms_url,
-
             "size": 0,
-
             "preview": ""
-
         }
