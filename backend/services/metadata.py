@@ -1,56 +1,133 @@
 from bs4 import BeautifulSoup
 
 
-class MetadataExtractor:
+class MetadataAnalyzer:
 
     @staticmethod
-    def extract(soup: BeautifulSoup):
+    def analyze(soup: BeautifulSoup):
 
-        title = (
-            soup.title.string.strip()
-            if soup.title and soup.title.string
-            else ""
+        def get_meta(name=None, property=None):
+
+            if name:
+                tag = soup.find(
+                    "meta",
+                    attrs={"name": name}
+                )
+
+                if tag:
+                    return tag.get("content", "")
+
+            if property:
+                tag = soup.find(
+                    "meta",
+                    attrs={"property": property}
+                )
+
+                if tag:
+                    return tag.get("content", "")
+
+            return ""
+
+        author = get_meta(name="author")
+
+        keywords = get_meta(name="keywords")
+
+        generator = get_meta(name="generator")
+
+        theme_color = get_meta(name="theme-color")
+
+        publisher = get_meta(name="publisher")
+
+        og_title = get_meta(property="og:title")
+
+        og_description = get_meta(property="og:description")
+
+        og_image = get_meta(property="og:image")
+
+        og_url = get_meta(property="og:url")
+
+        og_type = get_meta(property="og:type")
+
+        twitter_card = get_meta(name="twitter:card")
+
+        twitter_title = get_meta(name="twitter:title")
+
+        twitter_description = get_meta(name="twitter:description")
+
+        twitter_image = get_meta(name="twitter:image")
+
+        google_verification = get_meta(
+            name="google-site-verification"
         )
 
-        description = ""
-
-        tag = soup.find(
-            "meta",
-            attrs={"name": "description"}
+        ms_verification = get_meta(
+            name="msvalidate.01"
         )
 
-        if tag:
-            description = tag.get("content", "")
+        yandex_verification = get_meta(
+            name="yandex-verification"
+        )
 
-        canonical = ""
-
-        tag = soup.find(
+        apple_icon = soup.find(
             "link",
-            rel="canonical"
+            rel=lambda x: x and "apple-touch-icon" in x
         )
 
-        if tag:
-            canonical = tag.get("href", "")
-
-        robots = ""
-
-        tag = soup.find(
-            "meta",
-            attrs={"name": "robots"}
+        manifest = soup.find(
+            "link",
+            rel="manifest"
         )
-
-        if tag:
-            robots = tag.get("content", "")
-
-        language = ""
-
-        if soup.html:
-            language = soup.html.get("lang", "")
 
         return {
-            "title": title,
-            "meta_description": description,
-            "canonical": canonical,
-            "robots": robots,
-            "language": language
+
+            "author": author,
+
+            "publisher": publisher,
+
+            "keywords": keywords,
+
+            "generator": generator,
+
+            "theme_color": theme_color,
+
+            "open_graph": {
+
+                "title": og_title,
+
+                "description": og_description,
+
+                "image": og_image,
+
+                "url": og_url,
+
+                "type": og_type
+
+            },
+
+            "twitter": {
+
+                "card": twitter_card,
+
+                "title": twitter_title,
+
+                "description": twitter_description,
+
+                "image": twitter_image
+
+            },
+
+            "verification": {
+
+                "google": google_verification,
+
+                "bing": ms_verification,
+
+                "yandex": yandex_verification
+
+            },
+
+            "apple_touch_icon": apple_icon is not None,
+
+            "manifest": manifest is not None
+
         }

@@ -1,22 +1,14 @@
 import requests
+
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin, urlparse
+
+from services.technical import TechnicalAnalyzer
+from services.images import ImageAnalyzer
+from services.links import LinkAnalyzer
+from services.metadata import MetadataAnalyzer
 
 
 class WebsiteAnalyzer:
-
-    @staticmethod
-    def exists(url):
-        try:
-            r = requests.get(
-                url,
-                headers={"User-Agent": "Mozilla/5.0"},
-                timeout=10,
-                allow_redirects=True
-            )
-            return r.status_code == 200
-        except:
-            return False
 
     @staticmethod
     def analyze(url: str):
@@ -24,18 +16,26 @@ class WebsiteAnalyzer:
         try:
 
             headers = {
-                "User-Agent": "Mozilla/5.0"
+                "User-Agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/137.0 Safari/537.36"
+                )
             }
 
             response = requests.get(
                 url,
                 headers=headers,
-                timeout=15
+                timeout=20,
+                allow_redirects=True
             )
 
             response.raise_for_status()
 
-            soup = BeautifulSoup(response.text, "lxml")
+            soup = BeautifulSoup(
+                response.text,
+                "lxml"
+            )
 
             # -----------------------------
             # Basic SEO
@@ -47,15 +47,18 @@ class WebsiteAnalyzer:
                 else "Not Found"
             )
 
-            description = ""
+            meta_description = ""
 
-            meta = soup.find(
+            description = soup.find(
                 "meta",
                 attrs={"name": "description"}
             )
 
-            if meta:
-                description = meta.get("content", "")
+            if description:
+                meta_description = description.get(
+                    "content",
+                    ""
+                )
 
             language = (
                 soup.html.get("lang")
@@ -71,7 +74,10 @@ class WebsiteAnalyzer:
             )
 
             if canonical_tag:
-                canonical = canonical_tag.get("href", "")
+                canonical = canonical_tag.get(
+                    "href",
+                    ""
+                )
 
             robots = ""
 
@@ -81,162 +87,43 @@ class WebsiteAnalyzer:
             )
 
             if robots_tag:
-                robots = robots_tag.get("content", "")
+                robots = robots_tag.get(
+                    "content",
+                    ""
+                )
 
             h1 = [
-                tag.get_text(strip=True)
-                for tag in soup.find_all("h1")
+                h.get_text(strip=True)
+                for h in soup.find_all("h1")
             ]
 
             h2 = [
-                tag.get_text(strip=True)
-                for tag in soup.find_all("h2")
+                h.get_text(strip=True)
+                for h in soup.find_all("h2")
             ]
 
             # -----------------------------
-            # Technical SEO
+            # Module Calls
             # -----------------------------
 
-            robots_txt = WebsiteAnalyzer.exists(
-                urljoin(url, "/robots.txt")
+            technical = TechnicalAnalyzer.analyze(
+                url,
+                soup
             )
 
-            sitemap_xml = WebsiteAnalyzer.exists(
-                urljoin(url, "/sitemap.xml")
+            images = ImageAnalyzer.analyze(
+                url,
+                soup
             )
 
-            favicon = soup.find(
-                "link",
-                rel=lambda x: x and "icon" in x.lower()
+            links = LinkAnalyzer.analyze(
+                url,
+                soup
             )
 
-            viewport = soup.find(
-                "meta",
-                attrs={"name": "viewport"}
+            metadata = MetadataAnalyzer.analyze(
+                soup
             )
-
-            charset = soup.find(
-                "meta",
-                charset=True
-            )
-
-            ssl = url.startswith("https://")
-
-            # -----------------------------
-            # Image SEO
-            # -----------------------------
-
-            images = soup.find_all("img")
-
-            total_images = len(images)
-
-            missing_alt = 0
-            empty_alt = 0
-            lazy_loaded = 0
-
-            image_urls = []
-
-            for img in images:
-
-                src = img.get("src", "")
-
-                if src:
-                    image_urls.append(
-                        urljoin(url, src)
-                    )
-
-                if not img.has_attr("alt"):
-                    missing_alt += 1
-
-                elif img.get("alt", "").strip() == "":
-                    empty_alt += 1
-
-                if (
-                    img.get("loading") == "lazy"
-                    or img.has_attr("data-src")
-                    or img.has_attr("data-lazy-src")
-                ):
-                    lazy_loaded += 1
-
-            # -----------------------------
-            # Links SEO
-            # -----------------------------
-
-            links = soup.find_all("a")
-
-            total_links = len(links)
-
-            internal_links = 0
-            external_links = 0
-
-            nofollow_links = 0
-
-            mailto_links = 0
-            tel_links = 0
-
-            broken_links = 0
-
-            internal_urls = []
-            external_urls = []
-
-            domain = urlparse(url).netloc
-
-            for link in links:
-
-                href = link.get("href")
-
-                if not href:
-                    continue
-
-                href = href.strip()
-
-                if href.startswith("mailto:"):
-                    mailto_links += 1
-                    continue
-
-                if href.startswith("tel:"):
-                    tel_links += 1
-                    continue
-
-                absolute_url = urljoin(url, href)
-
-                parsed = urlparse(absolute_url)
-
-                if parsed.netloc == domain:
-                    internal_links += 1
-
-                    if len(internal_urls) < 10:
-                        internal_urls.append(absolute_url)
-
-                else:
-                    external_links += 1
-
-                    if len(external_urls) < 10:
-                        external_urls.append(absolute_url)
-
-                rel = link.get("rel", [])
-
-                if "nofollow" in rel:
-                    nofollow_links += 1
-
-                try:
-
-                    r = requests.head(
-                        absolute_url,
-                        headers=headers,
-                        allow_redirects=True,
-                        timeout=5
-                    )
-
-                    if r.status_code >= 400:
-                        broken_links += 1
-
-                except:
-                    broken_links += 1
-
-            # -----------------------------
-            # Final Response
-            # -----------------------------
 
             return {
 
@@ -244,7 +131,7 @@ class WebsiteAnalyzer:
 
                 "title": title,
 
-                "meta_description": description,
+                "meta_description": meta_description,
 
                 "language": language,
 
@@ -256,57 +143,13 @@ class WebsiteAnalyzer:
 
                 "h2": h2,
 
-                "technical": {
+                "technical": technical,
 
-                    "ssl": ssl,
+                "images": images,
 
-                    "robots_txt": robots_txt,
+                "links": links,
 
-                    "sitemap_xml": sitemap_xml,
-
-                    "favicon": favicon is not None,
-
-                    "viewport": viewport is not None,
-
-                    "charset": charset.get("charset") if charset else "Not Found"
-
-                },
-
-                "images": {
-
-                    "total": total_images,
-
-                    "missing_alt": missing_alt,
-
-                    "empty_alt": empty_alt,
-
-                    "lazy_loaded": lazy_loaded,
-
-                    "image_urls": image_urls[:10]
-
-                },
-
-                "links": {
-
-                    "total": total_links,
-
-                    "internal_links": internal_links,
-
-                    "external_links": external_links,
-
-                    "nofollow_links": nofollow_links,
-
-                    "mailto_links": mailto_links,
-
-                    "tel_links": tel_links,
-
-                    "broken_links": broken_links,
-
-                    "internal_urls": internal_urls,
-
-                    "external_urls": external_urls
-
-                }
+                "metadata": metadata
 
             }
 
