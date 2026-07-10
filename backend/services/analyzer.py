@@ -7,6 +7,7 @@ from services.images import ImageAnalyzer
 from services.links import LinkAnalyzer
 from services.metadata import MetadataAnalyzer
 from services.schema import SchemaAnalyzer
+from services.content import ContentAnalyzer
 
 
 class WebsiteAnalyzer:
@@ -128,6 +129,9 @@ class WebsiteAnalyzer:
             schema = SchemaAnalyzer.analyze(
     soup
 )
+            content = ContentAnalyzer.analyze(
+    soup
+)
 
             return {
 
@@ -154,8 +158,10 @@ class WebsiteAnalyzer:
                 "links": links,
 
                 "metadata": metadata,
+
+                "schema": schema,
                 
-                "schema": schema
+                "content": content
 
             }
 
