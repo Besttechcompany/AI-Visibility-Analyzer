@@ -1,13 +1,11 @@
 import requests
-
 from bs4 import BeautifulSoup
 
-from services.technical import TechnicalAnalyzer
-from services.images import ImageAnalyzer
-from services.links import LinkAnalyzer
-from services.metadata import MetadataAnalyzer
-from services.schema import SchemaAnalyzer
-from services.content import ContentAnalyzer
+from services.llms import LLMAnalyzer
+from services.chatgpt import ChatGPTAnalyzer
+from services.gemini import GeminiAnalyzer
+from services.claude import ClaudeAnalyzer
+from services.perplexity import PerplexityAnalyzer
 
 
 class WebsiteAnalyzer:
@@ -39,28 +37,21 @@ class WebsiteAnalyzer:
                 "lxml"
             )
 
-            # -----------------------------
-            # Basic SEO
-            # -----------------------------
-
             title = (
                 soup.title.string.strip()
                 if soup.title and soup.title.string
-                else "Not Found"
+                else ""
             )
 
-            meta_description = ""
+            description = ""
 
-            description = soup.find(
+            meta = soup.find(
                 "meta",
                 attrs={"name": "description"}
             )
 
-            if description:
-                meta_description = description.get(
-                    "content",
-                    ""
-                )
+            if meta:
+                description = meta.get("content", "")
 
             language = (
                 soup.html.get("lang")
@@ -104,64 +95,63 @@ class WebsiteAnalyzer:
                 for h in soup.find_all("h2")
             ]
 
-            # -----------------------------
-            # Module Calls
-            # -----------------------------
+            # ------------------------
+            # AI Modules
+            # ------------------------
 
-            technical = TechnicalAnalyzer.analyze(
+            llms = LLMAnalyzer.analyze(url)
+
+            chatgpt = ChatGPTAnalyzer.analyze(
                 url,
                 soup
             )
 
-            images = ImageAnalyzer.analyze(
+            gemini = GeminiAnalyzer.analyze(
                 url,
                 soup
             )
 
-            links = LinkAnalyzer.analyze(
+            claude = ClaudeAnalyzer.analyze(
                 url,
                 soup
             )
 
-            metadata = MetadataAnalyzer.analyze(
+            perplexity = PerplexityAnalyzer.analyze(
+                url,
                 soup
             )
-            schema = SchemaAnalyzer.analyze(
-    soup
-)
-            content = ContentAnalyzer.analyze(
-    soup
-)
 
             return {
 
                 "success": True,
 
-                "title": title,
+                "basic": {
 
-                "meta_description": meta_description,
+                    "title": title,
 
-                "language": language,
+                    "meta_description": description,
 
-                "canonical": canonical,
+                    "language": language,
 
-                "robots": robots,
+                    "canonical": canonical,
 
-                "h1": h1,
+                    "robots": robots,
 
-                "h2": h2,
+                    "h1": h1,
 
-                "technical": technical,
+                    "h2": h2
 
-                "images": images,
+                },
 
-                "links": links,
+                "llms": llms,
 
-                "metadata": metadata,
+                "chatgpt": chatgpt,
 
-                "schema": schema,
-                
-                "content": content
+                "gemini": gemini,
+
+                "claude": claude,
+
+                "perplexity": perplexity
 
             }
 
