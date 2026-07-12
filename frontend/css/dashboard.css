@@ -291,23 +291,119 @@ input:focus{
 
 #results{
 
-    min-height:220px;
+    margin-top:30px;
 
-    border:2px dashed #d6d6d6;
+}
 
-    border-radius:15px;
+.results-grid{
 
-    display:flex;
+    display:grid;
 
-    justify-content:center;
+    grid-template-columns:repeat(auto-fit,minmax(380px,1fr));
 
-    align-items:center;
+    gap:25px;
+
+}
+
+.ai-grid{
+
+    grid-column:1/-1;
+
+    display:grid;
+
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+
+    gap:20px;
+
+}
+
+.card{
+
+    background:#fff;
+
+    border-radius:18px;
+
+    padding:30px;
+
+    box-shadow:0 8px 25px rgba(0,0,0,.08);
+
+}
+
+.score-card{
+
+    background:linear-gradient(135deg,#2563eb,#4f46e5);
+
+    color:white;
 
     text-align:center;
 
-    color:#777;
+}
 
-    padding:30px;
+.score{
+
+    font-size:70px;
+
+    font-weight:bold;
+
+    margin:25px 0;
+
+}
+
+.ai-card{
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:25px;
+
+    text-align:center;
+
+    box-shadow:0 5px 18px rgba(0,0,0,.08);
+
+}
+
+.ai-card h2{
+
+    font-size:42px;
+
+    color:#2563eb;
+
+    margin:15px 0;
+
+}
+
+.report-table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+.report-table td{
+
+    padding:12px;
+
+    border-bottom:1px solid #eee;
+
+}
+
+.recommendation-card{
+
+    grid-column:1/-1;
+
+}
+
+.recommendation-card ul{
+
+    padding-left:25px;
+
+}
+
+.recommendation-card li{
+
+    margin-bottom:12px;
 
 }
 

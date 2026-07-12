@@ -194,113 +194,169 @@ function showResults(data) {
 
     results.innerHTML = `
 
-        <div class="card">
+<div class="results-grid">
 
-            <h2>Overall AI Visibility</h2>
+    <div class="card score-card">
 
-            <h1>${data.overall_ai_visibility.overall_score}</h1>
+        <h2>Overall AI Visibility</h2>
 
-            <h3>Grade : ${data.overall_ai_visibility.grade}</h3>
+        <div class="score">
+            ${data.overall_ai_visibility.overall_score}
+        </div>
+
+        <h3>
+            Grade ${data.overall_ai_visibility.grade}
+        </h3>
+
+    </div>
+
+    <div class="card">
+
+        <h2>Basic Information</h2>
+
+        <p><b>Title</b><br>${data.basic.title}</p>
+
+        <p><b>Description</b><br>${data.basic.meta_description}</p>
+
+        <p><b>Language</b> : ${data.basic.language}</p>
+
+        <p><b>Canonical</b> : ${data.basic.canonical}</p>
+
+    </div>
+
+    <div class="ai-grid">
+
+        <div class="ai-card">
+
+            <h3>LLMs.txt</h3>
+
+            <h2>${data.llms.exists ? "✅" : "❌"}</h2>
+
+            <p>${data.llms.exists ? "Found" : "Not Found"}</p>
 
         </div>
 
-        <div class="card">
+        <div class="ai-card">
 
-            <h2>Basic Information</h2>
+            <h3>ChatGPT</h3>
 
-            <p><strong>Title:</strong> ${data.basic.title}</p>
+            <h2>${data.chatgpt.score}</h2>
 
-            <p><strong>Description:</strong> ${data.basic.meta_description}</p>
-
-            <p><strong>Language:</strong> ${data.basic.language}</p>
-
-            <p><strong>Canonical:</strong> ${data.basic.canonical}</p>
+            <p>Score</p>
 
         </div>
 
-        <div class="card">
+        <div class="ai-card">
 
-            <h2>LLMs.txt</h2>
+            <h3>Gemini</h3>
 
-            <p>${data.llms.exists ? "✅ Found" : "❌ Not Found"}</p>
+            <h2>${data.gemini.score}</h2>
 
-        </div>
-
-        <div class="card">
-
-            <h2>ChatGPT</h2>
-
-            <p>Score : ${data.chatgpt.score}</p>
+            <p>Score</p>
 
         </div>
 
-        <div class="card">
+        <div class="ai-card">
 
-            <h2>Gemini</h2>
+            <h3>Claude</h3>
 
-            <p>Score : ${data.gemini.score}</p>
+            <h2>${data.claude.score}</h2>
 
-        </div>
-
-        <div class="card">
-
-            <h2>Claude</h2>
-
-            <p>Score : ${data.claude.score}</p>
+            <p>Score</p>
 
         </div>
 
-        <div class="card">
+        <div class="ai-card">
 
-            <h2>Perplexity</h2>
+            <h3>Perplexity</h3>
 
-            <p>Score : ${data.perplexity.score}</p>
+            <h2>${data.perplexity.score}</h2>
 
-        </div>
-
-        <div class="card">
-
-            <h2>E-E-A-T</h2>
-
-            <p>Score : ${data.eeat.score}</p>
-
-            <p>Author : ${data.eeat.author}</p>
-
-            <p>About : ${data.eeat.about}</p>
-
-            <p>Contact : ${data.eeat.contact}</p>
+            <p>Score</p>
 
         </div>
 
-        <div class="card">
+    </div>
 
-            <h2>Entities</h2>
+    <div class="card">
 
-            <p>Total : ${data.entities.count}</p>
+        <h2>E-E-A-T</h2>
 
-            <p><strong>Organizations</strong></p>
+        <table class="report-table">
 
-            <ul>
+            <tr>
+                <td>Score</td>
+                <td>${data.eeat.score}</td>
+            </tr>
 
-                ${data.entities.organizations.map(x=>`<li>${x}</li>`).join("")}
+            <tr>
+                <td>Author</td>
+                <td>${data.eeat.author ? "✅" : "❌"}</td>
+            </tr>
 
-            </ul>
+            <tr>
+                <td>About</td>
+                <td>${data.eeat.about ? "✅" : "❌"}</td>
+            </tr>
 
-        </div>
+            <tr>
+                <td>Contact</td>
+                <td>${data.eeat.contact ? "✅" : "❌"}</td>
+            </tr>
 
-        <div class="card">
+            <tr>
+                <td>Privacy</td>
+                <td>${data.eeat.privacy ? "✅" : "❌"}</td>
+            </tr>
 
-            <h2>Recommendations</h2>
+            <tr>
+                <td>Terms</td>
+                <td>${data.eeat.terms ? "✅" : "❌"}</td>
+            </tr>
 
-            <ul>
+        </table>
 
-                ${data.recommendations.map(x=>`<li>${x}</li>`).join("")}
+    </div>
 
-            </ul>
+    <div class="card">
 
-        </div>
+        <h2>Entities</h2>
 
-    `;
+        <p><b>Total :</b> ${data.entities.count}</p>
+
+        <h3>Organizations</h3>
+
+        <ul>
+
+        ${data.entities.organizations.map(x=>`<li>${x}</li>`).join("")}
+
+        </ul>
+
+        <h3>Topics</h3>
+
+        <ul>
+
+        ${data.entities.topics.map(x=>`<li>${x}</li>`).join("")}
+
+        </ul>
+
+    </div>
+
+    <div class="card recommendation-card">
+
+        <h2>Recommendations</h2>
+
+        <ul>
+
+        ${data.recommendations.map(x=>`<li>${x}</li>`).join("")}
+
+        </ul>
+
+    </div>
+
+</div>
+
+`;
 
 }
 
