@@ -16,43 +16,31 @@
 
 <div class="dashboard">
 
-    <!-- ================= Sidebar ================= -->
+    <!-- Sidebar -->
 
     <aside class="sidebar">
 
         <div class="logo">
-
-            <h2>AI Visibility</h2>
-
+            <h2>🤖 AI Visibility</h2>
         </div>
 
         <ul class="menu">
 
-            <li class="active">
-                📊 Dashboard
-            </li>
+            <li class="active">📊 Dashboard</li>
 
-            <li>
-                🌐 Website Analysis
-            </li>
+            <li>🌐 Website Analysis</li>
 
-            <li>
-                📈 Reports
-            </li>
+            <li>📈 Reports</li>
 
-            <li>
-                👤 Profile
-            </li>
+            <li>👤 Profile</li>
 
-            <li onclick="logout()">
-                🚪 Logout
-            </li>
+            <li onclick="logout()">🚪 Logout</li>
 
         </ul>
 
     </aside>
 
-    <!-- ================= Main Content ================= -->
+    <!-- Main Content -->
 
     <main class="main-content">
 
@@ -60,17 +48,15 @@
 
         <header class="topbar">
 
-            <h1>Dashboard</h1>
+            <h1>AI Visibility Dashboard</h1>
 
             <div id="profile-card" class="profile-card">
-
                 Loading...
-
             </div>
 
         </header>
 
-        <!-- Website Analysis -->
+        <!-- Website Analyzer -->
 
         <section class="card">
 
@@ -78,45 +64,43 @@
 
             <p>
 
-                Check how ChatGPT, Gemini, Claude and other AI platforms understand your website.
+                Analyze how AI platforms like ChatGPT, Gemini, Claude and Perplexity understand your website.
 
             </p>
 
-            <input
-                type="text"
-                id="website"
-                placeholder="https://example.com">
+            <div class="analyzer-box">
 
-            <button
-                class="analyze-btn"
-                onclick="analyzeWebsite()">
+                <input
+                    id="website"
+                    type="text"
+                    placeholder="https://example.com">
 
-                Analyze Website
+                <button
+                    class="analyze-btn"
+                    onclick="analyzeWebsite()">
 
-            </button>
+                    Analyze Website
+
+                </button>
+
+            </div>
 
         </section>
 
-        <!-- Results -->
+        <!-- AI Report -->
 
-        <section class="card">
+        <section id="results">
 
-            <h2>Results</h2>
+            <div class="empty-results">
 
-            <div id="results">
+                <h2>🚀 No Analysis Yet</h2>
 
-                <div class="empty-results">
+                <p>
 
-                    <h3>No Analysis Yet</h3>
+                    Enter your website URL above and click
+                    <strong>Analyze Website</strong>.
 
-                    <p>
-
-                        Enter a website URL above and click
-                        <strong>Analyze Website</strong>.
-
-                    </p>
-
-                </div>
+                </p>
 
             </div>
 

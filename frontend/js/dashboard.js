@@ -112,7 +112,7 @@ async function loadProfile() {
 // Analyze Website
 // =======================================
 
-function analyzeWebsite() {
+async function analyzeWebsite() {
 
     const website = document.getElementById("website").value.trim();
 
@@ -134,27 +134,173 @@ function analyzeWebsite() {
 
             <p><strong>${website}</strong></p>
 
-            <p>Please wait while we analyze AI visibility.</p>
+            <p>Please wait...</p>
 
         </div>
 
     `;
 
-    // TODO:
-    // Later you'll call your FastAPI endpoint here
+    try {
 
-    /*
-    fetch(`${API_URL}/analyze`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-            website: website
-        })
-    })
-    */
+        const response = await fetch(`${API_URL}/analyze`, {
+
+            method: "POST",
+
+            headers: {
+
+                "Content-Type": "application/json",
+
+                "Authorization": `Bearer ${token}`
+
+            },
+
+            body: JSON.stringify({
+
+                url: website
+
+            })
+
+        });
+
+        const data = await response.json();
+
+        console.log(data);
+
+        showResults(data);
+
+    }
+
+    catch (error) {
+
+        console.log(error);
+
+        results.innerHTML = `
+
+            <div class="error">
+
+                Failed to analyze website.
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+function showResults(data) {
+
+    const results = document.getElementById("results");
+
+    results.innerHTML = `
+
+        <div class="card">
+
+            <h2>Overall AI Visibility</h2>
+
+            <h1>${data.overall_ai_visibility.overall_score}</h1>
+
+            <h3>Grade : ${data.overall_ai_visibility.grade}</h3>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Basic Information</h2>
+
+            <p><strong>Title:</strong> ${data.basic.title}</p>
+
+            <p><strong>Description:</strong> ${data.basic.meta_description}</p>
+
+            <p><strong>Language:</strong> ${data.basic.language}</p>
+
+            <p><strong>Canonical:</strong> ${data.basic.canonical}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>LLMs.txt</h2>
+
+            <p>${data.llms.exists ? "✅ Found" : "❌ Not Found"}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>ChatGPT</h2>
+
+            <p>Score : ${data.chatgpt.score}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Gemini</h2>
+
+            <p>Score : ${data.gemini.score}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Claude</h2>
+
+            <p>Score : ${data.claude.score}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Perplexity</h2>
+
+            <p>Score : ${data.perplexity.score}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>E-E-A-T</h2>
+
+            <p>Score : ${data.eeat.score}</p>
+
+            <p>Author : ${data.eeat.author}</p>
+
+            <p>About : ${data.eeat.about}</p>
+
+            <p>Contact : ${data.eeat.contact}</p>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Entities</h2>
+
+            <p>Total : ${data.entities.count}</p>
+
+            <p><strong>Organizations</strong></p>
+
+            <ul>
+
+                ${data.entities.organizations.map(x=>`<li>${x}</li>`).join("")}
+
+            </ul>
+
+        </div>
+
+        <div class="card">
+
+            <h2>Recommendations</h2>
+
+            <ul>
+
+                ${data.recommendations.map(x=>`<li>${x}</li>`).join("")}
+
+            </ul>
+
+        </div>
+
+    `;
 
 }
 

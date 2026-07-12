@@ -397,4 +397,69 @@ input:focus{
 
 }
 
+
+.dashboard-report{
+
+    display:grid;
+
+    gap:25px;
+
+}
+
+.ai-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4,1fr);
+
+    gap:20px;
+
+}
+
+.ai-card{
+
+    background:#fff;
+
+    border-radius:15px;
+
+    padding:25px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
+.score-card{
+
+    background:linear-gradient(135deg,#2563eb,#4f46e5);
+
+    color:white;
+
+    border-radius:18px;
+
+    padding:35px;
+
+    text-align:center;
+
+}
+
+.score{
+
+    font-size:70px;
+
+    font-weight:bold;
+
+}
+
+.section{
+
+    background:white;
+
+    border-radius:15px;
+
+    padding:25px;
+
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+
+}
+
 }
