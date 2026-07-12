@@ -8,6 +8,7 @@ from services.claude import ClaudeAnalyzer
 from services.perplexity import PerplexityAnalyzer
 from services.entities import EntityAnalyzer
 from services.recommendations import RecommendationAnalyzer
+from services.score import ScoreAnalyzer
 
 
 class WebsiteAnalyzer:
@@ -177,6 +178,14 @@ class WebsiteAnalyzer:
 
             result["recommendations"] = (
                 RecommendationAnalyzer.analyze(result)
+            )
+
+            # ---------------------------------
+            # Overall AI Visibility Score
+            # ---------------------------------
+
+            result["overall_ai_visibility"] = (
+                ScoreAnalyzer.analyze(result)
             )
 
             return result
