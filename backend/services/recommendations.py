@@ -31,6 +31,10 @@ class RecommendationAnalyzer:
             result["perplexity"]["recommendations"]
         )
 
+        recommendations.extend(
+    result["eeat"]["recommendations"]
+)
+
         # Remove duplicates
         recommendations = list(dict.fromkeys(recommendations))
 

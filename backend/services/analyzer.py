@@ -9,6 +9,7 @@ from services.perplexity import PerplexityAnalyzer
 from services.entities import EntityAnalyzer
 from services.recommendations import RecommendationAnalyzer
 from services.score import ScoreAnalyzer
+from services.eeat import EEATAnalyzer
 
 
 class WebsiteAnalyzer:
@@ -131,6 +132,8 @@ class WebsiteAnalyzer:
             entities = EntityAnalyzer.analyze(
                 soup
             )
+            eeat = EEATAnalyzer.analyze(
+                soup)
 
             # ---------------------------------
             # Build Result
@@ -168,7 +171,9 @@ class WebsiteAnalyzer:
 
                 "perplexity": perplexity,
 
-                "entities": entities
+                "entities": entities,
+                
+                "eeat": eeat
 
             }
 
