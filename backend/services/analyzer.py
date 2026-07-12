@@ -7,6 +7,7 @@ from services.gemini import GeminiAnalyzer
 from services.claude import ClaudeAnalyzer
 from services.perplexity import PerplexityAnalyzer
 from services.entities import EntityAnalyzer
+from services.recommendations import RecommendationAnalyzer
 
 
 class WebsiteAnalyzer:
@@ -37,6 +38,10 @@ class WebsiteAnalyzer:
                 response.text,
                 "lxml"
             )
+
+            # ---------------------------------
+            # Basic Information
+            # ---------------------------------
 
             title = (
                 soup.title.string.strip()
@@ -96,9 +101,9 @@ class WebsiteAnalyzer:
                 for h in soup.find_all("h2")
             ]
 
-            # ------------------------
+            # ---------------------------------
             # AI Modules
-            # ------------------------
+            # ---------------------------------
 
             llms = LLMAnalyzer.analyze(url)
 
@@ -123,10 +128,14 @@ class WebsiteAnalyzer:
             )
 
             entities = EntityAnalyzer.analyze(
-    soup
-)
+                soup
+            )
 
-            return {
+            # ---------------------------------
+            # Build Result
+            # ---------------------------------
+
+            result = {
 
                 "success": True,
 
@@ -161,6 +170,16 @@ class WebsiteAnalyzer:
                 "entities": entities
 
             }
+
+            # ---------------------------------
+            # AI Recommendations
+            # ---------------------------------
+
+            result["recommendations"] = (
+                RecommendationAnalyzer.analyze(result)
+            )
+
+            return result
 
         except Exception as e:
 
