@@ -126,19 +126,100 @@ async function analyzeWebsite() {
 
     const results = document.getElementById("results");
 
-    results.innerHTML = `
+   results.innerHTML = `
+<div class="loading-card">
 
-        <div class="loading">
+    <h2>🔍 Analyzing Website</h2>
 
-            <h3>Analyzing Website...</h3>
+    <h3>${website}</h3>
 
-            <p><strong>${website}</strong></p>
+    <div class="progress-container">
 
-            <p>Please wait...</p>
+        <div id="progressBar" class="progress-bar"></div>
 
-        </div>
+    </div>
 
-    `;
+    <h2 id="progressPercent">0%</h2>
+
+    <p id="progressText">
+        Initializing Analysis...
+    </p>
+
+</div>
+`;
+
+// Start Progress Animation
+
+let progress = 0;
+
+let apiFinished = false;
+
+const stages = [
+
+    { value:5, text:"Initializing Analysis..." },
+
+    { value:15, text:"Connecting to Website..." },
+
+    { value:30, text:"Fetching HTML..." },
+
+    { value:45, text:"Analyzing Technical SEO..." },
+
+    { value:60, text:"Checking Metadata..." },
+
+    { value:75, text:"Analyzing AI Visibility..." },
+
+    { value:90, text:"Generating Recommendations..." }
+
+];
+
+const timer = setInterval(() => {
+
+if (apiFinished) {
+
+    if (progress < 100) {
+
+        progress++;
+
+        document.getElementById("progressText").innerHTML =
+            "Preparing Final Report...";
+
+    }
+
+} else {
+
+    if (progress < 90) {
+
+        progress++;
+
+    }
+
+}
+
+    document.getElementById("progressBar").style.width = progress + "%";
+
+    document.getElementById("progressPercent").innerHTML = progress + "%";
+
+ if (!apiFinished) {
+
+    for (const stage of stages) {
+
+        if (progress >= stage.value) {
+
+            document.getElementById("progressText").innerHTML = stage.text;
+
+        }
+
+    }
+
+}
+
+    if(progress >=100){
+
+        clearInterval(timer);
+
+    }
+
+},80);
 
     try {
 
@@ -162,11 +243,20 @@ async function analyzeWebsite() {
 
         });
 
-        const data = await response.json();
+     const data = await response.json();
 
-        console.log(data);
+console.log(data);
 
-        showResults(data);
+// Tell the progress animation that the API has finished
+apiFinished = true;
+
+// Wait until the progress bar reaches 100%
+while (progress < 100) {
+    await new Promise(resolve => setTimeout(resolve, 30));
+}
+
+// Now display the report
+showResults(data);
 
     }
 
