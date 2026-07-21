@@ -11,6 +11,7 @@ from services.recommendations import RecommendationAnalyzer
 from services.score import ScoreAnalyzer
 from services.eeat import EEATAnalyzer
 from services.audit import AuditAnalyzer
+from services.technical_seo import TechnicalSEOAnalyzer
 
 
 class WebsiteAnalyzer:
@@ -141,6 +142,12 @@ class WebsiteAnalyzer:
     soup,
     response.text
 )
+            
+            technical = TechnicalSEOAnalyzer.analyze(
+    url,
+    response,
+    soup
+)
 
             # ---------------------------------
             # Build Result
@@ -182,7 +189,9 @@ class WebsiteAnalyzer:
                 
                 "eeat": eeat,
 
-                "audit": audit
+                "audit": audit,
+
+                "technical_seo": technical
 
             }
 
