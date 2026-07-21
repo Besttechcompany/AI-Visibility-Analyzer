@@ -3,10 +3,12 @@
 ================================== */
 
 *{
+
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, Helvetica, sans-serif;
+    font-family:Arial,Helvetica,sans-serif;
+
 }
 
 body{
@@ -34,23 +36,19 @@ body{
 
     background:#fff;
 
-    border-radius:20px;
+    border-radius:22px;
 
     padding:50px 40px;
 
     text-align:center;
 
-    box-shadow:0 20px 50px rgba(0,0,0,.18);
+    box-shadow:0 20px 60px rgba(0,0,0,.20);
 
 }
 
-/* ==================================
-   Heading
-================================== */
-
 .login-card h1{
 
-    font-size:46px;
+    font-size:50px;
 
     color:#2563eb;
 
@@ -62,9 +60,9 @@ body{
 
     color:#666;
 
-    font-size:18px;
+    font-size:20px;
 
-    line-height:1.8;
+    line-height:1.7;
 
     margin-bottom:40px;
 
@@ -74,17 +72,11 @@ body{
    Google Button
 ================================== */
 
-.login-card a{
-
-    text-decoration:none;
-
-}
-
 .google-btn{
 
     width:100%;
 
-    height:60px;
+    height:62px;
 
     border:none;
 
@@ -94,7 +86,7 @@ body{
 
     color:#fff;
 
-    font-size:20px;
+    font-size:22px;
 
     font-weight:600;
 
@@ -115,6 +107,8 @@ body{
 .google-btn:hover{
 
     background:#1d4ed8;
+
+    transform:translateY(-2px);
 
 }
 
@@ -142,9 +136,9 @@ body{
 
     margin-top:35px;
 
-    text-decoration:none;
-
     color:#2563eb;
+
+    text-decoration:none;
 
     font-size:18px;
 
@@ -155,6 +149,158 @@ body{
 .back-home:hover{
 
     text-decoration:underline;
+
+}
+
+/* ==================================
+   Loading Overlay
+================================== */
+
+.loading-overlay{
+
+    position:fixed;
+
+    inset:0;
+
+    background:rgba(12,25,55,.92);
+
+    display:none;
+
+    justify-content:center;
+
+    align-items:center;
+
+    z-index:9999;
+
+}
+
+.loader-card{
+
+    width:480px;
+
+    background:#fff;
+
+    border-radius:22px;
+
+    padding:50px;
+
+    text-align:center;
+
+    box-shadow:0 20px 60px rgba(0,0,0,.30);
+
+}
+
+.ai-logo{
+
+    font-size:72px;
+
+    animation:float 2s ease-in-out infinite;
+
+}
+
+.loader-card h2{
+
+    margin:20px 0;
+
+    font-size:34px;
+
+    color:#2563eb;
+
+}
+
+.spinner{
+
+    width:80px;
+
+    height:80px;
+
+    margin:30px auto;
+
+    border:7px solid #dbeafe;
+
+    border-top:7px solid #2563eb;
+
+    border-radius:50%;
+
+    animation:spin .9s linear infinite;
+
+}
+
+#loadingMessage{
+
+    margin-top:20px;
+
+    font-size:20px;
+
+    color:#555;
+
+}
+
+.loading-bar{
+
+    width:100%;
+
+    height:16px;
+
+    background:#e5e7eb;
+
+    border-radius:30px;
+
+    overflow:hidden;
+
+    margin-top:35px;
+
+}
+
+.loading-progress{
+
+    width:0%;
+
+    height:100%;
+
+    background:linear-gradient(90deg,#2563eb,#4f46e5);
+
+}
+
+/* ==================================
+   Animations
+================================== */
+
+@keyframes spin{
+
+    from{
+
+        transform:rotate(0deg);
+
+    }
+
+    to{
+
+        transform:rotate(360deg);
+
+    }
+
+}
+
+@keyframes float{
+
+    0%{
+
+        transform:translateY(0);
+
+    }
+
+    50%{
+
+        transform:translateY(-12px);
+
+    }
+
+    100%{
+
+        transform:translateY(0);
+
+    }
 
 }
 
@@ -172,15 +318,23 @@ body{
 
 }
 
-.login-card h1{
+.loader-card{
 
-    font-size:36px;
+    width:92%;
+
+    padding:35px 25px;
 
 }
 
-.login-card p{
+.login-card h1{
 
-    font-size:16px;
+    font-size:38px;
+
+}
+
+.loader-card h2{
+
+    font-size:28px;
 
 }
 

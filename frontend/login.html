@@ -23,9 +23,9 @@
             Sign in with your Google account to access your AI Visibility Dashboard.
         </p>
 
-        <a
-            href="https://ai-visibility-analyzer.onrender.com/google/login"
-            class="google-btn">
+        <button
+            class="google-btn"
+            onclick="googleLogin()">
 
             <img
                 src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
@@ -33,7 +33,7 @@
 
             <span>Continue with Google</span>
 
-        </a>
+        </button>
 
         <a href="index.html" class="back-home">
 
@@ -42,6 +42,99 @@
         </a>
 
     </div>
+
+    <!-- Loading Overlay -->
+
+    <div id="loadingOverlay" class="loading-overlay">
+
+        <div class="loader-card">
+
+            <div class="ai-logo">🤖</div>
+
+            <h2>AI Visibility Analyzer</h2>
+
+            <div class="spinner"></div>
+
+            <h3 id="loadingMessage">
+
+                Initializing Secure Login...
+
+            </h3>
+
+            <div class="loading-bar">
+
+                <div
+                    id="loadingProgress"
+                    class="loading-progress">
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<script>
+
+function googleLogin(){
+
+    document.getElementById("loadingOverlay").style.display="flex";
+
+    const messages=[
+
+        "Initializing Secure Login...",
+
+        "Connecting to Google...",
+
+        "Verifying Authentication...",
+
+        "Redirecting to Google..."
+
+    ];
+
+    let progress=0;
+
+    const progressBar=document.getElementById("loadingProgress");
+
+    const message=document.getElementById("loadingMessage");
+
+    const timer=setInterval(()=>{
+
+        progress++;
+
+        progressBar.style.width=progress+"%";
+
+        if(progress==20){
+
+            message.innerHTML=messages[1];
+
+        }
+
+        if(progress==45){
+
+            message.innerHTML=messages[2];
+
+        }
+
+        if(progress==75){
+
+            message.innerHTML=messages[3];
+
+        }
+
+        if(progress>=100){
+
+            clearInterval(timer);
+
+            window.location.href="https://ai-visibility-analyzer.onrender.com/google/login";
+
+        }
+
+    },18);
+
+}
+
+</script>
 
 </body>
 
