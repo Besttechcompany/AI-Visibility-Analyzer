@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from urllib.parse import urljoin
 
 
 class TechnicalSEOAnalyzer:
@@ -44,9 +45,7 @@ class TechnicalSEOAnalyzer:
         # ------------------------
 
         technical["redirected"] = (
-            str(response.url).rstrip("/")
-            !=
-            str(url).rstrip("/")
+            response.url.rstrip("/") != url.rstrip("/")
         )
 
         technical["final_url"] = response.url
@@ -55,42 +54,40 @@ class TechnicalSEOAnalyzer:
         # robots.txt
         # ------------------------
 
-        robots_url = url.rstrip("/") + "/robots.txt"
+        robots_url = urljoin(url, "/robots.txt")
 
         try:
-
             r = requests.get(
                 robots_url,
-                timeout=10
+                timeout=10,
+                allow_redirects=True
             )
 
             technical["robots_txt"] = (
                 r.status_code == 200
             )
 
-        except:
-
+        except Exception:
             technical["robots_txt"] = False
 
         # ------------------------
         # sitemap.xml
         # ------------------------
 
-        sitemap_url = url.rstrip("/") + "/sitemap.xml"
+        sitemap_url = urljoin(url, "/sitemap.xml")
 
         try:
-
             r = requests.get(
                 sitemap_url,
-                timeout=10
+                timeout=10,
+                allow_redirects=True
             )
 
             technical["sitemap"] = (
                 r.status_code == 200
             )
 
-        except:
-
+        except Exception:
             technical["sitemap"] = False
 
         # ------------------------
@@ -99,10 +96,7 @@ class TechnicalSEOAnalyzer:
 
         og = {}
 
-        for tag in soup.find_all(
-            "meta",
-            property=True
-        ):
+        for tag in soup.find_all("meta", property=True):
 
             prop = tag.get("property", "")
 
@@ -114,6 +108,22 @@ class TechnicalSEOAnalyzer:
                 )
 
         technical["open_graph"] = og
+
+        technical["open_graph_summary"] = {
+
+            "exists": len(og) > 0,
+
+            "title": "og:title" in og,
+
+            "description": "og:description" in og,
+
+            "image": "og:image" in og,
+
+            "url": "og:url" in og,
+
+            "site_name": "og:site_name" in og
+
+        }
 
         # ------------------------
         # Twitter Cards
@@ -137,6 +147,17 @@ class TechnicalSEOAnalyzer:
 
         technical["twitter_cards"] = twitter
 
+        technical["twitter_summary"] = {
+
+            "exists": len(twitter) > 0,
+
+            "card": twitter.get(
+                "twitter:card",
+                ""
+            )
+
+        }
+
         # ------------------------
         # Favicon
         # ------------------------
@@ -147,8 +168,11 @@ class TechnicalSEOAnalyzer:
         )
 
         technical["favicon"] = (
-            favicon.get("href")
-            if favicon
+            urljoin(
+                response.url,
+                favicon.get("href")
+            )
+            if favicon and favicon.get("href")
             else ""
         )
 
