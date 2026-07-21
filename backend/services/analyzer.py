@@ -12,6 +12,7 @@ from services.score import ScoreAnalyzer
 from services.eeat import EEATAnalyzer
 from services.audit import AuditAnalyzer
 from services.technical_seo import TechnicalSEOAnalyzer
+from services.technology import TechnologyAnalyzer
 
 
 class WebsiteAnalyzer:
@@ -148,6 +149,10 @@ class WebsiteAnalyzer:
     response,
     soup
 )
+            technology = TechnologyAnalyzer.analyze(
+    response,
+    soup
+)
 
             # ---------------------------------
             # Build Result
@@ -191,7 +196,9 @@ class WebsiteAnalyzer:
 
                 "audit": audit,
 
-                "technical_seo": technical
+                "technical_seo": technical,
+                
+                "technology": technology,
 
             }
 
