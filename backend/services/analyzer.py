@@ -10,6 +10,7 @@ from services.entities import EntityAnalyzer
 from services.recommendations import RecommendationAnalyzer
 from services.score import ScoreAnalyzer
 from services.eeat import EEATAnalyzer
+from services.audit import AuditAnalyzer
 
 
 class WebsiteAnalyzer:
@@ -134,6 +135,12 @@ class WebsiteAnalyzer:
             )
             eeat = EEATAnalyzer.analyze(
                 soup)
+            
+            eeat = EEATAnalyzer.analyze(soup)
+            audit = AuditAnalyzer.analyze(
+    soup,
+    response.text
+)
 
             # ---------------------------------
             # Build Result
@@ -173,7 +180,9 @@ class WebsiteAnalyzer:
 
                 "entities": entities,
                 
-                "eeat": eeat
+                "eeat": eeat,
+
+                "audit": audit
 
             }
 
