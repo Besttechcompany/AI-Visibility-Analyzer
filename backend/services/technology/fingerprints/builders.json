@@ -1,1 +1,146 @@
-[]
+[
+  {
+    "technology": "Elementor",
+    "category": "Page Builder",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "elementor"
+      },
+      {
+        "type": "script",
+        "contains": "elementor"
+      },
+      {
+        "type": "stylesheet",
+        "contains": "elementor"
+      }
+    ]
+  },
+  {
+    "technology": "Divi",
+    "category": "Page Builder",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "et_pb"
+      },
+      {
+        "type": "script",
+        "contains": "divi"
+      }
+    ]
+  },
+  {
+    "technology": "WPBakery",
+    "category": "Page Builder",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "vc_row"
+      },
+      {
+        "type": "script",
+        "contains": "js_composer"
+      }
+    ]
+  },
+  {
+    "technology": "Beaver Builder",
+    "category": "Page Builder",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "fl-builder"
+      },
+      {
+        "type": "script",
+        "contains": "fl-builder"
+      }
+    ]
+  },
+  {
+    "technology": "Bricks Builder",
+    "category": "Page Builder",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "bricks"
+      },
+      {
+        "type": "script",
+        "contains": "bricks"
+      }
+    ]
+  },
+  {
+    "technology": "Oxygen Builder",
+    "category": "Page Builder",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "oxygen"
+      },
+      {
+        "type": "script",
+        "contains": "oxygen"
+      }
+    ]
+  },
+  {
+    "technology": "Breakdance",
+    "category": "Page Builder",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "breakdance"
+      },
+      {
+        "type": "script",
+        "contains": "breakdance"
+      }
+    ]
+  },
+  {
+    "technology": "Webflow",
+    "category": "Website Builder",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "w-webflow"
+      },
+      {
+        "type": "script",
+        "contains": "webflow"
+      }
+    ]
+  },
+  {
+    "technology": "Framer",
+    "category": "Website Builder",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "framerusercontent"
+      },
+      {
+        "type": "script",
+        "contains": "framer"
+      }
+    ]
+  },
+  {
+    "technology": "Carrd",
+    "category": "Website Builder",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "carrd"
+      },
+      {
+        "type": "script",
+        "contains": "carrd"
+      }
+    ]
+  }
+]

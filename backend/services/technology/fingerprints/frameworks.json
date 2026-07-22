@@ -1,1 +1,162 @@
-[]
+[
+  {
+    "technology": "React",
+    "category": "JavaScript Framework",
+    "rules": [
+      {
+        "type": "javascript_global",
+        "contains": "react"
+      },
+      {
+        "type": "html",
+        "contains": "__next"
+      },
+      {
+        "type": "script",
+        "contains": "react"
+      }
+    ]
+  },
+  {
+    "technology": "Next.js",
+    "category": "JavaScript Framework",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "__next"
+      },
+      {
+        "type": "network",
+        "contains": "/_next/"
+      },
+      {
+        "type": "script",
+        "contains": "/_next/"
+      }
+    ]
+  },
+  {
+    "technology": "Vue.js",
+    "category": "JavaScript Framework",
+    "rules": [
+      {
+        "type": "javascript_global",
+        "contains": "vue"
+      },
+      {
+        "type": "html",
+        "contains": "data-v-"
+      },
+      {
+        "type": "script",
+        "contains": "vue"
+      }
+    ]
+  },
+  {
+    "technology": "Nuxt.js",
+    "category": "JavaScript Framework",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "__nuxt"
+      },
+      {
+        "type": "network",
+        "contains": "/_nuxt/"
+      },
+      {
+        "type": "script",
+        "contains": "/_nuxt/"
+      }
+    ]
+  },
+  {
+    "technology": "Angular",
+    "category": "JavaScript Framework",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "ng-version"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "ng"
+      },
+      {
+        "type": "script",
+        "contains": "angular"
+      }
+    ]
+  },
+  {
+    "technology": "Svelte",
+    "category": "JavaScript Framework",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "svelte"
+      },
+      {
+        "type": "script",
+        "contains": "svelte"
+      }
+    ]
+  },
+  {
+    "technology": "Alpine.js",
+    "category": "JavaScript Framework",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "x-data"
+      },
+      {
+        "type": "script",
+        "contains": "alpine"
+      }
+    ]
+  },
+  {
+    "technology": "jQuery",
+    "category": "JavaScript Library",
+    "rules": [
+      {
+        "type": "javascript_global",
+        "contains": "$"
+      },
+      {
+        "type": "script",
+        "contains": "jquery"
+      }
+    ]
+  },
+  {
+    "technology": "Bootstrap",
+    "category": "CSS Framework",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "bootstrap"
+      },
+      {
+        "type": "script",
+        "contains": "bootstrap"
+      }
+    ]
+  },
+  {
+    "technology": "Tailwind CSS",
+    "category": "CSS Framework",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "tailwind"
+      },
+      {
+        "type": "html",
+        "contains": "class=\"container"
+      }
+    ]
+  }
+]

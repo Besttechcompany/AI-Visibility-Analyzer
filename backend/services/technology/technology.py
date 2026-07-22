@@ -6,37 +6,54 @@ class TechnologyAnalyzer:
 
     @staticmethod
     def analyze(response, soup):
+        """
+        Analyze a website and detect technologies.
+
+        Parameters
+        ----------
+        response : requests.Response
+            Original HTTP response from analyzer.py
+
+        soup : BeautifulSoup
+            Reserved for future compatibility.
+            Not used because Playwright performs
+            browser-based collection.
+
+        Returns
+        -------
+        list
+            List of detected technologies.
+        """
 
         print("=" * 60)
-        print("TechnologyAnalyzer.analyze() called")
+        print("Technology Analyzer")
         print("=" * 60)
 
-        evidence = EvidenceCollector.collect(
-            response,
-            soup
-        )
+        url = response.url
 
-        print("Evidence collected successfully")
+        print(f"Analyzing: {url}")
 
-        detections = TechnologyDetector.detect(
-            evidence
-        )
+        # Collect browser evidence
+        evidence = EvidenceCollector.collect(url)
 
-        print(f"Detections Found: {len(detections)}")
+        print("Evidence collection completed.")
+
+        # Detect technologies
+        detections = TechnologyDetector.detect(evidence)
 
         output = []
 
-        for d in detections:
+        for detection in detections:
 
             output.append({
 
-                "technology": d.technology,
+                "technology": detection.technology,
 
-                "category": d.category,
+                "category": detection.category,
 
-                "confidence": d.confidence,
+                "confidence": detection.confidence,
 
-                "evidence": d.evidence
+                "evidence": detection.evidence
 
             })
 
@@ -46,10 +63,14 @@ class TechnologyAnalyzer:
 
                 -x["confidence"],
 
-                x["technology"]
+                x["technology"].lower()
 
             )
 
         )
+
+        print("=" * 60)
+        print(f"Total Technologies: {len(output)}")
+        print("=" * 60)
 
         return output

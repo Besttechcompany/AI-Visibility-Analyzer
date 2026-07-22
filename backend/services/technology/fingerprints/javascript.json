@@ -1,1 +1,138 @@
-[]
+[
+  {
+    "technology": "Axios",
+    "category": "JavaScript Library",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "axios"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "axios"
+      }
+    ]
+  },
+  {
+    "technology": "Lodash",
+    "category": "JavaScript Library",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "lodash"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "_"
+      }
+    ]
+  },
+  {
+    "technology": "Moment.js",
+    "category": "JavaScript Library",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "moment"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "moment"
+      }
+    ]
+  },
+  {
+    "technology": "GSAP",
+    "category": "Animation",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "gsap"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "gsap"
+      }
+    ]
+  },
+  {
+    "technology": "Chart.js",
+    "category": "Charts",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "chart"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "chart"
+      }
+    ]
+  },
+  {
+    "technology": "Three.js",
+    "category": "3D",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "three"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "three"
+      }
+    ]
+  },
+  {
+    "technology": "Swiper",
+    "category": "UI",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "swiper"
+      },
+      {
+        "type": "stylesheet",
+        "contains": "swiper"
+      }
+    ]
+  },
+  {
+    "technology": "Anime.js",
+    "category": "Animation",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "anime"
+      }
+    ]
+  },
+  {
+    "technology": "RequireJS",
+    "category": "Module Loader",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "require"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "require"
+      }
+    ]
+  },
+  {
+    "technology": "Socket.IO",
+    "category": "Realtime",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "socket.io"
+      },
+      {
+        "type": "network",
+        "contains": "socket.io"
+      }
+    ]
+  }
+]

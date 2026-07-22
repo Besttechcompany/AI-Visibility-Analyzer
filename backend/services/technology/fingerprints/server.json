@@ -1,0 +1,172 @@
+[
+  {
+    "technology": "Nginx",
+    "category": "Web Server",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "nginx"
+      }
+    ]
+  },
+  {
+    "technology": "Apache HTTP Server",
+    "category": "Web Server",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "apache"
+      }
+    ]
+  },
+  {
+    "technology": "LiteSpeed",
+    "category": "Web Server",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "litespeed"
+      }
+    ]
+  },
+  {
+    "technology": "Microsoft IIS",
+    "category": "Web Server",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "microsoft-iis"
+      }
+    ]
+  },
+  {
+    "technology": "OpenResty",
+    "category": "Web Server",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "openresty"
+      }
+    ]
+  },
+  {
+    "technology": "Caddy",
+    "category": "Web Server",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "caddy"
+      }
+    ]
+  },
+  {
+    "technology": "Tomcat",
+    "category": "Application Server",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "tomcat"
+      }
+    ]
+  },
+  {
+    "technology": "Jetty",
+    "category": "Application Server",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "jetty"
+      }
+    ]
+  },
+  {
+    "technology": "Gunicorn",
+    "category": "Python Server",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "gunicorn"
+      }
+    ]
+  },
+  {
+    "technology": "uWSGI",
+    "category": "Python Server",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "uwsgi"
+      }
+    ]
+  },
+  {
+    "technology": "Kestrel",
+    "category": ".NET Server",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "kestrel"
+      }
+    ]
+  },
+  {
+    "technology": "Express.js",
+    "category": "Node.js Server",
+    "rules": [
+      {
+        "type": "header",
+        "header": "x-powered-by",
+        "contains": "express"
+      }
+    ]
+  },
+  {
+    "technology": "PHP",
+    "category": "Programming Language",
+    "rules": [
+      {
+        "type": "header",
+        "header": "x-powered-by",
+        "contains": "php"
+      }
+    ]
+  },
+  {
+    "technology": "ASP.NET",
+    "category": ".NET",
+    "rules": [
+      {
+        "type": "header",
+        "header": "x-powered-by",
+        "contains": "asp.net"
+      }
+    ]
+  },
+  {
+    "technology": "FastAPI",
+    "category": "Python Framework",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "uvicorn"
+      },
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "hypercorn"
+      }
+    ]
+  }
+]

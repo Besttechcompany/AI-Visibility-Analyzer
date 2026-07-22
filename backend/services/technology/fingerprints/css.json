@@ -1,1 +1,226 @@
-[]
+[
+  {
+    "technology": "Bootstrap",
+    "category": "CSS Framework",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "bootstrap"
+      },
+      {
+        "type": "script",
+        "contains": "bootstrap"
+      }
+    ]
+  },
+  {
+    "technology": "Tailwind CSS",
+    "category": "CSS Framework",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "tailwind"
+      },
+      {
+        "type": "html",
+        "contains": "tailwind"
+      }
+    ]
+  },
+  {
+    "technology": "Bulma",
+    "category": "CSS Framework",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "bulma"
+      }
+    ]
+  },
+  {
+    "technology": "Foundation",
+    "category": "CSS Framework",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "foundation"
+      }
+    ]
+  },
+  {
+    "technology": "Materialize CSS",
+    "category": "CSS Framework",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "materialize"
+      }
+    ]
+  },
+  {
+    "technology": "Semantic UI",
+    "category": "CSS Framework",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "semantic"
+      }
+    ]
+  },
+  {
+    "technology": "UIKit",
+    "category": "CSS Framework",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "uikit"
+      }
+    ]
+  },
+  {
+    "technology": "Pure CSS",
+    "category": "CSS Framework",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "pure-min.css"
+      }
+    ]
+  },
+  {
+    "technology": "Animate.css",
+    "category": "CSS Library",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "animate"
+      }
+    ]
+  },
+  {
+    "technology": "Normalize.css",
+    "category": "CSS Library",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "normalize"
+      }
+    ]
+  },
+  {
+    "technology": "Font Awesome",
+    "category": "Icon Library",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "font-awesome"
+      },
+      {
+        "type": "stylesheet",
+        "contains": "fontawesome"
+      },
+      {
+        "type": "script",
+        "contains": "fontawesome"
+      }
+    ]
+  },
+  {
+    "technology": "Bootstrap Icons",
+    "category": "Icon Library",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "bootstrap-icons"
+      }
+    ]
+  },
+  {
+    "technology": "Material Icons",
+    "category": "Icon Library",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "material-icons"
+      },
+      {
+        "type": "stylesheet",
+        "contains": "fonts.googleapis.com/icon"
+      }
+    ]
+  },
+  {
+    "technology": "Google Fonts",
+    "category": "Font Service",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "fonts.googleapis.com"
+      },
+      {
+        "type": "network",
+        "contains": "fonts.gstatic.com"
+      }
+    ]
+  },
+  {
+    "technology": "Adobe Fonts",
+    "category": "Font Service",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "use.typekit.net"
+      }
+    ]
+  },
+  {
+    "technology": "LESS",
+    "category": "CSS Preprocessor",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": ".less"
+      }
+    ]
+  },
+  {
+    "technology": "Sass",
+    "category": "CSS Preprocessor",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": ".scss"
+      }
+    ]
+  },
+  {
+    "technology": "Stylus",
+    "category": "CSS Preprocessor",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": ".styl"
+      }
+    ]
+  },
+  {
+    "technology": "Open Props",
+    "category": "CSS Library",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "open-props"
+      }
+    ]
+  },
+  {
+    "technology": "Picnic CSS",
+    "category": "CSS Framework",
+    "rules": [
+      {
+        "type": "stylesheet",
+        "contains": "picnic"
+      }
+    ]
+  }
+]

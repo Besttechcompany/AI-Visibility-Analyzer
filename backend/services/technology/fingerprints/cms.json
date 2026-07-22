@@ -2,55 +2,148 @@
   {
     "technology": "WordPress",
     "category": "CMS",
-    "confidence": 100,
     "rules": [
-      {
-        "type": "meta_generator",
-        "contains": "wordpress"
-      },
-      {
-        "type": "script",
-        "contains": "/wp-includes/"
-      },
-      {
-        "type": "stylesheet",
-        "contains": "/wp-content/"
-      },
       {
         "type": "html",
         "contains": "wp-content"
-      }
-    ]
-  },
-
-  {
-    "technology": "Drupal",
-    "category": "CMS",
-    "confidence": 100,
-    "rules": [
-      {
-        "type": "meta_generator",
-        "contains": "drupal"
       },
       {
         "type": "html",
-        "contains": "/sites/default/"
+        "contains": "wp-includes"
+      },
+      {
+        "type": "network",
+        "contains": "/wp-json"
+      },
+      {
+        "type": "script",
+        "contains": "wp-content"
+      },
+      {
+        "type": "script",
+        "contains": "wp-includes"
+      },
+      {
+        "type": "meta",
+        "contains": "wordpress"
       }
     ]
   },
-
   {
     "technology": "Joomla",
     "category": "CMS",
-    "confidence": 100,
     "rules": [
-      {
-        "type": "meta_generator",
-        "contains": "joomla"
-      },
       {
         "type": "html",
         "contains": "/media/system/"
+      },
+      {
+        "type": "html",
+        "contains": "joomla!"
+      },
+      {
+        "type": "meta",
+        "contains": "joomla"
+      }
+    ]
+  },
+  {
+    "technology": "Drupal",
+    "category": "CMS",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "/sites/default/"
+      },
+      {
+        "type": "network",
+        "contains": "/sites/default/"
+      },
+      {
+        "type": "meta",
+        "contains": "drupal"
+      }
+    ]
+  },
+  {
+    "technology": "Magento",
+    "category": "CMS",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "/static/frontend/"
+      },
+      {
+        "type": "script",
+        "contains": "/static/frontend/"
+      },
+      {
+        "type": "cookie",
+        "contains": "mage-cache"
+      }
+    ]
+  },
+  {
+    "technology": "Shopify",
+    "category": "E-Commerce",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "cdn.shopify.com"
+      },
+      {
+        "type": "script",
+        "contains": "cdn.shopify.com"
+      },
+      {
+        "type": "meta",
+        "contains": "shopify"
+      }
+    ]
+  },
+  {
+    "technology": "Wix",
+    "category": "Website Builder",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "wixstatic.com"
+      },
+      {
+        "type": "network",
+        "contains": "wixstatic.com"
+      },
+      {
+        "type": "html",
+        "contains": "wix"
+      }
+    ]
+  },
+  {
+    "technology": "Squarespace",
+    "category": "Website Builder",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "static.squarespace.com"
+      },
+      {
+        "type": "network",
+        "contains": "squarespace.com"
+      }
+    ]
+  },
+  {
+    "technology": "Blogger",
+    "category": "CMS",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "blogger.com"
+      },
+      {
+        "type": "network",
+        "contains": "blogger.com"
       }
     ]
   }

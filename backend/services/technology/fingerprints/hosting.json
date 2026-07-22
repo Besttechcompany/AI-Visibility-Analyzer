@@ -1,1 +1,160 @@
-[]
+[
+  {
+    "technology": "Vercel",
+    "category": "Hosting",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "vercel"
+      },
+      {
+        "type": "header",
+        "header": "x-vercel-id",
+        "contains": ""
+      },
+      {
+        "type": "network",
+        "contains": "vercel.app"
+      }
+    ]
+  },
+  {
+    "technology": "Netlify",
+    "category": "Hosting",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "netlify"
+      },
+      {
+        "type": "header",
+        "header": "x-nf-request-id",
+        "contains": ""
+      },
+      {
+        "type": "network",
+        "contains": "netlify.app"
+      }
+    ]
+  },
+  {
+    "technology": "Render",
+    "category": "Hosting",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "render"
+      },
+      {
+        "type": "network",
+        "contains": "onrender.com"
+      }
+    ]
+  },
+  {
+    "technology": "Railway",
+    "category": "Hosting",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "railway.app"
+      },
+      {
+        "type": "network",
+        "contains": "railway.internal"
+      }
+    ]
+  },
+  {
+    "technology": "Firebase Hosting",
+    "category": "Hosting",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "firebase"
+      },
+      {
+        "type": "network",
+        "contains": "firebaseapp.com"
+      },
+      {
+        "type": "network",
+        "contains": "web.app"
+      }
+    ]
+  },
+  {
+    "technology": "GitHub Pages",
+    "category": "Hosting",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "github"
+      },
+      {
+        "type": "network",
+        "contains": "github.io"
+      }
+    ]
+  },
+  {
+    "technology": "Azure App Service",
+    "category": "Hosting",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "microsoft-iis"
+      },
+      {
+        "type": "network",
+        "contains": "azurewebsites.net"
+      }
+    ]
+  },
+  {
+    "technology": "Google App Engine",
+    "category": "Hosting",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "google frontend"
+      },
+      {
+        "type": "network",
+        "contains": "appspot.com"
+      }
+    ]
+  },
+  {
+    "technology": "DigitalOcean App Platform",
+    "category": "Hosting",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "ondigitalocean.app"
+      }
+    ]
+  },
+  {
+    "technology": "Heroku",
+    "category": "Hosting",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "heroku"
+      },
+      {
+        "type": "network",
+        "contains": "herokuapp.com"
+      }
+    ]
+  }
+]

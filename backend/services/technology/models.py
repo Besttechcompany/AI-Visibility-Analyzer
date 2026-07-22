@@ -3,39 +3,40 @@ from typing import Dict, List
 
 
 @dataclass
-class Evidence:
+class BrowserEvidence:
+    """
+    Stores all evidence collected from the browser.
+    """
+
+    url: str
+    final_url: str
 
     html: str
 
-    headers: Dict[str, str]
+    headers: Dict[str, str] = field(default_factory=dict)
 
-    scripts: List[str]
+    meta: Dict[str, str] = field(default_factory=dict)
 
-    stylesheets: List[str]
+    scripts: List[str] = field(default_factory=list)
 
-    links: List[str]
+    stylesheets: List[str] = field(default_factory=list)
 
-    body_classes: List[str]
+    cookies: Dict[str, str] = field(default_factory=dict)
 
-    html_classes: List[str]
+    local_storage: Dict[str, str] = field(default_factory=dict)
 
-    ids: List[str]
+    session_storage: Dict[str, str] = field(default_factory=dict)
 
-    meta: Dict[str, str]
+    javascript_globals: List[str] = field(default_factory=list)
 
-    meta_generator: str
-
-    cookies: Dict[str, str]
-
-    response_url: str
-
-    title: str
-
-    json_ld: List[str]
+    network_requests: List[str] = field(default_factory=list)
 
 
 @dataclass
-class DetectionResult:
+class TechnologyMatch:
+    """
+    Stores one detected technology.
+    """
 
     technology: str
 

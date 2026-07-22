@@ -1,1 +1,130 @@
-[]
+[
+  {
+    "technology": "Yoast SEO",
+    "category": "SEO",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "yoast"
+      },
+      {
+        "type": "script",
+        "contains": "yoast"
+      },
+      {
+        "type": "meta",
+        "contains": "yoast"
+      }
+    ]
+  },
+  {
+    "technology": "Rank Math",
+    "category": "SEO",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "rank-math"
+      },
+      {
+        "type": "script",
+        "contains": "rank-math"
+      },
+      {
+        "type": "meta",
+        "contains": "rank math"
+      }
+    ]
+  },
+  {
+    "technology": "All in One SEO",
+    "category": "SEO",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "aioseo"
+      },
+      {
+        "type": "script",
+        "contains": "aioseo"
+      }
+    ]
+  },
+  {
+    "technology": "SEOPress",
+    "category": "SEO",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "seopress"
+      },
+      {
+        "type": "script",
+        "contains": "seopress"
+      }
+    ]
+  },
+  {
+    "technology": "Google Search Console",
+    "category": "SEO",
+    "rules": [
+      {
+        "type": "meta",
+        "contains": "google-site-verification"
+      }
+    ]
+  },
+  {
+    "technology": "Bing Webmaster Tools",
+    "category": "SEO",
+    "rules": [
+      {
+        "type": "meta",
+        "contains": "msvalidate.01"
+      }
+    ]
+  },
+  {
+    "technology": "Yandex Webmaster",
+    "category": "SEO",
+    "rules": [
+      {
+        "type": "meta",
+        "contains": "yandex-verification"
+      }
+    ]
+  },
+  {
+    "technology": "Pinterest Verification",
+    "category": "SEO",
+    "rules": [
+      {
+        "type": "meta",
+        "contains": "p:domain_verify"
+      }
+    ]
+  },
+  {
+    "technology": "Facebook Domain Verification",
+    "category": "SEO",
+    "rules": [
+      {
+        "type": "meta",
+        "contains": "facebook-domain-verification"
+      }
+    ]
+  },
+  {
+    "technology": "Schema.org",
+    "category": "Structured Data",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "application/ld+json"
+      },
+      {
+        "type": "html",
+        "contains": "\"@context\":\"https://schema.org\""
+      }
+    ]
+  }
+]

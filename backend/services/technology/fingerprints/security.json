@@ -1,1 +1,214 @@
-[]
+[
+  {
+    "technology": "Cloudflare WAF",
+    "category": "Security",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "cloudflare"
+      },
+      {
+        "type": "cookie",
+        "contains": "__cf_bm"
+      },
+      {
+        "type": "cookie",
+        "contains": "cf_clearance"
+      }
+    ]
+  },
+  {
+    "technology": "Google reCAPTCHA",
+    "category": "Security",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "google.com/recaptcha"
+      },
+      {
+        "type": "script",
+        "contains": "www.gstatic.com/recaptcha"
+      },
+      {
+        "type": "network",
+        "contains": "recaptcha"
+      }
+    ]
+  },
+  {
+    "technology": "hCaptcha",
+    "category": "Security",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "hcaptcha.com"
+      },
+      {
+        "type": "network",
+        "contains": "hcaptcha.com"
+      }
+    ]
+  },
+  {
+    "technology": "AWS WAF",
+    "category": "Security",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "awselb"
+      },
+      {
+        "type": "header",
+        "header": "x-amzn-requestid",
+        "contains": ""
+      }
+    ]
+  },
+  {
+    "technology": "Imperva",
+    "category": "Security",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "imperva"
+      },
+      {
+        "type": "cookie",
+        "contains": "incap_ses"
+      },
+      {
+        "type": "cookie",
+        "contains": "visid_incap"
+      }
+    ]
+  },
+  {
+    "technology": "Sucuri Firewall",
+    "category": "Security",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "sucuri"
+      },
+      {
+        "type": "header",
+        "header": "x-sucuri-id",
+        "contains": ""
+      },
+      {
+        "type": "header",
+        "header": "x-sucuri-cache",
+        "contains": ""
+      }
+    ]
+  },
+  {
+    "technology": "Wordfence",
+    "category": "Security",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "wordfence"
+      },
+      {
+        "type": "script",
+        "contains": "wordfence"
+      },
+      {
+        "type": "cookie",
+        "contains": "wfvt_"
+      }
+    ]
+  },
+  {
+    "technology": "Akamai Bot Manager",
+    "category": "Security",
+    "rules": [
+      {
+        "type": "cookie",
+        "contains": "_abck"
+      },
+      {
+        "type": "cookie",
+        "contains": "bm_sv"
+      },
+      {
+        "type": "network",
+        "contains": "akamai"
+      }
+    ]
+  },
+  {
+    "technology": "Fortinet",
+    "category": "Security",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "fortinet"
+      },
+      {
+        "type": "cookie",
+        "contains": "fortiwafsid"
+      }
+    ]
+  },
+  {
+    "technology": "Let's Encrypt",
+    "category": "SSL Certificate",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "letsencrypt"
+      }
+    ]
+  },
+  {
+    "technology": "DigiCert",
+    "category": "SSL Certificate",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "digicert"
+      }
+    ]
+  },
+  {
+    "technology": "GeoTrust",
+    "category": "SSL Certificate",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "geotrust"
+      }
+    ]
+  },
+  {
+    "technology": "Sectigo",
+    "category": "SSL Certificate",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "sectigo"
+      }
+    ]
+  },
+  {
+    "technology": "Cloudflare Turnstile",
+    "category": "Security",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "challenges.cloudflare.com/turnstile"
+      },
+      {
+        "type": "network",
+        "contains": "turnstile"
+      }
+    ]
+  }
+]

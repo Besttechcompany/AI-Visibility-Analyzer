@@ -1,122 +1,32 @@
-import json
-from bs4 import BeautifulSoup
-
-from .models import Evidence
+from .browser import Browser
+from .models import BrowserEvidence
 
 
 class EvidenceCollector:
+    """
+    Collects browser-rendered evidence using Playwright.
+    """
 
     @staticmethod
-    def collect(response, soup):
+    def collect(url: str) -> BrowserEvidence:
 
-        scripts = [
-            s.get("src", "").lower()
-            for s in soup.find_all("script", src=True)
-        ]
+        print("=" * 60)
+        print("Collecting Browser Evidence")
+        print("=" * 60)
 
-        stylesheets = [
-            l.get("href", "").lower()
-            for l in soup.find_all(
-                "link",
-                rel=lambda r: r and "stylesheet" in r
-            )
-        ]
+        evidence = Browser.collect(url)
 
-        links = [
-            l.get("href", "").lower()
-            for l in soup.find_all("link", href=True)
-        ]
+        print(f"Original URL       : {evidence.url}")
+        print(f"Final URL          : {evidence.final_url}")
+        print(f"HTML Length        : {len(evidence.html)}")
+        print(f"Headers            : {len(evidence.headers)}")
+        print(f"Meta Tags          : {len(evidence.meta)}")
+        print(f"Scripts            : {len(evidence.scripts)}")
+        print(f"Stylesheets        : {len(evidence.stylesheets)}")
+        print(f"Cookies            : {len(evidence.cookies)}")
+        print(f"Local Storage      : {len(evidence.local_storage)}")
+        print(f"Session Storage    : {len(evidence.session_storage)}")
+        print(f"JS Globals         : {len(evidence.javascript_globals)}")
+        print(f"Network Requests   : {len(evidence.network_requests)}")
 
-        body_classes = []
-
-        if soup.body:
-            body_classes = [
-                c.lower()
-                for c in soup.body.get("class", [])
-            ]
-
-        html_classes = []
-
-        if soup.html:
-            html_classes = [
-                c.lower()
-                for c in soup.html.get("class", [])
-            ]
-
-        ids = []
-
-        for tag in soup.find_all(id=True):
-            ids.append(tag["id"].lower())
-
-        generator = ""
-
-        tag = soup.find(
-            "meta",
-            attrs={"name": "generator"}
-        )
-
-        if tag:
-            generator = tag.get("content", "").lower()
-
-        meta = {}
-
-        for m in soup.find_all("meta"):
-
-            key = (
-                m.get("name")
-                or m.get("property")
-            )
-
-            if key:
-
-                meta[key.lower()] = m.get(
-                    "content",
-                    ""
-                )
-
-        cookies = {
-            c.name.lower(): c.value
-            for c in response.cookies
-        }
-
-        json_ld = []
-
-        for script in soup.find_all(
-            "script",
-            type="application/ld+json"
-        ):
-            json_ld.append(script.text)
-
-        return Evidence(
-
-            html=response.text.lower(),
-
-            headers={
-                k.lower(): v.lower()
-                for k, v in response.headers.items()
-            },
-
-            scripts=scripts,
-
-            stylesheets=stylesheets,
-
-            links=links,
-
-            body_classes=body_classes,
-
-            html_classes=html_classes,
-
-            ids=ids,
-
-            meta=meta,
-
-            meta_generator=generator,
-
-            cookies=cookies,
-
-            response_url=response.url,
-
-            title=soup.title.string if soup.title else "",
-
-            json_ld=json_ld
-        )
+        return evidence

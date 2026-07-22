@@ -1,1 +1,168 @@
-[]
+[
+  {
+    "technology": "Cloudflare",
+    "category": "CDN",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "cloudflare"
+      },
+      {
+        "type": "header",
+        "header": "cf-ray",
+        "contains": ""
+      },
+      {
+        "type": "cookie",
+        "contains": "__cf_bm"
+      },
+      {
+        "type": "network",
+        "contains": "cloudflare"
+      }
+    ]
+  },
+  {
+    "technology": "Amazon CloudFront",
+    "category": "CDN",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "cloudfront"
+      },
+      {
+        "type": "header",
+        "header": "via",
+        "contains": "cloudfront"
+      },
+      {
+        "type": "network",
+        "contains": "cloudfront.net"
+      }
+    ]
+  },
+  {
+    "technology": "jsDelivr",
+    "category": "CDN",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "cdn.jsdelivr.net"
+      },
+      {
+        "type": "stylesheet",
+        "contains": "cdn.jsdelivr.net"
+      },
+      {
+        "type": "network",
+        "contains": "cdn.jsdelivr.net"
+      }
+    ]
+  },
+  {
+    "technology": "Fastly",
+    "category": "CDN",
+    "rules": [
+      {
+        "type": "header",
+        "header": "x-served-by",
+        "contains": "cache"
+      },
+      {
+        "type": "header",
+        "header": "via",
+        "contains": "fastly"
+      }
+    ]
+  },
+  {
+    "technology": "Akamai",
+    "category": "CDN",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "akamai"
+      },
+      {
+        "type": "network",
+        "contains": "akamaized.net"
+      }
+    ]
+  },
+  {
+    "technology": "BunnyCDN",
+    "category": "CDN",
+    "rules": [
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "bunnycdn"
+      },
+      {
+        "type": "network",
+        "contains": "b-cdn.net"
+      }
+    ]
+  },
+  {
+    "technology": "KeyCDN",
+    "category": "CDN",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "kxcdn.com"
+      },
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "keycdn"
+      }
+    ]
+  },
+  {
+    "technology": "StackPath",
+    "category": "CDN",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "stackpathcdn.com"
+      },
+      {
+        "type": "header",
+        "header": "server",
+        "contains": "stackpath"
+      }
+    ]
+  },
+  {
+    "technology": "Cloudinary",
+    "category": "Media CDN",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "res.cloudinary.com"
+      },
+      {
+        "type": "script",
+        "contains": "cloudinary"
+      }
+    ]
+  },
+  {
+    "technology": "Imgix",
+    "category": "Image CDN",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "imgix.net"
+      },
+      {
+        "type": "script",
+        "contains": "imgix"
+      }
+    ]
+  }
+]

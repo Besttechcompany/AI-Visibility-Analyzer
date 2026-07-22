@@ -7,27 +7,76 @@ class TechnologyDetector:
     @staticmethod
     def detect(evidence):
 
-        results = []
+        print("=" * 60)
+        print("Technology Detection Started")
+        print("=" * 60)
 
-        # Load all fingerprint files
         fingerprints = FingerprintLoader.load()
 
-        # Debug message
-        print(f"Loaded {len(fingerprints)} fingerprints")
+        print(f"Fingerprints Loaded: {len(fingerprints)}")
 
-        for fp in fingerprints:
+        detections = []
 
-            detection = RuleMatcher.match(
-                evidence,
-                fp
-            )
+        for fingerprint in fingerprints:
 
-            if detection:
-                results.append(detection)
+            try:
+
+                result = RuleMatcher.match(
+                    evidence,
+                    fingerprint
+                )
+
+                if result:
+
+                    print(
+                        f"[MATCH] {result.technology} "
+                        f"({result.confidence}%)"
+                    )
+
+                    detections.append(result)
+
+            except Exception as e:
+
+                technology = fingerprint.get(
+                    "technology",
+                    "Unknown"
+                )
+
+                print(
+                    f"[ERROR] {technology}: {e}"
+                )
+
+        # Remove duplicate technologies
+        unique = {}
+
+        for detection in detections:
+
+            tech = detection.technology
+
+            if tech not in unique:
+
+                unique[tech] = detection
+
+            elif detection.confidence > unique[tech].confidence:
+
+                unique[tech] = detection
+
+        results = list(unique.values())
 
         results.sort(
-            key=lambda x: x.confidence,
-            reverse=True
+
+            key=lambda item: (
+
+                -item.confidence,
+
+                item.technology.lower()
+
+            )
+
         )
+
+        print("=" * 60)
+        print(f"Detected Technologies: {len(results)}")
+        print("=" * 60)
 
         return results

@@ -1,1 +1,240 @@
-[]
+[
+  {
+    "technology": "WooCommerce",
+    "category": "E-Commerce",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "woocommerce"
+      },
+      {
+        "type": "script",
+        "contains": "woocommerce"
+      },
+      {
+        "type": "script",
+        "contains": "wc-cart-fragments"
+      },
+      {
+        "type": "network",
+        "contains": "wc-ajax"
+      }
+    ]
+  },
+  {
+    "technology": "Shopify",
+    "category": "E-Commerce",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "shopify"
+      },
+      {
+        "type": "script",
+        "contains": "cdn.shopify.com"
+      },
+      {
+        "type": "network",
+        "contains": "shopify"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "shopify"
+      }
+    ]
+  },
+  {
+    "technology": "Magento",
+    "category": "E-Commerce",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "mage/"
+      },
+      {
+        "type": "script",
+        "contains": "mage"
+      },
+      {
+        "type": "cookie",
+        "contains": "mage-cache"
+      },
+      {
+        "type": "network",
+        "contains": "static/frontend"
+      }
+    ]
+  },
+  {
+    "technology": "PrestaShop",
+    "category": "E-Commerce",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "prestashop"
+      },
+      {
+        "type": "script",
+        "contains": "prestashop"
+      },
+      {
+        "type": "network",
+        "contains": "modules/"
+      }
+    ]
+  },
+  {
+    "technology": "OpenCart",
+    "category": "E-Commerce",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "route=product"
+      },
+      {
+        "type": "script",
+        "contains": "catalog/view/javascript"
+      },
+      {
+        "type": "network",
+        "contains": "index.php?route="
+      }
+    ]
+  },
+  {
+    "technology": "BigCommerce",
+    "category": "E-Commerce",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "cdn.bcapp"
+      },
+      {
+        "type": "network",
+        "contains": "bigcommerce"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "bigcommerce"
+      }
+    ]
+  },
+  {
+    "technology": "Salesforce Commerce Cloud",
+    "category": "E-Commerce",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "demandware"
+      },
+      {
+        "type": "script",
+        "contains": "demandware"
+      },
+      {
+        "type": "html",
+        "contains": "dwfrm"
+      }
+    ]
+  },
+  {
+    "technology": "Ecwid",
+    "category": "E-Commerce",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "ecwid"
+      },
+      {
+        "type": "network",
+        "contains": "ecwid"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "ecwid"
+      }
+    ]
+  },
+  {
+    "technology": "Snipcart",
+    "category": "E-Commerce",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "snipcart"
+      },
+      {
+        "type": "network",
+        "contains": "snipcart"
+      }
+    ]
+  },
+  {
+    "technology": "Paddle",
+    "category": "Payment Platform",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "paddle"
+      },
+      {
+        "type": "network",
+        "contains": "paddle"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "paddle"
+      }
+    ]
+  },
+  {
+    "technology": "Stripe",
+    "category": "Payment Gateway",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "js.stripe.com"
+      },
+      {
+        "type": "network",
+        "contains": "stripe"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "stripe"
+      }
+    ]
+  },
+  {
+    "technology": "PayPal",
+    "category": "Payment Gateway",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "paypal.com/sdk/js"
+      },
+      {
+        "type": "network",
+        "contains": "paypal.com"
+      }
+    ]
+  },
+  {
+    "technology": "Razorpay",
+    "category": "Payment Gateway",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "checkout.razorpay.com"
+      },
+      {
+        "type": "network",
+        "contains": "razorpay"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "razorpay"
+      }
+    ]
+  }
+]

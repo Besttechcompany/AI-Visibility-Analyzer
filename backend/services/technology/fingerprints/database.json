@@ -1,0 +1,207 @@
+[
+  {
+    "technology": "MySQL",
+    "category": "Database",
+    "rules": [
+      {
+        "type": "header",
+        "header": "x-powered-by",
+        "contains": "mysql"
+      },
+      {
+        "type": "html",
+        "contains": "mysql"
+      }
+    ]
+  },
+  {
+    "technology": "MariaDB",
+    "category": "Database",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "mariadb"
+      },
+      {
+        "type": "header",
+        "header": "x-powered-by",
+        "contains": "mariadb"
+      }
+    ]
+  },
+  {
+    "technology": "PostgreSQL",
+    "category": "Database",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "postgresql"
+      },
+      {
+        "type": "network",
+        "contains": "postgres"
+      }
+    ]
+  },
+  {
+    "technology": "MongoDB",
+    "category": "Database",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "mongodb"
+      },
+      {
+        "type": "script",
+        "contains": "mongodb"
+      },
+      {
+        "type": "network",
+        "contains": "mongodb"
+      }
+    ]
+  },
+  {
+    "technology": "Redis",
+    "category": "Database",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "redis"
+      },
+      {
+        "type": "network",
+        "contains": "redis"
+      }
+    ]
+  },
+  {
+    "technology": "Elasticsearch",
+    "category": "Search Engine",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "elasticsearch"
+      },
+      {
+        "type": "html",
+        "contains": "elasticsearch"
+      }
+    ]
+  },
+  {
+    "technology": "OpenSearch",
+    "category": "Search Engine",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "opensearch"
+      },
+      {
+        "type": "html",
+        "contains": "opensearch"
+      }
+    ]
+  },
+  {
+    "technology": "Firebase Firestore",
+    "category": "Cloud Database",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "firestore.googleapis.com"
+      },
+      {
+        "type": "script",
+        "contains": "firebase-firestore"
+      }
+    ]
+  },
+  {
+    "technology": "Supabase",
+    "category": "Backend Platform",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "supabase.co"
+      },
+      {
+        "type": "script",
+        "contains": "supabase"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "supabase"
+      }
+    ]
+  },
+  {
+    "technology": "PlanetScale",
+    "category": "Cloud Database",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "planetscale"
+      }
+    ]
+  },
+  {
+    "technology": "Neon",
+    "category": "Cloud Database",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "neon.tech"
+      }
+    ]
+  },
+  {
+    "technology": "SQLite",
+    "category": "Database",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "sqlite"
+      }
+    ]
+  },
+  {
+    "technology": "Oracle Database",
+    "category": "Database",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "oracle"
+      }
+    ]
+  },
+  {
+    "technology": "Microsoft SQL Server",
+    "category": "Database",
+    "rules": [
+      {
+        "type": "html",
+        "contains": "sql server"
+      },
+      {
+        "type": "header",
+        "header": "x-powered-by",
+        "contains": "asp.net"
+      }
+    ]
+  },
+  {
+    "technology": "CouchDB",
+    "category": "Database",
+    "rules": [
+      {
+        "type": "network",
+        "contains": "couchdb"
+      },
+      {
+        "type": "html",
+        "contains": "couchdb"
+      }
+    ]
+  }
+]

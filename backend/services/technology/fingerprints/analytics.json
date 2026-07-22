@@ -1,1 +1,182 @@
-[]
+[
+  {
+    "technology": "Google Analytics",
+    "category": "Analytics",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "google-analytics.com"
+      },
+      {
+        "type": "script",
+        "contains": "gtag/js"
+      },
+      {
+        "type": "network",
+        "contains": "google-analytics.com"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "gtag"
+      }
+    ]
+  },
+  {
+    "technology": "Google Tag Manager",
+    "category": "Tag Manager",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "googletagmanager.com"
+      },
+      {
+        "type": "network",
+        "contains": "googletagmanager.com"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "dataLayer"
+      }
+    ]
+  },
+  {
+    "technology": "Microsoft Clarity",
+    "category": "Analytics",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "clarity.ms"
+      },
+      {
+        "type": "network",
+        "contains": "clarity.ms"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "clarity"
+      }
+    ]
+  },
+  {
+    "technology": "Hotjar",
+    "category": "Analytics",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "hotjar"
+      },
+      {
+        "type": "network",
+        "contains": "hotjar"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "hj"
+      }
+    ]
+  },
+  {
+    "technology": "Mixpanel",
+    "category": "Analytics",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "mixpanel"
+      },
+      {
+        "type": "network",
+        "contains": "mixpanel"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "mixpanel"
+      }
+    ]
+  },
+  {
+    "technology": "Segment",
+    "category": "Analytics",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "segment.com"
+      },
+      {
+        "type": "network",
+        "contains": "segment.io"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "analytics"
+      }
+    ]
+  },
+  {
+    "technology": "Facebook Pixel",
+    "category": "Marketing",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "connect.facebook.net"
+      },
+      {
+        "type": "network",
+        "contains": "facebook.com/tr"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "fbq"
+      }
+    ]
+  },
+  {
+    "technology": "LinkedIn Insight Tag",
+    "category": "Marketing",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "snap.licdn.com"
+      },
+      {
+        "type": "network",
+        "contains": "linkedin.com"
+      }
+    ]
+  },
+  {
+    "technology": "TikTok Pixel",
+    "category": "Marketing",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "analytics.tiktok.com"
+      },
+      {
+        "type": "network",
+        "contains": "analytics.tiktok.com"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "ttq"
+      }
+    ]
+  },
+  {
+    "technology": "Matomo",
+    "category": "Analytics",
+    "rules": [
+      {
+        "type": "script",
+        "contains": "matomo"
+      },
+      {
+        "type": "network",
+        "contains": "matomo"
+      },
+      {
+        "type": "javascript_global",
+        "contains": "_paq"
+      }
+    ]
+  }
+]
