@@ -1,5 +1,8 @@
+import os
 from playwright.sync_api import sync_playwright
 from .models import BrowserEvidence
+
+os.environ["PLAYWRIGHT_BROWSERS_PATH"] = "0"
 
 
 class Browser:
