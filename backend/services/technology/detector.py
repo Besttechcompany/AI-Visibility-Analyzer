@@ -11,44 +11,36 @@ class TechnologyDetector:
 
         results = []
 
-        fingerprint_folder = (
+        fingerprint_folder = Path(__file__).parent / "fingerprints"
 
-            Path(__file__).parent
+        print("=" * 60)
+        print("Fingerprint Folder:", fingerprint_folder)
 
-            / "fingerprints"
+        files = list(fingerprint_folder.glob("*.json"))
 
-        )
+        print("JSON Files Found:", len(files))
 
-        for file in fingerprint_folder.glob("*.json"):
+        for file in files:
 
-            with open(
+            print("Loading:", file.name)
 
-                file,
-
-                "r",
-
-                encoding="utf-8"
-
-            ) as f:
+            with open(file, "r", encoding="utf-8") as f:
 
                 fingerprints = json.load(f)
 
+            print("Fingerprints:", len(fingerprints))
+
             for fp in fingerprints:
 
-                detection = RuleMatcher.match(
-
-                    evidence,
-
-                    fp
-
-                )
+                detection = RuleMatcher.match(evidence, fp)
 
                 if detection:
 
-                    results.append(
+                    print("MATCH:", detection.technology)
 
-                        detection
+                    results.append(detection)
 
-                    )
+        print("Total Matches:", len(results))
+        print("=" * 60)
 
         return results
