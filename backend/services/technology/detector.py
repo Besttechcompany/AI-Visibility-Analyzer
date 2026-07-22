@@ -1,6 +1,4 @@
-import json
-from pathlib import Path
-
+from .loader import FingerprintLoader
 from .matcher import RuleMatcher
 
 
@@ -11,36 +9,25 @@ class TechnologyDetector:
 
         results = []
 
-        fingerprint_folder = Path(__file__).parent / "fingerprints"
+        # Load all fingerprint files
+        fingerprints = FingerprintLoader.load()
 
-        print("=" * 60)
-        print("Fingerprint Folder:", fingerprint_folder)
+        # Debug message
+        print(f"Loaded {len(fingerprints)} fingerprints")
 
-        files = list(fingerprint_folder.glob("*.json"))
+        for fp in fingerprints:
 
-        print("JSON Files Found:", len(files))
+            detection = RuleMatcher.match(
+                evidence,
+                fp
+            )
 
-        for file in files:
+            if detection:
+                results.append(detection)
 
-            print("Loading:", file.name)
-
-            with open(file, "r", encoding="utf-8") as f:
-
-                fingerprints = json.load(f)
-
-            print("Fingerprints:", len(fingerprints))
-
-            for fp in fingerprints:
-
-                detection = RuleMatcher.match(evidence, fp)
-
-                if detection:
-
-                    print("MATCH:", detection.technology)
-
-                    results.append(detection)
-
-        print("Total Matches:", len(results))
-        print("=" * 60)
+        results.sort(
+            key=lambda x: x.confidence,
+            reverse=True
+        )
 
         return results

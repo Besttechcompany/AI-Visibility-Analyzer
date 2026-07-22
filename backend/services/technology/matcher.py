@@ -1,125 +1,135 @@
+import re
+
 from .models import DetectionResult
 
 
 class RuleMatcher:
 
     @staticmethod
-    def match(evidence, fingerprint):
+    def _match_rule(evidence, rule):
+
+        rtype = rule.get("type")
+        operator = rule.get("operator", "contains")
+        value = str(rule.get("value", rule.get("contains", ""))).lower()
+
+        # -----------------------------
+        # Sources
+        # -----------------------------
+
+        if rtype == "html":
+            target = evidence.html
+
+        elif rtype == "title":
+            target = evidence.title.lower()
+
+        elif rtype == "generator":
+            target = evidence.meta_generator
+
+        elif rtype == "script":
+            target = " ".join(evidence.scripts)
+
+        elif rtype == "stylesheet":
+            target = " ".join(evidence.stylesheets)
+
+        elif rtype == "link":
+            target = " ".join(evidence.links)
+
+        elif rtype == "body_class":
+            target = " ".join(evidence.body_classes)
+
+        elif rtype == "html_class":
+            target = " ".join(evidence.html_classes)
+
+        elif rtype == "id":
+            target = " ".join(evidence.ids)
+
+        elif rtype == "jsonld":
+            target = " ".join(evidence.json_ld).lower()
+
+        elif rtype == "header":
+
+            header = rule.get("header", "").lower()
+
+            target = evidence.headers.get(header, "")
+
+        elif rtype == "meta":
+
+            meta = rule.get("meta", "").lower()
+
+            target = evidence.meta.get(meta, "").lower()
+
+        elif rtype == "cookie":
+
+            cookie = rule.get("cookie", "").lower()
+
+            target = evidence.cookies.get(cookie, "").lower()
+
+        else:
+            return False
+
+        # -----------------------------
+        # Operators
+        # -----------------------------
+
+        if operator == "contains":
+
+            return value in target
+
+        if operator == "equals":
+
+            return target == value
+
+        if operator == "starts_with":
+
+            return target.startswith(value)
+
+        if operator == "ends_with":
+
+            return target.endswith(value)
+
+        if operator == "regex":
+
+            return re.search(value, target) is not None
+
+        if operator == "exists":
+
+            return bool(target)
+
+        return False
+
+    @classmethod
+    def match(cls, evidence, fingerprint):
+
+        evidence_found = []
 
         score = 0
 
-        matched = []
+        for rule in fingerprint.get("rules", []):
 
-        total_rules = len(
-            fingerprint["rules"]
-        )
+            if cls._match_rule(evidence, rule):
 
-        for rule in fingerprint["rules"]:
+                evidence_found.append(
 
-            rtype = rule["type"]
-
-            value = rule.get(
-                "contains",
-                ""
-            ).lower()
-
-            # -----------------------
-            # META GENERATOR
-            # -----------------------
-
-            if rtype == "meta_generator":
-
-                if value in evidence.meta_generator:
-
-                    score += 1
-
-                    matched.append(
-                        "Meta Generator"
-                    )
-
-            # -----------------------
-            # HTML
-            # -----------------------
-
-            elif rtype == "html":
-
-                if value in evidence.html:
-
-                    score += 1
-
-                    matched.append(value)
-
-            # -----------------------
-            # Script
-            # -----------------------
-
-            elif rtype == "script":
-
-                if any(
-                    value in s
-                    for s in evidence.scripts
-                ):
-
-                    score += 1
-
-                    matched.append(value)
-
-            # -----------------------
-            # Stylesheet
-            # -----------------------
-
-            elif rtype == "stylesheet":
-
-                if any(
-                    value in s
-                    for s in evidence.stylesheets
-                ):
-
-                    score += 1
-
-                    matched.append(value)
-
-            # -----------------------
-            # Header
-            # -----------------------
-
-            elif rtype == "header":
-
-                header = rule["header"].lower()
-
-                if header in evidence.headers:
-
-                    if value in evidence.headers[header]:
-
-                        score += 1
-
-                        matched.append(
-                            header
+                    rule.get(
+                        "name",
+                        rule.get(
+                            "type",
+                            "rule"
                         )
-
-            # -----------------------
-            # Cookie
-            # -----------------------
-
-            elif rtype == "cookie":
-
-                if value in evidence.cookies:
-
-                    score += 1
-
-                    matched.append(
-                        value
                     )
+
+                )
+
+                score += rule.get(
+                    "weight",
+                    20
+                )
 
         if score == 0:
 
             return None
 
-        confidence = round(
-
-            (score / total_rules) * 100
-
-        )
+        confidence = min(score, 100)
 
         return DetectionResult(
 
@@ -129,6 +139,6 @@ class RuleMatcher:
 
             confidence=confidence,
 
-            evidence=matched
+            evidence=evidence_found
 
         )
