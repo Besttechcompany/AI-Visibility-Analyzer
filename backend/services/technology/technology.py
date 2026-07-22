@@ -1,5 +1,4 @@
 from .evidence import EvidenceCollector
-
 from .detector import TechnologyDetector
 
 
@@ -8,19 +7,22 @@ class TechnologyAnalyzer:
     @staticmethod
     def analyze(response, soup):
 
+        print("=" * 60)
+        print("TechnologyAnalyzer.analyze() called")
+        print("=" * 60)
+
         evidence = EvidenceCollector.collect(
-
             response,
-
             soup
-
         )
+
+        print("Evidence collected successfully")
 
         detections = TechnologyDetector.detect(
-
             evidence
-
         )
+
+        print(f"Detections Found: {len(detections)}")
 
         output = []
 
