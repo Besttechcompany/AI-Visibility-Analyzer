@@ -1,0 +1,57 @@
+[
+  {
+    "technology": "WordPress",
+    "category": "CMS",
+    "confidence": 100,
+    "rules": [
+      {
+        "type": "meta_generator",
+        "contains": "wordpress"
+      },
+      {
+        "type": "script",
+        "contains": "/wp-includes/"
+      },
+      {
+        "type": "stylesheet",
+        "contains": "/wp-content/"
+      },
+      {
+        "type": "html",
+        "contains": "wp-content"
+      }
+    ]
+  },
+
+  {
+    "technology": "Drupal",
+    "category": "CMS",
+    "confidence": 100,
+    "rules": [
+      {
+        "type": "meta_generator",
+        "contains": "drupal"
+      },
+      {
+        "type": "html",
+        "contains": "/sites/default/"
+      }
+    ]
+  },
+
+  {
+    "technology": "Joomla",
+    "category": "CMS",
+    "confidence": 100,
+    "rules": [
+      {
+        "type": "meta_generator",
+        "contains": "joomla"
+      },
+      {
+        "type": "html",
+        "contains": "/media/system/"
+      }
+    ]
+  }
+]

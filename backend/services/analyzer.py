@@ -12,7 +12,7 @@ from services.score import ScoreAnalyzer
 from services.eeat import EEATAnalyzer
 from services.audit import AuditAnalyzer
 from services.technical_seo import TechnicalSEOAnalyzer
-from services.technology import TechnologyAnalyzer
+from services.technology.technology import TechnologyAnalyzer
 
 
 class WebsiteAnalyzer:
