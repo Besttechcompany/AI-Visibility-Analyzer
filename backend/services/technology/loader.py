@@ -9,28 +9,22 @@ class FingerprintLoader:
 
         folder = Path(__file__).parent / "fingerprints"
 
-        print("=" * 60)
-        print("Folder Exists:", folder.exists())
-        print("Folder:", folder)
-
-        print("Directory Contents:")
-        for item in folder.iterdir():
-            print(" -", item.name)
-
-        files = list(folder.glob("*.json"))
-
-        print("JSON Files:", [f.name for f in files])
-
         fingerprints = []
 
-        for file in files:
+        for file in sorted(folder.glob("*.json")):
+
             with open(file, "r", encoding="utf-8") as f:
-                data = json.load(f)
+
+                print(f"Loading: {file.name}")
+
+                try:
+                    data = json.load(f)
+
+                except json.JSONDecodeError as e:
+                    print(f"Invalid JSON in {file.name}: {e}")
+                    continue
 
                 if isinstance(data, list):
                     fingerprints.extend(data)
-
-        print("Total Fingerprints Loaded:", len(fingerprints))
-        print("=" * 60)
 
         return fingerprints
