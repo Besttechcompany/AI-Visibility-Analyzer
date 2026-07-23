@@ -1,3 +1,5 @@
+from collections import defaultdict
+
 from .evidence import EvidenceCollector
 from .detector import TechnologyDetector
 
@@ -6,24 +8,6 @@ class TechnologyAnalyzer:
 
     @staticmethod
     def analyze(response, soup):
-        """
-        Analyze a website and detect technologies.
-
-        Parameters
-        ----------
-        response : requests.Response
-            Original HTTP response from analyzer.py
-
-        soup : BeautifulSoup
-            Reserved for future compatibility.
-            Not used because Playwright performs
-            browser-based collection.
-
-        Returns
-        -------
-        list
-            List of detected technologies.
-        """
 
         print("=" * 60)
         print("Technology Analyzer")
@@ -41,15 +25,13 @@ class TechnologyAnalyzer:
         # Detect technologies
         detections = TechnologyDetector.detect(evidence)
 
-        output = []
+        categories = defaultdict(list)
 
         for detection in detections:
 
-            output.append({
+            categories[detection.category].append({
 
                 "technology": detection.technology,
-
-                "category": detection.category,
 
                 "confidence": detection.confidence,
 
@@ -57,20 +39,34 @@ class TechnologyAnalyzer:
 
             })
 
-        output.sort(
+        # Sort technologies inside each category
+        for category in categories:
 
-            key=lambda x: (
+            categories[category].sort(
 
-                -x["confidence"],
+                key=lambda x: (
 
-                x["technology"].lower()
+                    -x["confidence"],
+
+                    x["technology"].lower()
+
+                )
 
             )
 
-        )
+        result = {
+
+            "total_technologies": len(detections),
+
+            "total_categories": len(categories),
+
+            "categories": dict(categories)
+
+        }
 
         print("=" * 60)
-        print(f"Total Technologies: {len(output)}")
+        print(f"Categories : {result['total_categories']}")
+        print(f"Technologies : {result['total_technologies']}")
         print("=" * 60)
 
-        return output
+        return result
