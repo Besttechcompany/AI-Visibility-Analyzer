@@ -1,3 +1,5 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -54,12 +56,29 @@ app.include_router(auth_router)
 app.include_router(analyze_router)
 
 # ---------------------------------------
+# Screenshot Directory
+# ---------------------------------------
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SCREENSHOTS_DIR = os.path.join(BASE_DIR, "screenshots")
+
+os.makedirs(
+    SCREENSHOTS_DIR,
+    exist_ok=True
+)
+
+print("=" * 60)
+print("Serving screenshots from:")
+print(SCREENSHOTS_DIR)
+print("=" * 60)
+
+# ---------------------------------------
 # Serve Screenshot Images
 # ---------------------------------------
 
 app.mount(
     "/screenshots",
-    StaticFiles(directory="screenshots"),
+    StaticFiles(directory=SCREENSHOTS_DIR),
     name="screenshots"
 )
 
