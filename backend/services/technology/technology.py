@@ -1,3 +1,4 @@
+import time
 from collections import defaultdict
 
 from .evidence import EvidenceCollector
@@ -9,6 +10,8 @@ class TechnologyAnalyzer:
     @staticmethod
     def analyze(browser, response, soup):
 
+        total_start = time.time()
+
         print("=" * 60)
         print("Technology Analyzer")
         print("=" * 60)
@@ -17,13 +20,30 @@ class TechnologyAnalyzer:
 
         print(f"Analyzing: {url}")
 
-        # Collect browser evidence using the shared browser
-        evidence = EvidenceCollector.collect(browser, url)
+        # ---------------------------------------
+        # Evidence Collection
+        # ---------------------------------------
 
-        print("Evidence collection completed.")
+        evidence_start = time.time()
 
-        # Detect technologies
-        detections = TechnologyDetector.detect(evidence)
+        evidence = EvidenceCollector.collect(
+            browser,
+            url
+        )
+
+        print(f"Evidence collection completed in {time.time() - evidence_start:.2f} sec")
+
+        # ---------------------------------------
+        # Technology Detection
+        # ---------------------------------------
+
+        detect_start = time.time()
+
+        detections = TechnologyDetector.detect(
+            evidence
+        )
+
+        print(f"Technology detection completed in {time.time() - detect_start:.2f} sec")
 
         categories = defaultdict(list)
 
@@ -39,7 +59,6 @@ class TechnologyAnalyzer:
 
             })
 
-        # Sort technologies inside each category
         for category in categories:
 
             categories[category].sort(
@@ -67,6 +86,7 @@ class TechnologyAnalyzer:
         print("=" * 60)
         print(f"Categories : {result['total_categories']}")
         print(f"Technologies : {result['total_technologies']}")
+        print(f"Technology Analyzer Total : {time.time() - total_start:.2f} sec")
         print("=" * 60)
 
         return result

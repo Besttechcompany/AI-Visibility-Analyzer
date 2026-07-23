@@ -1,9 +1,6 @@
 import os
 import uuid
-
-# ---------------------------------------
-# Backend Root Directory
-# ---------------------------------------
+import time
 
 BASE_DIR = os.path.abspath(
     os.path.join(
@@ -12,10 +9,6 @@ BASE_DIR = os.path.abspath(
         ".."
     )
 )
-
-# ---------------------------------------
-# Screenshot Storage Directory
-# ---------------------------------------
 
 SCREENSHOTS_DIR = os.path.join(
     BASE_DIR,
@@ -32,6 +25,8 @@ class ScreenshotService:
 
     @staticmethod
     def capture(browser, url: str):
+
+        total_start = time.time()
 
         analysis_id = str(uuid.uuid4())
 
@@ -50,9 +45,11 @@ class ScreenshotService:
         print(folder)
         print("=" * 60)
 
-        # ==========================================================
+        # ===========================================
         # Desktop Screenshot
-        # ==========================================================
+        # ===========================================
+
+        desktop_start = time.time()
 
         desktop_context = browser.new_context(
             viewport={
@@ -65,9 +62,11 @@ class ScreenshotService:
 
         desktop_page.goto(
             url,
-            wait_until="networkidle",
-            timeout=60000
+            wait_until="domcontentloaded",
+            timeout=30000
         )
+
+        desktop_page.wait_for_timeout(2000)
 
         desktop_path = os.path.join(
             folder,
@@ -80,12 +79,15 @@ class ScreenshotService:
         )
 
         print("Desktop exists :", os.path.exists(desktop_path))
+        print(f"Desktop Screenshot : {time.time() - desktop_start:.2f} sec")
 
         desktop_context.close()
 
-        # ==========================================================
+        # ===========================================
         # Mobile Screenshot
-        # ==========================================================
+        # ===========================================
+
+        mobile_start = time.time()
 
         mobile_context = browser.new_context(
             viewport={
@@ -100,9 +102,11 @@ class ScreenshotService:
 
         mobile_page.goto(
             url,
-            wait_until="networkidle",
-            timeout=60000
+            wait_until="domcontentloaded",
+            timeout=30000
         )
+
+        mobile_page.wait_for_timeout(2000)
 
         mobile_path = os.path.join(
             folder,
@@ -114,18 +118,17 @@ class ScreenshotService:
             full_page=True
         )
 
-        print("Mobile exists  :", os.path.exists(mobile_path))
+        print("Mobile exists :", os.path.exists(mobile_path))
+        print(f"Mobile Screenshot : {time.time() - mobile_start:.2f} sec")
 
         mobile_context.close()
-
-        # ==========================================================
-        # Verify Folder Contents
-        # ==========================================================
 
         print("=" * 60)
         print("Files in Screenshot Folder:")
         print(os.listdir(folder))
         print("=" * 60)
+
+        print(f"Screenshot Service Total : {time.time() - total_start:.2f} sec")
 
         return {
 
