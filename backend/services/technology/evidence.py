@@ -8,13 +8,13 @@ class EvidenceCollector:
     """
 
     @staticmethod
-    def collect(url: str) -> BrowserEvidence:
+    def collect(browser, url: str) -> BrowserEvidence:
 
         print("=" * 60)
         print("Collecting Browser Evidence")
         print("=" * 60)
 
-        evidence = Browser.collect(url)
+        evidence = Browser.collect(browser, url)
 
         print(f"Original URL       : {evidence.url}")
         print(f"Final URL          : {evidence.final_url}")

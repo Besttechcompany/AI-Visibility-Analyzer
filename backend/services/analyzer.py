@@ -13,6 +13,8 @@ from services.eeat import EEATAnalyzer
 from services.audit import AuditAnalyzer
 from services.technical_seo import TechnicalSEOAnalyzer
 from services.technology.technology import TechnologyAnalyzer
+from services.screenshots.analyzer import ScreenshotAnalyzer
+from services.browser.browser import BrowserManager
 
 
 class WebsiteAnalyzer:
@@ -135,24 +137,45 @@ class WebsiteAnalyzer:
             entities = EntityAnalyzer.analyze(
                 soup
             )
+
             eeat = EEATAnalyzer.analyze(
-                soup)
-            
-            eeat = EEATAnalyzer.analyze(soup)
+                soup
+            )
+
             audit = AuditAnalyzer.analyze(
-    soup,
-    response.text
-)
-            
+                soup,
+                response.text
+            )
+
             technical = TechnicalSEOAnalyzer.analyze(
-    url,
-    response,
-    soup
-)
-            technology = TechnologyAnalyzer.analyze(
-    response,
-    soup
-)
+                url,
+                response,
+                soup
+            )
+
+            # ---------------------------------
+            # Shared Browser
+            # ---------------------------------
+
+            browser_manager = BrowserManager()
+            browser = browser_manager.start()
+
+            try:
+
+                technology = TechnologyAnalyzer.analyze(
+                    browser,
+                    response,
+                    soup
+                )
+
+                screenshots = ScreenshotAnalyzer.analyze(
+                    browser,
+                    response.url
+                )
+
+            finally:
+
+                browser_manager.stop()
 
             # ---------------------------------
             # Build Result
@@ -191,14 +214,16 @@ class WebsiteAnalyzer:
                 "perplexity": perplexity,
 
                 "entities": entities,
-                
+
                 "eeat": eeat,
 
                 "audit": audit,
 
                 "technical_seo": technical,
-                
+
                 "technology": technology,
+
+                "screenshots": screenshots
 
             }
 

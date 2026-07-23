@@ -7,7 +7,7 @@ from .detector import TechnologyDetector
 class TechnologyAnalyzer:
 
     @staticmethod
-    def analyze(response, soup):
+    def analyze(browser, response, soup):
 
         print("=" * 60)
         print("Technology Analyzer")
@@ -17,8 +17,8 @@ class TechnologyAnalyzer:
 
         print(f"Analyzing: {url}")
 
-        # Collect browser evidence
-        evidence = EvidenceCollector.collect(url)
+        # Collect browser evidence using the shared browser
+        evidence = EvidenceCollector.collect(browser, url)
 
         print("Evidence collection completed.")
 
