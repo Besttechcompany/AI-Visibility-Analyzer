@@ -1,7 +1,10 @@
 import os
 import uuid
 
-# Backend folder
+# ---------------------------------------
+# Backend Root Directory
+# ---------------------------------------
+
 BASE_DIR = os.path.abspath(
     os.path.join(
         os.path.dirname(__file__),
@@ -10,7 +13,10 @@ BASE_DIR = os.path.abspath(
     )
 )
 
-# backend/screenshots
+# ---------------------------------------
+# Screenshot Storage Directory
+# ---------------------------------------
+
 SCREENSHOTS_DIR = os.path.join(
     BASE_DIR,
     "screenshots"
@@ -44,9 +50,9 @@ class ScreenshotService:
         print(folder)
         print("=" * 60)
 
-        # -----------------------
+        # ==========================================================
         # Desktop Screenshot
-        # -----------------------
+        # ==========================================================
 
         desktop_context = browser.new_context(
             viewport={
@@ -73,11 +79,13 @@ class ScreenshotService:
             full_page=True
         )
 
+        print("Desktop exists :", os.path.exists(desktop_path))
+
         desktop_context.close()
 
-        # -----------------------
+        # ==========================================================
         # Mobile Screenshot
-        # -----------------------
+        # ==========================================================
 
         mobile_context = browser.new_context(
             viewport={
@@ -106,10 +114,25 @@ class ScreenshotService:
             full_page=True
         )
 
+        print("Mobile exists  :", os.path.exists(mobile_path))
+
         mobile_context.close()
 
+        # ==========================================================
+        # Verify Folder Contents
+        # ==========================================================
+
+        print("=" * 60)
+        print("Files in Screenshot Folder:")
+        print(os.listdir(folder))
+        print("=" * 60)
+
         return {
+
             "analysis_id": analysis_id,
+
             "desktop": f"/screenshots/{analysis_id}/desktop.png",
+
             "mobile": f"/screenshots/{analysis_id}/mobile.png"
+
         }
