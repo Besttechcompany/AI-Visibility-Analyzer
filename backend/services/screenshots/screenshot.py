@@ -1,36 +1,63 @@
 import os
 import uuid
 
+# Backend folder
+BASE_DIR = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        ".."
+    )
+)
+
+# backend/screenshots
+SCREENSHOTS_DIR = os.path.join(
+    BASE_DIR,
+    "screenshots"
+)
+
+os.makedirs(
+    SCREENSHOTS_DIR,
+    exist_ok=True
+)
+
 
 class ScreenshotService:
 
     @staticmethod
     def capture(browser, url: str):
 
-        # Create unique folder
         analysis_id = str(uuid.uuid4())
 
         folder = os.path.join(
-            "screenshots",
+            SCREENSHOTS_DIR,
             analysis_id
         )
 
-        os.makedirs(folder, exist_ok=True)
+        os.makedirs(
+            folder,
+            exist_ok=True
+        )
+
+        print("=" * 60)
+        print("Saving screenshots to:")
+        print(folder)
+        print("=" * 60)
 
         # -----------------------
         # Desktop Screenshot
         # -----------------------
 
-        context = browser.new_context(
+        desktop_context = browser.new_context(
             viewport={
                 "width": 1440,
                 "height": 900
             }
         )
 
-        page = context.new_page()
+        desktop_page = desktop_context.new_page()
 
-        page.goto(
+        desktop_page.goto(
             url,
             wait_until="networkidle",
             timeout=60000
@@ -41,18 +68,18 @@ class ScreenshotService:
             "desktop.png"
         )
 
-        page.screenshot(
+        desktop_page.screenshot(
             path=desktop_path,
             full_page=True
         )
 
-        context.close()
+        desktop_context.close()
 
         # -----------------------
         # Mobile Screenshot
         # -----------------------
 
-        mobile = browser.new_context(
+        mobile_context = browser.new_context(
             viewport={
                 "width": 390,
                 "height": 844
@@ -61,9 +88,9 @@ class ScreenshotService:
             has_touch=True
         )
 
-        page = mobile.new_page()
+        mobile_page = mobile_context.new_page()
 
-        page.goto(
+        mobile_page.goto(
             url,
             wait_until="networkidle",
             timeout=60000
@@ -74,12 +101,12 @@ class ScreenshotService:
             "mobile.png"
         )
 
-        page.screenshot(
+        mobile_page.screenshot(
             path=mobile_path,
             full_page=True
         )
 
-        mobile.close()
+        mobile_context.close()
 
         return {
             "analysis_id": analysis_id,
