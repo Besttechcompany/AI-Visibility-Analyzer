@@ -300,21 +300,106 @@ function showResults(data) {
 
     </div>
 
-    <div class="card">
+  <div class="card">
 
-        <h2>Basic Information</h2>
+    <h2>Basic Information</h2>
 
-        <p><b>Title</b><br>${data.basic.title}</p>
+    <p><b>Title</b><br>${data.basic.title}</p>
 
-        <p><b>Description</b><br>${data.basic.meta_description}</p>
+    <p><b>Description</b><br>${data.basic.meta_description}</p>
 
-        <p><b>Language</b> : ${data.basic.language}</p>
+    <p><b>Language</b> : ${data.basic.language}</p>
 
-        <p><b>Canonical</b> : ${data.basic.canonical}</p>
+    <p><b>Canonical</b> : ${data.basic.canonical}</p>
+
+</div>
+
+<!-- ================================ -->
+<!-- Website Preview -->
+<!-- ================================ -->
+
+<div class="card screenshot-card">
+
+    <h2>🖥 Website Preview</h2>
+
+    <div class="screenshot-grid">
+
+        <div>
+
+            <h3>Desktop View</h3>
+
+            <img
+                class="desktop-image"
+                src="${API_URL + data.screenshots.desktop}"
+            >
+
+        </div>
+
+        <div>
+
+            <h3>Mobile View</h3>
+
+            <img
+                class="mobile-image"
+                src="${API_URL + data.screenshots.mobile}"
+            >
+
+        </div>
 
     </div>
 
-    <div class="ai-grid">
+</div>
+
+
+<!-- ================================ -->
+<!-- Technology Stack -->
+<!-- ================================ -->
+
+<div class="card technology-card">
+
+<h2>
+
+🛠 Technology Stack
+
+</h2>
+
+<div class="technology-container">
+
+${Object.entries(data.technology.categories).map(([category,techs])=>`
+
+<div class="technology-section">
+
+<h3>${category}</h3>
+
+<div class="technology-badges">
+
+${techs.map(item=>`
+
+<span class="tech-badge">
+
+${item.technology}
+
+<span class="confidence">
+
+${item.confidence}%
+
+</span>
+
+</span>
+
+`).join("")}
+
+</div>
+
+</div>
+
+`).join("")}
+
+</div>
+
+</div>
+
+<div class="ai-grid">
 
         <div class="ai-card">
 
