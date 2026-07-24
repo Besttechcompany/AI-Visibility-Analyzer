@@ -2,115 +2,104 @@
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>AI Visibility Analyzer Dashboard</title>
 
+    <!-- Dashboard CSS -->
     <link rel="stylesheet" href="css/dashboard.css">
-
 </head>
 
 <body>
 
-<div class="dashboard">
+    <div class="dashboard">
 
-    <!-- Sidebar -->
+        <!-- ==========================
+             Sidebar
+        =========================== -->
+        <aside class="sidebar">
 
-    <aside class="sidebar">
-
-        <div class="logo">
-            <h2>🤖 AI Visibility</h2>
-        </div>
-
-        <ul class="menu">
-
-            <li class="active">📊 Dashboard</li>
-
-            <li>🌐 Website Analysis</li>
-
-            <li>📈 Reports</li>
-
-            <li>👤 Profile</li>
-
-            <li onclick="logout()">🚪 Logout</li>
-
-        </ul>
-
-    </aside>
-
-    <!-- Main Content -->
-
-    <main class="main-content">
-
-        <!-- Top Bar -->
-
-        <header class="topbar">
-
-            <h1>AI Visibility Dashboard</h1>
-
-            <div id="profile-card" class="profile-card">
-                Loading...
+            <div class="logo">
+                <h2>🤖 AI Visibility</h2>
             </div>
 
-        </header>
+            <ul class="menu">
+                <li class="active">📊 Dashboard</li>
+                <li>🌐 Website Analysis</li>
+                <li>📈 Reports</li>
+                <li>👤 Profile</li>
+                <li onclick="logout()">🚪 Logout</li>
+            </ul>
 
-        <!-- Website Analyzer -->
+        </aside>
 
-        <section class="card">
+        <!-- ==========================
+             Main Content
+        =========================== -->
+        <main class="main-content">
 
-            <h2>Analyze Your Website</h2>
+            <!-- Top Bar -->
+            <header class="topbar">
 
-            <p>
+                <h1>AI Visibility Dashboard</h1>
 
-                Analyze how AI platforms like ChatGPT, Gemini, Claude and Perplexity understand your website.
+                <div id="profile-card" class="profile-card">
+                    Loading...
+                </div>
 
-            </p>
+            </header>
 
-            <div class="analyzer-box">
+            <!-- Website Analyzer -->
+            <section class="card">
 
-                <input
-                    id="website"
-                    type="text"
-                    placeholder="https://example.com">
-
-                <button
-                    class="analyze-btn"
-                    onclick="analyzeWebsite()">
-
-                    Analyze Website
-
-                </button>
-
-            </div>
-
-        </section>
-
-        <!-- AI Report -->
-
-        <section id="results">
-
-            <div class="empty-results">
-
-                <h2>🚀 No Analysis Yet</h2>
+                <h2>Analyze Your Website</h2>
 
                 <p>
-
-                    Enter your website URL above and click
-                    <strong>Analyze Website</strong>.
-
+                    Analyze how AI platforms like ChatGPT, Gemini,
+                    Claude and Perplexity understand your website.
                 </p>
 
-            </div>
+                <div class="analyzer-box">
 
-        </section>
+                    <input
+                        id="website"
+                        type="text"
+                        placeholder="https://example.com"
+                    >
 
-    </main>
+                    <button
+                        class="analyze-btn"
+                        onclick="analyzeWebsite()"
+                    >
+                        Analyze Website
+                    </button>
 
-</div>
+                </div>
 
-<script src="js/dashboard.js"></script>
+            </section>
+
+            <!-- Results -->
+            <section id="results">
+
+                <div class="empty-results">
+
+                    <h2>🚀 No Analysis Yet</h2>
+
+                    <p>
+                        Enter your website URL above and click
+                        <strong>Analyze Website</strong>.
+                    </p>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Dashboard JavaScript -->
+    <script src="js/dashboard.js"></script>
 
 </body>
 
