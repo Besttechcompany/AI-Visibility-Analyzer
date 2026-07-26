@@ -2,104 +2,369 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>AI Visibility Analyzer Dashboard</title>
 
-    <!-- Dashboard CSS -->
-    <link rel="stylesheet" href="css/dashboard.css">
+    <!-- CSS -->
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+    <!-- Google Fonts -->
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
 </head>
 
 <body>
 
-    <div class="dashboard">
+<div class="dashboard">
 
-        <!-- ==========================
-             Sidebar
-        =========================== -->
-        <aside class="sidebar">
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
 
-            <div class="logo">
-                <h2>🤖 AI Visibility</h2>
-            </div>
+    <aside class="sidebar">
 
-            <ul class="menu">
-                <li class="active">📊 Dashboard</li>
-                <li>🌐 Website Analysis</li>
-                <li>📈 Reports</li>
-                <li>👤 Profile</li>
-                <li onclick="logout()">🚪 Logout</li>
-            </ul>
+        <div class="logo">
 
-        </aside>
+            <!-- Replace with your logo if required -->
 
-        <!-- ==========================
-             Main Content
-        =========================== -->
-        <main class="main-content">
+            <img
+                src="images/logo.png"
+                alt="AI Visibility Analyzer"
+            >
 
-            <!-- Top Bar -->
-            <header class="topbar">
+            <h2>
 
-                <h1>AI Visibility Dashboard</h1>
+                AI Visibility
 
-                <div id="profile-card" class="profile-card">
-                    Loading...
-                </div>
+            </h2>
 
-            </header>
+            <span>
 
-            <!-- Website Analyzer -->
-            <section class="card">
+                Analyzer Dashboard
 
-                <h2>Analyze Your Website</h2>
+            </span>
+
+        </div>
+
+        <ul class="menu">
+
+            <li class="active">
+
+                📊 Dashboard
+
+            </li>
+
+            <li>
+
+                🌐 Website Analysis
+
+            </li>
+
+            <li>
+
+                📈 Reports
+
+            </li>
+
+            <li>
+
+                ⚙ Settings
+
+            </li>
+
+            <li>
+
+                👤 Profile
+
+            </li>
+
+        </ul>
+
+        <div class="sidebar-footer">
+
+            <button
+                class="logout-btn"
+                onclick="logout()"
+            >
+
+                Logout
+
+            </button>
+
+        </div>
+
+    </aside>
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main-content">
+
+        <!-- ================================================
+             TOP BAR
+        ================================================= -->
+
+        <header class="topbar">
+
+            <div class="page-title">
+
+                <h1>
+
+                    AI Visibility Dashboard
+
+                </h1>
 
                 <p>
-                    Analyze how AI platforms like ChatGPT, Gemini,
-                    Claude and Perplexity understand your website.
+
+                    Analyze how ChatGPT, Gemini, Claude,
+                    Perplexity and other AI platforms
+                    understand your website.
+
                 </p>
 
-                <div class="analyzer-box">
+            </div>
 
-                    <input
-                        id="website"
-                        type="text"
-                        placeholder="https://example.com"
-                    >
+            <!-- Profile loaded by dashboard.js -->
 
-                    <button
-                        class="analyze-btn"
-                        onclick="analyzeWebsite()"
-                    >
-                        Analyze Website
-                    </button>
+            <div
+                id="profile-card"
+                class="profile-card"
+            >
 
-                </div>
+                Loading...
 
-            </section>
+            </div>
 
-            <!-- Results -->
-            <section id="results">
+        </header>
 
-                <div class="empty-results">
+                <!-- =====================================================
+             WEBSITE ANALYZER
+        ====================================================== -->
 
-                    <h2>🚀 No Analysis Yet</h2>
+        <section class="search-card">
+
+            <h2>
+
+                Analyze Your Website
+
+            </h2>
+
+            <p>
+
+                Enter your website URL below and analyze how
+                leading AI platforms such as ChatGPT, Gemini,
+                Claude, Perplexity and other Large Language
+                Models understand your website.
+
+            </p>
+
+            <div class="input-group">
+
+                <input
+                    id="website"
+                    type="text"
+                    placeholder="https://example.com"
+                    autocomplete="off"
+                >
+
+                <button
+                    class="analyze-btn"
+                    onclick="analyzeWebsite()"
+                >
+
+                    🚀 Analyze
+
+                </button>
+
+                <button
+                    class="reset-btn"
+                    onclick="resetDashboard()"
+                >
+
+                    Reset
+
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- =====================================================
+             RESULTS
+             (Filled Automatically by dashboard.js)
+        ====================================================== -->
+
+        <div id="results">
+
+            <div class="card">
+
+                <div class="loading-box">
+
+                    <h2>
+
+                        🚀 Welcome to AI Visibility Analyzer
+
+                    </h2>
 
                     <p>
+
                         Enter your website URL above and click
-                        <strong>Analyze Website</strong>.
+                        <strong>Analyze</strong> to generate a
+                        complete AI Visibility Report.
+
                     </p>
+
+                    <br>
+
+                    <div class="summary-grid">
+
+                        <div class="summary-card">
+
+                            <h3>
+
+                                ChatGPT
+
+                            </h3>
+
+                            <h1>
+
+                                —
+
+                            </h1>
+
+                            <span>
+
+                                Waiting for Analysis
+
+                            </span>
+
+                        </div>
+
+                        <div class="summary-card">
+
+                            <h3>
+
+                                Gemini
+
+                            </h3>
+
+                            <h1>
+
+                                —
+
+                            </h1>
+
+                            <span>
+
+                                Waiting for Analysis
+
+                            </span>
+
+                        </div>
+
+                        <div class="summary-card">
+
+                            <h3>
+
+                                Claude
+
+                            </h3>
+
+                            <h1>
+
+                                —
+
+                            </h1>
+
+                            <span>
+
+                                Waiting for Analysis
+
+                            </span>
+
+                        </div>
+
+                        <div class="summary-card">
+
+                            <h3>
+
+                                Perplexity
+
+                            </h3>
+
+                            <h1>
+
+                                —
+
+                            </h1>
+
+                            <span>
+
+                                Waiting for Analysis
+
+                            </span>
+
+                        </div>
+
+                    </div>
 
                 </div>
 
-            </section>
+            </div>
 
-        </main>
+                    </div>
 
-    </div>
+        <!-- =====================================================
+             FOOTER
+        ====================================================== -->
 
-    <!-- Dashboard JavaScript -->
-    <script src="js/dashboard.js"></script>
+        <footer class="footer">
+
+            <p>
+
+                © 2026 AI Visibility Analyzer |
+                Powered by Best Tech Company
+
+            </p>
+
+        </footer>
+
+    </main>
+
+</div>
+
+<!-- =====================================================
+     DASHBOARD JAVASCRIPT
+====================================================== -->
+
+<script src="js/dashboard.js"></script>
 
 </body>
 
