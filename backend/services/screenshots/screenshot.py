@@ -24,6 +24,80 @@ os.makedirs(
 class ScreenshotService:
 
     @staticmethod
+    def _prepare_page(page, url: str):
+
+        page.goto(
+            url,
+            wait_until="networkidle",
+            timeout=90000
+        )
+
+        page.wait_for_timeout(3000)
+
+        # Scroll page to trigger lazy loading
+        page.evaluate("""
+        async () => {
+            await new Promise(resolve => {
+
+                let totalHeight = 0;
+                const distance = 500;
+
+                const timer = setInterval(() => {
+
+                    window.scrollBy(0, distance);
+                    totalHeight += distance;
+
+                    if (totalHeight >= document.body.scrollHeight) {
+
+                        clearInterval(timer);
+                        window.scrollTo(0, 0);
+                        resolve();
+
+                    }
+
+                }, 250);
+
+            });
+        }
+        """)
+
+        page.wait_for_timeout(1500)
+
+        # Hide common floating widgets
+        page.add_style_tag(content="""
+        iframe[src*="intercom"],
+        iframe[src*="crisp"],
+        iframe[src*="tawk"],
+        .intercom-lightweight-app,
+        .crisp-client,
+        .tawk-min-container,
+        .fc-widget,
+        .whatsapp-widget,
+        .whatsapp-chat{
+            display:none !important;
+        }
+        """)
+
+        # Close common cookie popups
+        selectors = [
+            "#onetrust-accept-btn-handler",
+            ".cookie-accept",
+            ".cookie-close",
+            ".popup-close",
+            ".modal-close",
+            ".close",
+            "button[aria-label='Close']"
+        ]
+
+        for selector in selectors:
+            try:
+                page.locator(selector).click(timeout=1000)
+            except Exception:
+                pass
+
+        page.wait_for_timeout(1500)
+
+    @staticmethod
     def capture(browser, url: str):
 
         total_start = time.time()
@@ -60,13 +134,10 @@ class ScreenshotService:
 
         desktop_page = desktop_context.new_page()
 
-        desktop_page.goto(
-            url,
-            wait_until="domcontentloaded",
-            timeout=30000
+        ScreenshotService._prepare_page(
+            desktop_page,
+            url
         )
-
-        desktop_page.wait_for_timeout(2000)
 
         desktop_path = os.path.join(
             folder,
@@ -100,13 +171,10 @@ class ScreenshotService:
 
         mobile_page = mobile_context.new_page()
 
-        mobile_page.goto(
-            url,
-            wait_until="domcontentloaded",
-            timeout=30000
+        ScreenshotService._prepare_page(
+            mobile_page,
+            url
         )
-
-        mobile_page.wait_for_timeout(2000)
 
         mobile_path = os.path.join(
             folder,
@@ -131,11 +199,7 @@ class ScreenshotService:
         print(f"Screenshot Service Total : {time.time() - total_start:.2f} sec")
 
         return {
-
             "analysis_id": analysis_id,
-
             "desktop": f"/screenshots/{analysis_id}/desktop.png",
-
             "mobile": f"/screenshots/{analysis_id}/mobile.png"
-
         }
