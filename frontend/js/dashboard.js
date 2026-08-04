@@ -498,32 +498,27 @@ function renderAIScores(data){
 }
 
 // ======================================================
-// Website Screenshots
+// ======================================================
+// Website Preview (Desktop + Mobile Overlay)
 // ======================================================
 
 function renderScreenshots(data){
 
-    const card=document.createElement("section");
+    const card = document.createElement("section");
 
-    card.className="card";
+    card.className = "card";
 
-    card.innerHTML=`
+    card.innerHTML = `
 
-        <h2>
+        <h2 class="preview-title">
 
-            Website Screenshots
+            Website Preview
 
         </h2>
 
-        <div class="screenshots">
+        <div class="preview-wrapper">
 
-            <div class="shot">
-
-                <h3>
-
-                    Desktop View
-
-                </h3>
+            <div class="desktop-preview">
 
                 <img
 
@@ -535,25 +530,19 @@ function renderScreenshots(data){
 
                 >
 
-            </div>
+                <div class="mobile-preview">
 
-            <div class="shot">
+                    <img
 
-                <h3>
+                        src="${API_URL}${data.screenshots.mobile}"
 
-                    Mobile View
+                        alt="Mobile Screenshot"
 
-                </h3>
+                        onclick="window.open(this.src,'_blank')"
 
-                <img
+                    >
 
-                    src="${API_URL}${data.screenshots.mobile}"
-
-                    alt="Mobile Screenshot"
-
-                    onclick="window.open(this.src,'_blank')"
-
-                >
+                </div>
 
             </div>
 
