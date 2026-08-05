@@ -49,6 +49,9 @@ const results = document.getElementById("results");
 
 const websiteInput = document.getElementById("website");
 
+let loaderProgress = 0;
+let loaderTimer = null;
+
 // ===========================================
 // Load User Profile
 // ===========================================
@@ -141,45 +144,106 @@ function logout() {
 // Loading Screen
 // ===========================================
 
-function showLoading(url) {
+function showLoading(url){
 
     results.innerHTML = `
 
-        <div class="card">
+    <div class="card">
 
-            <div class="loading-box">
+        <div class="loading-box">
 
-                <div class="spinner"></div>
+            <div class="progress-circle">
 
-                <br>
+                <svg width="160" height="160">
 
-                <h2>
+                    <circle
+                        class="bg-circle"
+                        cx="80"
+                        cy="80"
+                        r="70">
+                    </circle>
 
-                    Analyzing Website
+                    <circle
+                        id="progress-bar"
+                        class="progress-bar"
+                        cx="80"
+                        cy="80"
+                        r="70">
+                    </circle>
 
-                </h2>
+                </svg>
 
-                <br>
+                <div
+                    id="progress-number"
+                    class="progress-number">
 
-                <p>
+                    0%
 
-                    ${url}
-
-                </p>
-
-                <br>
-
-                <p>
-
-                    Please wait while AI analyzes your website...
-
-                </p>
+                </div>
 
             </div>
 
+            <h2>
+
+                Analyzing Website
+
+            </h2>
+
+            <p>
+
+                ${url}
+
+            </p>
+
+            <p>
+
+                Please wait while AI analyzes your website...
+
+            </p>
+
         </div>
 
+    </div>
+
     `;
+
+    startFakeLoader();
+
+}
+
+function startFakeLoader(){
+
+    loaderProgress = 0;
+
+    const number = document.getElementById("progress-number");
+
+    const circle = document.getElementById("progress-bar");
+
+    const circumference = 440;
+
+    loaderTimer = setInterval(() => {
+
+        loaderProgress++;
+
+        if(loaderProgress > 100){
+
+            loaderProgress = 100;
+
+        }
+
+        number.innerHTML = loaderProgress + "%";
+
+        const offset = circumference - (loaderProgress / 100) * circumference;
+
+        circle.style.strokeDashoffset = offset;
+
+        if(loaderProgress >= 100){
+
+            clearInterval(loaderTimer);
+
+        }
+
+    },60);
 
 }
 
@@ -265,11 +329,21 @@ async function analyzeWebsite() {
 
         }
 
-        const data = await response.json();
+      const data = await response.json();
 
-        console.log(data);
+console.log(data);
+
+const wait = setInterval(()=>{
+
+    if(loaderProgress >= 100){
+
+        clearInterval(wait);
 
         showResults(data);
+
+    }
+
+},100);
 
     }
 

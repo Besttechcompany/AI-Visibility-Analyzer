@@ -1449,6 +1449,72 @@ button{
 
 }
 
+.progress-circle{
+
+    position:relative;
+
+    width:160px;
+
+    height:160px;
+
+    margin:auto;
+
+    margin-bottom:25px;
+
+}
+
+.progress-circle svg{
+
+    transform:rotate(-90deg);
+
+}
+
+.bg-circle{
+
+    fill:none;
+
+    stroke:#e5e7eb;
+
+    stroke-width:10;
+
+}
+
+.progress-bar{
+
+    fill:none;
+
+    stroke:#2563eb;
+
+    stroke-width:10;
+
+    stroke-linecap:round;
+
+    stroke-dasharray:440;
+
+    stroke-dashoffset:440;
+
+    transition:stroke-dashoffset .2s linear;
+
+}
+
+.progress-number{
+
+    position:absolute;
+
+    left:50%;
+
+    top:50%;
+
+    transform:translate(-50%,-50%);
+
+    font-size:32px;
+
+    font-weight:bold;
+
+    color:#2563eb;
+
+}
+
 /* ==========================================================
    END OF FILE
    ========================================================== */
