@@ -1497,21 +1497,153 @@ button{
 
 }
 
+/* ==========================================================
+   PREMIUM LOADER
+========================================================== */
+
+.loading-box{
+
+    animation:fadeIn .6s ease;
+
+}
+
+.progress-circle{
+
+    animation:popIn .8s ease;
+
+}
+
 .progress-number{
 
-    position:absolute;
+    transition:all .3s ease;
 
-    left:50%;
+}
 
-    top:50%;
-
-    transform:translate(-50%,-50%);
+#loading-title{
 
     font-size:32px;
 
-    font-weight:bold;
+    font-weight:700;
+
+    color:#111827;
+
+    margin-top:25px;
+
+    animation:fadeUp .8s ease;
+
+}
+
+#loading-status{
+
+    font-size:20px;
 
     color:#2563eb;
+
+    font-weight:600;
+
+    min-height:32px;
+
+    transition:all .4s ease;
+
+}
+
+#loading-platforms{
+
+    margin-top:25px;
+
+    display:inline-block;
+
+    text-align:left;
+
+    background:#f8fafc;
+
+    padding:18px 25px;
+
+    border-radius:12px;
+
+    border:1px solid #e5e7eb;
+
+    box-shadow:0 5px 15px rgba(0,0,0,.05);
+
+    line-height:2;
+
+    font-size:16px;
+
+}
+
+.progress-bar{
+
+    transition:stroke-dashoffset .4s ease;
+
+}
+
+.loading-box.fade-out{
+
+    opacity:0;
+
+    transform:translateY(25px);
+
+    transition:all .6s ease;
+
+}
+
+/* ==========================
+   Animations
+========================== */
+
+@keyframes fadeIn{
+
+    from{
+
+        opacity:0;
+
+    }
+
+    to{
+
+        opacity:1;
+
+    }
+
+}
+
+@keyframes fadeUp{
+
+    from{
+
+        opacity:0;
+
+        transform:translateY(20px);
+
+    }
+
+    to{
+
+        opacity:1;
+
+        transform:translateY(0);
+
+    }
+
+}
+
+@keyframes popIn{
+
+    from{
+
+        transform:scale(.85);
+
+        opacity:0;
+
+    }
+
+    to{
+
+        transform:scale(1);
+
+        opacity:1;
+
+    }
 
 }
 

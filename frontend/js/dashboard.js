@@ -154,21 +154,21 @@ function showLoading(url){
 
             <div class="progress-circle">
 
-                <svg width="160" height="160">
+                <svg width="170" height="170">
 
                     <circle
                         class="bg-circle"
-                        cx="80"
-                        cy="80"
-                        r="70">
+                        cx="85"
+                        cy="85"
+                        r="75">
                     </circle>
 
                     <circle
                         id="progress-bar"
                         class="progress-bar"
-                        cx="80"
-                        cy="80"
-                        r="70">
+                        cx="85"
+                        cy="85"
+                        r="75">
                     </circle>
 
                 </svg>
@@ -183,23 +183,51 @@ function showLoading(url){
 
             </div>
 
-            <h2>
+            <h2 id="loading-title">
 
-                Analyzing Website
+                Initializing Analysis...
 
             </h2>
 
-            <p>
+            <p
+                id="loading-status"
+                style="font-size:18px;
+                       font-weight:600;
+                       color:#2563eb;
+                       margin-top:15px;">
+
+                🔍 Connecting to Website...
+
+            </p>
+
+            <br>
+
+            <p
+                style="font-size:15px;
+                       color:#64748b;">
 
                 ${url}
 
             </p>
 
-            <p>
+            <br>
 
-                Please wait while AI analyzes your website...
+            <div
+                id="loading-platforms"
+                style="max-width:300px;
+                       margin:auto;
+                       text-align:left;
+                       line-height:2;">
 
-            </p>
+                ⏳ ChatGPT<br>
+
+                ⏳ Gemini<br>
+
+                ⏳ Claude<br>
+
+                ⏳ Perplexity
+
+            </div>
 
         </div>
 
@@ -219,31 +247,122 @@ function startFakeLoader(){
 
     const circle = document.getElementById("progress-bar");
 
-    const circumference = 440;
+    const status = document.getElementById("loading-status");
+
+    const platforms = document.getElementById("loading-platforms");
+
+    const circumference = 471;
 
     loaderTimer = setInterval(() => {
 
-        loaderProgress++;
+        // Speed Control
+        if(loaderProgress < 20){
 
-        if(loaderProgress > 100){
+            loaderProgress += 1.5;
 
-            loaderProgress = 100;
+        }
+        else if(loaderProgress < 45){
+
+            loaderProgress += 1;
+
+        }
+        else if(loaderProgress < 70){
+
+            loaderProgress += 0.8;
+
+        }
+        else if(loaderProgress < 90){
+
+            loaderProgress += 0.5;
+
+        }
+        else if(loaderProgress < 99){
+
+            loaderProgress += 0.2;
 
         }
 
-        number.innerHTML = loaderProgress + "%";
+        loaderProgress = Math.min(loaderProgress,99);
 
-        const offset = circumference - (loaderProgress / 100) * circumference;
+        number.innerHTML = Math.floor(loaderProgress) + "%";
+
+        const offset =
+            circumference -
+            (loaderProgress/100) * circumference;
 
         circle.style.strokeDashoffset = offset;
 
-        if(loaderProgress >= 100){
+        // ==========================
+        // Status Messages
+        // ==========================
 
-            clearInterval(loaderTimer);
+        if(loaderProgress < 20){
+
+            status.innerHTML =
+            "🔍 Connecting to Website...";
 
         }
 
-    },60);
+        else if(loaderProgress < 40){
+
+            status.innerHTML =
+            "🌐 Crawling Website...";
+
+        }
+
+        else if(loaderProgress < 60){
+
+            status.innerHTML =
+            "📄 Reading Website Content...";
+
+        }
+
+        else if(loaderProgress < 80){
+
+            status.innerHTML =
+            "🤖 AI Analysis in Progress...";
+
+        }
+
+        else if(loaderProgress < 95){
+
+            status.innerHTML =
+            "📊 Calculating AI Visibility Score...";
+
+        }
+
+        else{
+
+            status.innerHTML =
+            "📋 Preparing Final Report...";
+
+        }
+
+        // ==========================
+        // AI Platforms
+        // ==========================
+
+        let html = "";
+
+        html += loaderProgress > 20
+        ? "✅ ChatGPT<br>"
+        : "⏳ ChatGPT<br>";
+
+        html += loaderProgress > 40
+        ? "✅ Gemini<br>"
+        : "⏳ Gemini<br>";
+
+        html += loaderProgress > 65
+        ? "✅ Claude<br>"
+        : "⏳ Claude<br>";
+
+        html += loaderProgress > 85
+        ? "✅ Perplexity"
+        : "⏳ Perplexity";
+
+        platforms.innerHTML = html;
+
+    },90);
 
 }
 
@@ -329,21 +448,64 @@ async function analyzeWebsite() {
 
         }
 
-      const data = await response.json();
+   const data = await response.json();
 
 console.log(data);
 
-const wait = setInterval(()=>{
+// Backend finished
+clearInterval(loaderTimer);
 
-    if(loaderProgress >= 100){
+const number = document.getElementById("progress-number");
+const circle = document.getElementById("progress-bar");
+const status = document.getElementById("loading-status");
+const title = document.getElementById("loading-title");
+const platforms = document.getElementById("loading-platforms");
 
-        clearInterval(wait);
+const circumference = 471;
 
-        showResults(data);
+// Complete remaining progress smoothly
+const finishTimer = setInterval(() => {
+
+    loaderProgress += 1;
+
+    if(loaderProgress > 100){
+
+        loaderProgress = 100;
 
     }
 
-},100);
+    number.innerHTML = Math.floor(loaderProgress) + "%";
+
+    const offset =
+        circumference -
+        (loaderProgress / 100) * circumference;
+
+    circle.style.strokeDashoffset = offset;
+
+    if(loaderProgress >= 100){
+
+        clearInterval(finishTimer);
+
+        title.innerHTML = "Analysis Complete";
+
+        status.innerHTML = "✅ Preparing Dashboard...";
+
+        platforms.innerHTML = `
+            ✅ ChatGPT<br>
+            ✅ Gemini<br>
+            ✅ Claude<br>
+            ✅ Perplexity
+        `;
+
+        setTimeout(() => {
+
+            showResults(data);
+
+        },800);
+
+    }
+
+},35);
 
     }
 
