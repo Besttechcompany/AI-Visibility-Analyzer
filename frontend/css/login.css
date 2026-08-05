@@ -345,3 +345,71 @@ body{
 }
 
 }
+
+/* ==================================
+   Circular Progress
+================================== */
+
+.progress-circle{
+
+    position:relative;
+
+    width:170px;
+
+    height:170px;
+
+    margin:25px auto;
+
+}
+
+.progress-circle svg{
+
+    transform:rotate(-90deg);
+
+}
+
+.bg-circle{
+
+    fill:none;
+
+    stroke:#e5e7eb;
+
+    stroke-width:10;
+
+}
+
+.progress-circle-fill{
+
+    fill:none;
+
+    stroke:#2563eb;
+
+    stroke-width:10;
+
+    stroke-linecap:round;
+
+    stroke-dasharray:471;
+
+    stroke-dashoffset:471;
+
+    transition:stroke-dashoffset .2s linear;
+
+}
+
+.progress-text{
+
+    position:absolute;
+
+    top:50%;
+
+    left:50%;
+
+    transform:translate(-50%,-50%);
+
+    font-size:34px;
+
+    font-weight:700;
+
+    color:#2563eb;
+
+}

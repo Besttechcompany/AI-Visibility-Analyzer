@@ -45,34 +45,54 @@
 
     <!-- Loading Overlay -->
 
-    <div id="loadingOverlay" class="loading-overlay">
+   <div id="loadingOverlay" class="loading-overlay">
 
-        <div class="loader-card">
+    <div class="loader-card">
 
-            <div class="ai-logo">🤖</div>
+        <div class="ai-logo">🤖</div>
 
-            <h2>AI Visibility Analyzer</h2>
+        <h2>AI Visibility Analyzer</h2>
 
-            <div class="spinner"></div>
+        <div class="progress-circle">
 
-            <h3 id="loadingMessage">
+            <svg width="170" height="170">
 
-                Initializing Secure Login...
+                <circle
+                    class="bg-circle"
+                    cx="85"
+                    cy="85"
+                    r="75">
+                </circle>
 
-            </h3>
+                <circle
+                    id="progressCircle"
+                    class="progress-circle-fill"
+                    cx="85"
+                    cy="85"
+                    r="75">
+                </circle>
 
-            <div class="loading-bar">
+            </svg>
 
-                <div
-                    id="loadingProgress"
-                    class="loading-progress">
-                </div>
+            <div
+                id="loadingPercentage"
+                class="progress-text">
+
+                0%
 
             </div>
 
         </div>
 
+        <h3 id="loadingMessage">
+
+            Initializing Secure Login...
+
+        </h3>
+
     </div>
+
+</div>
 
 <script>
 
@@ -82,27 +102,37 @@ function googleLogin(){
 
     const messages=[
 
-        "Initializing Secure Login...",
+        "🔐 Initializing Secure Login...",
 
-        "Connecting to Google...",
+        "🌐 Connecting to Google...",
 
-        "Verifying Authentication...",
+        "🔍 Verifying Authentication...",
 
-        "Redirecting to Google..."
+        "🛡 Securing Session...",
+
+        "🚀 Redirecting to Google..."
 
     ];
 
-    let progress=0;
+    const circle=document.getElementById("progressCircle");
 
-    const progressBar=document.getElementById("loadingProgress");
+    const percentage=document.getElementById("loadingPercentage");
 
     const message=document.getElementById("loadingMessage");
+
+    const circumference=471;
+
+    let progress=0;
 
     const timer=setInterval(()=>{
 
         progress++;
 
-        progressBar.style.width=progress+"%";
+        percentage.innerHTML=progress+"%";
+
+        const offset=circumference-(progress/100)*circumference;
+
+        circle.style.strokeDashoffset=offset;
 
         if(progress==20){
 
@@ -116,9 +146,15 @@ function googleLogin(){
 
         }
 
-        if(progress==75){
+        if(progress==70){
 
             message.innerHTML=messages[3];
+
+        }
+
+        if(progress==90){
+
+            message.innerHTML=messages[4];
 
         }
 
@@ -130,10 +166,9 @@ function googleLogin(){
 
         }
 
-    },18);
+    },25);
 
 }
-
 </script>
 
 </body>
