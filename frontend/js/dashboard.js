@@ -490,12 +490,12 @@ const finishTimer = setInterval(() => {
 
         status.innerHTML = "✅ Preparing Dashboard...";
 
-        platforms.innerHTML = `
-            ✅ ChatGPT<br>
-            ✅ Gemini<br>
-            ✅ Claude<br>
-            ✅ Perplexity
-        `;
+        // platforms.innerHTML = `
+        //     ✅ ChatGPT<br>
+        //     ✅ Gemini<br>
+        //     ✅ Claude<br>
+        //     ✅ Perplexity
+        // `;
 
         setTimeout(() => {
 
