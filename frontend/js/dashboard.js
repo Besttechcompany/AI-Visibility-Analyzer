@@ -1969,7 +1969,7 @@ function showNotification(message,type="success"){
 
         notification.classList.add("show");
 
-    },100);
+    },90);
 
     setTimeout(()=>{
 
