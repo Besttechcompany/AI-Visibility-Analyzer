@@ -738,11 +738,46 @@ function renderAIScores(data){
 // Website Preview (Desktop + Mobile Overlay)
 // ======================================================
 
+// ======================================================
+// Website Preview (Premium Browser + Mobile)
+// ======================================================
+
 function renderScreenshots(data){
 
     const card = document.createElement("section");
 
     card.className = "card";
+
+    // ----------------------------------------
+    // Screenshot URLs
+    // ----------------------------------------
+
+    const desktopImage =
+
+        data.screenshots &&
+        data.screenshots.desktop
+            ? `${API_URL}${data.screenshots.desktop}`
+            : "images/desktop-placeholder.png";
+
+    const mobileImage =
+
+        data.screenshots &&
+        data.screenshots.mobile
+            ? `${API_URL}${data.screenshots.mobile}`
+            : "images/mobile-placeholder.png";
+
+    // ----------------------------------------
+    // Website URL
+    // ----------------------------------------
+
+    const websiteURL =
+
+        data.technical_seo &&
+        data.technical_seo.final_url
+
+            ? data.technical_seo.final_url
+
+            : "Website Preview";
 
     card.innerHTML = `
 
@@ -756,25 +791,53 @@ function renderScreenshots(data){
 
             <div class="desktop-preview">
 
-                <img
+                <div class="browser-bar">
 
-                    src="${API_URL}${data.screenshots.desktop}"
+                    <span class="browser-dot red"></span>
 
-                    alt="Desktop Screenshot"
+                    <span class="browser-dot yellow"></span>
 
-                    onclick="window.open(this.src,'_blank')"
+                    <span class="browser-dot green"></span>
 
-                >
+                    <div class="browser-address">
+
+                        ${websiteURL}
+
+                    </div>
+
+                </div>
+
+                                <div class="browser-screen">
+
+                    <img
+
+                        src="${desktopImage}"
+
+                        alt="Desktop Screenshot"
+
+                        loading="lazy"
+
+                        onclick="window.open(this.src,'_blank')"
+
+                        onerror="this.src='images/desktop-placeholder.png'"
+
+                    >
+
+                </div>
 
                 <div class="mobile-preview">
 
                     <img
 
-                        src="${API_URL}${data.screenshots.mobile}"
+                        src="${mobileImage}"
 
                         alt="Mobile Screenshot"
 
+                        loading="lazy"
+
                         onclick="window.open(this.src,'_blank')"
+
+                        onerror="this.src='images/mobile-placeholder.png'"
 
                     >
 
@@ -782,9 +845,41 @@ function renderScreenshots(data){
 
             </div>
 
-        </div>
+                    </div>
 
     `;
+
+    // ----------------------------------------
+    // Make Desktop Screenshot Clickable
+    // ----------------------------------------
+
+    const desktopImg = card.querySelector(".browser-screen img");
+
+    if (desktopImg) {
+
+        desktopImg.addEventListener("click", () => {
+
+            window.open(desktopImage, "_blank");
+
+        });
+
+    }
+
+    // ----------------------------------------
+    // Make Mobile Screenshot Clickable
+    // ----------------------------------------
+
+    const mobileImg = card.querySelector(".mobile-preview img");
+
+    if (mobileImg) {
+
+        mobileImg.addEventListener("click", () => {
+
+            window.open(mobileImage, "_blank");
+
+        });
+
+    }
 
     return card;
 
