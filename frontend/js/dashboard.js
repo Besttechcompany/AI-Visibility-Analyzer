@@ -43,14 +43,23 @@ if (!token) {
 // DOM Elements
 // ===========================================
 
-const profileCard = document.getElementById("profile-card");
+const profileCard =
+    document.getElementById("profile-card");
 
-const results = document.getElementById("results");
+const results =
+    document.getElementById("results");
 
-const websiteInput = document.getElementById("website");
+const websiteInput =
+    document.getElementById("website");
+
+// ===========================================
+// Loader Variables
+// ===========================================
 
 let loaderProgress = 0;
+
 let loaderTimer = null;
+
 
 // ===========================================
 // Load User Profile
@@ -84,7 +93,8 @@ async function loadProfile() {
 
         }
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
         profileCard.innerHTML = `
 
@@ -128,6 +138,7 @@ async function loadProfile() {
 
 }
 
+
 // ===========================================
 // Logout
 // ===========================================
@@ -140,98 +151,105 @@ function logout() {
 
 }
 
-// ===========================================
-// Loading Screen
-// ===========================================
 
-function showLoading(url){
+// ======================================================
+// HORIZONTAL LOADING SCREEN
+// ======================================================
+
+function showLoading(url) {
 
     results.innerHTML = `
 
-    <div class="card">
+        <div class="card">
 
-        <div class="loading-box">
+            <div class="loading-box">
 
-            <div class="progress-circle">
+                <!-- =====================================
+                     HORIZONTAL PROGRESS BAR
+                ====================================== -->
 
-                <svg width="170" height="170">
+                <div class="analysis-progress">
 
-                    <circle
-                        class="bg-circle"
-                        cx="85"
-                        cy="85"
-                        r="75">
-                    </circle>
+                    <div class="progress-track">
 
-                    <circle
-                        id="progress-bar"
-                        class="progress-bar"
-                        cx="85"
-                        cy="85"
-                        r="75">
-                    </circle>
+                        <div
+                            id="progress-bar"
+                            class="progress-fill"
+                            style="width:0%;"
+                        >
 
-                </svg>
+                            <span
+                                id="progress-number"
+                                class="progress-label"
+                            >
+                                0%
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =====================================
+                     LOADING TITLE
+                ====================================== -->
+
+                <h2 id="loading-title">
+
+                    Initializing Analysis...
+
+                </h2>
+
+
+                <!-- =====================================
+                     STATUS
+                ====================================== -->
+
+                <p
+                    id="loading-status"
+                    class="loading-status"
+                >
+
+                    🔍 Connecting to Website...
+
+                </p>
+
+
+                <!-- =====================================
+                     WEBSITE URL
+                ====================================== -->
+
+                <p class="loading-url">
+
+                    ${url}
+
+                </p>
+
+
+                <!-- =====================================
+                     AI PLATFORMS
+                ====================================== -->
 
                 <div
-                    id="progress-number"
-                    class="progress-number">
+                    id="loading-platforms"
+                    class="loading-platforms"
+                >
 
-                    0%
+                    ⏳ ChatGPT<br>
+
+                    ⏳ Gemini<br>
+
+                    ⏳ Claude<br>
+
+                    ⏳ Perplexity
 
                 </div>
 
             </div>
 
-            <h2 id="loading-title">
-
-                Initializing Analysis...
-
-            </h2>
-
-            <p
-                id="loading-status"
-                style="font-size:18px;
-                       font-weight:600;
-                       color:#2563eb;
-                       margin-top:15px;">
-
-                🔍 Connecting to Website...
-
-            </p>
-
-            <br>
-
-            <p
-                style="font-size:15px;
-                       color:#64748b;">
-
-                ${url}
-
-            </p>
-
-            <br>
-
-            <div
-                id="loading-platforms"
-                style="max-width:300px;
-                       margin:auto;
-                       text-align:left;
-                       line-height:2;">
-
-                ⏳ ChatGPT<br>
-
-                ⏳ Gemini<br>
-
-                ⏳ Claude<br>
-
-                ⏳ Perplexity
-
-            </div>
-
         </div>
-
-    </div>
 
     `;
 
@@ -239,132 +257,496 @@ function showLoading(url){
 
 }
 
-function startFakeLoader(){
+
+// ======================================================
+// FAKE PROGRESS LOADER
+//
+// IMPORTANT:
+//
+// This loader can go only from:
+//
+// 0% → 99%
+//
+// It MUST NOT reach 100% here.
+//
+// 100% is handled only after the
+// backend has actually returned the result.
+// ======================================================
+
+function startFakeLoader() {
 
     loaderProgress = 0;
 
-    const number = document.getElementById("progress-number");
 
-    const circle = document.getElementById("progress-bar");
+    // Clear previous timer if one exists
 
-    const status = document.getElementById("loading-status");
+    if (loaderTimer) {
 
-    const platforms = document.getElementById("loading-platforms");
+        clearInterval(loaderTimer);
 
-    const circumference = 471;
+    }
+
+
+    const number =
+        document.getElementById(
+            "progress-number"
+        );
+
+    const bar =
+        document.getElementById(
+            "progress-bar"
+        );
+
+    const status =
+        document.getElementById(
+            "loading-status"
+        );
+
+    const platforms =
+        document.getElementById(
+            "loading-platforms"
+        );
+
+    const title =
+        document.getElementById(
+            "loading-title"
+        );
+
+
+    if (
+        !number ||
+        !bar ||
+        !status ||
+        !platforms ||
+        !title
+    ) {
+
+        return;
+
+    }
+
+
+    // ==================================================
+    // SLOW PROGRESS
+    // ==================================================
 
     loaderTimer = setInterval(() => {
 
-        // Speed Control
-        if(loaderProgress < 20){
 
-            loaderProgress += 1.5;
+        /*
+            0 - 20%
+            Faster at the beginning
+        */
 
-        }
-        else if(loaderProgress < 45){
+        if (loaderProgress < 20) {
 
-            loaderProgress += 1;
-
-        }
-        else if(loaderProgress < 70){
-
-            loaderProgress += 0.8;
-
-        }
-        else if(loaderProgress < 90){
-
-            loaderProgress += 0.5;
-
-        }
-        else if(loaderProgress < 99){
-
-            loaderProgress += 0.2;
+            loaderProgress += 0.35;
 
         }
 
-        loaderProgress = Math.min(loaderProgress,99);
 
-        number.innerHTML = Math.floor(loaderProgress) + "%";
+        /*
+            20 - 45%
+        */
 
-        const offset =
-            circumference -
-            (loaderProgress/100) * circumference;
+        else if (loaderProgress < 45) {
 
-        circle.style.strokeDashoffset = offset;
+            loaderProgress += 0.28;
 
-        // ==========================
-        // Status Messages
-        // ==========================
+        }
 
-        if(loaderProgress < 20){
+
+        /*
+            45 - 70%
+        */
+
+        else if (loaderProgress < 70) {
+
+            loaderProgress += 0.22;
+
+        }
+
+
+        /*
+            70 - 90%
+        */
+
+        else if (loaderProgress < 90) {
+
+            loaderProgress += 0.16;
+
+        }
+
+
+        /*
+            90 - 97%
+        */
+
+        else if (loaderProgress < 97) {
+
+            loaderProgress += 0.10;
+
+        }
+
+
+        /*
+            97 - 99%
+        */
+
+        else if (loaderProgress < 99) {
+
+            loaderProgress += 0.04;
+
+        }
+
+
+        /*
+            NEVER allow fake loader
+            to reach 100%.
+        */
+
+        loaderProgress =
+            Math.min(
+                loaderProgress,
+                99
+            );
+
+
+        updateLoaderProgress(
+            loaderProgress
+        );
+
+
+        // ==================================================
+        // LOADING STATUS MESSAGES
+        // ==================================================
+
+        if (loaderProgress < 20) {
 
             status.innerHTML =
-            "🔍 Connecting to Website...";
+                "🔍 Connecting to Website...";
+
+            title.innerHTML =
+                "Initializing Analysis...";
 
         }
 
-        else if(loaderProgress < 40){
+        else if (loaderProgress < 40) {
 
             status.innerHTML =
-            "🌐 Crawling Website...";
+                "🌐 Crawling Website...";
+
+            title.innerHTML =
+                "Analyzing Website...";
 
         }
 
-        else if(loaderProgress < 60){
+        else if (loaderProgress < 60) {
 
             status.innerHTML =
-            "📄 Reading Website Content...";
+                "📄 Reading Website Content...";
+
+            title.innerHTML =
+                "Reading Website Data...";
 
         }
 
-        else if(loaderProgress < 80){
+        else if (loaderProgress < 80) {
 
             status.innerHTML =
-            "🤖 AI Analysis in Progress...";
+                "🤖 AI Analysis in Progress...";
+
+            title.innerHTML =
+                "AI Analysis in Progress...";
 
         }
 
-        else if(loaderProgress < 95){
+        else if (loaderProgress < 95) {
 
             status.innerHTML =
-            "📊 Calculating AI Visibility Score...";
+                "📊 Calculating AI Visibility Score...";
+
+            title.innerHTML =
+                "Calculating Visibility Score...";
 
         }
 
-        else{
+        else {
 
             status.innerHTML =
-            "📋 Preparing Final Report...";
+                "📸 Generating Website Screenshots...";
+
+            title.innerHTML =
+                "Generating Website Screenshots...";
 
         }
 
-        // ==========================
-        // AI Platforms
-        // ==========================
+
+        // ==================================================
+        // AI PLATFORM STATUS
+        // ==================================================
 
         let html = "";
 
-        html += loaderProgress > 20
-        ? "✅ ChatGPT<br>"
-        : "⏳ ChatGPT<br>";
 
-        html += loaderProgress > 40
-        ? "✅ Gemini<br>"
-        : "⏳ Gemini<br>";
+        html +=
+            loaderProgress >= 20
 
-        html += loaderProgress > 65
-        ? "✅ Claude<br>"
-        : "⏳ Claude<br>";
+                ? "✅ ChatGPT<br>"
 
-        html += loaderProgress > 85
-        ? "✅ Perplexity"
-        : "⏳ Perplexity";
+                : "⏳ ChatGPT<br>";
+
+
+        html +=
+            loaderProgress >= 40
+
+                ? "✅ Gemini<br>"
+
+                : "⏳ Gemini<br>";
+
+
+        html +=
+            loaderProgress >= 65
+
+                ? "✅ Claude<br>"
+
+                : "⏳ Claude<br>";
+
+
+        html +=
+            loaderProgress >= 85
+
+                ? "✅ Perplexity"
+
+                : "⏳ Perplexity";
+
 
         platforms.innerHTML = html;
 
-    },90);
+
+    }, 100);
 
 }
+
+
+// ======================================================
+// UPDATE HORIZONTAL PROGRESS BAR
+// ======================================================
+
+function updateLoaderProgress(value) {
+
+    const number =
+        document.getElementById(
+            "progress-number"
+        );
+
+    const bar =
+        document.getElementById(
+            "progress-bar"
+        );
+
+
+    if (!number || !bar) {
+
+        return;
+
+    }
+
+
+    const safeValue =
+        Math.max(
+            0,
+            Math.min(
+                value,
+                100
+            )
+        );
+
+
+    number.innerHTML =
+        Math.floor(
+            safeValue
+        ) + "%";
+
+
+    bar.style.width =
+        safeValue + "%";
+
+}
+
+
+// ======================================================
+// FINISH LOADER
+//
+// This function is called ONLY after:
+//
+// const data = await response.json();
+//
+// Therefore:
+//
+// Backend finished
+//       ↓
+// 95/99% → 100%
+//       ↓
+// Results
+// ======================================================
+
+function finishLoader(data) {
+
+    clearInterval(
+        loaderTimer
+    );
+
+
+    const number =
+        document.getElementById(
+            "progress-number"
+        );
+
+    const bar =
+        document.getElementById(
+            "progress-bar"
+        );
+
+    const status =
+        document.getElementById(
+            "loading-status"
+        );
+
+    const title =
+        document.getElementById(
+            "loading-title"
+        );
+
+    const platforms =
+        document.getElementById(
+            "loading-platforms"
+        );
+
+
+    if (
+        !number ||
+        !bar ||
+        !status ||
+        !title
+    ) {
+
+        showResults(data);
+
+        return;
+
+    }
+
+
+    // ==================================================
+    // BACKEND HAS FINISHED
+    //
+    // NOW continue to 100%.
+    // ==================================================
+
+    const finishTimer =
+        setInterval(() => {
+
+
+            loaderProgress += 0.75;
+
+
+            if (
+                loaderProgress >= 100
+            ) {
+
+                loaderProgress = 100;
+
+            }
+
+
+            updateLoaderProgress(
+                loaderProgress
+            );
+
+
+            // ==========================================
+            // 100% REACHED
+            // ==========================================
+
+            if (
+                loaderProgress >= 100
+            ) {
+
+                clearInterval(
+                    finishTimer
+                );
+
+
+                title.innerHTML =
+                    "Analysis Complete";
+
+
+                status.innerHTML =
+                    "✅ Analysis completed successfully";
+
+
+                if (platforms) {
+
+                    platforms.innerHTML = `
+
+                        ✅ ChatGPT<br>
+
+                        ✅ Gemini<br>
+
+                        ✅ Claude<br>
+
+                        ✅ Perplexity
+
+                    `;
+
+                }
+
+
+                /*
+                    IMPORTANT:
+
+                    Results are NOT displayed
+                    until the progress bar
+                    has actually reached 100%.
+                */
+
+                setTimeout(() => {
+
+                    showResults(data);
+
+
+                    const analyzeBtn =
+                        document.querySelector(
+                            ".analyze-btn"
+                        );
+
+
+                    if (analyzeBtn) {
+
+                        analyzeBtn.disabled =
+                            false;
+
+                        analyzeBtn.innerHTML =
+                            "🚀 Analyze";
+
+                        analyzeBtn.style.opacity =
+                            "1";
+
+                        analyzeBtn.style.cursor =
+                            "pointer";
+
+                    }
+
+                }, 350);
+
+            }
+
+
+        }, 30);
+
+}
+
 
 // ===========================================
 // Error
@@ -396,124 +778,169 @@ function showError(message) {
 
 }
 
+
 // ===========================================
 // Analyze Website
 // ===========================================
 
 async function analyzeWebsite() {
 
-    const website = websiteInput.value.trim();
+    const website =
+        websiteInput.value.trim();
+
 
     if (!website) {
 
-        alert("Please enter website URL.");
+        alert(
+            "Please enter website URL."
+        );
 
         return;
 
     }
 
-    showLoading(website);
+
+    const analyzeBtn =
+        document.querySelector(
+            ".analyze-btn"
+        );
+
+
+    // ==========================================
+    // DISABLE BUTTON WHILE ANALYZING
+    // ==========================================
+
+    if (analyzeBtn) {
+
+        analyzeBtn.disabled =
+            true;
+
+        analyzeBtn.innerHTML =
+            "⏳ Analyzing...";
+
+        analyzeBtn.style.opacity =
+            "0.7";
+
+        analyzeBtn.style.cursor =
+            "wait";
+
+    }
+
+
+    showLoading(
+        website
+    );
+
 
     try {
 
-        const response = await fetch(
+        const response =
+            await fetch(
 
-            `${API_URL}/analyze`,
+                `${API_URL}/analyze`,
 
-            {
+                {
 
-                method: "POST",
+                    method: "POST",
 
-                headers: {
+                    headers: {
 
-                    "Content-Type": "application/json",
+                        "Content-Type":
+                            "application/json",
 
-                    Authorization: `Bearer ${token}`
+                        Authorization:
+                            `Bearer ${token}`
 
-                },
+                    },
 
-                body: JSON.stringify({
+                    body:
+                        JSON.stringify({
 
-                    url: website
+                            url: website
 
-                })
+                        })
 
-            }
+                }
 
-        );
+            );
+
 
         if (!response.ok) {
 
-            throw new Error("Analysis Failed");
+            throw new Error(
+                "Analysis Failed"
+            );
 
         }
 
-   const data = await response.json();
 
-console.log(data);
+        /*
+            WAIT FOR THE REAL BACKEND RESULT
+        */
 
-// Backend finished
-clearInterval(loaderTimer);
+        const data =
+            await response.json();
 
-const number = document.getElementById("progress-number");
-const circle = document.getElementById("progress-bar");
-const status = document.getElementById("loading-status");
-const title = document.getElementById("loading-title");
-const platforms = document.getElementById("loading-platforms");
 
-const circumference = 471;
+        console.log(data);
 
-// Complete remaining progress smoothly
-const finishTimer = setInterval(() => {
 
-    loaderProgress += 1;
+        /*
+            VERY IMPORTANT:
 
-    if(loaderProgress > 100){
+            Do NOT call showResults()
+            here.
 
-        loaderProgress = 100;
+            finishLoader() first takes
+            the progress to 100%.
 
-    }
+            Only after 100% does
+            finishLoader() call showResults().
+        */
 
-    number.innerHTML = Math.floor(loaderProgress) + "%";
+        finishLoader(
+            data
+        );
 
-    const offset =
-        circumference -
-        (loaderProgress / 100) * circumference;
-
-    circle.style.strokeDashoffset = offset;
-
-    if(loaderProgress >= 100){
-
-        clearInterval(finishTimer);
-
-        title.innerHTML = "Analysis Complete";
-
-        status.innerHTML = "✅ Preparing Dashboard...";
-
-        // platforms.innerHTML = `
-        //     ✅ ChatGPT<br>
-        //     ✅ Gemini<br>
-        //     ✅ Claude<br>
-        //     ✅ Perplexity
-        // `;
-
-        setTimeout(() => {
-
-            showResults(data);
-
-        },800);
-
-    }
-
-},35);
 
     }
 
     catch (error) {
 
-        console.error(error);
+        console.error(
+            error
+        );
 
-        showError(error.message);
+
+        clearInterval(
+            loaderTimer
+        );
+
+
+        showError(
+            error.message
+        );
+
+
+        // ==========================================
+        // RESTORE ANALYZE BUTTON
+        // ==========================================
+
+        if (analyzeBtn) {
+
+            analyzeBtn.disabled =
+                false;
+
+            analyzeBtn.innerHTML =
+                "🚀 Analyze";
+
+            analyzeBtn.style.opacity =
+                "1";
+
+            analyzeBtn.style.cursor =
+                "pointer";
+
+        }
 
     }
 
@@ -528,53 +955,66 @@ function showResults(data) {
 
     results.innerHTML = "";
 
+
     results.appendChild(
         renderOverallScore(data)
     );
+
 
     results.appendChild(
         renderAIScores(data)
     );
 
+
     results.appendChild(
         renderScreenshots(data)
     );
+
 
     results.appendChild(
         renderTechnology(data)
     );
 
+
     results.appendChild(
         renderBasicInformation(data)
     );
+
 
     results.appendChild(
         renderTechnicalSEO(data)
     );
 
+
     results.appendChild(
         renderAudit(data)
     );
+
 
     results.appendChild(
         renderOpenGraph(data)
     );
 
+
     results.appendChild(
         renderTwitterCards(data)
     );
+
 
     results.appendChild(
         renderLLMS(data)
     );
 
+
     results.appendChild(
         renderEEAT(data)
     );
 
+
     results.appendChild(
         renderEntities(data)
     );
+
 
     results.appendChild(
         renderRecommendations(data)
@@ -587,13 +1027,19 @@ function showResults(data) {
 // Overall AI Visibility
 // ======================================================
 
-function renderOverallScore(data){
+function renderOverallScore(data) {
 
-    const card=document.createElement("section");
+    const card =
+        document.createElement(
+            "section"
+        );
 
-    card.className="card";
 
-    card.innerHTML=`
+    card.className =
+        "card";
+
+
+    card.innerHTML = `
 
         <h2>
 
@@ -607,7 +1053,9 @@ function renderOverallScore(data){
 
                 <h1>
 
-                    ${data.overall_ai_visibility.overall_score}
+                    ${data
+                        .overall_ai_visibility
+                        .overall_score}
 
                 </h1>
 
@@ -615,7 +1063,9 @@ function renderOverallScore(data){
 
                     Grade
 
-                    ${data.overall_ai_visibility.grade}
+                    ${data
+                        .overall_ai_visibility
+                        .grade}
 
                 </span>
 
@@ -635,23 +1085,29 @@ function renderOverallScore(data){
 
     `;
 
+
     return card;
 
 }
-
 
 
 // ======================================================
 // AI Platform Scores
 // ======================================================
 
-function renderAIScores(data){
+function renderAIScores(data) {
 
-    const card=document.createElement("section");
+    const card =
+        document.createElement(
+            "section"
+        );
 
-    card.className="card";
 
-    card.innerHTML=`
+    card.className =
+        "card";
+
+
+    card.innerHTML = `
 
         <h2>
 
@@ -729,24 +1185,27 @@ function renderAIScores(data){
 
     `;
 
+
     return card;
 
 }
 
-// ======================================================
-// ======================================================
-// Website Preview (Desktop + Mobile Overlay)
-// ======================================================
 
 // ======================================================
-// Website Preview (Premium Browser + Mobile)
+// Website Preview
 // ======================================================
 
-function renderScreenshots(data){
+function renderScreenshots(data) {
 
-    const card = document.createElement("section");
+    const card =
+        document.createElement(
+            "section"
+        );
 
-    card.className = "card";
+
+    card.className =
+        "card";
+
 
     // ----------------------------------------
     // Screenshot URLs
@@ -756,15 +1215,21 @@ function renderScreenshots(data){
 
         data.screenshots &&
         data.screenshots.desktop
+
             ? `${API_URL}${data.screenshots.desktop}`
+
             : "images/desktop-placeholder.png";
+
 
     const mobileImage =
 
         data.screenshots &&
         data.screenshots.mobile
+
             ? `${API_URL}${data.screenshots.mobile}`
+
             : "images/mobile-placeholder.png";
+
 
     // ----------------------------------------
     // Website URL
@@ -778,6 +1243,7 @@ function renderScreenshots(data){
             ? data.technical_seo.final_url
 
             : "Website Preview";
+
 
     card.innerHTML = `
 
@@ -793,11 +1259,17 @@ function renderScreenshots(data){
 
                 <div class="browser-bar">
 
-                    <span class="browser-dot red"></span>
+                    <span
+                        class="browser-dot red">
+                    </span>
 
-                    <span class="browser-dot yellow"></span>
+                    <span
+                        class="browser-dot yellow">
+                    </span>
 
-                    <span class="browser-dot green"></span>
+                    <span
+                        class="browser-dot green">
+                    </span>
 
                     <div class="browser-address">
 
@@ -807,20 +1279,14 @@ function renderScreenshots(data){
 
                 </div>
 
-                                <div class="browser-screen">
+                <div class="browser-screen">
 
                     <img
-
                         src="${desktopImage}"
-
                         alt="Desktop Screenshot"
-
                         loading="lazy"
-
                         onclick="window.open(this.src,'_blank')"
-
                         onerror="this.src='images/desktop-placeholder.png'"
-
                     >
 
                 </div>
@@ -828,175 +1294,184 @@ function renderScreenshots(data){
                 <div class="mobile-preview">
 
                     <img
-
                         src="${mobileImage}"
-
                         alt="Mobile Screenshot"
-
                         loading="lazy"
-
                         onclick="window.open(this.src,'_blank')"
-
                         onerror="this.src='images/mobile-placeholder.png'"
-
                     >
 
                 </div>
 
             </div>
 
-                    </div>
+        </div>
 
     `;
+
 
     // ----------------------------------------
     // Make Desktop Screenshot Clickable
     // ----------------------------------------
 
-    const desktopImg = card.querySelector(".browser-screen img");
+    const desktopImg =
+        card.querySelector(
+            ".browser-screen img"
+        );
+
 
     if (desktopImg) {
 
-        desktopImg.addEventListener("click", () => {
+        desktopImg.addEventListener(
+            "click",
+            () => {
 
-            window.open(desktopImage, "_blank");
+                window.open(
+                    desktopImage,
+                    "_blank"
+                );
 
-        });
+            }
+        );
 
     }
+
 
     // ----------------------------------------
     // Make Mobile Screenshot Clickable
     // ----------------------------------------
 
-    const mobileImg = card.querySelector(".mobile-preview img");
+    const mobileImg =
+        card.querySelector(
+            ".mobile-preview img"
+        );
+
 
     if (mobileImg) {
 
-        mobileImg.addEventListener("click", () => {
+        mobileImg.addEventListener(
+            "click",
+            () => {
 
-            window.open(mobileImage, "_blank");
+                window.open(
+                    mobileImage,
+                    "_blank"
+                );
 
-        });
+            }
+        );
 
     }
+
 
     return card;
 
 }
 
-
 // ======================================================
 // Technology Detection
 // ======================================================
 
-function renderTechnology(data){
+function renderTechnology(data) {
 
-    const card=document.createElement("section");
+    const card =
+        document.createElement("section");
 
-    card.className="card";
+    card.className = "card";
 
-    let html=`
+    let html = `
 
         <h2>
-
             Technology Detection
-
         </h2>
 
     `;
 
-    if(
 
+    if (
         !data.technology ||
-
         !data.technology.categories ||
+        Object.keys(
+            data.technology.categories
+        ).length === 0
+    ) {
 
-        Object.keys(data.technology.categories).length===0
-
-    ){
-
-        html+=`
+        html += `
 
             <p>
-
                 No technologies detected.
-
             </p>
 
         `;
 
     }
 
-    else{
+    else {
 
-        html+=`
+        html += `
 
             <div class="technology-wrapper">
 
         `;
 
+
         Object.entries(
-
             data.technology.categories
-
         ).forEach(
+            ([category, technologies]) => {
 
-            ([category,technologies])=>{
-
-                html+=`
+                html += `
 
                     <div class="technology-section">
 
                         <h3>
-
                             ${category}
-
                         </h3>
 
                         <div class="technology-grid">
 
                 `;
 
-                technologies.forEach(tech=>{
 
-                    html+=`
+                technologies.forEach(
+                    tech => {
 
-                        <div class="technology-card">
+                        html += `
 
-                            <h3>
+                            <div class="technology-card">
 
-                                ${tech.technology}
+                                <h3>
+                                    ${tech.technology}
+                                </h3>
 
-                            </h3>
+                                <p>
 
-                            <p>
+                                    Confidence:
 
-                                Confidence :
+                                    <strong>
+                                        ${tech.confidence}%
+                                    </strong>
 
-                                <strong>
+                                </p>
 
-                                    ${tech.confidence}%
+                                <p>
 
-                                </strong>
+                                    Evidence:
 
-                            </p>
+                                    ${(tech.evidence || [])
+                                        .join(", ")}
 
-                            <p>
+                                </p>
 
-                                Evidence :
+                            </div>
 
-                                ${(tech.evidence||[]).join(", ")}
+                        `;
 
-                            </p>
+                    }
+                );
 
-                        </div>
 
-                    `;
-
-                });
-
-                html+=`
+                html += `
 
                         </div>
 
@@ -1005,10 +1480,10 @@ function renderTechnology(data){
                 `;
 
             }
-
         );
 
-        html+=`
+
+        html += `
 
             </div>
 
@@ -1016,97 +1491,143 @@ function renderTechnology(data){
 
     }
 
-    card.innerHTML=html;
+
+    card.innerHTML = html;
 
     return card;
 
 }
 
+
 // ======================================================
 // Basic Information
 // ======================================================
 
-function renderBasicInformation(data){
+function renderBasicInformation(data) {
 
-    const basic=data.basic;
+    const basic =
+        data.basic || {};
 
-    const card=document.createElement("section");
 
-    card.className="card";
+    const card =
+        document.createElement(
+            "section"
+        );
 
-    card.innerHTML=`
+
+    card.className =
+        "card";
+
+
+    card.innerHTML = `
 
         <h2>
-
             Basic Information
-
         </h2>
 
         <table class="info-table">
 
             <tr>
 
-                <td>Title</td>
+                <td>
+                    Title
+                </td>
 
-                <td>${basic.title||"-"}</td>
-
-            </tr>
-
-            <tr>
-
-                <td>Meta Description</td>
-
-                <td>${basic.meta_description||"-"}</td>
+                <td>
+                    ${basic.title || "-"}
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Language</td>
+                <td>
+                    Meta Description
+                </td>
 
-                <td>${basic.language||"-"}</td>
+                <td>
+                    ${basic.meta_description || "-"}
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Canonical URL</td>
+                <td>
+                    Language
+                </td>
 
-                <td>${basic.canonical||"-"}</td>
+                <td>
+                    ${basic.language || "-"}
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Robots</td>
+                <td>
+                    Canonical URL
+                </td>
 
-                <td>${basic.robots||"-"}</td>
+                <td>
+                    ${basic.canonical || "-"}
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>H1 Headings</td>
+                <td>
+                    Robots
+                </td>
+
+                <td>
+                    ${basic.robots || "-"}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    H1 Headings
+                </td>
 
                 <td>
 
-                    ${(basic.h1||[]).length
-                        ? basic.h1.join("<br>")
-                        : "-"}
+                    ${
+                        (basic.h1 || []).length
+
+                            ? basic.h1.join("<br>")
+
+                            : "-"
+                    }
 
                 </td>
 
             </tr>
 
+
             <tr>
 
-                <td>H2 Headings</td>
+                <td>
+                    H2 Headings
+                </td>
 
                 <td>
 
-                    ${(basic.h2||[]).length
-                        ? basic.h2.join("<br>")
-                        : "-"}
+                    ${
+                        (basic.h2 || []).length
+
+                            ? basic.h2.join("<br>")
+
+                            : "-"
+                    }
 
                 </td>
 
@@ -1116,123 +1637,213 @@ function renderBasicInformation(data){
 
     `;
 
+
     return card;
 
 }
-
 
 
 // ======================================================
 // Technical SEO
 // ======================================================
 
-function renderTechnicalSEO(data){
+function renderTechnicalSEO(data) {
 
-    const seo=data.technical_seo;
+    const seo =
+        data.technical_seo || {};
 
-    const card=document.createElement("section");
 
-    card.className="card";
+    const card =
+        document.createElement(
+            "section"
+        );
 
-    card.innerHTML=`
+
+    card.className =
+        "card";
+
+
+    card.innerHTML = `
 
         <h2>
-
             Technical SEO
-
         </h2>
 
         <table class="info-table">
 
             <tr>
 
-                <td>HTTPS</td>
+                <td>
+                    HTTPS
+                </td>
 
-                <td>${seo.https?"✅ Yes":"❌ No"}</td>
-
-            </tr>
-
-            <tr>
-
-                <td>Status Code</td>
-
-                <td>${seo.status_code}</td>
-
-            </tr>
-
-            <tr>
-
-                <td>Response Time</td>
-
-                <td>${seo.response_time_ms} ms</td>
+                <td>
+                    ${
+                        seo.https
+                            ? "✅ Yes"
+                            : "❌ No"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Page Size</td>
+                <td>
+                    Status Code
+                </td>
 
-                <td>${seo.page_size_kb} KB</td>
+                <td>
+                    ${seo.status_code || "-"}
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Redirected</td>
+                <td>
+                    Response Time
+                </td>
 
-                <td>${seo.redirected?"Yes":"No"}</td>
+                <td>
+                    ${seo.response_time_ms || "-"} ms
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Final URL</td>
+                <td>
+                    Page Size
+                </td>
 
-                <td>${seo.final_url}</td>
+                <td>
+                    ${seo.page_size_kb || "-"} KB
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>robots.txt</td>
+                <td>
+                    Redirected
+                </td>
 
-                <td>${seo.robots_txt?"✅ Found":"❌ Missing"}</td>
+                <td>
+                    ${
+                        seo.redirected
+                            ? "Yes"
+                            : "No"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Sitemap.xml</td>
+                <td>
+                    Final URL
+                </td>
 
-                <td>${seo.sitemap?"✅ Found":"❌ Missing"}</td>
+                <td>
+                    ${seo.final_url || "-"}
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Structured Data</td>
+                <td>
+                    robots.txt
+                </td>
 
-                <td>${seo.structured_data?"✅ Yes":"❌ No"}</td>
+                <td>
+                    ${
+                        seo.robots_txt
+                            ? "✅ Found"
+                            : "❌ Missing"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>JSON-LD Count</td>
+                <td>
+                    Sitemap.xml
+                </td>
 
-                <td>${seo.json_ld_count}</td>
+                <td>
+                    ${
+                        seo.sitemap
+                            ? "✅ Found"
+                            : "❌ Missing"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Favicon</td>
+                <td>
+                    Structured Data
+                </td>
+
+                <td>
+                    ${
+                        seo.structured_data
+                            ? "✅ Yes"
+                            : "❌ No"
+                    }
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    JSON-LD Count
+                </td>
+
+                <td>
+                    ${seo.json_ld_count || 0}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Favicon
+                </td>
 
                 <td>
 
-                    ${seo.favicon
-                        ? `<img src="${seo.favicon}" style="height:40px;border-radius:5px;">`
-                        : "-"}
+                    ${
+                        seo.favicon
+
+                            ? `
+                                <img
+                                    src="${seo.favicon}"
+                                    style="
+                                        height:40px;
+                                        border-radius:5px;
+                                    "
+                                >
+                              `
+
+                            : "-"
+                    }
 
                 </td>
 
@@ -1242,87 +1853,139 @@ function renderTechnicalSEO(data){
 
     `;
 
+
     return card;
 
 }
-
 
 
 // ======================================================
 // Website Audit
 // ======================================================
 
-function renderAudit(data){
+function renderAudit(data) {
 
-    const audit=data.audit;
+    const audit =
+        data.audit || {};
 
-    const card=document.createElement("section");
 
-    card.className="card";
+    const card =
+        document.createElement(
+            "section"
+        );
 
-    card.innerHTML=`
+
+    card.className =
+        "card";
+
+
+    card.innerHTML = `
 
         <h2>
-
             Website Audit
-
         </h2>
 
         <table class="info-table">
 
             <tr>
 
-                <td>Meta Description</td>
+                <td>
+                    Meta Description
+                </td>
 
-                <td>${audit.meta_description?"✅ Available":"❌ Missing"}</td>
-
-            </tr>
-
-            <tr>
-
-                <td>Canonical URL</td>
-
-                <td>${audit.canonical?"✅ Available":"❌ Missing"}</td>
-
-            </tr>
-
-            <tr>
-
-                <td>Robots Meta</td>
-
-                <td>${audit.robots?"✅ Available":"❌ Missing"}</td>
+                <td>
+                    ${
+                        audit.meta_description
+                            ? "✅ Available"
+                            : "❌ Missing"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>H1 Count</td>
+                <td>
+                    Canonical URL
+                </td>
 
-                <td>${audit.h1_count}</td>
+                <td>
+                    ${
+                        audit.canonical
+                            ? "✅ Available"
+                            : "❌ Missing"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Total Images</td>
+                <td>
+                    Robots Meta
+                </td>
 
-                <td>${audit.images}</td>
+                <td>
+                    ${
+                        audit.robots
+                            ? "✅ Available"
+                            : "❌ Missing"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Images Without ALT</td>
+                <td>
+                    H1 Count
+                </td>
 
-                <td>${audit.images_without_alt}</td>
+                <td>
+                    ${audit.h1_count || 0}
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Total Links</td>
+                <td>
+                    Total Images
+                </td>
 
-                <td>${audit.total_links}</td>
+                <td>
+                    ${audit.images || 0}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Images Without ALT
+                </td>
+
+                <td>
+                    ${audit.images_without_alt || 0}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Total Links
+                </td>
+
+                <td>
+                    ${audit.total_links || 0}
+                </td>
 
             </tr>
 
@@ -1330,79 +1993,146 @@ function renderAudit(data){
 
     `;
 
+
     return card;
 
 }
+
 
 // ======================================================
 // Open Graph
 // ======================================================
 
-function renderOpenGraph(data){
+function renderOpenGraph(data) {
 
-    const og=data.technical_seo.open_graph||{};
+    const technicalSEO =
+        data.technical_seo || {};
 
-    const summary=data.technical_seo.open_graph_summary||{};
 
-    const card=document.createElement("section");
+    const og =
+        technicalSEO.open_graph || {};
 
-    card.className="card";
 
-    let html=`
+    const summary =
+        technicalSEO.open_graph_summary || {};
+
+
+    const card =
+        document.createElement(
+            "section"
+        );
+
+
+    card.className =
+        "card";
+
+
+    let html = `
 
         <h2>
-
             Open Graph
-
         </h2>
 
         <table class="info-table">
 
             <tr>
 
-                <td>Available</td>
+                <td>
+                    Available
+                </td>
 
-                <td>${summary.exists?"✅ Yes":"❌ No"}</td>
-
-            </tr>
-
-            <tr>
-
-                <td>Title</td>
-
-                <td>${summary.title?"✅":"❌"}</td>
-
-            </tr>
-
-            <tr>
-
-                <td>Description</td>
-
-                <td>${summary.description?"✅":"❌"}</td>
+                <td>
+                    ${
+                        summary.exists
+                            ? "✅ Yes"
+                            : "❌ No"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Image</td>
+                <td>
+                    Title
+                </td>
 
-                <td>${summary.image?"✅":"❌"}</td>
+                <td>
+                    ${
+                        summary.title
+                            ? "✅"
+                            : "❌"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>URL</td>
+                <td>
+                    Description
+                </td>
 
-                <td>${summary.url?"✅":"❌"}</td>
+                <td>
+                    ${
+                        summary.description
+                            ? "✅"
+                            : "❌"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Site Name</td>
+                <td>
+                    Image
+                </td>
 
-                <td>${summary.site_name?"✅":"❌"}</td>
+                <td>
+                    ${
+                        summary.image
+                            ? "✅"
+                            : "❌"
+                    }
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    URL
+                </td>
+
+                <td>
+                    ${
+                        summary.url
+                            ? "✅"
+                            : "❌"
+                    }
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Site Name
+                </td>
+
+                <td>
+                    ${
+                        summary.site_name
+                            ? "✅"
+                            : "❌"
+                    }
+                </td>
 
             </tr>
 
@@ -1411,82 +2141,117 @@ function renderOpenGraph(data){
         <br>
 
         <h3>
-
             Open Graph Tags
-
         </h3>
 
         <table class="info-table">
 
     `;
 
-    Object.entries(og).forEach(([key,value])=>{
 
-        html+=`
+    Object.entries(
+        og
+    ).forEach(
+        ([key, value]) => {
 
-            <tr>
+            html += `
 
-                <td>${key}</td>
+                <tr>
 
-                <td>${value}</td>
+                    <td>
+                        ${key}
+                    </td>
 
-            </tr>
+                    <td>
+                        ${value}
+                    </td>
 
-        `;
+                </tr>
 
-    });
+            `;
 
-    html+=`
+        }
+    );
+
+
+    html += `
 
         </table>
 
     `;
 
-    card.innerHTML=html;
+
+    card.innerHTML =
+        html;
+
 
     return card;
 
 }
 
 
-
 // ======================================================
 // Twitter Cards
 // ======================================================
 
-function renderTwitterCards(data){
+function renderTwitterCards(data) {
 
-    const twitter=data.technical_seo.twitter_cards||{};
+    const technicalSEO =
+        data.technical_seo || {};
 
-    const summary=data.technical_seo.twitter_summary||{};
 
-    const card=document.createElement("section");
+    const twitter =
+        technicalSEO.twitter_cards || {};
 
-    card.className="card";
 
-    let html=`
+    const summary =
+        technicalSEO.twitter_summary || {};
+
+
+    const card =
+        document.createElement(
+            "section"
+        );
+
+
+    card.className =
+        "card";
+
+
+    let html = `
 
         <h2>
-
             Twitter Cards
-
         </h2>
 
         <table class="info-table">
 
             <tr>
 
-                <td>Available</td>
+                <td>
+                    Available
+                </td>
 
-                <td>${summary.exists?"✅ Yes":"❌ No"}</td>
+                <td>
+                    ${
+                        summary.exists
+                            ? "✅ Yes"
+                            : "❌ No"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Card Type</td>
+                <td>
+                    Card Type
+                </td>
 
-                <td>${summary.card||"-"}</td>
+                <td>
+                    ${summary.card || "-"}
+                </td>
 
             </tr>
 
@@ -1494,39 +2259,50 @@ function renderTwitterCards(data){
 
     `;
 
-    if(Object.keys(twitter).length){
 
-        html+=`
+    if (
+        Object.keys(twitter).length
+    ) {
+
+        html += `
 
             <br>
 
             <h3>
-
                 Twitter Meta Tags
-
             </h3>
 
             <table class="info-table">
 
         `;
 
-        Object.entries(twitter).forEach(([key,value])=>{
 
-            html+=`
+        Object.entries(
+            twitter
+        ).forEach(
+            ([key, value]) => {
 
-                <tr>
+                html += `
 
-                    <td>${key}</td>
+                    <tr>
 
-                    <td>${value}</td>
+                        <td>
+                            ${key}
+                        </td>
 
-                </tr>
+                        <td>
+                            ${value}
+                        </td>
 
-            `;
+                    </tr>
 
-        });
+                `;
 
-        html+=`
+            }
+        );
+
+
+        html += `
 
             </table>
 
@@ -1534,145 +2310,231 @@ function renderTwitterCards(data){
 
     }
 
-    card.innerHTML=html;
+
+    card.innerHTML =
+        html;
+
 
     return card;
 
 }
-
 
 
 // ======================================================
 // LLMs.txt
 // ======================================================
 
-function renderLLMS(data){
+function renderLLMS(data) {
 
-    const llms=data.llms;
+    const llms =
+        data.llms || {};
 
-    const card=document.createElement("section");
 
-    card.className="card";
+    const card =
+        document.createElement(
+            "section"
+        );
 
-    card.innerHTML=`
+
+    card.className =
+        "card";
+
+
+    card.innerHTML = `
 
         <h2>
-
             LLMs.txt
-
         </h2>
 
         <table class="info-table">
 
             <tr>
 
-                <td>Exists</td>
+                <td>
+                    Exists
+                </td>
 
-                <td>${llms.exists?"✅ Yes":"❌ No"}</td>
-
-            </tr>
-
-            <tr>
-
-                <td>URL</td>
-
-                <td>${llms.url}</td>
-
-            </tr>
-
-            <tr>
-
-                <td>Size</td>
-
-                <td>${llms.size} Bytes</td>
+                <td>
+                    ${
+                        llms.exists
+                            ? "✅ Yes"
+                            : "❌ No"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Preview</td>
+                <td>
+                    URL
+                </td>
 
-                <td>${llms.preview||"-"}</td>
+                <td>
+                    ${llms.url || "-"}
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Size
+                </td>
+
+                <td>
+                    ${llms.size || 0} Bytes
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Preview
+                </td>
+
+                <td>
+                    ${llms.preview || "-"}
+                </td>
 
             </tr>
 
         </table>
 
     `;
+
 
     return card;
 
 }
 
 
-
 // ======================================================
 // E-E-A-T
 // ======================================================
 
-function renderEEAT(data){
+function renderEEAT(data) {
 
-    const eeat=data.eeat;
+    const eeat =
+        data.eeat || {};
 
-    const card=document.createElement("section");
 
-    card.className="card";
+    const card =
+        document.createElement(
+            "section"
+        );
 
-    let html=`
+
+    card.className =
+        "card";
+
+
+    let html = `
 
         <h2>
-
             E-E-A-T Analysis
-
         </h2>
 
         <table class="info-table">
 
             <tr>
 
-                <td>Score</td>
+                <td>
+                    Score
+                </td>
 
-                <td>${eeat.score}</td>
-
-            </tr>
-
-            <tr>
-
-                <td>Author</td>
-
-                <td>${eeat.author?"✅":"❌"}</td>
+                <td>
+                    ${eeat.score || 0}
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>About</td>
+                <td>
+                    Author
+                </td>
 
-                <td>${eeat.about?"✅":"❌"}</td>
+                <td>
+                    ${
+                        eeat.author
+                            ? "✅"
+                            : "❌"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Contact</td>
+                <td>
+                    About
+                </td>
 
-                <td>${eeat.contact?"✅":"❌"}</td>
+                <td>
+                    ${
+                        eeat.about
+                            ? "✅"
+                            : "❌"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Privacy Policy</td>
+                <td>
+                    Contact
+                </td>
 
-                <td>${eeat.privacy?"✅":"❌"}</td>
+                <td>
+                    ${
+                        eeat.contact
+                            ? "✅"
+                            : "❌"
+                    }
+                </td>
 
             </tr>
 
+
             <tr>
 
-                <td>Terms & Conditions</td>
+                <td>
+                    Privacy Policy
+                </td>
 
-                <td>${eeat.terms?"✅":"❌"}</td>
+                <td>
+                    ${
+                        eeat.privacy
+                            ? "✅"
+                            : "❌"
+                    }
+                </td>
+
+            </tr>
+
+
+            <tr>
+
+                <td>
+                    Terms & Conditions
+                </td>
+
+                <td>
+                    ${
+                        eeat.terms
+                            ? "✅"
+                            : "❌"
+                    }
+                </td>
 
             </tr>
 
@@ -1680,33 +2542,42 @@ function renderEEAT(data){
 
     `;
 
-    if(eeat.recommendations?.length){
 
-        html+=`
+    if (
+        eeat.recommendations &&
+        eeat.recommendations.length
+    ) {
+
+        html += `
 
             <br>
 
             <h3>
-
                 Recommendations
-
             </h3>
 
             <ul class="recommendation-list">
 
         `;
 
-        eeat.recommendations.forEach(item=>{
 
-            html+=`
+        eeat.recommendations
+            .forEach(
+                item => {
 
-                <li>${item}</li>
+                    html += `
 
-            `;
+                        <li>
+                            ${item}
+                        </li>
 
-        });
+                    `;
 
-        html+=`
+                }
+            );
+
+
+        html += `
 
             </ul>
 
@@ -1714,39 +2585,53 @@ function renderEEAT(data){
 
     }
 
-    card.innerHTML=html;
+
+    card.innerHTML =
+        html;
+
 
     return card;
 
 }
 
+
 // ======================================================
 // Entity Analysis
 // ======================================================
 
-function renderEntities(data){
+function renderEntities(data) {
 
-    const entity=data.entities||{};
+    const entity =
+        data.entities || {};
 
-    const card=document.createElement("section");
 
-    card.className="card";
+    const card =
+        document.createElement(
+            "section"
+        );
 
-    let html=`
+
+    card.className =
+        "card";
+
+
+    let html = `
 
         <h2>
-
             Entity Analysis
-
         </h2>
 
         <table class="info-table">
 
             <tr>
 
-                <td>Total Entities</td>
+                <td>
+                    Total Entities
+                </td>
 
-                <td>${entity.count||0}</td>
+                <td>
+                    ${entity.count || 0}
+                </td>
 
             </tr>
 
@@ -1754,39 +2639,34 @@ function renderEntities(data){
 
     `;
 
-    html+=renderEntityGroup(
 
+    html += renderEntityGroup(
         "Organizations",
-
         entity.organizations
-
     );
 
-    html+=renderEntityGroup(
 
+    html += renderEntityGroup(
         "Services",
-
         entity.services
-
     );
 
-    html+=renderEntityGroup(
 
+    html += renderEntityGroup(
         "Topics",
-
         entity.topics
-
     );
 
-    html+=renderEntityGroup(
 
+    html += renderEntityGroup(
         "Top Entities",
-
         entity.top_entities
-
     );
 
-    card.innerHTML=html;
+
+    card.innerHTML =
+        html;
+
 
     return card;
 
@@ -1797,35 +2677,47 @@ function renderEntities(data){
 // Entity Helper
 // ======================================================
 
-function renderEntityGroup(title,list){
+function renderEntityGroup(
+    title,
+    list
+) {
 
-    if(!list || list.length===0){
+    if (
+        !list ||
+        list.length === 0
+    ) {
 
         return `
 
-            <h3>${title}</h3>
+            <h3>
+                ${title}
+            </h3>
 
             <p>
-
                 No Data
-
             </p>
 
         `;
 
     }
 
+
     return `
 
         <h3>
-
             ${title}
-
         </h3>
 
         <ul class="entity-list">
 
-            ${list.map(item=>`<li>${item}</li>`).join("")}
+            ${
+                list
+                    .map(
+                        item =>
+                            `<li>${item}</li>`
+                    )
+                    .join("")
+            }
 
         </ul>
 
@@ -1834,50 +2726,62 @@ function renderEntityGroup(title,list){
 }
 
 
-
 // ======================================================
 // Recommendations
 // ======================================================
 
-function renderRecommendations(data){
+function renderRecommendations(data) {
 
-    const card=document.createElement("section");
+    const card =
+        document.createElement(
+            "section"
+        );
 
-    card.className="card";
 
-    let html=`
+    card.className =
+        "card";
+
+
+    let html = `
 
         <h2>
-
             AI Recommendations
-
         </h2>
 
     `;
 
-    if(data.recommendations.length){
 
-        html+=`
+    const recommendations =
+        data.recommendations || [];
+
+
+    if (
+        recommendations.length
+    ) {
+
+        html += `
 
             <ul class="recommendation-list">
 
         `;
 
-        data.recommendations.forEach(item=>{
 
-            html+=`
+        recommendations.forEach(
+            item => {
 
-                <li>
+                html += `
 
-                    ${item}
+                    <li>
+                        ${item}
+                    </li>
 
-                </li>
+                `;
 
-            `;
+            }
+        );
 
-        });
 
-        html+=`
+        html += `
 
             </ul>
 
@@ -1885,9 +2789,9 @@ function renderRecommendations(data){
 
     }
 
-    else{
+    else {
 
-        html+=`
+        html += `
 
             <p>
 
@@ -1901,23 +2805,34 @@ function renderRecommendations(data){
 
     }
 
-    card.innerHTML=html;
+
+    card.innerHTML =
+        html;
+
 
     return card;
 
 }
 
 
-
 // ======================================================
 // Reset Dashboard
 // ======================================================
 
-function resetDashboard(){
+function resetDashboard() {
 
-    websiteInput.value="";
+    websiteInput.value = "";
 
-    results.innerHTML=`
+
+    clearInterval(
+        loaderTimer
+    );
+
+
+    loaderProgress = 0;
+
+
+    results.innerHTML = `
 
         <div class="card">
 
@@ -1947,44 +2862,94 @@ function resetDashboard(){
 
     `;
 
-}
 
+    const analyzeBtn =
+        document.querySelector(
+            ".analyze-btn"
+        );
+
+
+    if (analyzeBtn) {
+
+        analyzeBtn.disabled =
+            false;
+
+        analyzeBtn.innerHTML =
+            "🚀 Analyze";
+
+        analyzeBtn.style.opacity =
+            "1";
+
+        analyzeBtn.style.cursor =
+            "pointer";
+
+    }
+
+}
 
 
 // ======================================================
 // Notification
 // ======================================================
 
-function showNotification(message,type="success"){
+function showNotification(
+    message,
+    type = "success"
+) {
 
-    const notification=document.createElement("div");
+    const notification =
+        document.createElement(
+            "div"
+        );
 
-    notification.className=`notification ${type}`;
 
-    notification.innerHTML=message;
+    notification.className =
+        `notification ${type}`;
 
-    document.body.appendChild(notification);
 
-    setTimeout(()=>{
+    notification.innerHTML =
+        message;
 
-        notification.classList.add("show");
 
-    },90);
+    document.body.appendChild(
+        notification
+    );
 
-    setTimeout(()=>{
 
-        notification.classList.remove("show");
+    setTimeout(
+        () => {
 
-        setTimeout(()=>{
+            notification.classList.add(
+                "show"
+            );
 
-            notification.remove();
+        },
+        100
+    );
 
-        },300);
 
-    },3000);
+    setTimeout(
+        () => {
+
+            notification.classList.remove(
+                "show"
+            );
+
+
+            setTimeout(
+                () => {
+
+                    notification.remove();
+
+                },
+                300
+            );
+
+        },
+        3000
+    );
 
 }
-
 
 
 // ======================================================
@@ -1992,13 +2957,10 @@ function showNotification(message,type="success"){
 // ======================================================
 
 document.addEventListener(
-
     "DOMContentLoaded",
-
-    ()=>{
+    () => {
 
         loadProfile();
 
     }
-
 );
