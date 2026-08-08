@@ -5,37 +5,75 @@
 
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <title>Login | AI Visibility Analyzer</title>
+    <title>
+        Login | AI Visibility Analyzer
+    </title>
 
-    <link rel="stylesheet" href="css/login.css">
+    <link
+        rel="stylesheet"
+        href="css/login.css"
+    >
 
 </head>
 
+
 <body>
+
+
+    <!-- =====================================================
+         LOGIN CARD
+    ====================================================== -->
 
     <div class="login-card">
 
-        <h1>Welcome Back</h1>
+        <h1>
+            Welcome Back
+        </h1>
+
 
         <p>
-            Sign in with your Google account to access your AI Visibility Dashboard.
+
+            Sign in with your Google account to access
+            your AI Visibility Dashboard.
+
         </p>
+
+
+        <!-- =================================================
+             GOOGLE LOGIN BUTTON
+        ================================================== -->
 
         <button
             class="google-btn"
-            onclick="googleLogin()">
+            onclick="googleLogin()"
+        >
 
             <img
                 src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                alt="Google Logo">
+                alt="Google Logo"
+            >
 
-            <span>Continue with Google</span>
+
+            <span>
+                Continue with Google
+            </span>
 
         </button>
 
-        <a href="index.html" class="back-home">
+
+        <!-- =================================================
+             BACK HOME
+        ================================================== -->
+
+        <a
+            href="index.html"
+            class="back-home"
+        >
 
             ← Back to Home
 
@@ -43,133 +81,498 @@
 
     </div>
 
-    <!-- Loading Overlay -->
 
-   <div id="loadingOverlay" class="loading-overlay">
 
-    <div class="loader-card">
+    <!-- =====================================================
+         LOADING OVERLAY
+    ====================================================== -->
 
-        <div class="ai-logo">🤖</div>
+    <div
+        id="loadingOverlay"
+        class="loading-overlay"
+    >
 
-        <h2>AI Visibility Analyzer</h2>
 
-        <div class="progress-circle">
+        <div class="loader-card">
 
-            <svg width="170" height="170">
 
-                <circle
-                    class="bg-circle"
-                    cx="85"
-                    cy="85"
-                    r="75">
-                </circle>
+            <!-- =================================================
+                 AI LOGO
+            ================================================== -->
 
-                <circle
-                    id="progressCircle"
-                    class="progress-circle-fill"
-                    cx="85"
-                    cy="85"
-                    r="75">
-                </circle>
+            <div class="ai-logo">
 
-            </svg>
-
-            <div
-                id="loadingPercentage"
-                class="progress-text">
-
-                0%
+                🤖
 
             </div>
 
+
+            <!-- =================================================
+                 TITLE
+            ================================================== -->
+
+            <h2>
+
+                AI Visibility Analyzer
+
+            </h2>
+
+
+            <!-- =================================================
+                 HORIZONTAL PROGRESS
+            ================================================== -->
+
+            <div class="login-progress-container">
+
+
+                <div class="login-progress-track">
+
+
+                    <div
+                        id="loginProgressBar"
+                        class="login-progress-bar"
+                    >
+
+
+                        <span
+                            id="loadingPercentage"
+                            class="login-progress-text"
+                        >
+
+                            0%
+
+                        </span>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 LOADING MESSAGE
+            ================================================== -->
+
+            <h3
+                id="loadingMessage"
+            >
+
+                🔐 Initializing Secure Login...
+
+            </h3>
+
+
+            <!-- =================================================
+                 LOGIN STATUS
+            ================================================== -->
+
+            <p
+                id="loginStatus"
+                class="login-status"
+            >
+
+                Preparing secure authentication...
+
+            </p>
+
+
         </div>
 
-        <h3 id="loadingMessage">
-
-            Initializing Secure Login...
-
-        </h3>
 
     </div>
 
-</div>
 
-<script>
 
-function googleLogin(){
+    <!-- =====================================================
+         GOOGLE LOGIN SCRIPT
+    ====================================================== -->
 
-    document.getElementById("loadingOverlay").style.display="flex";
+    <script>
 
-    const messages=[
 
-        "🔐 Initializing Secure Login...",
+        function googleLogin(){
 
-        "🌐 Connecting to Google...",
 
-        "🔍 Verifying Authentication...",
+            /*
+             * ==============================================
+             * SHOW LOADING OVERLAY
+             * ==============================================
+             */
 
-        "🛡 Securing Session...",
+            const overlay =
+                document.getElementById(
+                    "loadingOverlay"
+                );
 
-        "🚀 Redirecting to Google..."
 
-    ];
+            overlay.style.display =
+                "flex";
 
-    const circle=document.getElementById("progressCircle");
 
-    const percentage=document.getElementById("loadingPercentage");
+            /*
+             * ==============================================
+             * ELEMENTS
+             * ==============================================
+             */
 
-    const message=document.getElementById("loadingMessage");
+            const progressBar =
+                document.getElementById(
+                    "loginProgressBar"
+                );
 
-    const circumference=471;
 
-    let progress=0;
+            const percentage =
+                document.getElementById(
+                    "loadingPercentage"
+                );
 
-    const timer=setInterval(()=>{
 
-        progress++;
+            const message =
+                document.getElementById(
+                    "loadingMessage"
+                );
 
-        percentage.innerHTML=progress+"%";
 
-        const offset=circumference-(progress/100)*circumference;
+            const status =
+                document.getElementById(
+                    "loginStatus"
+                );
 
-        circle.style.strokeDashoffset=offset;
 
-        if(progress==20){
+            /*
+             * ==============================================
+             * LOGIN MESSAGES
+             * ==============================================
+             */
 
-            message.innerHTML=messages[1];
+            const messages = [
+
+                {
+                    progress: 10,
+
+                    title:
+                        "🔐 Initializing Secure Login...",
+
+                    status:
+                        "Preparing secure authentication..."
+
+                },
+
+
+                {
+                    progress: 25,
+
+                    title:
+                        "🌐 Connecting to Google...",
+
+                    status:
+                        "Establishing secure connection..."
+
+                },
+
+
+                {
+                    progress: 45,
+
+                    title:
+                        "🔍 Verifying Authentication...",
+
+                    status:
+                        "Waiting for Google authentication..."
+
+                },
+
+
+                {
+                    progress: 65,
+
+                    title:
+                        "🛡 Securing Session...",
+
+                    status:
+                        "Creating your secure session..."
+
+                },
+
+
+                {
+                    progress: 82,
+
+                    title:
+                        "🔒 Securing Dashboard Access...",
+
+                    status:
+                        "Preparing your AI Visibility Dashboard..."
+
+                },
+
+
+                {
+                    progress: 94,
+
+                    title:
+                        "🚀 Almost Ready...",
+
+                    status:
+                        "Finalizing secure login..."
+
+                },
+
+
+                {
+                    progress: 99,
+
+                    title:
+                        "⏳ Waiting for Authentication...",
+
+                    status:
+                        "Please wait while Google completes authentication..."
+
+                }
+
+            ];
+
+
+            /*
+             * ==============================================
+             * PROGRESS VARIABLES
+             * ==============================================
+             */
+
+            let progress = 0;
+
+            let messageIndex = 0;
+
+            let redirectStarted = false;
+
+
+            /*
+             * ==============================================
+             * UPDATE MESSAGE
+             * ==============================================
+             */
+
+            function updateMessage(){
+
+                if(
+                    messageIndex >=
+                    messages.length
+                ){
+
+                    return;
+
+                }
+
+
+                const current =
+                    messages[
+                        messageIndex
+                    ];
+
+
+                if(
+                    progress >=
+                    current.progress
+                ){
+
+                    message.innerHTML =
+                        current.title;
+
+
+                    status.innerHTML =
+                        current.status;
+
+
+                    messageIndex++;
+
+                }
+
+            }
+
+
+            /*
+             * ==============================================
+             * PROGRESS TIMER
+             *
+             * 0 → 99 SLOWLY
+             *
+             * NEVER SHOW 100% HERE.
+             * ==============================================
+             */
+
+            const timer =
+                setInterval(
+                    function(){
+
+
+                        /*
+                         * Slow down progressively
+                         * as we approach 99%.
+                         */
+
+                        if(
+                            progress < 30
+                        ){
+
+                            progress +=
+                                0.35;
+
+                        }
+
+                        else if(
+                            progress < 60
+                        ){
+
+                            progress +=
+                                0.25;
+
+                        }
+
+                        else if(
+                            progress < 80
+                        ){
+
+                            progress +=
+                                0.16;
+
+                        }
+
+                        else if(
+                            progress < 94
+                        ){
+
+                            progress +=
+                                0.09;
+
+                        }
+
+                        else if(
+                            progress < 99
+                        ){
+
+                            progress +=
+                                0.035;
+
+                        }
+
+
+                        /*
+                         * NEVER exceed 99%.
+                         */
+
+                        if(
+                            progress > 99
+                        ){
+
+                            progress = 99;
+
+                        }
+
+
+                        /*
+                         * Display percentage
+                         */
+
+                        percentage.innerHTML =
+                            Math.floor(
+                                progress
+                            ) + "%";
+
+
+                        /*
+                         * Update horizontal bar
+                         */
+
+                        progressBar.style.width =
+                            progress + "%";
+
+
+                        /*
+                         * Update messages
+                         */
+
+                        updateMessage();
+
+
+                        /*
+                         * =================================
+                         * WHEN 99% IS REACHED
+                         * =================================
+                         */
+
+                        if(
+                            progress >= 99 &&
+                            !redirectStarted
+                        ){
+
+                            redirectStarted =
+                                true;
+
+
+                            clearInterval(
+                                timer
+                            );
+
+
+                            percentage.innerHTML =
+                                "99%";
+
+
+                            progressBar.style.width =
+                                "99%";
+
+
+                            message.innerHTML =
+                                "⏳ Waiting for Authentication...";
+
+
+                            status.innerHTML =
+                                "Redirecting securely to Google...";
+
+
+                            /*
+                             * Give the browser a very
+                             * short moment to display
+                             * the 99% state.
+                             */
+
+                            setTimeout(
+                                function(){
+
+
+                                    /*
+                                     * =================================
+                                     * EXISTING GOOGLE LOGIN URL
+                                     *
+                                     * DO NOT CHANGE
+                                     * =================================
+                                     */
+
+                                    window.location.href =
+                                        "https://ai-visibility-analyzer.onrender.com/google/login";
+
+
+                                },
+                                250
+                            );
+
+                        }
+
+
+                    },
+                    80
+                );
+
 
         }
 
-        if(progress==45){
 
-            message.innerHTML=messages[2];
+    </script>
 
-        }
-
-        if(progress==70){
-
-            message.innerHTML=messages[3];
-
-        }
-
-        if(progress==90){
-
-            message.innerHTML=messages[4];
-
-        }
-
-        if(progress>=100){
-
-            clearInterval(timer);
-
-            window.location.href="https://ai-visibility-analyzer.onrender.com/google/login";
-
-        }
-
-    },25);
-
-}
-</script>
 
 </body>
 
