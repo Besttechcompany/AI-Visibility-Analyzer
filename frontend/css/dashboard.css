@@ -224,8 +224,13 @@ button{
 }
 
 
+.logout-menu:hover{
 
+    background:#ef4444;
 
+    color:#ffffff;
+
+}
 
 /* ==========================================================
    MAIN CONTENT

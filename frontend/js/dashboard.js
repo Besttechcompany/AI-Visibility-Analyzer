@@ -783,56 +783,78 @@ function showError(message) {
 // Analyze Website
 // ===========================================
 
+// ===========================================
+// Analyze Website
+// ===========================================
+
 async function analyzeWebsite() {
 
-    const website =
-        websiteInput.value.trim();
+    let website = websiteInput.value.trim();
 
+    // ==========================================
+    // CHECK EMPTY URL
+    // ==========================================
 
     if (!website) {
 
-        alert(
-            "Please enter website URL."
-        );
+        alert("Please enter website URL.");
 
         return;
+    }
+
+
+    // ==========================================
+    // NORMALIZE WEBSITE URL
+    // ==========================================
+
+    // Remove spaces
+    website = website.trim();
+
+    // If user enters:
+    // mckinleyresearch.org
+    // convert to:
+    // https://mckinleyresearch.org/
+
+    if (!/^https?:\/\//i.test(website)) {
+
+        website = "https://" + website;
 
     }
 
 
+    // ==========================================
+    // DISABLE ANALYZE BUTTON
+    // ==========================================
+
     const analyzeBtn =
-        document.querySelector(
-            ".analyze-btn"
-        );
+        document.querySelector(".analyze-btn");
 
-
-    // ==========================================
-    // DISABLE BUTTON WHILE ANALYZING
-    // ==========================================
 
     if (analyzeBtn) {
 
-        analyzeBtn.disabled =
-            true;
+        analyzeBtn.disabled = true;
 
-        analyzeBtn.innerHTML =
-            "⏳ Analyzing...";
+        analyzeBtn.innerHTML = "⏳ Analyzing...";
 
-        analyzeBtn.style.opacity =
-            "0.7";
+        analyzeBtn.style.opacity = "0.7";
 
-        analyzeBtn.style.cursor =
-            "wait";
+        analyzeBtn.style.cursor = "wait";
 
     }
 
 
-    showLoading(
-        website
-    );
+    // ==========================================
+    // SHOW LOADING SCREEN
+    // ==========================================
+
+    showLoading(website);
 
 
     try {
+
+        // ======================================
+        // SEND REQUEST TO BACKEND
+        // ======================================
 
         const response =
             await fetch(
@@ -865,42 +887,78 @@ async function analyzeWebsite() {
             );
 
 
+        // ======================================
+        // CHECK HTTP RESPONSE
+        // ======================================
+
         if (!response.ok) {
 
+            let errorMessage =
+                "Analysis Failed";
+
+            try {
+
+                const errorData =
+                    await response.json();
+
+                if (errorData.detail) {
+
+                    errorMessage =
+                        errorData.detail;
+
+                }
+
+                else if (errorData.error) {
+
+                    errorMessage =
+                        errorData.error;
+
+                }
+
+            }
+
+            catch (e) {
+
+                console.error(
+                    "Could not read error response:",
+                    e
+                );
+
+            }
+
             throw new Error(
-                "Analysis Failed"
+                errorMessage
             );
 
         }
 
 
-        /*
-            WAIT FOR THE REAL BACKEND RESULT
-        */
+        // ======================================
+        // WAIT FOR REAL BACKEND RESULT
+        // ======================================
 
         const data =
             await response.json();
 
 
-        console.log(data);
-
-
-        /*
-            VERY IMPORTANT:
-
-            Do NOT call showResults()
-            here.
-
-            finishLoader() first takes
-            the progress to 100%.
-
-            Only after 100% does
-            finishLoader() call showResults().
-        */
-
-        finishLoader(
+        console.log(
+            "Analysis Result:",
             data
         );
+
+
+        // ======================================
+        // IMPORTANT
+        //
+        // Backend has completed.
+        // finishLoader() will move the bar
+        // from current progress to 100%.
+        //
+        // Results will appear ONLY after
+        // 100% is reached.
+        // ======================================
+
+        finishLoader(data);
 
 
     }
@@ -908,23 +966,33 @@ async function analyzeWebsite() {
     catch (error) {
 
         console.error(
+            "Analysis Error:",
             error
         );
 
+
+        // ======================================
+        // STOP LOADER
+        // ======================================
 
         clearInterval(
             loaderTimer
         );
 
 
+        // ======================================
+        // SHOW ERROR
+        // ======================================
+
         showError(
-            error.message
+            error.message ||
+            "Unable to analyze this website."
         );
 
 
-        // ==========================================
-        // RESTORE ANALYZE BUTTON
-        // ==========================================
+        // ======================================
+        // RESTORE BUTTON
+        // ======================================
 
         if (analyzeBtn) {
 
