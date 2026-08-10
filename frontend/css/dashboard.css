@@ -1,7 +1,7 @@
 /* ==========================================================
-   AI VISIBILITY ANALYZER
-   PREMIUM DASHBOARD CSS
-   PART 1
+   AI Visibility Analyzer Dashboard
+   Premium SaaS UI
+   Part 1
 ========================================================== */
 
 
@@ -9,80 +9,60 @@
    RESET
 ========================================================== */
 
-* {
+*{
 
-    margin: 0;
+    margin:0;
 
-    padding: 0;
+    padding:0;
 
-    box-sizing: border-box;
-
-}
-
-
-/* ==========================================================
-   HTML
-========================================================== */
-
-html {
-
-    scroll-behavior: smooth;
+    box-sizing:border-box;
 
 }
 
 
-/* ==========================================================
-   BODY
-========================================================== */
+html{
 
-body {
-
-    font-family: "Inter", sans-serif;
-
-    background: #f4f7fb;
-
-    color: #1f2937;
-
-    line-height: 1.6;
-
-    overflow-x: hidden;
+    scroll-behavior:smooth;
 
 }
 
 
-/* ==========================================================
-   LINKS
-========================================================== */
+body{
 
-a {
+    font-family:"Inter",sans-serif;
 
-    text-decoration: none;
+    background:#f4f7fb;
 
-    color: inherit;
+    color:#1f2937;
 
-}
+    line-height:1.6;
 
-
-/* ==========================================================
-   IMAGES
-========================================================== */
-
-img {
-
-    display: block;
-
-    max-width: 100%;
+    overflow-x:hidden;
 
 }
 
 
-/* ==========================================================
-   BUTTONS
-========================================================== */
+a{
 
-button {
+    text-decoration:none;
 
-    font-family: inherit;
+    color:inherit;
+
+}
+
+
+img{
+
+    display:block;
+
+    max-width:100%;
+
+}
+
+
+button{
+
+    font-family:inherit;
 
 }
 
@@ -91,13 +71,13 @@ button {
    DASHBOARD LAYOUT
 ========================================================== */
 
-.dashboard {
+.dashboard{
 
-    display: flex;
+    display:flex;
 
-    min-height: 100vh;
+    min-height:100vh;
 
-    background: #f4f7fb;
+    background:#f4f7fb;
 
 }
 
@@ -106,23 +86,21 @@ button {
    SIDEBAR
 ========================================================== */
 
-.sidebar {
+.sidebar{
 
-    width: 260px;
+    width:260px;
 
-    min-height: 100vh;
+    background:#0f172a;
 
-    background: #0f172a;
+    color:#ffffff;
 
-    color: #ffffff;
+    display:flex;
 
-    display: flex;
+    flex-direction:column;
 
-    flex-direction: column;
+    padding:30px 20px;
 
-    padding: 30px 20px;
-
-    box-shadow: 8px 0 30px rgba(0, 0, 0, .12);
+    box-shadow:8px 0 30px rgba(0,0,0,.12);
 
 }
 
@@ -131,175 +109,137 @@ button {
    SIDEBAR HEADER
 ========================================================== */
 
-.sidebar-top {
+.sidebar-top{
 
-    margin-bottom: 40px;
+    margin-bottom:40px;
 
-    text-align: center;
-
-}
-
-
-.sidebar-top h2 {
-
-    font-size: 28px;
-
-    font-weight: 700;
-
-    color: #ffffff;
+    text-align:center;
 
 }
 
 
-.sidebar-top p {
+.sidebar-top h2{
 
-    margin-top: 8px;
+    font-size:28px;
 
-    color: #94a3b8;
+    font-weight:700;
 
-    font-size: 15px;
+    color:#ffffff;
 
 }
 
 
-/* ==========================================================
-   SIDEBAR MENU
+.sidebar-top p{
 
-   IMPORTANT:
-   No flex:1 here.
+    margin-top:8px;
 
-   This keeps Logout close to Profile.
-========================================================== */
+    color:#94a3b8;
 
-.menu {
-
-    list-style: none;
-
-    display: flex;
-
-    flex-direction: column;
-
-    gap: 10px;
-
-    margin: 0;
-
-    padding: 0;
+    font-size:15px;
 
 }
 
 
 /* ==========================================================
-   MENU ITEM
+   MENU
 ========================================================== */
 
-.menu li {
+.menu{
 
-    display: flex;
+    list-style:none;
 
-    align-items: center;
+    display:flex;
 
-    gap: 14px;
+    flex-direction:column;
 
-    padding: 15px 18px;
+    gap:10px;
 
-    border-radius: 14px;
-
-    cursor: pointer;
-
-    transition:
-        background .3s ease,
-        color .3s ease,
-        transform .2s ease;
-
-    font-size: 16px;
-
-    font-weight: 500;
+    flex:1;
 
 }
 
 
-/* ==========================================================
-   MENU HOVER
-========================================================== */
+.menu li{
 
-.menu li:hover {
+    display:flex;
 
-    background: #1e293b;
+    align-items:center;
+
+    gap:14px;
+
+    padding:15px 18px;
+
+    border-radius:14px;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+    font-size:16px;
+
+    font-weight:500;
 
 }
 
 
-/* ==========================================================
-   ACTIVE MENU
-========================================================== */
+.menu li:hover{
 
-.menu li.active {
-
-    background: #2563eb;
-
-    color: #ffffff;
+    background:#1e293b;
 
 }
 
 
-/* ==========================================================
-   MENU ICON
-========================================================== */
+.menu li.active{
 
-.menu-icon {
+    background:#2563eb;
 
-    width: 24px;
+    color:#ffffff;
 
-    min-width: 24px;
+}
 
-    text-align: center;
 
-    font-size: 20px;
+.menu-icon{
+
+    width:24px;
+
+    text-align:center;
+
+    font-size:20px;
 
 }
 
 
 /* ==========================================================
    LOGOUT
-
-   Logout stays immediately below Profile.
 ========================================================== */
 
-.logout-menu {
+.logout-menu{
 
-    margin-top: 8px !important;
+    margin-top:10px;
 
-    color: #ffb4b4;
+     background:#ef4444;
+
+    color:#ffffff;
 
 }
 
 
-/* ==========================================================
-   LOGOUT HOVER
-========================================================== */
 
-.logout-menu:hover {
-
-    background: #ef4444 !important;
-
-    color: #ffffff !important;
-
-}
 
 
 /* ==========================================================
    MAIN CONTENT
 ========================================================== */
 
-.main-content {
+.main-content{
 
-    flex: 1;
+    flex:1;
 
-    padding: 35px;
+    padding:35px;
 
-    overflow-y: auto;
+    overflow-y:auto;
 
-    overflow-x: hidden;
+    overflow-x:hidden;
 
 }
 
@@ -308,52 +248,48 @@ button {
    TOP BAR
 ========================================================== */
 
-.topbar {
+.topbar{
 
-    display: flex;
+    display:flex;
 
-    justify-content: space-between;
+    justify-content:space-between;
 
-    align-items: center;
+    align-items:center;
 
-    gap: 25px;
+    gap:25px;
 
-    margin-bottom: 35px;
-
-}
-
-
-/* ==========================================================
-   PAGE TITLE
-========================================================== */
-
-.page-title {
-
-    flex: 1;
+    margin-bottom:35px;
 
 }
 
 
-.page-title h1 {
+.page-title{
 
-    font-size: 36px;
-
-    font-weight: 800;
-
-    color: #111827;
-
-    margin-bottom: 8px;
+    flex:1;
 
 }
 
 
-.page-title p {
+.page-title h1{
 
-    color: #6b7280;
+    font-size:36px;
 
-    font-size: 16px;
+    font-weight:800;
 
-    line-height: 1.7;
+    color:#111827;
+
+    margin-bottom:8px;
+
+}
+
+
+.page-title p{
+
+    color:#6b7280;
+
+    font-size:16px;
+
+    line-height:1.7;
 
 }
 
@@ -362,86 +298,74 @@ button {
    PROFILE CARD
 ========================================================== */
 
-.profile-card {
+.profile-card{
 
-    background: #ffffff;
+    background:#ffffff;
 
-    border-radius: 16px;
+    border-radius:16px;
 
-    padding: 12px 18px;
+    padding:12px 18px;
 
-    box-shadow: 0 12px 30px rgba(0, 0, 0, .08);
+    box-shadow:0 12px 30px rgba(0,0,0,.08);
 
-    border: 1px solid #e5e7eb;
+    border:1px solid #e5e7eb;
 
-    min-width: 260px;
-
-}
-
-
-/* ==========================================================
-   USER CARD
-========================================================== */
-
-.user-card {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 15px;
+    min-width:260px;
 
 }
 
 
-/* ==========================================================
-   PROFILE IMAGE
-========================================================== */
+.user-card{
 
-.profile-image {
+    display:flex;
 
-    width: 58px;
+    align-items:center;
 
-    height: 58px;
-
-    border-radius: 50%;
-
-    object-fit: cover;
-
-    border: 3px solid #2563eb;
+    gap:15px;
 
 }
 
 
-/* ==========================================================
-   USER INFORMATION
-========================================================== */
+.profile-image{
 
-.user-info {
+    width:58px;
 
-    flex: 1;
+    height:58px;
 
-}
+    border-radius:50%;
 
+    object-fit:cover;
 
-.user-info h3 {
-
-    font-size: 17px;
-
-    font-weight: 700;
-
-    color: #111827;
-
-    margin-bottom: 4px;
+    border:3px solid #2563eb;
 
 }
 
 
-.user-info p {
+.user-info{
 
-    font-size: 14px;
+    flex:1;
 
-    color: #64748b;
+}
+
+
+.user-info h3{
+
+    font-size:17px;
+
+    font-weight:700;
+
+    color:#111827;
+
+    margin-bottom:4px;
+
+}
+
+
+.user-info p{
+
+    font-size:14px;
+
+    color:#64748b;
 
 }
 
@@ -450,51 +374,55 @@ button {
    SEARCH CARD
 ========================================================== */
 
-.search-card {
+.search-card{
 
-    background: #ffffff;
+    background:#ffffff;
 
-    border-radius: 20px;
+    border-radius:20px;
 
-    padding: 35px;
+    padding:35px;
 
-    margin-bottom: 35px;
+    margin-bottom:35px;
 
-    border: 1px solid #e5e7eb;
+    border:1px solid #e5e7eb;
 
-    box-shadow: 0 12px 35px rgba(0, 0, 0, .08);
-
-}
-
-
-/* ==========================================================
-   SEARCH CARD TITLE
-========================================================== */
-
-.search-card h2 {
-
-    font-size: 30px;
-
-    color: #111827;
-
-    margin-bottom: 10px;
-
-    font-weight: 700;
+    box-shadow:0 12px 35px rgba(0,0,0,.08);
 
 }
 
 
+.search-card h2{
+
+    font-size:30px;
+
+    color:#111827;
+
+}
+
 /* ==========================================================
-   SEARCH CARD DESCRIPTION
+   SEARCH CARD — CONTINUED
 ========================================================== */
 
-.search-card p {
+.search-card h2{
 
-    color: #64748b;
+    font-size:30px;
 
-    line-height: 1.8;
+    color:#111827;
 
-    margin-bottom: 25px;
+    margin-bottom:10px;
+
+}
+
+
+.search-card p{
+
+    color:#64748b;
+
+    font-size:15px;
+
+    line-height:1.7;
+
+    margin-bottom:25px;
 
 }
 
@@ -503,71 +431,59 @@ button {
    INPUT GROUP
 ========================================================== */
 
-.input-group {
+.input-group{
 
-    display: flex;
+    display:flex;
 
-    gap: 15px;
+    align-items:center;
 
-    align-items: center;
+    gap:12px;
 
-    flex-wrap: wrap;
-
-}
-
-
-/* ==========================================================
-   WEBSITE INPUT
-========================================================== */
-
-.input-group input {
-
-    flex: 1;
-
-    min-width: 320px;
-
-    height: 58px;
-
-    padding: 0 20px;
-
-    font-size: 17px;
-
-    border: 2px solid #dbe4f0;
-
-    border-radius: 14px;
-
-    background: #ffffff;
-
-    color: #1f2937;
-
-    transition: .3s;
+    width:100%;
 
 }
 
 
-/* ==========================================================
-   INPUT FOCUS
-========================================================== */
+.input-group input{
 
-.input-group input:focus {
+    flex:1;
 
-    outline: none;
+    min-width:0;
 
-    border-color: #2563eb;
+    height:52px;
+
+    padding:0 18px;
+
+    border:1px solid #d1d5db;
+
+    border-radius:12px;
+
+    outline:none;
+
+    font-size:15px;
+
+    color:#111827;
+
+    background:#ffffff;
+
+    transition:.25s ease;
+
+}
+
+
+.input-group input:focus{
+
+    border-color:#2563eb;
 
     box-shadow:
-        0 0 0 5px rgba(37, 99, 235, .15);
+        0 0 0 4px rgba(37,99,235,.10);
 
 }
 
 
-/* ==========================================================
-   INPUT PLACEHOLDER
-========================================================== */
+.input-group input::placeholder{
 
-.input-group input::placeholder {
-
-    color: #94a3b8;
+    color:#9ca3af;
 
 }
 
@@ -576,55 +492,66 @@ button {
    ANALYZE BUTTON
 ========================================================== */
 
-.analyze-btn {
+.analyze-btn{
 
-    height: 58px;
+    height:52px;
 
-    padding: 0 32px;
+    padding:0 24px;
 
-    border: none;
+    border:none;
 
-    border-radius: 14px;
+    border-radius:12px;
 
-    background: #2563eb;
+    background:#2563eb;
 
-    color: #ffffff;
+    color:#ffffff;
 
-    font-size: 16px;
+    font-size:15px;
 
-    font-weight: 700;
+    font-weight:700;
 
-    cursor: pointer;
+    cursor:pointer;
 
-    transition: .3s;
+    white-space:nowrap;
 
-}
+    transition:
 
+        transform .2s ease,
 
-/* ==========================================================
-   ANALYZE BUTTON HOVER
-========================================================== */
+        box-shadow .2s ease,
 
-.analyze-btn:hover {
+        opacity .2s ease;
 
-    background: #1d4ed8;
-
-    transform: translateY(-2px);
+    box-shadow:
+        0 8px 20px rgba(37,99,235,.25);
 
 }
 
 
-/* ==========================================================
-   ANALYZE BUTTON DISABLED
-========================================================== */
+.analyze-btn:hover{
 
-.analyze-btn:disabled {
+    transform:translateY(-2px);
 
-    opacity: .65;
+    box-shadow:
+        0 12px 25px rgba(37,99,235,.32);
 
-    cursor: not-allowed;
+}
 
-    transform: none;
+
+.analyze-btn:active{
+
+    transform:translateY(0);
+
+}
+
+
+.analyze-btn:disabled{
+
+    transform:none;
+
+    box-shadow:none;
+
+    cursor:wait;
 
 }
 
@@ -633,434 +560,131 @@ button {
    RESET BUTTON
 ========================================================== */
 
-.reset-btn {
+.reset-btn{
 
-    height: 58px;
+    height:52px;
 
-    padding: 0 28px;
+    padding:0 22px;
 
-    border: none;
+    border:1px solid #d1d5db;
 
-    border-radius: 14px;
+    border-radius:12px;
 
-    background: #64748b;
+    background:#ffffff;
 
-    color: #ffffff;
+    color:#374151;
 
-    font-size: 16px;
+    font-size:15px;
 
-    font-weight: 600;
+    font-weight:600;
 
-    cursor: pointer;
+    cursor:pointer;
 
-    transition: .3s;
+    white-space:nowrap;
+
+    transition:.25s ease;
 
 }
 
 
-/* ==========================================================
-   RESET BUTTON HOVER
-========================================================== */
+.reset-btn:hover{
 
-.reset-btn:hover {
+    background:#f8fafc;
 
-    background: #475569;
-
-    transform: translateY(-2px);
+    border-color:#94a3b8;
 
 }
 
 
 /* ==========================================================
    RESULTS CONTAINER
-
-   IMPORTANT:
-   Empty initially.
 ========================================================== */
 
-#results {
+#results{
 
-    width: 100%;
-
-    margin-top: 35px;
+    width:100%;
 
 }
 
 
 /* ==========================================================
-   HIDE EMPTY RESULTS
-
-   This removes the unwanted empty result area
-   when the dashboard first opens.
+   GENERAL CARD
 ========================================================== */
 
-#results:empty {
+.card{
 
-    display: none;
+    background:#ffffff;
 
-}
+    border-radius:20px;
 
+    padding:30px;
 
-/* ==========================================================
-   COMMON CARD
-========================================================== */
+    margin-bottom:30px;
 
-.card {
-
-    background: #ffffff;
-
-    border-radius: 20px;
-
-    padding: 35px;
-
-    margin-bottom: 35px;
-
-    border: 1px solid #e5e7eb;
-
-    box-shadow: 0 12px 35px rgba(0, 0, 0, .08);
-
-}
-
-
-/* ==========================================================
-   CARD TITLE
-========================================================== */
-
-.card h2 {
-
-    font-size: 28px;
-
-    font-weight: 700;
-
-    color: #111827;
-
-    margin-bottom: 15px;
-
-}
-
-
-/* ==========================================================
-   CARD TEXT
-========================================================== */
-
-.card p {
-
-    color: #64748b;
-
-    line-height: 1.8;
-
-}
-
-
-/* ==========================================================
-   LOADING BOX
-========================================================== */
-
-.loading-box {
-
-    text-align: center;
-
-    padding: 55px 30px;
-
-}
-
-
-/* ==========================================================
-   LOADING TITLE
-========================================================== */
-
-.loading-box h2 {
-
-    font-size: 30px;
-
-    color: #111827;
-
-    margin-bottom: 15px;
-
-}
-
-
-/* ==========================================================
-   LOADING TEXT
-========================================================== */
-
-.loading-box p {
-
-    max-width: 720px;
-
-    margin: 0 auto;
-
-    color: #64748b;
-
-    line-height: 1.8;
-
-}
-
-
-/* ==========================================================
-   WEBSITE PREVIEW
-========================================================== */
-
-.preview-wrapper {
-
-    position: relative;
-
-    max-width: 950px;
-
-    margin: 40px auto;
-
-}
-
-
-/* ==========================================================
-   PREVIEW TITLE
-========================================================== */
-
-.preview-title {
-
-    text-align: center;
-
-    font-size: 28px;
-
-    font-weight: 700;
-
-    color: #111827;
-
-    margin-bottom: 30px;
-
-}
-
-
-/* ==========================================================
-   DESKTOP BROWSER PREVIEW
-========================================================== */
-
-.desktop-preview {
-
-    position: relative;
-
-    width: 100%;
-
-    background: #ffffff;
-
-    border-radius: 16px;
-
-    overflow: hidden;
-
-    border: 1px solid #dbe3ef;
+    border:1px solid #e5e7eb;
 
     box-shadow:
-        0 20px 50px rgba(0,0,0,.15);
+        0 12px 35px rgba(15,23,42,.07);
+
+    overflow:hidden;
+
+}
+
+
+.card h2{
+
+    color:#111827;
+
+    font-size:25px;
+
+    font-weight:750;
+
+    margin-bottom:20px;
+
+}
+
+
+.card h3{
+
+    color:#1f2937;
+
+    font-size:18px;
+
+    font-weight:700;
 
 }
 
 
 /* ==========================================================
-   BROWSER BAR
+   ==========================================================
+   NEW HORIZONTAL ANALYSIS LOADER
+   ==========================================================
 ========================================================== */
 
-.browser-bar {
+/*
+    IMPORTANT
 
-    height: 42px;
+    The old circular SVG loader is NOT used anymore.
 
-    background: #edf2f7;
+    These classes belong to the new loader:
 
-    display: flex;
+        .analysis-progress
+        .progress-track
+        .progress-fill
+        .progress-label
+        .loading-status
+        .loading-url
+        .loading-platforms
+*/
 
-    align-items: center;
 
-    padding: 0 15px;
+.analysis-progress{
 
-    gap: 8px;
+    width:100%;
 
-    border-bottom: 1px solid #dbe3ef;
+    margin:10px auto 28px;
 
-}
-
-
-/* ==========================================================
-   BROWSER DOT
-========================================================== */
-
-.browser-dot {
-
-    width: 12px;
-
-    height: 12px;
-
-    border-radius: 50%;
-
-    flex-shrink: 0;
-
-}
-
-
-.browser-dot.red {
-
-    background: #ff5f57;
-
-}
-
-
-.browser-dot.yellow {
-
-    background: #febc2e;
-
-}
-
-
-.browser-dot.green {
-
-    background: #28c840;
-
-}
-
-
-/* ==========================================================
-   BROWSER ADDRESS
-========================================================== */
-
-.browser-address {
-
-    flex: 1;
-
-    margin-left: 12px;
-
-    height: 26px;
-
-    border-radius: 20px;
-
-    background: #ffffff;
-
-    display: flex;
-
-    align-items: center;
-
-    padding: 0 15px;
-
-    color: #64748b;
-
-    font-size: 13px;
-
-    overflow: hidden;
-
-    white-space: nowrap;
-
-    text-overflow: ellipsis;
-
-}
-
-
-/* ==========================================================
-   DESKTOP PREVIEW IMAGE
-========================================================== */
-
-.desktop-preview img {
-
-    width: 100%;
-
-    height: 340px;
-
-    object-fit: cover;
-
-    object-position: top;
-
-    display: block;
-
-}
-
-
-/* ==========================================================
-   MOBILE PHONE PREVIEW
-========================================================== */
-
-.mobile-preview {
-
-    position: absolute;
-
-    right: 25px;
-
-    bottom: 20px;
-
-    width: 130px;
-
-    height: 250px;
-
-    background: #111827;
-
-    border-radius: 26px;
-
-    padding: 8px;
-
-    box-shadow:
-        0 18px 40px rgba(0,0,0,.25);
-
-    z-index: 5;
-
-}
-
-
-/* ==========================================================
-   PHONE NOTCH
-========================================================== */
-
-.mobile-preview::before {
-
-    content: "";
-
-    position: absolute;
-
-    top: 8px;
-
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    width: 55px;
-
-    height: 6px;
-
-    background: #374151;
-
-    border-radius: 20px;
-
-    z-index: 2;
-
-}
-
-
-/* ==========================================================
-   MOBILE PREVIEW IMAGE
-========================================================== */
-
-.mobile-preview img {
-
-    width: 100%;
-
-    height: 100%;
-
-    border-radius: 20px;
-
-    object-fit: cover;
-
-    object-position: top;
-
-    background: #ffffff;
-
-}
-
-
-/* ==========================================================
-   ANALYSIS PROGRESS
-========================================================== */
-
-.analysis-progress {
-
-    width: 100%;
-
-    max-width: 850px;
-
-    margin: 0 auto 35px;
+    position:relative;
 
 }
 
@@ -1069,103 +693,182 @@ button {
    PROGRESS TRACK
 ========================================================== */
 
-.analysis-progress-track {
+.progress-track{
 
-    position: relative;
+    width:100%;
 
-    width: 100%;
+    height:30px;
 
-    height: 18px;
+    background:#e8eef7;
 
-    background: #e5e7eb;
+    border-radius:999px;
 
-    border-radius: 999px;
+    overflow:hidden;
 
-    overflow: hidden;
+    border:1px solid #dbe4f0;
 
     box-shadow:
-        inset 0 1px 3px rgba(0,0,0,.08);
+        inset 0 2px 5px rgba(15,23,42,.08);
 
 }
 
 
 /* ==========================================================
    PROGRESS FILL
-
-   Smooth visual movement.
 ========================================================== */
 
-.analysis-progress-fill {
+.progress-fill{
 
-    width: 0%;
+    position:relative;
 
-    height: 100%;
+    width:0%;
+
+    height:100%;
+
+    min-width:0;
+
+    border-radius:999px;
 
     background:
+
         linear-gradient(
-            90deg,
-            #2563eb,
-            #4f46e5
+
+            135deg,
+
+            #2563eb 25%,
+
+            #3b82f6 25%,
+
+            #3b82f6 50%,
+
+            #2563eb 50%,
+
+            #2563eb 75%,
+
+            #3b82f6 75%
+
         );
 
-    border-radius: 999px;
+    background-size:40px 40px;
+
+    box-shadow:
+
+        0 4px 14px
+        rgba(37,99,235,.28);
 
     transition:
-        width .18s linear;
 
-    position: relative;
+        width .35s linear;
 
-}
+    animation:
 
-
-/* ==========================================================
-   PROGRESS SHINE
-========================================================== */
-
-.analysis-progress-fill::after {
-
-    content: "";
-
-    position: absolute;
-
-    top: 0;
-
-    right: 0;
-
-    width: 70px;
-
-    height: 100%;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255,255,255,.35),
-            transparent
-        );
-
-    animation: progressShine 1.5s linear infinite;
+        progress-stripes 1s linear infinite;
 
 }
 
 
 /* ==========================================================
-   PROGRESS NUMBER
+   MOVING STRIPES
 ========================================================== */
 
-.analysis-progress-label {
+@keyframes progress-stripes{
 
-    margin-top: 15px;
+    from{
 
-    text-align: center;
+        background-position:0 0;
 
-    font-size: 30px;
+    }
 
-    font-weight: 800;
+    to{
 
-    color: #2563eb;
+        background-position:40px 0;
 
-    line-height: 1;
+    }
+
+}
+
+
+/* ==========================================================
+   PROGRESS PERCENTAGE
+========================================================== */
+
+.progress-label{
+
+    position:absolute;
+
+    right:12px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    color:#ffffff;
+
+    font-size:13px;
+
+    font-weight:800;
+
+    line-height:1;
+
+    text-shadow:
+        0 1px 3px rgba(0,0,0,.25);
+
+    white-space:nowrap;
+
+}
+
+
+/*
+    When the progress is very small, the percentage
+    should remain visible instead of disappearing.
+*/
+
+.progress-fill[style*="width:0%"] .progress-label{
+
+    color:#2563eb;
+
+    right:auto;
+
+    left:12px;
+
+    text-shadow:none;
+
+}
+
+
+/* ==========================================================
+   LOADING BOX
+========================================================== */
+
+.loading-box{
+
+    width:100%;
+
+    text-align:center;
+
+    padding:20px 10px 10px;
+
+}
+
+
+.loading-box h2{
+
+    font-size:26px;
+
+    font-weight:800;
+
+    color:#111827;
+
+    margin:15px 0 10px;
+
+}
+
+
+.loading-box > p{
+
+    color:#64748b;
+
+    font-size:15px;
 
 }
 
@@ -1174,206 +877,120 @@ button {
    LOADING STATUS
 ========================================================== */
 
-.loading-status {
+.loading-status{
 
-    margin-top: 20px;
+    min-height:28px;
 
-    font-size: 18px;
+    margin:12px 0 5px !important;
 
-    font-weight: 600;
+    color:#2563eb !important;
 
-    color: #475569;
+    font-size:16px !important;
 
-    transition: opacity .25s ease;
+    font-weight:700;
 
-}
+    transition:
 
+        opacity .25s ease,
 
-/* ==========================================================
-   LOADING URL
-========================================================== */
-
-.loading-url {
-
-    max-width: 700px;
-
-    margin: 18px auto 0;
-
-    padding: 12px 18px;
-
-    background: #f8fafc;
-
-    border: 1px solid #e2e8f0;
-
-    border-radius: 10px;
-
-    color: #64748b;
-
-    font-size: 14px;
-
-    overflow: hidden;
-
-    text-overflow: ellipsis;
-
-    white-space: nowrap;
+        transform .25s ease;
 
 }
 
 
 /* ==========================================================
-   LOADING PLATFORMS
+   WEBSITE URL DURING ANALYSIS
 ========================================================== */
 
-.loading-platforms {
+.loading-url{
 
-    margin-top: 25px;
+    display:inline-block;
 
-    color: #475569;
+    max-width:100%;
 
-    line-height: 2;
+    margin:5px auto 20px !important;
 
-    font-size: 15px;
+    padding:8px 14px;
+
+    background:#f1f5f9;
+
+    border-radius:8px;
+
+    color:#475569 !important;
+
+    font-size:13px !important;
+
+    word-break:break-all;
 
 }
 
 
 /* ==========================================================
-   LOADING FOOTER
+   AI PLATFORM STATUS
 ========================================================== */
 
-.loading-footer {
+.loading-platforms{
 
-    margin-top: 25px;
+    max-width:420px;
 
-    color: #94a3b8;
+    margin:20px auto 0;
 
-    font-size: 14px;
+    padding:18px 22px;
+
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:14px;
+
+    text-align:left;
+
+    color:#475569;
+
+    font-size:14px;
+
+    line-height:2;
+
+    box-shadow:
+        0 6px 20px rgba(15,23,42,.05);
 
 }
 
 
 /* ==========================================================
-   PROGRESS ANIMATION
+   ANALYSIS COMPLETE STATE
 ========================================================== */
 
-@keyframes progressShine {
+.analysis-complete{
 
-    0% {
-
-        transform: translateX(-80px);
-
-    }
-
-    100% {
-
-        transform: translateX(850px);
-
-    }
+    color:#16a34a;
 
 }
 
 
-/* ==========================================================
-   OVERALL RESULT CARD
-========================================================== */
+.analysis-complete .progress-fill{
 
-.overall-card {
+    background:
 
-    display: flex;
+        linear-gradient(
 
-    justify-content: space-between;
+            135deg,
 
-    align-items: center;
+            #16a34a 25%,
 
-    gap: 40px;
+            #22c55e 25%,
 
-    flex-wrap: wrap;
+            #22c55e 50%,
 
-}
+            #16a34a 50%,
 
+            #16a34a 75%,
 
-/* ==========================================================
-   OVERALL LEFT
-========================================================== */
+            #22c55e 75%
 
-.overall-left {
+        );
 
-    flex: 1;
-
-    min-width: 260px;
-
-}
-
-
-.overall-left h2 {
-
-    font-size: 30px;
-
-    color: #111827;
-
-}
-
-
-.overall-left h1 {
-
-    font-size: 90px;
-
-    font-weight: 800;
-
-    color: #2563eb;
-
-    margin: 20px 0;
-
-}
-
-
-/* ==========================================================
-   GRADE
-========================================================== */
-
-.grade {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    padding: 10px 22px;
-
-    border-radius: 40px;
-
-    background: #16a34a;
-
-    color: #ffffff;
-
-    font-size: 18px;
-
-    font-weight: 700;
-
-}
-
-
-/* ==========================================================
-   OVERALL RIGHT
-========================================================== */
-
-.overall-right {
-
-    flex: 1;
-
-    min-width: 320px;
-
-}
-
-
-.overall-right p {
-
-    font-size: 17px;
-
-    line-height: 1.9;
-
-    color: #475569;
+    background-size:40px 40px;
 
 }
 
@@ -1382,40 +999,297 @@ button {
    SUMMARY GRID
 ========================================================== */
 
-.summary-grid {
+.summary-grid{
 
-    display: grid;
+    display:grid;
 
     grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(220px, 1fr)
-        );
+        repeat(4,minmax(0,1fr));
 
-    gap: 22px;
+    gap:20px;
 
-    margin-top: 35px;
+    margin-top:25px;
+
+}
+
+
+.summary-card{
+
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:16px;
+
+    padding:22px;
+
+    text-align:center;
+
+    transition:.25s ease;
+
+}
+
+
+.summary-card:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 10px 25px rgba(15,23,42,.08);
+
+}
+
+
+.summary-card h3{
+
+    font-size:16px;
+
+    margin-bottom:10px;
+
+}
+
+
+.summary-card h1{
+
+    font-size:34px;
+
+    color:#2563eb;
+
+    margin-bottom:5px;
+
+}
+
+
+.summary-card span{
+
+    color:#64748b;
+
+    font-size:13px;
 
 }
 
 
 /* ==========================================================
-   SUMMARY CARD
+   OVERALL SCORE
 ========================================================== */
 
-.summary-card {
+.overall-card{
 
-    background: #ffffff;
+    display:flex;
 
-    border: 1px solid #e5e7eb;
+    align-items:center;
 
-    border-radius: 18px;
+    justify-content:space-between;
 
-    padding: 28px;
+    gap:30px;
 
-    text-align: center;
+    padding:30px;
 
-    transition: .3s;
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #f8fafc
+        );
+
+    border:1px solid #dbeafe;
+
+    border-radius:18px;
+
+}
+
+
+.overall-left{
+
+    min-width:160px;
+
+    text-align:center;
+
+}
+
+
+.overall-left h1{
+
+    font-size:64px;
+
+    line-height:1;
+
+    color:#2563eb;
+
+    font-weight:800;
+
+}
+
+
+.grade{
+
+    display:inline-block;
+
+    margin-top:12px;
+
+    padding:7px 14px;
+
+    border-radius:999px;
+
+    background:#dbeafe;
+
+    color:#1d4ed8;
+
+    font-size:14px;
+
+    font-weight:700;
+
+}
+
+
+.overall-right{
+
+    flex:1;
+
+}
+
+
+.overall-right p{
+
+    color:#64748b;
+
+    font-size:16px;
+
+}
+
+/* ==========================================================
+   RESULTS AREA
+========================================================== */
+
+#results{
+
+    margin-top:35px;
+
+}
+
+
+/* ==========================================================
+   OVERALL SCORE
+========================================================== */
+
+.overall-card{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    gap:40px;
+
+    flex-wrap:wrap;
+
+}
+
+
+.overall-left{
+
+    flex:1;
+
+}
+
+
+.overall-left h2{
+
+    font-size:30px;
+
+    color:#111827;
+
+}
+
+
+.overall-left h1{
+
+    font-size:90px;
+
+    font-weight:800;
+
+    color:#2563eb;
+
+    margin:20px 0;
+
+}
+
+
+.grade{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:10px 22px;
+
+    border-radius:40px;
+
+    background:#16a34a;
+
+    color:#ffffff;
+
+    font-size:18px;
+
+    font-weight:700;
+
+}
+
+
+.overall-right{
+
+    flex:1;
+
+    min-width:320px;
+
+}
+
+
+.overall-right p{
+
+    font-size:17px;
+
+    line-height:1.9;
+
+    color:#475569;
+
+}
+
+
+/* ==========================================================
+   SUMMARY GRID
+========================================================== */
+
+.summary-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(220px,1fr));
+
+    gap:22px;
+
+    margin-top:35px;
+
+}
+
+
+.summary-card{
+
+    background:#ffffff;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:18px;
+
+    padding:28px;
+
+    text-align:center;
+
+    transition:.3s;
 
     box-shadow:
         0 8px 22px rgba(0,0,0,.05);
@@ -1423,9 +1297,9 @@ button {
 }
 
 
-.summary-card:hover {
+.summary-card:hover{
 
-    transform: translateY(-6px);
+    transform:translateY(-6px);
 
     box-shadow:
         0 18px 35px rgba(0,0,0,.10);
@@ -1433,85 +1307,78 @@ button {
 }
 
 
-.summary-card h3 {
+.summary-card h3{
 
-    color: #475569;
+    color:#475569;
 
-    font-size: 18px;
+    font-size:18px;
 
-    margin-bottom: 14px;
-
-}
-
-
-.summary-card h1 {
-
-    font-size: 48px;
-
-    color: #2563eb;
-
-    margin-bottom: 10px;
+    margin-bottom:14px;
 
 }
 
 
-.summary-card span {
+.summary-card h1{
 
-    color: #64748b;
+    font-size:48px;
 
-    font-size: 15px;
+    color:#2563eb;
+
+    margin-bottom:10px;
+
+}
+
+
+.summary-card span{
+
+    color:#64748b;
+
+    font-size:15px;
 
 }
 
 
 /* ==========================================================
-   AI PLATFORM SCORE GRID
+   AI PLATFORM CARDS
 ========================================================== */
 
-.score-grid {
+.score-grid{
 
-    display: grid;
+    display:grid;
 
     grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(240px, 1fr)
-        );
+        repeat(auto-fit,minmax(240px,1fr));
 
-    gap: 24px;
+    gap:24px;
 
-    margin-top: 30px;
+    margin-top:30px;
 
 }
 
 
-/* ==========================================================
-   SCORE CARD
-========================================================== */
+.score-card{
 
-.score-card {
+    background:#ffffff;
 
-    background: #ffffff;
+    border-radius:18px;
 
-    border-radius: 18px;
+    padding:30px;
 
-    padding: 30px;
+    text-align:center;
 
-    text-align: center;
-
-    border: 1px solid #e5e7eb;
+    border:1px solid #e5e7eb;
 
     box-shadow:
         0 10px 25px rgba(0,0,0,.06);
 
-    transition: .3s;
+    transition:.3s;
 
 }
 
 
-.score-card:hover {
+.score-card:hover{
 
-    transform: translateY(-6px);
+    transform:translateY(-6px);
 
     box-shadow:
         0 18px 40px rgba(0,0,0,.12);
@@ -1519,31 +1386,31 @@ button {
 }
 
 
-.score-card h3 {
+.score-card h3{
 
-    font-size: 20px;
+    font-size:20px;
 
-    color: #374151;
+    color:#374151;
 
-    margin-bottom: 18px;
-
-}
-
-
-.score-card h1 {
-
-    font-size: 52px;
-
-    color: #2563eb;
-
-    margin-bottom: 10px;
+    margin-bottom:18px;
 
 }
 
 
-.score-card p {
+.score-card h1{
 
-    color: #64748b;
+    font-size:52px;
+
+    color:#2563eb;
+
+    margin-bottom:10px;
+
+}
+
+
+.score-card p{
+
+    color:#64748b;
 
 }
 
@@ -1552,117 +1419,104 @@ button {
    TECHNOLOGY GRID
 ========================================================== */
 
-.technology-grid {
+.technology-wrapper{
 
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(240px, 1fr)
-        );
-
-    gap: 24px;
-
-    margin-top: 30px;
+    width:100%;
 
 }
 
 
-/* ==========================================================
-   TECHNOLOGY CARD
-========================================================== */
+.technology-section{
 
-.technology-card {
+    margin-bottom:35px;
 
-    background: #ffffff;
+}
 
-    border-left: 5px solid #2563eb;
 
-    border-radius: 16px;
+.technology-section > h3{
 
-    padding: 24px;
+    margin-bottom:5px;
+
+}
+
+
+.technology-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(240px,1fr));
+
+    gap:24px;
+
+    margin-top:30px;
+
+}
+
+
+.technology-card{
+
+    background:#ffffff;
+
+    border-left:5px solid #2563eb;
+
+    border-radius:16px;
+
+    padding:24px;
 
     box-shadow:
         0 10px 25px rgba(0,0,0,.06);
 
-    transition: .3s;
+    transition:.3s;
 
 }
 
 
-.technology-card:hover {
+.technology-card:hover{
 
-    transform: translateY(-5px);
+    transform:translateY(-5px);
 
-}
-
-
-.technology-card h3 {
-
-    font-size: 19px;
-
-    color: #111827;
-
-    margin-bottom: 12px;
+    box-shadow:
+        0 16px 32px rgba(0,0,0,.10);
 
 }
 
 
-.technology-card p {
+.technology-card h3{
 
-    color: #64748b;
+    font-size:19px;
 
-    margin-bottom: 15px;
+    color:#111827;
 
-}
-
-
-.technology-card span {
-
-    display: inline-block;
-
-    background: #2563eb;
-
-    color: #ffffff;
-
-    padding: 7px 15px;
-
-    border-radius: 30px;
-
-    font-size: 13px;
-
-    font-weight: 700;
-
-}
-
-/* ==========================================================
-   TECHNOLOGY WRAPPER
-========================================================== */
-
-.technology-wrapper {
-
-    width: 100%;
+    margin-bottom:12px;
 
 }
 
 
-.technology-section {
+.technology-card p{
 
-    width: 100%;
+    color:#64748b;
 
-    margin-bottom: 35px;
+    margin-bottom:15px;
 
 }
 
 
-.technology-section > h3 {
+.technology-card span{
 
-    margin-bottom: 8px;
+    display:inline-block;
 
-    color: #111827;
+    background:#2563eb;
 
-    font-size: 20px;
+    color:#ffffff;
+
+    padding:7px 15px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+    font-weight:700;
 
 }
 
@@ -1671,251 +1525,84 @@ button {
    INFORMATION TABLE
 ========================================================== */
 
-.info-table {
+.info-table{
 
-    width: 100%;
+    width:100%;
 
-    border-collapse: collapse;
+    border-collapse:collapse;
 
-    margin-top: 25px;
+    margin-top:25px;
 
-    background: #ffffff;
+    background:#ffffff;
 
-    border-radius: 18px;
+    border-radius:18px;
 
-    overflow: hidden;
-
-}
-
-
-.info-table tr {
-
-    border-bottom: 1px solid #e5e7eb;
+    overflow:hidden;
 
 }
 
 
-.info-table tr:last-child {
+.info-table tr{
 
-    border-bottom: none;
-
-}
-
-
-.info-table td {
-
-    padding: 16px 18px;
-
-    vertical-align: top;
-
-    font-size: 14px;
+    border-bottom:1px solid #e5e7eb;
 
 }
 
 
-.info-table td:first-child {
+.info-table tr:last-child{
 
-    width: 30%;
-
-    font-weight: 700;
-
-    color: #374151;
-
-    background: #f8fafc;
+    border-bottom:none;
 
 }
 
 
-.info-table td:last-child {
+.info-table td{
 
-    color: #64748b;
+    padding:16px 18px;
 
-    word-break: break-word;
+    vertical-align:top;
 
-}
-
-
-.info-table tr:hover td {
-
-    background: #f8fafc;
+    font-size:14px;
 
 }
 
 
-.info-table img {
+.info-table td:first-child{
 
-    max-height: 40px;
+    width:30%;
 
-    width: auto;
+    font-weight:700;
 
-    border-radius: 6px;
+    color:#374151;
 
-}
-
-
-/* ==========================================================
-   LLM STATUS
-========================================================== */
-
-.llms-status {
-
-    display: flex;
-
-    align-items: center;
-
-    gap: 12px;
-
-    margin-top: 20px;
-
-    flex-wrap: wrap;
+    background:#f8fafc;
 
 }
 
 
-.status-found {
+.info-table td:last-child{
 
-    color: #16a34a;
+    color:#64748b;
 
-    font-weight: 700;
-
-}
-
-
-.status-missing {
-
-    color: #dc2626;
-
-    font-weight: 700;
+    word-break:break-word;
 
 }
 
 
-/* ==========================================================
-   E-E-A-T GRID
-========================================================== */
+.info-table tr:hover td{
 
-.eeat-grid {
-
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(260px, 1fr)
-        );
-
-    gap: 22px;
-
-    margin-top: 30px;
+    background:#f8fafc;
 
 }
 
 
-/* ==========================================================
-   E-E-A-T CARD
-========================================================== */
+.info-table img{
 
-.eeat-card {
+    max-height:40px;
 
-    background: #ffffff;
+    width:auto;
 
-    border-radius: 18px;
-
-    padding: 26px;
-
-    border: 1px solid #e5e7eb;
-
-    box-shadow:
-        0 8px 20px rgba(0,0,0,.05);
-
-    transition: .3s;
-
-}
-
-
-.eeat-card:hover {
-
-    transform: translateY(-4px);
-
-    box-shadow:
-        0 14px 30px rgba(0,0,0,.08);
-
-}
-
-
-.eeat-card h3 {
-
-    margin-bottom: 12px;
-
-    color: #111827;
-
-    font-size: 19px;
-
-}
-
-
-.eeat-card p {
-
-    color: #64748b;
-
-    line-height: 1.8;
-
-}
-
-
-/* ==========================================================
-   ENTITY COUNT
-========================================================== */
-
-.entity-count {
-
-    font-size: 26px;
-
-    font-weight: 700;
-
-    color: #2563eb;
-
-    margin-bottom: 20px;
-
-}
-
-
-/* ==========================================================
-   ENTITY LIST
-========================================================== */
-
-.entity-list {
-
-    list-style: none;
-
-    display: flex;
-
-    flex-wrap: wrap;
-
-    gap: 10px;
-
-    margin: 15px 0 25px;
-
-    padding: 0;
-
-}
-
-
-.entity-list li {
-
-    padding: 8px 14px;
-
-    border-radius: 30px;
-
-    background: #eff6ff;
-
-    border: 1px solid #dbeafe;
-
-    color: #1d4ed8;
-
-    font-size: 13px;
-
-    font-weight: 600;
+    border-radius:6px;
 
 }
 
@@ -1924,101 +1611,532 @@ button {
    RECOMMENDATION LIST
 ========================================================== */
 
-.recommendation-list {
+.recommendation-list{
 
-    list-style: none;
+    list-style:none;
 
-    margin-top: 20px;
+    margin-top:20px;
 
-    padding: 0;
+    display:flex;
 
-    display: flex;
+    flex-direction:column;
 
-    flex-direction: column;
-
-    gap: 12px;
+    gap:12px;
 
 }
 
 
-.recommendation-list li {
+.recommendation-list li{
 
-    position: relative;
+    position:relative;
 
-    padding: 15px 18px 15px 45px;
+    padding:15px 18px 15px 45px;
 
-    background: #f8fafc;
+    background:#f8fafc;
 
-    border: 1px solid #e2e8f0;
+    border:1px solid #e2e8f0;
 
-    border-radius: 12px;
+    border-radius:12px;
 
-    color: #475569;
+    color:#475569;
 
-    line-height: 1.6;
+    line-height:1.6;
+
+}
+
+
+.recommendation-list li::before{
+
+    content:"✓";
+
+    position:absolute;
+
+    left:17px;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    width:22px;
+
+    height:22px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:50%;
+
+    background:#2563eb;
+
+    color:#ffffff;
+
+    font-size:12px;
+
+    font-weight:800;
 
 }
 
 
 /* ==========================================================
-   RECOMMENDATION CHECK ICON
+   ENTITY LIST
 ========================================================== */
 
-.recommendation-list li::before {
+.entity-list{
 
-    content: "✓";
+    list-style:none;
 
-    position: absolute;
+    display:flex;
 
-    left: 17px;
+    flex-wrap:wrap;
 
-    top: 50%;
+    gap:10px;
 
-    transform: translateY(-50%);
+    margin:15px 0 25px;
 
-    width: 22px;
+}
 
-    height: 22px;
 
-    display: flex;
+.entity-list li{
 
-    align-items: center;
+    padding:8px 14px;
 
-    justify-content: center;
+    border-radius:30px;
 
-    border-radius: 50%;
+    background:#eff6ff;
 
-    background: #2563eb;
+    border:1px solid #dbeafe;
 
-    color: #ffffff;
+    color:#1d4ed8;
 
-    font-size: 12px;
+    font-size:13px;
 
-    font-weight: 800;
+    font-weight:600;
 
 }
 
 
 /* ==========================================================
-   BROWSER / MOBILE IMAGE HOVER
+   TECHNOLOGY WRAPPER
+========================================================== */
+
+.technology-wrapper{
+
+    width:100%;
+
+}
+
+
+.technology-section{
+
+    width:100%;
+
+}
+
+
+/* ==========================================================
+   PREVIEW IMAGE CURSOR
 ========================================================== */
 
 .browser-screen img,
-.mobile-preview img {
 
-    cursor: pointer;
+.mobile-preview img{
+
+    cursor:pointer;
 
     transition:
+
         transform .25s ease,
+
         opacity .25s ease;
 
 }
 
 
 .browser-screen img:hover,
-.mobile-preview img:hover {
 
-    opacity: .94;
+.mobile-preview img:hover{
+
+    opacity:.94;
+
+}
+
+
+/* ==========================================================
+   WEBSITE PREVIEW
+========================================================== */
+
+.preview-wrapper{
+
+    position:relative;
+
+    max-width:950px;
+
+    margin:40px auto;
+
+}
+
+
+.desktop-preview{
+
+    position:relative;
+
+    width:100%;
+
+    background:#ffffff;
+
+    border-radius:16px;
+
+    overflow:hidden;
+
+    border:1px solid #dbe3ef;
+
+    box-shadow:
+        0 20px 50px rgba(0,0,0,.15);
+
+}
+
+
+.browser-bar{
+
+    height:42px;
+
+    background:#edf2f7;
+
+    display:flex;
+
+    align-items:center;
+
+    padding:0 15px;
+
+    gap:8px;
+
+    border-bottom:1px solid #dbe3ef;
+
+}
+
+
+.browser-dot{
+
+    width:12px;
+
+    height:12px;
+
+    border-radius:50%;
+
+}
+
+
+.browser-dot.red{
+
+    background:#ff5f57;
+
+}
+
+
+.browser-dot.yellow{
+
+    background:#febc2e;
+
+}
+
+
+.browser-dot.green{
+
+    background:#28c840;
+
+}
+
+
+.browser-address{
+
+    flex:1;
+
+    margin-left:12px;
+
+    height:26px;
+
+    border-radius:20px;
+
+    background:#ffffff;
+
+    display:flex;
+
+    align-items:center;
+
+    padding:0 15px;
+
+    color:#64748b;
+
+    font-size:13px;
+
+    overflow:hidden;
+
+    white-space:nowrap;
+
+    text-overflow:ellipsis;
+
+}
+
+
+.browser-screen{
+
+    width:100%;
+
+    overflow:hidden;
+
+}
+
+
+.desktop-preview img{
+
+    width:100%;
+
+    height:340px;
+
+    object-fit:cover;
+
+    object-position:top;
+
+    display:block;
+
+}
+
+
+/* ==========================================================
+   MOBILE PHONE PREVIEW
+========================================================== */
+
+.mobile-preview{
+
+    position:absolute;
+
+    right:25px;
+
+    bottom:20px;
+
+    width:130px;
+
+    height:250px;
+
+    background:#111827;
+
+    border-radius:26px;
+
+    padding:8px;
+
+    box-shadow:
+        0 18px 40px rgba(0,0,0,.25);
+
+}
+
+
+.mobile-preview::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:8px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    width:55px;
+
+    height:6px;
+
+    background:#374151;
+
+    border-radius:20px;
+
+    z-index:2;
+
+}
+
+
+.mobile-preview img{
+
+    width:100%;
+
+    height:100%;
+
+    border-radius:20px;
+
+    object-fit:cover;
+
+    object-position:top;
+
+    background:#ffffff;
+
+}
+
+
+/* ==========================================================
+   PREVIEW TITLE
+========================================================== */
+
+.preview-title{
+
+    text-align:center;
+
+    font-size:28px;
+
+    font-weight:700;
+
+    color:#111827;
+
+    margin-bottom:30px;
+
+}
+
+/* ==========================================================
+   LLMs STATUS
+========================================================== */
+
+.llms-status{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-top:20px;
+
+}
+
+
+.status-found{
+
+    color:#16a34a;
+
+    font-weight:700;
+
+}
+
+
+.status-missing{
+
+    color:#dc2626;
+
+    font-weight:700;
+
+}
+
+
+/* ==========================================================
+   E-E-A-T
+========================================================== */
+
+.eeat-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fit,minmax(260px,1fr));
+
+    gap:22px;
+
+    margin-top:30px;
+
+}
+
+
+.eeat-card{
+
+    background:#ffffff;
+
+    border-radius:18px;
+
+    padding:26px;
+
+    border:1px solid #e5e7eb;
+
+    box-shadow:
+        0 8px 20px rgba(0,0,0,.05);
+
+}
+
+
+.eeat-card h3{
+
+    margin-bottom:12px;
+
+    color:#111827;
+
+}
+
+
+.eeat-card p{
+
+    color:#64748b;
+
+    line-height:1.8;
+
+}
+
+
+/* ==========================================================
+   ENTITIES
+========================================================== */
+
+.entity-count{
+
+    font-size:26px;
+
+    font-weight:700;
+
+    color:#2563eb;
+
+    margin-bottom:20px;
+
+}
+
+
+.entity-list{
+
+    padding-left:20px;
+
+    margin-top:15px;
+
+}
+
+
+.entity-list li{
+
+    margin-bottom:12px;
+
+    color:#475569;
+
+    line-height:1.8;
+
+}
+
+
+/* ==========================================================
+   RECOMMENDATIONS
+========================================================== */
+
+.recommendation-list{
+
+    padding-left:22px;
+
+    margin-top:20px;
+
+}
+
+
+.recommendation-list li{
+
+    margin-bottom:15px;
+
+    line-height:1.9;
+
+    color:#374151;
 
 }
 
@@ -2027,77 +2145,73 @@ button {
    NOTIFICATIONS
 ========================================================== */
 
-.notification {
+.notification{
 
-    position: fixed;
+    position:fixed;
 
-    top: 25px;
+    top:25px;
 
-    right: 25px;
+    right:25px;
 
-    min-width: 320px;
+    min-width:320px;
 
-    max-width: 430px;
+    max-width:430px;
 
-    padding: 18px 22px;
+    padding:18px 22px;
 
-    border-radius: 14px;
+    border-radius:14px;
 
-    color: #ffffff;
+    color:#ffffff;
 
-    font-weight: 600;
+    font-weight:600;
 
     box-shadow:
         0 15px 40px rgba(0,0,0,.20);
 
-    opacity: 0;
+    opacity:0;
 
-    transform: translateY(-20px);
+    transform:translateY(-20px);
 
-    transition: .35s;
+    transition:.35s;
 
-    z-index: 9999;
-
-}
-
-
-.notification.show {
-
-    opacity: 1;
-
-    transform: translateY(0);
+    z-index:9999;
 
 }
 
 
-/* ==========================================================
-   NOTIFICATION TYPES
-========================================================== */
+.notification.show{
 
-.notification.success {
+    opacity:1;
 
-    background: #16a34a;
+    transform:translateY(0);
 
 }
 
 
-.notification.error {
+.notification.success{
 
-    background: #dc2626;
-
-}
-
-
-.notification.warning {
-
-    background: #d97706;
+    background:#16a34a;
 
 }
 
 
-.notification.info {
+.notification.error{
 
-    background: #2563eb;
+    background:#dc2626;
+
+}
+
+
+.notification.warning{
+
+    background:#d97706;
+
+}
+
+
+.notification.info{
+
+    background:#2563eb;
 
 }
 
@@ -2106,99 +2220,99 @@ button {
    BADGES
 ========================================================== */
 
-.badge {
+.badge{
 
-    display: inline-block;
+    display:inline-block;
 
-    padding: 6px 14px;
+    padding:6px 14px;
 
-    border-radius: 30px;
+    border-radius:30px;
 
-    font-size: 13px;
+    font-size:13px;
 
-    font-weight: 700;
-
-}
-
-
-.badge-success {
-
-    background: #dcfce7;
-
-    color: #166534;
+    font-weight:700;
 
 }
 
 
-.badge-warning {
+.badge-success{
 
-    background: #fef3c7;
+    background:#dcfce7;
 
-    color: #92400e;
-
-}
-
-
-.badge-danger {
-
-    background: #fee2e2;
-
-    color: #991b1b;
+    color:#166534;
 
 }
 
 
-.badge-info {
+.badge-warning{
 
-    background: #dbeafe;
+    background:#fef3c7;
 
-    color: #1d4ed8;
+    color:#92400e;
+
+}
+
+
+.badge-danger{
+
+    background:#fee2e2;
+
+    color:#991b1b;
+
+}
+
+
+.badge-info{
+
+    background:#dbeafe;
+
+    color:#1d4ed8;
 
 }
 
 
 /* ==========================================================
-   UTILITY CLASSES
+   UTILITIES
 ========================================================== */
 
-.hidden {
+.hidden{
 
-    display: none !important;
-
-}
-
-
-.text-center {
-
-    text-align: center;
+    display:none;
 
 }
 
 
-.mt-20 {
+.text-center{
 
-    margin-top: 20px;
-
-}
-
-
-.mt-30 {
-
-    margin-top: 30px;
+    text-align:center;
 
 }
 
 
-.mb-20 {
+.mt-20{
 
-    margin-bottom: 20px;
+    margin-top:20px;
 
 }
 
 
-.mb-30 {
+.mt-30{
 
-    margin-bottom: 30px;
+    margin-top:30px;
+
+}
+
+
+.mb-20{
+
+    margin-bottom:20px;
+
+}
+
+
+.mb-30{
+
+    margin-bottom:30px;
 
 }
 
@@ -2207,19 +2321,19 @@ button {
    FOOTER
 ========================================================== */
 
-.footer {
+.footer{
 
-    margin-top: 45px;
+    margin-top:45px;
 
-    padding: 25px;
+    padding:25px;
 
-    text-align: center;
+    text-align:center;
 
-    color: #94a3b8;
+    color:#94a3b8;
 
-    font-size: 14px;
+    font-size:14px;
 
-    border-top: 1px solid #e5e7eb;
+    border-top:1px solid #e5e7eb;
 
 }
 
@@ -2228,1026 +2342,356 @@ button {
    SCROLLBAR
 ========================================================== */
 
-::-webkit-scrollbar {
+::-webkit-scrollbar{
 
-    width: 10px;
+    width:10px;
 
-    height: 10px;
-
-}
-
-
-::-webkit-scrollbar-track {
-
-    background: #edf2f7;
+    height:10px;
 
 }
 
 
-::-webkit-scrollbar-thumb {
+::-webkit-scrollbar-track{
 
-    background: #94a3b8;
-
-    border-radius: 20px;
+    background:#edf2f7;
 
 }
 
 
-::-webkit-scrollbar-thumb:hover {
+::-webkit-scrollbar-thumb{
 
-    background: #64748b;
+    background:#94a3b8;
 
-}
-
-
-/* ==========================================================
-   DESKTOP RESULT SPACING
-========================================================== */
-
-#results .card {
-
-    animation:
-        resultAppear .35s ease;
+    border-radius:20px;
 
 }
 
 
-@keyframes resultAppear {
+::-webkit-scrollbar-thumb:hover{
 
-    from {
-
-        opacity: 0;
-
-        transform: translateY(8px);
-
-    }
-
-    to {
-
-        opacity: 1;
-
-        transform: translateY(0);
-
-    }
+    background:#64748b;
 
 }
 
 
 /* ==========================================================
-   ANALYSIS COMPLETE
+   TABLET
 ========================================================== */
 
-.analysis-complete {
+@media(max-width:992px){
 
-    color: #16a34a;
+    .dashboard{
 
-}
-
-
-.analysis-complete .analysis-progress-fill {
-
-    background:
-        linear-gradient(
-            90deg,
-            #16a34a,
-            #22c55e
-        );
-
-}
-
-
-/* ==========================================================
-   SUCCESS MESSAGE
-========================================================== */
-
-.success-message {
-
-    color: #16a34a;
-
-    font-weight: 700;
-
-}
-
-
-/* ==========================================================
-   ERROR MESSAGE
-========================================================== */
-
-.error-message {
-
-    color: #dc2626;
-
-    font-weight: 600;
-
-}
-
-
-/* ==========================================================
-   EMPTY RESULTS
-========================================================== */
-
-#results:empty {
-
-    display: none;
-
-}
-
-
-/* ==========================================================
-   PREVENT LOADER OVERFLOW
-========================================================== */
-
-.loading-box {
-
-    overflow: hidden;
-
-}
-
-
-.analysis-progress-track {
-
-    overflow: hidden;
-
-}
-
-/* ==========================================================
-   TABLET RESPONSIVE
-   992px and below
-========================================================== */
-
-@media (max-width: 992px) {
-
-
-    /* ======================================================
-       DASHBOARD
-    ====================================================== */
-
-    .dashboard {
-
-        flex-direction: column;
+        flex-direction:column;
 
     }
 
 
-    /* ======================================================
-       SIDEBAR
-    ====================================================== */
+    .sidebar{
 
-    .sidebar {
+        width:100%;
 
-        width: 100%;
-
-        min-height: auto;
-
-        padding: 20px;
-
-        box-shadow:
-            0 5px 20px rgba(0,0,0,.12);
+        padding:20px;
 
     }
 
 
-    /* ======================================================
-       SIDEBAR HEADER
-    ====================================================== */
+    .menu{
 
-    .sidebar-top {
+        flex-direction:row;
 
-        margin-bottom: 20px;
+        flex-wrap:wrap;
 
-        text-align: left;
+        gap:10px;
 
     }
 
 
-    .sidebar-top h2 {
+    .menu li{
 
-        font-size: 24px;
-
-    }
-
-
-    .sidebar-top p {
-
-        font-size: 14px;
+        margin:0;
 
     }
 
 
-    /* ======================================================
-       MENU
+    .logout-menu{
 
-       Keep Logout near Profile.
-       Do NOT use flex:1.
-    ====================================================== */
-
-    .menu {
-
-        display: flex;
-
-        flex-direction: row;
-
-        flex-wrap: wrap;
-
-        gap: 8px;
+        margin-top:0;
 
     }
 
 
-    /* ======================================================
-       MENU ITEMS
-    ====================================================== */
+    .main-content{
 
-    .menu li {
-
-        padding: 12px 14px;
-
-        font-size: 14px;
+        padding:25px;
 
     }
 
 
-    /* ======================================================
-       LOGOUT
+    .topbar{
 
-       Keep it next to / near Profile.
-    ====================================================== */
+        flex-direction:column;
 
-    .logout-menu {
-
-        margin-top: 0 !important;
+        align-items:flex-start;
 
     }
 
 
-    /* ======================================================
-       MAIN CONTENT
-    ====================================================== */
+    .profile-card{
 
-    .main-content {
-
-        padding: 25px;
+        width:100%;
 
     }
 
 
-    /* ======================================================
-       TOPBAR
-    ====================================================== */
+    .overall-card{
 
-    .topbar {
+        flex-direction:column;
 
-        flex-direction: column;
-
-        align-items: flex-start;
-
-        gap: 20px;
+        text-align:center;
 
     }
 
 
-    /* ======================================================
-       PROFILE CARD
-    ====================================================== */
+    .overall-left h1{
 
-    .profile-card {
-
-        width: 100%;
-
-        min-width: 0;
+        font-size:70px;
 
     }
 
 
-    /* ======================================================
-       OVERALL SCORE
-    ====================================================== */
+    .preview-wrapper{
 
-    .overall-card {
-
-        flex-direction: column;
-
-        text-align: center;
+        max-width:100%;
 
     }
 
 
-    .overall-left,
-    .overall-right {
+    .desktop-preview img{
 
-        width: 100%;
-
-        min-width: 0;
+        height:280px;
 
     }
 
 
-    .overall-left h1 {
+    .mobile-preview{
 
-        font-size: 70px;
+        width:110px;
 
-    }
+        height:220px;
 
+        right:15px;
 
-    /* ======================================================
-       PREVIEW
-    ====================================================== */
-
-    .preview-wrapper {
-
-        max-width: 100%;
+        bottom:15px;
 
     }
 
 
-    .desktop-preview img {
+    /* ----------------------------------------------
+       HORIZONTAL LOADER — TABLET
+    ---------------------------------------------- */
 
-        height: 280px;
+    .progress-track{
 
-    }
-
-
-    .mobile-preview {
-
-        width: 110px;
-
-        height: 220px;
-
-        right: 15px;
-
-        bottom: 15px;
+        height:28px;
 
     }
 
 
-    /* ======================================================
-       PROGRESS
-    ====================================================== */
+    .loading-box{
 
-    .analysis-progress {
-
-        max-width: 100%;
+        padding:55px 20px;
 
     }
-
 
 }
 
 
 /* ==========================================================
    MOBILE
-   768px and below
 ========================================================== */
 
-@media (max-width: 768px) {
+@media(max-width:768px){
 
+    .main-content{
 
-    /* ======================================================
-       BODY
-    ====================================================== */
-
-    body {
-
-        overflow-x: hidden;
+        padding:18px;
 
     }
 
 
-    /* ======================================================
-       SIDEBAR
-    ====================================================== */
+    .card,
+    .search-card{
 
-    .sidebar {
-
-        padding: 18px;
+        padding:22px;
 
     }
 
 
-    /* ======================================================
-       SIDEBAR HEADER
-    ====================================================== */
+    .page-title h1{
 
-    .sidebar-top {
-
-        margin-bottom: 15px;
+        font-size:28px;
 
     }
 
 
-    .sidebar-top h2 {
+    .page-title p{
 
-        font-size: 22px;
-
-    }
-
-
-    .sidebar-top p {
-
-        font-size: 13px;
+        font-size:15px;
 
     }
 
 
-    /* ======================================================
-       MENU
+    .topbar{
 
-       Keep items together.
-    ====================================================== */
+        flex-direction:column;
 
-    .menu {
+        align-items:flex-start;
 
-        flex-direction: row;
-
-        flex-wrap: wrap;
-
-        gap: 7px;
+        gap:18px;
 
     }
 
 
-    .menu li {
+    .profile-card{
 
-        padding: 10px 12px;
-
-        border-radius: 10px;
-
-        font-size: 13px;
-
-        gap: 8px;
+        width:100%;
 
     }
 
 
-    .menu-icon {
+    .input-group{
 
-        width: 20px;
-
-        min-width: 20px;
-
-        font-size: 17px;
+        flex-direction:column;
 
     }
 
 
-    /* ======================================================
-       LOGOUT
-
-       No auto margin on mobile.
-    ====================================================== */
-
-    .logout-menu {
-
-        margin-top: 0 !important;
-
-    }
-
-
-    /* ======================================================
-       MAIN CONTENT
-    ====================================================== */
-
-    .main-content {
-
-        padding: 18px;
-
-    }
-
-
-    /* ======================================================
-       TOPBAR
-    ====================================================== */
-
-    .topbar {
-
-        margin-bottom: 25px;
-
-    }
-
-
-    /* ======================================================
-       PAGE TITLE
-    ====================================================== */
-
-    .page-title h1 {
-
-        font-size: 28px;
-
-        line-height: 1.25;
-
-    }
-
-
-    .page-title p {
-
-        font-size: 14px;
-
-        line-height: 1.7;
-
-    }
-
-
-    /* ======================================================
-       PROFILE
-    ====================================================== */
-
-    .profile-card {
-
-        width: 100%;
-
-        padding: 12px 15px;
-
-    }
-
-
-    .profile-image {
-
-        width: 50px;
-
-        height: 50px;
-
-    }
-
-
-    .user-info h3 {
-
-        font-size: 15px;
-
-    }
-
-
-    .user-info p {
-
-        font-size: 12px;
-
-    }
-
-
-    /* ======================================================
-       SEARCH CARD
-    ====================================================== */
-
-    .search-card {
-
-        padding: 22px;
-
-        border-radius: 16px;
-
-        margin-bottom: 25px;
-
-    }
-
-
-    .search-card h2 {
-
-        font-size: 24px;
-
-    }
-
-
-    .search-card p {
-
-        font-size: 14px;
-
-        line-height: 1.7;
-
-    }
-
-
-    /* ======================================================
-       INPUT GROUP
-    ====================================================== */
-
-    .input-group {
-
-        flex-direction: column;
-
-        align-items: stretch;
-
-        width: 100%;
-
-    }
-
-
-    /* ======================================================
-       INPUT
-    ====================================================== */
-
-    .input-group input {
-
-        width: 100%;
-
-        min-width: 0;
-
-        height: 54px;
-
-        font-size: 15px;
-
-    }
-
-
-    /* ======================================================
-       BUTTONS
-    ====================================================== */
-
+    .input-group input,
     .analyze-btn,
-    .reset-btn {
+    .reset-btn{
 
-        width: 100%;
+        width:100%;
 
-        height: 54px;
-
-    }
-
-
-    /* ======================================================
-       RESULTS
-    ====================================================== */
-
-    #results {
-
-        margin-top: 25px;
+        min-width:100%;
 
     }
 
 
-    .card {
+    .desktop-preview img{
 
-        padding: 22px;
-
-        border-radius: 16px;
-
-        margin-bottom: 22px;
+        height:210px;
 
     }
 
 
-    .card h2 {
+    .mobile-preview{
 
-        font-size: 23px;
+        width:85px;
 
-    }
+        height:170px;
 
+        right:10px;
 
-    /* ======================================================
-       LOADING BOX
-    ====================================================== */
+        bottom:10px;
 
-    .loading-box {
-
-        padding: 35px 10px;
+        border-radius:18px;
 
     }
 
 
-    .loading-box h2 {
+    .summary-grid,
+    .score-grid,
+    .technology-grid,
+    .eeat-grid{
 
-        font-size: 24px;
-
-    }
-
-
-    /* ======================================================
-       PROGRESS
-    ====================================================== */
-
-    .analysis-progress {
-
-        width: 100%;
-
-        margin-bottom: 25px;
+        grid-template-columns:1fr;
 
     }
 
 
-    .analysis-progress-track {
+    .info-table td{
 
-        height: 16px;
+        display:block;
 
-    }
-
-
-    .analysis-progress-label {
-
-        font-size: 26px;
-
-        margin-top: 13px;
+        width:100%;
 
     }
 
 
-    .loading-status {
+    .info-table tr{
 
-        font-size: 16px;
+        display:block;
 
-    }
-
-
-    .loading-url {
-
-        font-size: 12px;
-
-        padding: 10px 12px;
+        margin-bottom:18px;
 
     }
 
 
-    .loading-platforms {
+    /* ----------------------------------------------
+       HORIZONTAL LOADER — MOBILE
+    ---------------------------------------------- */
 
-        font-size: 14px;
+    .analysis-progress{
 
-    }
+        width:100%;
 
-
-    /* ======================================================
-       OVERALL SCORE
-    ====================================================== */
-
-    .overall-left h1 {
-
-        font-size: 58px;
+        margin-top:5px;
 
     }
 
 
-    .overall-right p {
+    .progress-track{
 
-        font-size: 15px;
-
-        line-height: 1.7;
+        height:26px;
 
     }
 
 
-    /* ======================================================
-       SUMMARY GRID
-    ====================================================== */
+    .progress-label{
 
-    .summary-grid {
+        font-size:12px;
 
-        grid-template-columns: 1fr;
-
-        gap: 15px;
+        right:10px;
 
     }
 
 
-    .summary-card {
+    .loading-box{
 
-        padding: 22px;
-
-    }
-
-
-    .summary-card h1 {
-
-        font-size: 42px;
+        padding:45px 5px 15px;
 
     }
 
 
-    /* ======================================================
-       SCORE GRID
-    ====================================================== */
+    .loading-box h2{
 
-    .score-grid {
-
-        grid-template-columns: 1fr;
-
-        gap: 16px;
+        font-size:24px;
 
     }
 
 
-    .score-card {
+    .loading-status{
 
-        padding: 24px;
-
-    }
-
-
-    .score-card h1 {
-
-        font-size: 44px;
+        font-size:14px !important;
 
     }
 
 
-    /* ======================================================
-       TECHNOLOGY GRID
-    ====================================================== */
+    .loading-url{
 
-    .technology-grid {
-
-        grid-template-columns: 1fr;
-
-        gap: 16px;
+        max-width:95%;
 
     }
 
 
-    .technology-card {
+    .loading-platforms{
 
-        padding: 20px;
+        max-width:100%;
 
-    }
+        padding:15px;
 
-
-    /* ======================================================
-       E-E-A-T
-    ====================================================== */
-
-    .eeat-grid {
-
-        grid-template-columns: 1fr;
-
-        gap: 16px;
-
-    }
-
-
-    .eeat-card {
-
-        padding: 22px;
-
-    }
-
-
-    /* ======================================================
-       INFORMATION TABLE
-    ====================================================== */
-
-    .info-table {
-
-        display: block;
-
-        width: 100%;
-
-    }
-
-
-    .info-table tbody {
-
-        display: block;
-
-        width: 100%;
-
-    }
-
-
-    .info-table tr {
-
-        display: block;
-
-        width: 100%;
-
-        margin-bottom: 15px;
-
-        border: 1px solid #e5e7eb;
-
-        border-radius: 12px;
-
-        overflow: hidden;
-
-    }
-
-
-    .info-table td {
-
-        display: block;
-
-        width: 100% !important;
-
-        padding: 13px 15px;
-
-    }
-
-
-    .info-table td:first-child {
-
-        background: #f8fafc;
-
-    }
-
-
-    /* ======================================================
-       PREVIEW
-    ====================================================== */
-
-    .preview-wrapper {
-
-        margin: 25px auto;
-
-    }
-
-
-    .preview-title {
-
-        font-size: 23px;
-
-        margin-bottom: 20px;
-
-    }
-
-
-    .desktop-preview img {
-
-        height: 210px;
-
-    }
-
-
-    .mobile-preview {
-
-        width: 85px;
-
-        height: 170px;
-
-        right: 10px;
-
-        bottom: 10px;
-
-        border-radius: 18px;
-
-    }
-
-
-    .mobile-preview img {
-
-        border-radius: 13px;
-
-    }
-
-
-    /* ======================================================
-       BROWSER BAR
-    ====================================================== */
-
-    .browser-bar {
-
-        height: 36px;
-
-        padding: 0 10px;
-
-    }
-
-
-    .browser-dot {
-
-        width: 9px;
-
-        height: 9px;
-
-    }
-
-
-    .browser-address {
-
-        height: 23px;
-
-        font-size: 11px;
-
-        padding: 0 10px;
-
-        margin-left: 6px;
-
-    }
-
-
-    /* ======================================================
-       NOTIFICATION
-    ====================================================== */
-
-    .notification {
-
-        top: 15px;
-
-        right: 15px;
-
-        left: 15px;
-
-        min-width: 0;
-
-        max-width: none;
-
-        width: auto;
-
-        font-size: 14px;
-
-    }
-
-
-    /* ======================================================
-       FOOTER
-    ====================================================== */
-
-    .footer {
-
-        margin-top: 30px;
-
-        padding: 20px 10px;
-
-        font-size: 12px;
+        font-size:13px;
 
     }
 
@@ -3256,348 +2700,95 @@ button {
 
 /* ==========================================================
    SMALL MOBILE
-   480px and below
 ========================================================== */
 
-@media (max-width: 480px) {
+@media(max-width:480px){
 
+    .sidebar-top h2{
 
-    /* ======================================================
-       SIDEBAR
-    ====================================================== */
-
-    .sidebar {
-
-        padding: 15px;
+        font-size:24px;
 
     }
 
 
-    .sidebar-top h2 {
+    .overall-left h1{
 
-        font-size: 20px;
-
-    }
-
-
-    /* ======================================================
-       MENU
-    ====================================================== */
-
-    .menu {
-
-        gap: 5px;
+        font-size:52px;
 
     }
 
 
-    .menu li {
+    .desktop-preview img{
 
-        padding: 9px 10px;
-
-        font-size: 12px;
+        height:170px;
 
     }
 
 
-    .menu-icon {
+    .mobile-preview{
 
-        font-size: 15px;
+        width:70px;
 
-    }
-
-
-    /* ======================================================
-       MAIN
-    ====================================================== */
-
-    .main-content {
-
-        padding: 14px;
+        height:140px;
 
     }
 
 
-    /* ======================================================
-       PAGE TITLE
-    ====================================================== */
+    .browser-bar{
 
-    .page-title h1 {
-
-        font-size: 24px;
+        height:34px;
 
     }
 
 
-    .page-title p {
+    .browser-dot{
 
-        font-size: 13px;
+        width:9px;
 
-    }
-
-
-    /* ======================================================
-       SEARCH CARD
-    ====================================================== */
-
-    .search-card {
-
-        padding: 18px;
+        height:9px;
 
     }
 
 
-    .search-card h2 {
+    .browser-address{
 
-        font-size: 21px;
-
-    }
-
-
-    .search-card p {
-
-        font-size: 13px;
+        font-size:11px;
 
     }
 
 
-    /* ======================================================
-       INPUT
-    ====================================================== */
+    /* ----------------------------------------------
+       LOADER — SMALL MOBILE
+    ---------------------------------------------- */
 
-    .input-group input {
+    .progress-track{
 
-        height: 50px;
-
-        font-size: 14px;
-
-        padding: 0 15px;
+        height:24px;
 
     }
 
 
-    /* ======================================================
-       BUTTONS
-    ====================================================== */
+    .progress-label{
 
-    .analyze-btn,
-    .reset-btn {
+        font-size:11px;
 
-        height: 50px;
-
-        font-size: 14px;
+        right:8px;
 
     }
 
 
-    /* ======================================================
-       CARD
-    ====================================================== */
+    .loading-box h2{
 
-    .card {
-
-        padding: 18px;
+        font-size:21px;
 
     }
 
 
-    /* ======================================================
-       LOADER
-    ====================================================== */
+    .loading-platforms{
 
-    .loading-box {
+        font-size:12px;
 
-        padding: 28px 5px;
-
-    }
-
-
-    .loading-box h2 {
-
-        font-size: 21px;
-
-    }
-
-
-    .analysis-progress-track {
-
-        height: 14px;
-
-    }
-
-
-    .analysis-progress-label {
-
-        font-size: 23px;
-
-    }
-
-
-    .loading-status {
-
-        font-size: 14px;
-
-    }
-
-
-    .loading-url {
-
-        font-size: 11px;
-
-    }
-
-
-    .loading-platforms {
-
-        font-size: 13px;
-
-    }
-
-
-    /* ======================================================
-       OVERALL SCORE
-    ====================================================== */
-
-    .overall-left h1 {
-
-        font-size: 48px;
-
-    }
-
-
-    .grade {
-
-        font-size: 14px;
-
-        padding: 8px 17px;
-
-    }
-
-
-    /* ======================================================
-       SUMMARY CARD
-    ====================================================== */
-
-    .summary-card {
-
-        padding: 18px;
-
-    }
-
-
-    .summary-card h3 {
-
-        font-size: 16px;
-
-    }
-
-
-    .summary-card h1 {
-
-        font-size: 38px;
-
-    }
-
-
-    /* ======================================================
-       SCORE CARD
-    ====================================================== */
-
-    .score-card {
-
-        padding: 20px;
-
-    }
-
-
-    .score-card h3 {
-
-        font-size: 17px;
-
-    }
-
-
-    .score-card h1 {
-
-        font-size: 40px;
-
-    }
-
-
-    /* ======================================================
-       TECHNOLOGY CARD
-    ====================================================== */
-
-    .technology-card {
-
-        padding: 18px;
-
-    }
-
-
-    .technology-card h3 {
-
-        font-size: 17px;
-
-    }
-
-
-    /* ======================================================
-       PREVIEW
-    ====================================================== */
-
-    .desktop-preview img {
-
-        height: 170px;
-
-    }
-
-
-    .mobile-preview {
-
-        width: 70px;
-
-        height: 140px;
-
-        right: 8px;
-
-        bottom: 8px;
-
-        border-radius: 16px;
-
-    }
-
-
-    .mobile-preview img {
-
-        border-radius: 11px;
-
-    }
-
-
-    .browser-bar {
-
-        height: 32px;
-
-    }
-
-
-    .browser-address {
-
-        font-size: 10px;
-
-    }
-
-
-    /* ======================================================
-       FOOTER
-    ====================================================== */
-
-    .footer {
-
-        font-size: 11px;
-
-        padding: 18px 5px;
+        line-height:1.8;
 
     }
 
@@ -3608,58 +2799,32 @@ button {
    PRINT
 ========================================================== */
 
-@media print {
-
-
-    /* ======================================================
-       HIDE NAVIGATION
-    ====================================================== */
+@media print{
 
     .sidebar,
     .analyze-btn,
     .reset-btn,
-    .notification {
+    .notification{
 
-        display: none !important;
-
-    }
-
-
-    /* ======================================================
-       MAIN CONTENT
-    ====================================================== */
-
-    .main-content {
-
-        padding: 0;
-
-        width: 100%;
+        display:none;
 
     }
 
 
-    /* ======================================================
-       CARDS
-    ====================================================== */
+    .main-content{
 
-    .card {
-
-        box-shadow: none;
-
-        border: 1px solid #d1d5db;
-
-        page-break-inside: avoid;
+        padding:0;
 
     }
 
 
-    /* ======================================================
-       FOOTER
-    ====================================================== */
+    .card{
 
-    .footer {
+        box-shadow:none;
 
-        border-top: 1px solid #d1d5db;
+        border:1px solid #d1d5db;
+
+        page-break-inside:avoid;
 
     }
 
