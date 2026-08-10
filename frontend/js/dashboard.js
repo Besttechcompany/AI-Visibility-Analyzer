@@ -791,35 +791,86 @@ async function analyzeWebsite() {
 
     let website = websiteInput.value.trim();
 
+
     // ==========================================
-    // CHECK EMPTY URL
+    // EMPTY INPUT
     // ==========================================
 
     if (!website) {
 
-        alert("Please enter website URL.");
+        showError(
+            "Please enter a website address.<br><br>" +
+            "Example: <strong>mckinleyresearch.org</strong>"
+        );
+
+        websiteInput.focus();
 
         return;
     }
 
 
     // ==========================================
-    // NORMALIZE WEBSITE URL
+    // NORMALIZE URL
     // ==========================================
-
-    // Remove spaces
-    website = website.trim();
-
-    // If user enters:
-    // mckinleyresearch.org
-    // convert to:
-    // https://mckinleyresearch.org/
 
     if (!/^https?:\/\//i.test(website)) {
 
         website = "https://" + website;
 
     }
+
+
+    // ==========================================
+    // VALIDATE URL FORMAT
+    // ==========================================
+
+    let parsedURL;
+
+    try {
+
+        parsedURL = new URL(website);
+
+    }
+    catch (error) {
+
+        showError(
+            "The website address you entered is not valid.<br><br>" +
+            "Please enter a valid domain such as:<br>" +
+            "<strong>mckinleyresearch.org</strong>"
+        );
+
+        websiteInput.focus();
+
+        return;
+    }
+
+
+    // ==========================================
+    // CHECK DOMAIN
+    // ==========================================
+
+    if (
+        !parsedURL.hostname ||
+        !parsedURL.hostname.includes(".")
+    ) {
+
+        showError(
+            "Please enter a valid website domain.<br><br>" +
+            "Example:<br>" +
+            "<strong>mckinleyresearch.org</strong>"
+        );
+
+        websiteInput.focus();
+
+        return;
+    }
+
+
+    // ==========================================
+    // UPDATE INPUT
+    // ==========================================
+
+    websiteInput.value = website;
 
 
     // ==========================================
@@ -834,17 +885,20 @@ async function analyzeWebsite() {
 
         analyzeBtn.disabled = true;
 
-        analyzeBtn.innerHTML = "⏳ Analyzing...";
+        analyzeBtn.innerHTML =
+            "⏳ Analyzing...";
 
-        analyzeBtn.style.opacity = "0.7";
+        analyzeBtn.style.opacity =
+            "0.7";
 
-        analyzeBtn.style.cursor = "wait";
+        analyzeBtn.style.cursor =
+            "wait";
 
     }
 
 
     // ==========================================
-    // SHOW LOADING SCREEN
+    // SHOW LOADING
     // ==========================================
 
     showLoading(website);
@@ -853,7 +907,7 @@ async function analyzeWebsite() {
     try {
 
         // ======================================
-        // SEND REQUEST TO BACKEND
+        // SEND TO BACKEND
         // ======================================
 
         const response =
@@ -888,53 +942,140 @@ async function analyzeWebsite() {
 
 
         // ======================================
-        // CHECK HTTP RESPONSE
+        // SERVER ERROR
         // ======================================
 
         if (!response.ok) {
 
-            let errorMessage =
-                "Analysis Failed";
+            let serverMessage = "";
 
             try {
 
                 const errorData =
                     await response.json();
 
-                if (errorData.detail) {
-
-                    errorMessage =
-                        errorData.detail;
-
-                }
-
-                else if (errorData.error) {
-
-                    errorMessage =
-                        errorData.error;
-
-                }
+                serverMessage =
+                    errorData.detail ||
+                    errorData.error ||
+                    "";
 
             }
-
             catch (e) {
 
                 console.error(
-                    "Could not read error response:",
+                    "Error reading server response:",
                     e
                 );
 
             }
 
+
+            // ----------------------------------
+            // 400
+            // ----------------------------------
+
+            if (response.status === 400) {
+
+                throw new Error(
+                    serverMessage ||
+                    "The website address is invalid or could not be analyzed."
+                );
+
+            }
+
+
+            // ----------------------------------
+            // 401
+            // ----------------------------------
+
+            if (response.status === 401) {
+
+                throw new Error(
+                    "Your login session has expired. Please log in again."
+                );
+
+            }
+
+
+            // ----------------------------------
+            // 403
+            // ----------------------------------
+
+            if (response.status === 403) {
+
+                throw new Error(
+                    "Access to this website analysis is not permitted."
+                );
+
+            }
+
+
+            // ----------------------------------
+            // 404
+            // ----------------------------------
+
+            if (response.status === 404) {
+
+                throw new Error(
+                    "The analysis service could not be found. Please try again later."
+                );
+
+            }
+
+
+            // ----------------------------------
+            // 408
+            // ----------------------------------
+
+            if (response.status === 408) {
+
+                throw new Error(
+                    "The website took too long to respond. Please try again."
+                );
+
+            }
+
+
+            // ----------------------------------
+            // 429
+            // ----------------------------------
+
+            if (response.status === 429) {
+
+                throw new Error(
+                    "Too many analysis requests. Please wait a moment and try again."
+                );
+
+            }
+
+
+            // ----------------------------------
+            // 500+
+            // ----------------------------------
+
+            if (response.status >= 500) {
+
+                throw new Error(
+                    "Our analysis server is temporarily unavailable. Please try again in a few moments."
+                );
+
+            }
+
+
+            // ----------------------------------
+            // GENERAL ERROR
+            // ----------------------------------
+
             throw new Error(
-                errorMessage
+                serverMessage ||
+                `Unable to analyze the website (Error ${response.status}).`
             );
 
         }
 
 
         // ======================================
-        // WAIT FOR REAL BACKEND RESULT
+        // GET RESULT
         // ======================================
 
         const data =
@@ -948,20 +1089,34 @@ async function analyzeWebsite() {
 
 
         // ======================================
-        // IMPORTANT
+        // BACKEND ERROR INSIDE RESPONSE
+        // ======================================
+
+        if (data.success === false) {
+
+            throw new Error(
+                data.error ||
+                data.message ||
+                "The website could not be analyzed."
+            );
+
+        }
+
+
+        // ======================================
+        // FINISH LOADER
         //
-        // Backend has completed.
-        // finishLoader() will move the bar
-        // from current progress to 100%.
-        //
-        // Results will appear ONLY after
-        // 100% is reached.
+        // 99%
+        // ↓
+        // 100%
+        // ↓
+        // RESULTS
         // ======================================
 
         finishLoader(data);
 
-
     }
+
 
     catch (error) {
 
@@ -981,12 +1136,12 @@ async function analyzeWebsite() {
 
 
         // ======================================
-        // SHOW ERROR
+        // SHOW PROPER ERROR
         // ======================================
 
         showError(
             error.message ||
-            "Unable to analyze this website."
+            "We couldn't analyze this website. Please check the website address and try again."
         );
 
 
