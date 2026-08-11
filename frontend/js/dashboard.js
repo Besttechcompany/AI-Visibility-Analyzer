@@ -3255,16 +3255,20 @@ document.addEventListener(
 // DOWNLOAD PDF REPORT
 // ======================================================
 
+// ======================================================
+// DOWNLOAD PDF REPORT
+// ======================================================
+// Robust PDF generator
+// Fixes blank PDF caused by off-screen rendering
+// ======================================================
+
 async function downloadPDF() {
 
     const report =
         document.getElementById("results");
 
-
     const button =
-        document.getElementById(
-            "download-pdf-btn"
-        );
+        document.getElementById("download-pdf-btn");
 
 
     // ==================================================
@@ -3279,7 +3283,6 @@ async function downloadPDF() {
         );
 
         return;
-
     }
 
 
@@ -3287,21 +3290,36 @@ async function downloadPDF() {
     // CHECK PDF LIBRARY
     // ==================================================
 
-    if (
-        typeof html2pdf === "undefined"
-    ) {
+    if (typeof html2pdf === "undefined") {
 
         showNotification(
-            "PDF generator could not be loaded. Please refresh the page and try again.",
+            "PDF generator is not ready. Please refresh the page and try again.",
             "error"
         );
 
         console.error(
-            "html2pdf is not available."
+            "❌ html2pdf library is not available."
         );
 
         return;
+    }
 
+
+    // ==================================================
+    // CHECK REPORT CONTENT
+    // ==================================================
+
+    if (
+        !report.innerHTML ||
+        report.innerHTML.trim() === ""
+    ) {
+
+        showNotification(
+            "There is no report data available to export.",
+            "error"
+        );
+
+        return;
     }
 
 
@@ -3314,24 +3332,44 @@ async function downloadPDF() {
         button.disabled = true;
 
         button.innerHTML =
-            "⏳ Generating PDF...";
+            "⏳ Preparing PDF...";
 
         button.style.opacity =
             "0.7";
 
         button.style.cursor =
             "wait";
-
     }
 
 
     let wrapper = null;
 
+    let originalButtonDisplay = "";
 
     try {
 
         // ==================================================
-        // CLONE RESULTS
+        // SAVE CURRENT BUTTON STATE
+        // ==================================================
+
+        const pdfButtonSection =
+            report.querySelector(
+                ".pdf-download-section"
+            );
+
+
+        if (pdfButtonSection) {
+
+            originalButtonDisplay =
+                pdfButtonSection.style.display;
+
+            pdfButtonSection.style.display =
+                "none";
+        }
+
+
+        // ==================================================
+        // CLONE COMPLETE REPORT
         // ==================================================
 
         const pdfContent =
@@ -3339,50 +3377,110 @@ async function downloadPDF() {
 
 
         // ==================================================
-        // REMOVE PDF BUTTON
+        // REMOVE PDF BUTTON FROM CLONE
         // ==================================================
 
-        const pdfButton =
+        const clonedPdfButton =
             pdfContent.querySelector(
                 ".pdf-download-section"
             );
 
 
-        if (pdfButton) {
+        if (clonedPdfButton) {
 
-            pdfButton.remove();
-
+            clonedPdfButton.remove();
         }
 
 
         // ==================================================
-        // CREATE PDF WRAPPER
+        // PDF WRAPPER
+        // ==================================================
+        // IMPORTANT:
+        // DO NOT use:
+        //
+        // left: -100000px
+        //
+        // That can cause blank PDF rendering.
         // ==================================================
 
         wrapper =
             document.createElement("div");
 
 
+        wrapper.id =
+            "pdf-render-wrapper";
+
+
+        wrapper.style.position =
+            "fixed";
+
+
+        wrapper.style.left =
+            "0";
+
+
+        wrapper.style.top =
+            "0";
+
+
+        wrapper.style.width =
+            "794px";
+
+
+        wrapper.style.minHeight =
+            "1123px";
+
+
         wrapper.style.background =
             "#ffffff";
 
-        wrapper.style.width =
-            "100%";
 
         wrapper.style.padding =
-            "20px";
+            "24px";
+
 
         wrapper.style.boxSizing =
             "border-box";
 
-        wrapper.style.position =
-            "absolute";
 
-        wrapper.style.left =
-            "-100000px";
+        wrapper.style.zIndex =
+            "999999";
 
-        wrapper.style.top =
+
+        wrapper.style.overflow =
+            "visible";
+
+
+        wrapper.style.fontFamily =
+            "Arial, Helvetica, sans-serif";
+
+
+        // ==================================================
+        // ADD REPORT TO WRAPPER
+        // ==================================================
+
+        pdfContent.style.width =
+            "100%";
+
+
+        pdfContent.style.maxWidth =
+            "100%";
+
+
+        pdfContent.style.margin =
             "0";
+
+
+        pdfContent.style.padding =
+            "0";
+
+
+        pdfContent.style.background =
+            "#ffffff";
+
+
+        pdfContent.style.boxSizing =
+            "border-box";
 
 
         wrapper.appendChild(
@@ -3390,13 +3488,159 @@ async function downloadPDF() {
         );
 
 
+        // ==================================================
+        // ADD TEMPORARY WRAPPER TO DOCUMENT
+        // ==================================================
+
         document.body.appendChild(
             wrapper
         );
 
 
         // ==================================================
-        // WEBSITE NAME
+        // FORCE BROWSER TO RENDER
+        // ==================================================
+
+        await new Promise(
+            resolve => {
+
+                requestAnimationFrame(() => {
+
+                    requestAnimationFrame(() => {
+
+                        resolve();
+
+                    });
+
+                });
+
+            }
+        );
+
+
+        // ==================================================
+        // WAIT FOR WEB FONTS
+        // ==================================================
+
+        if (
+            document.fonts &&
+            document.fonts.ready
+        ) {
+
+            try {
+
+                await document.fonts.ready;
+
+            }
+
+            catch (fontError) {
+
+                console.warn(
+                    "Font loading warning:",
+                    fontError
+                );
+
+            }
+
+        }
+
+
+        // ==================================================
+        // WAIT FOR IMAGES
+        // ==================================================
+
+        const images =
+            pdfContent.querySelectorAll(
+                "img"
+            );
+
+
+        await Promise.all(
+
+            Array.from(images)
+                .map(
+                    image => {
+
+                        if (
+                            image.complete
+                        ) {
+
+                            return Promise.resolve();
+
+                        }
+
+
+                        return new Promise(
+                            resolve => {
+
+                                image.onload =
+                                    resolve;
+
+                                image.onerror =
+                                    resolve;
+
+                            }
+                        );
+
+                    }
+                )
+
+        );
+
+
+        // ==================================================
+        // EXTRA RENDER DELAY
+        // ==================================================
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    700
+                )
+        );
+
+
+        console.log(
+            "✅ PDF content prepared."
+        );
+
+
+        console.log(
+            "PDF wrapper width:",
+            wrapper.offsetWidth
+        );
+
+
+        console.log(
+            "PDF wrapper height:",
+            wrapper.offsetHeight
+        );
+
+
+        console.log(
+            "PDF content height:",
+            pdfContent.scrollHeight
+        );
+
+
+        // ==================================================
+        // VALIDATE PDF CONTENT
+        // ==================================================
+
+        if (
+            wrapper.offsetWidth === 0 ||
+            wrapper.offsetHeight === 0
+        ) {
+
+            throw new Error(
+                "PDF content has zero dimensions."
+            );
+
+        }
+
+                // ==================================================
+        // GET WEBSITE NAME
         // ==================================================
 
         let websiteName =
@@ -3431,8 +3675,9 @@ async function downloadPDF() {
 
             catch (error) {
 
-                console.log(
-                    "Could not extract website name."
+                console.warn(
+                    "Could not extract website name:",
+                    error
                 );
 
             }
@@ -3441,7 +3686,7 @@ async function downloadPDF() {
 
 
         // ==================================================
-        // DATE
+        // CURRENT DATE
         // ==================================================
 
         const today =
@@ -3455,10 +3700,26 @@ async function downloadPDF() {
 
 
         // ==================================================
+        // UPDATE BUTTON
+        // ==================================================
+
+        if (button) {
+
+            button.innerHTML =
+                "⏳ Generating PDF...";
+
+        }
+
+
+        // ==================================================
         // PDF OPTIONS
         // ==================================================
 
         const options = {
+
+            // ----------------------------------------------
+            // PAGE MARGINS
+            // ----------------------------------------------
 
             margin: [
                 10,
@@ -3467,48 +3728,116 @@ async function downloadPDF() {
                 10
             ],
 
+
+            // ----------------------------------------------
+            // FILE NAME
+            // ----------------------------------------------
+
             filename:
                 `${websiteName}-AI-Visibility-Report-${dateString}.pdf`,
 
+
+            // ----------------------------------------------
+            // IMAGE
+            // ----------------------------------------------
+
             image: {
 
-                type: "jpeg",
+                type:
+                    "jpeg",
 
-                quality: 0.98
+                quality:
+                    0.98
 
             },
 
+
+            // ----------------------------------------------
+            // HTML2CANVAS
+            // ----------------------------------------------
+
             html2canvas: {
 
-                scale: 2,
+                scale:
+                    2,
 
-                useCORS: true,
+                useCORS:
+                    true,
 
-                allowTaint: true,
+                allowTaint:
+                    false,
 
                 backgroundColor:
                     "#ffffff",
 
-                logging: false
+                logging:
+                    true,
+
+                imageTimeout:
+                    15000,
+
+                removeContainer:
+                    true,
+
+
+                // IMPORTANT
+                // Capture the actual rendered wrapper
+
+                width:
+                    wrapper.scrollWidth,
+
+                height:
+                    wrapper.scrollHeight,
+
+                windowWidth:
+                    wrapper.scrollWidth,
+
+                windowHeight:
+                    wrapper.scrollHeight
 
             },
+
+
+            // ----------------------------------------------
+            // jsPDF
+            // ----------------------------------------------
 
             jsPDF: {
 
-                unit: "mm",
+                unit:
+                    "mm",
 
-                format: "a4",
+                format:
+                    "a4",
 
-                orientation: "portrait"
+                orientation:
+                    "portrait",
+
+                compress:
+                    true
 
             },
+
+
+            // ----------------------------------------------
+            // PAGE BREAKS
+            // ----------------------------------------------
 
             pagebreak: {
 
                 mode: [
                     "css",
                     "legacy"
-                ]
+                ],
+
+                avoid:
+                    [
+                        ".card",
+                        ".score-card",
+                        ".technology-card",
+                        "table",
+                        "tr"
+                    ]
 
             }
 
@@ -3519,10 +3848,39 @@ async function downloadPDF() {
         // GENERATE PDF
         // ==================================================
 
+        console.log(
+            "📄 Starting PDF generation..."
+        );
+
+
         await html2pdf()
+
             .set(options)
+
             .from(wrapper)
+
+            .toCanvas()
+
+            .toPdf()
+
             .save();
+
+
+        console.log(
+            "✅ PDF generated successfully."
+        );
+
+
+        // ==================================================
+        // RESTORE ORIGINAL PDF BUTTON
+        // ==================================================
+
+        if (pdfButtonSection) {
+
+            pdfButtonSection.style.display =
+                originalButtonDisplay;
+
+        }
 
 
         // ==================================================
@@ -3533,13 +3891,14 @@ async function downloadPDF() {
 
             wrapper.remove();
 
-            wrapper = null;
+            wrapper =
+                null;
 
         }
 
 
         // ==================================================
-        // RESTORE BUTTON
+        // RESTORE DOWNLOAD BUTTON
         // ==================================================
 
         if (button) {
@@ -3547,11 +3906,14 @@ async function downloadPDF() {
             button.disabled =
                 false;
 
+
             button.innerHTML =
                 "📄 Download PDF Report";
 
+
             button.style.opacity =
                 "1";
+
 
             button.style.cursor =
                 "pointer";
@@ -3568,15 +3930,38 @@ async function downloadPDF() {
             "success"
         );
 
-
     }
 
     catch (error) {
 
+        // ==================================================
+        // PDF ERROR
+        // ==================================================
+
         console.error(
-            "PDF Generation Error:",
+            "❌ PDF Generation Error:",
             error
         );
+
+
+        // ==================================================
+        // RESTORE ORIGINAL BUTTON
+        // ==================================================
+
+        const pdfButtonSection =
+            report
+                ? report.querySelector(
+                    ".pdf-download-section"
+                )
+                : null;
+
+
+        if (pdfButtonSection) {
+
+            pdfButtonSection.style.display =
+                "";
+
+        }
 
 
         // ==================================================
@@ -3587,13 +3972,14 @@ async function downloadPDF() {
 
             wrapper.remove();
 
-            wrapper = null;
+            wrapper =
+                null;
 
         }
 
 
         // ==================================================
-        // RESTORE BUTTON
+        // RESTORE DOWNLOAD BUTTON
         // ==================================================
 
         if (button) {
@@ -3601,11 +3987,14 @@ async function downloadPDF() {
             button.disabled =
                 false;
 
+
             button.innerHTML =
                 "📄 Download PDF Report";
 
+
             button.style.opacity =
                 "1";
+
 
             button.style.cursor =
                 "pointer";
@@ -3614,7 +4003,7 @@ async function downloadPDF() {
 
 
         // ==================================================
-        // ERROR MESSAGE
+        // SHOW ERROR
         // ==================================================
 
         showNotification(
