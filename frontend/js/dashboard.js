@@ -1272,6 +1272,37 @@ function showResults(data) {
         renderRecommendations(data)
     );
 
+    // ==================================================
+    // DOWNLOAD PDF BUTTON
+    // APPEARS ONLY AFTER RESULTS
+    // ==================================================
+
+    const pdfSection =
+        document.createElement("section");
+
+
+    pdfSection.className =
+        "pdf-download-section";
+
+
+    pdfSection.innerHTML = `
+
+        <button
+            class="pdf-btn"
+            onclick="downloadPDF()"
+        >
+
+            📄 Download PDF Report
+
+        </button>
+
+    `;
+
+
+    results.appendChild(
+        pdfSection
+    );
+
 }
 
 

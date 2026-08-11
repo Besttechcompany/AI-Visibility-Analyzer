@@ -3651,3 +3651,123 @@ button {
     }
 
 }
+
+/* ==========================================================
+   PDF DOWNLOAD — BOTTOM OF REPORT
+========================================================== */
+
+.pdf-download-section {
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    margin: 35px 0 45px;
+
+    padding: 10px;
+
+}
+
+
+.pdf-btn {
+
+    height: 54px;
+
+    padding: 0 30px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: #16a34a;
+
+    color: #ffffff;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    white-space: nowrap;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        opacity .2s ease;
+
+    box-shadow:
+        0 8px 20px rgba(22,163,74,.22);
+
+}
+
+
+.pdf-btn:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 28px rgba(22,163,74,.30);
+
+}
+
+
+.pdf-btn:active {
+
+    transform: translateY(0);
+
+}
+
+
+.pdf-btn:disabled {
+
+    opacity: .6;
+
+    cursor: wait;
+
+    transform: none;
+
+    box-shadow: none;
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .pdf-download-section {
+
+        margin:
+            25px 0
+            35px;
+
+    }
+
+
+    .pdf-btn {
+
+        width: 100%;
+
+        max-width: 360px;
+
+        height: 52px;
+
+    }
+
+}
+
