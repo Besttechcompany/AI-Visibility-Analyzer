@@ -13,7 +13,6 @@ from services.eeat import EEATAnalyzer
 from services.audit import AuditAnalyzer
 from services.technical_seo import TechnicalSEOAnalyzer
 from services.technology.technology import TechnologyAnalyzer
-from services.screenshots.analyzer import ScreenshotAnalyzer
 from services.browser.browser import BrowserManager
 
 
@@ -45,10 +44,6 @@ class WebsiteAnalyzer:
                 response.text,
                 "lxml"
             )
-
-            # ---------------------------------
-            # Basic Information
-            # ---------------------------------
 
             title = (
                 soup.title.string.strip()
@@ -156,6 +151,11 @@ class WebsiteAnalyzer:
             # ---------------------------------
             # Shared Browser
             # ---------------------------------
+            # Browser is still required for
+            # technology detection.
+            #
+            # ScreenshotAnalyzer is completely
+            # removed. No screenshots are generated.
 
             browser_manager = BrowserManager()
             browser = browser_manager.start()
@@ -166,11 +166,6 @@ class WebsiteAnalyzer:
                     browser,
                     response,
                     soup
-                )
-
-                screenshots = ScreenshotAnalyzer.analyze(
-                    browser,
-                    response.url
                 )
 
             finally:
@@ -221,9 +216,7 @@ class WebsiteAnalyzer:
 
                 "technical_seo": technical,
 
-                "technology": technology,
-
-                "screenshots": screenshots
+                "technology": technology
 
             }
 

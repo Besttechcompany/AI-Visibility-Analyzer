@@ -854,10 +854,8 @@ async function analyzeWebsite() {
     ) {
 
         showError(
-            "Please enter a valid website domain.<br><br>" +
-            "Example:<br>" +
-            "<strong>mckinleyresearch.org</strong>"
-        );
+            "Please enter a valid website domain" 
+         );
 
         websiteInput.focus();
 
