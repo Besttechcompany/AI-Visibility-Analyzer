@@ -1,7 +1,7 @@
 /* ==========================================================
-   AI Visibility Analyzer Dashboard
-   Premium SaaS UI
-   Part 1
+   AI VISIBILITY ANALYZER DASHBOARD
+   PREMIUM SAAS UI
+   UPDATED VERSION
 ========================================================== */
 
 
@@ -9,61 +9,45 @@
    RESET
 ========================================================== */
 
-*{
-
-    margin:0;
-
-    padding:0;
-
-    box-sizing:border-box;
-
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 
-html{
-
-    scroll-behavior:smooth;
-
+html {
+    scroll-behavior: smooth;
 }
 
 
-body{
+body {
+    font-family: "Inter", sans-serif;
 
-    font-family:"Inter",sans-serif;
+    background: #f4f7fb;
 
-    background:#f4f7fb;
+    color: #1f2937;
 
-    color:#1f2937;
+    line-height: 1.6;
 
-    line-height:1.6;
-
-    overflow-x:hidden;
-
+    overflow-x: hidden;
 }
 
 
-a{
-
-    text-decoration:none;
-
-    color:inherit;
-
+a {
+    text-decoration: none;
+    color: inherit;
 }
 
 
-img{
-
-    display:block;
-
-    max-width:100%;
-
+img {
+    display: block;
+    max-width: 100%;
 }
 
 
-button{
-
-    font-family:inherit;
-
+button {
+    font-family: inherit;
 }
 
 
@@ -71,13 +55,13 @@ button{
    DASHBOARD LAYOUT
 ========================================================== */
 
-.dashboard{
+.dashboard {
 
-    display:flex;
+    display: flex;
 
-    min-height:100vh;
+    min-height: 100vh;
 
-    background:#f4f7fb;
+    background: #f4f7fb;
 
 }
 
@@ -86,21 +70,24 @@ button{
    SIDEBAR
 ========================================================== */
 
-.sidebar{
+.sidebar {
 
-    width:260px;
+    width: 260px;
 
-    background:#0f172a;
+    min-width: 260px;
 
-    color:#ffffff;
+    background: #0f172a;
 
-    display:flex;
+    color: #ffffff;
 
-    flex-direction:column;
+    display: flex;
 
-    padding:30px 20px;
+    flex-direction: column;
 
-    box-shadow:8px 0 30px rgba(0,0,0,.12);
+    padding: 30px 20px;
+
+    box-shadow:
+        8px 0 30px rgba(0, 0, 0, .12);
 
 }
 
@@ -109,102 +96,102 @@ button{
    SIDEBAR HEADER
 ========================================================== */
 
-.sidebar-top{
+.sidebar-top {
 
-    margin-bottom:40px;
+    margin-bottom: 40px;
 
-    text-align:center;
-
-}
-
-
-.sidebar-top h2{
-
-    font-size:28px;
-
-    font-weight:700;
-
-    color:#ffffff;
+    text-align: center;
 
 }
 
 
-.sidebar-top p{
+.sidebar-top h2 {
 
-    margin-top:8px;
+    font-size: 28px;
 
-    color:#94a3b8;
+    font-weight: 700;
 
-    font-size:15px;
+    color: #ffffff;
+
+}
+
+
+.sidebar-top p {
+
+    margin-top: 8px;
+
+    color: #94a3b8;
+
+    font-size: 15px;
 
 }
 
 
 /* ==========================================================
-   MENU
+   SIDEBAR MENU
 ========================================================== */
 
-.menu{
+.menu {
 
-    list-style:none;
+    list-style: none;
 
-    display:flex;
+    display: flex;
 
-    flex-direction:column;
+    flex-direction: column;
 
-    gap:10px;
+    gap: 10px;
 
-    flex:1;
-
-}
-
-
-.menu li{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:14px;
-
-    padding:15px 18px;
-
-    border-radius:14px;
-
-    cursor:pointer;
-
-    transition:.3s;
-
-    font-size:16px;
-
-    font-weight:500;
+    flex: 1;
 
 }
 
 
-.menu li:hover{
+.menu li {
 
-    background:#1e293b;
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    padding: 15px 18px;
+
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    transition: .3s;
+
+    font-size: 16px;
+
+    font-weight: 500;
 
 }
 
 
-.menu li.active{
+.menu li:hover {
 
-    background:#2563eb;
-
-    color:#ffffff;
+    background: #1e293b;
 
 }
 
 
-.menu-icon{
+.menu li.active {
 
-    width:24px;
+    background: #2563eb;
 
-    text-align:center;
+    color: #ffffff;
 
-    font-size:20px;
+}
+
+
+.menu-icon {
+
+    width: 24px;
+
+    text-align: center;
+
+    font-size: 20px;
 
 }
 
@@ -213,38 +200,41 @@ button{
    LOGOUT
 ========================================================== */
 
-.logout-menu{
+.logout-menu {
 
-    margin-top:10px;
+    margin-top: auto;
 
-     background:#ef4444;
+    background: #ef4444;
 
-    color:#ffffff;
+    color: #ffffff;
+
+}
+
+
+.logout-menu:hover {
+
+    background: #dc2626;
+
+    color: #ffffff;
 
 }
 
-
-.logout-menu:hover{
-
-    background:#ef4444;
-
-    color:#ffffff;
-
-}
 
 /* ==========================================================
    MAIN CONTENT
 ========================================================== */
 
-.main-content{
+.main-content {
 
-    flex:1;
+    flex: 1;
 
-    padding:35px;
+    min-width: 0;
 
-    overflow-y:auto;
+    padding: 35px;
 
-    overflow-x:hidden;
+    overflow-y: auto;
+
+    overflow-x: hidden;
 
 }
 
@@ -253,48 +243,48 @@ button{
    TOP BAR
 ========================================================== */
 
-.topbar{
+.topbar {
 
-    display:flex;
+    display: flex;
 
-    justify-content:space-between;
+    justify-content: space-between;
 
-    align-items:center;
+    align-items: center;
 
-    gap:25px;
+    gap: 25px;
 
-    margin-bottom:35px;
-
-}
-
-
-.page-title{
-
-    flex:1;
+    margin-bottom: 35px;
 
 }
 
 
-.page-title h1{
+.page-title {
 
-    font-size:36px;
-
-    font-weight:800;
-
-    color:#111827;
-
-    margin-bottom:8px;
+    flex: 1;
 
 }
 
 
-.page-title p{
+.page-title h1 {
 
-    color:#6b7280;
+    font-size: 36px;
 
-    font-size:16px;
+    font-weight: 800;
 
-    line-height:1.7;
+    color: #111827;
+
+    margin-bottom: 8px;
+
+}
+
+
+.page-title p {
+
+    color: #6b7280;
+
+    font-size: 16px;
+
+    line-height: 1.7;
 
 }
 
@@ -303,74 +293,79 @@ button{
    PROFILE CARD
 ========================================================== */
 
-.profile-card{
+.profile-card {
 
-    background:#ffffff;
+    background: #ffffff;
 
-    border-radius:16px;
+    border-radius: 16px;
 
-    padding:12px 18px;
+    padding: 12px 18px;
 
-    box-shadow:0 12px 30px rgba(0,0,0,.08);
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, .08);
 
-    border:1px solid #e5e7eb;
+    border: 1px solid #e5e7eb;
 
-    min-width:260px;
-
-}
-
-
-.user-card{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:15px;
+    min-width: 260px;
 
 }
 
 
-.profile-image{
+.user-card {
 
-    width:58px;
+    display: flex;
 
-    height:58px;
+    align-items: center;
 
-    border-radius:50%;
-
-    object-fit:cover;
-
-    border:3px solid #2563eb;
+    gap: 15px;
 
 }
 
 
-.user-info{
+.profile-image {
 
-    flex:1;
+    width: 58px;
 
-}
+    height: 58px;
 
+    border-radius: 50%;
 
-.user-info h3{
+    object-fit: cover;
 
-    font-size:17px;
-
-    font-weight:700;
-
-    color:#111827;
-
-    margin-bottom:4px;
+    border: 3px solid #2563eb;
 
 }
 
 
-.user-info p{
+.user-info {
 
-    font-size:14px;
+    flex: 1;
 
-    color:#64748b;
+    min-width: 0;
+
+}
+
+
+.user-info h3 {
+
+    font-size: 17px;
+
+    font-weight: 700;
+
+    color: #111827;
+
+    margin-bottom: 4px;
+
+}
+
+
+.user-info p {
+
+    font-size: 14px;
+
+    color: #64748b;
+
+    word-break: break-word;
 
 }
 
@@ -379,55 +374,44 @@ button{
    SEARCH CARD
 ========================================================== */
 
-.search-card{
+.search-card {
 
-    background:#ffffff;
+    background: #ffffff;
 
-    border-radius:20px;
+    border-radius: 20px;
 
-    padding:35px;
+    padding: 35px;
 
-    margin-bottom:35px;
+    margin-bottom: 35px;
 
-    border:1px solid #e5e7eb;
+    border: 1px solid #e5e7eb;
 
-    box-shadow:0 12px 35px rgba(0,0,0,.08);
-
-}
-
-
-.search-card h2{
-
-    font-size:30px;
-
-    color:#111827;
-
-}
-
-/* ==========================================================
-   SEARCH CARD — CONTINUED
-========================================================== */
-
-.search-card h2{
-
-    font-size:30px;
-
-    color:#111827;
-
-    margin-bottom:10px;
+    box-shadow:
+        0 12px 35px rgba(0, 0, 0, .08);
 
 }
 
 
-.search-card p{
+.search-card h2 {
 
-    color:#64748b;
+    font-size: 30px;
 
-    font-size:15px;
+    color: #111827;
 
-    line-height:1.7;
+    margin-bottom: 10px;
 
-    margin-bottom:25px;
+}
+
+
+.search-card p {
+
+    color: #64748b;
+
+    font-size: 15px;
+
+    line-height: 1.7;
+
+    margin-bottom: 25px;
 
 }
 
@@ -436,59 +420,59 @@ button{
    INPUT GROUP
 ========================================================== */
 
-.input-group{
+.input-group {
 
-    display:flex;
+    display: flex;
 
-    align-items:center;
+    align-items: center;
 
-    gap:12px;
+    gap: 12px;
 
-    width:100%;
-
-}
-
-
-.input-group input{
-
-    flex:1;
-
-    min-width:0;
-
-    height:52px;
-
-    padding:0 18px;
-
-    border:1px solid #d1d5db;
-
-    border-radius:12px;
-
-    outline:none;
-
-    font-size:15px;
-
-    color:#111827;
-
-    background:#ffffff;
-
-    transition:.25s ease;
+    width: 100%;
 
 }
 
 
-.input-group input:focus{
+.input-group input {
 
-    border-color:#2563eb;
+    flex: 1;
+
+    min-width: 0;
+
+    height: 52px;
+
+    padding: 0 18px;
+
+    border: 1px solid #d1d5db;
+
+    border-radius: 12px;
+
+    outline: none;
+
+    font-size: 15px;
+
+    color: #111827;
+
+    background: #ffffff;
+
+    transition: .25s ease;
+
+}
+
+
+.input-group input:focus {
+
+    border-color: #2563eb;
 
     box-shadow:
-        0 0 0 4px rgba(37,99,235,.10);
+        0 0 0 4px rgba(37, 99, 235, .10);
 
 }
 
 
-.input-group input::placeholder{
+.input-group input::placeholder {
 
-    color:#9ca3af;
+    color: #9ca3af;
 
 }
 
@@ -497,66 +481,63 @@ button{
    ANALYZE BUTTON
 ========================================================== */
 
-.analyze-btn{
+.analyze-btn {
 
-    height:52px;
+    height: 52px;
 
-    padding:0 24px;
+    padding: 0 24px;
 
-    border:none;
+    border: none;
 
-    border-radius:12px;
+    border-radius: 12px;
 
-    background:#2563eb;
+    background: #2563eb;
 
-    color:#ffffff;
+    color: #ffffff;
 
-    font-size:15px;
+    font-size: 15px;
 
-    font-weight:700;
+    font-weight: 700;
 
-    cursor:pointer;
+    cursor: pointer;
 
-    white-space:nowrap;
+    white-space: nowrap;
 
     transition:
-
         transform .2s ease,
-
         box-shadow .2s ease,
-
         opacity .2s ease;
 
     box-shadow:
-        0 8px 20px rgba(37,99,235,.25);
+        0 8px 20px rgba(37, 99, 235, .25);
 
 }
 
 
-.analyze-btn:hover{
+.analyze-btn:hover {
 
-    transform:translateY(-2px);
+    transform: translateY(-2px);
 
     box-shadow:
-        0 12px 25px rgba(37,99,235,.32);
+        0 12px 25px rgba(37, 99, 235, .32);
 
 }
 
 
-.analyze-btn:active{
+.analyze-btn:active {
 
-    transform:translateY(0);
+    transform: translateY(0);
 
 }
 
 
-.analyze-btn:disabled{
+.analyze-btn:disabled {
 
-    transform:none;
+    transform: none;
 
-    box-shadow:none;
+    box-shadow: none;
 
-    cursor:wait;
+    cursor: wait;
 
 }
 
@@ -565,38 +546,38 @@ button{
    RESET BUTTON
 ========================================================== */
 
-.reset-btn{
+.reset-btn {
 
-    height:52px;
+    height: 52px;
 
-    padding:0 22px;
+    padding: 0 22px;
 
-    border:1px solid #d1d5db;
+    border: 1px solid #d1d5db;
 
-    border-radius:12px;
+    border-radius: 12px;
 
-    background:#ffffff;
+    background: #ffffff;
 
-    color:#374151;
+    color: #374151;
 
-    font-size:15px;
+    font-size: 15px;
 
-    font-weight:600;
+    font-weight: 600;
 
-    cursor:pointer;
+    cursor: pointer;
 
-    white-space:nowrap;
+    white-space: nowrap;
 
-    transition:.25s ease;
+    transition: .25s ease;
 
 }
 
 
-.reset-btn:hover{
+.reset-btn:hover {
 
-    background:#f8fafc;
+    background: #f8fafc;
 
-    border-color:#94a3b8;
+    border-color: #94a3b8;
 
 }
 
@@ -605,9 +586,11 @@ button{
    RESULTS CONTAINER
 ========================================================== */
 
-#results{
+#results {
 
-    width:100%;
+    width: 100%;
+
+    margin-top: 35px;
 
 }
 
@@ -616,80 +599,125 @@ button{
    GENERAL CARD
 ========================================================== */
 
-.card{
+.card {
 
-    background:#ffffff;
+    width: 100%;
 
-    border-radius:20px;
+    background: #ffffff;
 
-    padding:30px;
+    border-radius: 20px;
 
-    margin-bottom:30px;
+    padding: 30px;
 
-    border:1px solid #e5e7eb;
+    margin-bottom: 30px;
+
+    border: 1px solid #e5e7eb;
 
     box-shadow:
-        0 12px 35px rgba(15,23,42,.07);
+        0 12px 35px rgba(15, 23, 42, .07);
 
-    overflow:hidden;
-
-}
-
-
-.card h2{
-
-    color:#111827;
-
-    font-size:25px;
-
-    font-weight:750;
-
-    margin-bottom:20px;
+    overflow: hidden;
 
 }
 
 
-.card h3{
+.card h2 {
 
-    color:#1f2937;
+    color: #111827;
 
-    font-size:18px;
+    font-size: 25px;
 
-    font-weight:700;
+    font-weight: 750;
+
+    margin-bottom: 20px;
+
+}
+
+
+.card h3 {
+
+    color: #1f2937;
+
+    font-size: 18px;
+
+    font-weight: 700;
 
 }
 
 
 /* ==========================================================
-   ==========================================================
-   NEW HORIZONTAL ANALYSIS LOADER
-   ==========================================================
+   FOOTER
 ========================================================== */
 
-/*
-    IMPORTANT
+.footer {
 
-    The old circular SVG loader is NOT used anymore.
+    margin-top: 45px;
 
-    These classes belong to the new loader:
+    padding: 25px;
 
-        .analysis-progress
-        .progress-track
-        .progress-fill
-        .progress-label
-        .loading-status
-        .loading-url
-        .loading-platforms
-*/
+    text-align: center;
+
+    color: #94a3b8;
+
+    font-size: 14px;
+
+    border-top: 1px solid #e5e7eb;
+
+}
 
 
-.analysis-progress{
+/* ==========================================================
+   SCROLLBAR
+========================================================== */
 
-    width:100%;
+::-webkit-scrollbar {
 
-    margin:10px auto 28px;
+    width: 10px;
 
-    position:relative;
+    height: 10px;
+
+}
+
+
+::-webkit-scrollbar-track {
+
+    background: #edf2f7;
+
+}
+
+
+::-webkit-scrollbar-thumb {
+
+    background: #94a3b8;
+
+    border-radius: 20px;
+
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+
+    background: #64748b;
+
+}
+
+/* ==========================================================
+   PART 2
+   HORIZONTAL ANALYSIS LOADER
+========================================================== */
+
+
+/* ==========================================================
+   ANALYSIS PROGRESS CONTAINER
+========================================================== */
+
+.analysis-progress {
+
+    width: 100%;
+
+    margin: 10px auto 28px;
+
+    position: relative;
 
 }
 
@@ -697,22 +725,23 @@ button{
 /* ==========================================================
    PROGRESS TRACK
 ========================================================== */
-.progress-track{
 
-    width:100%;
+.progress-track {
 
-    height:30px;
+    width: 100%;
 
-    background:#e8eef7;
+    height: 30px;
 
-    border-radius:999px;
+    background: #e8eef7;
 
-    overflow:hidden;
+    border-radius: 999px;
 
-    border:1px solid #dbe4f0;
+    overflow: hidden;
+
+    border: 1px solid #dbe4f0;
 
     box-shadow:
-        inset 0 2px 5px rgba(15,23,42,.08);
+        inset 0 2px 5px rgba(15, 23, 42, .08);
 
 }
 
@@ -721,71 +750,58 @@ button{
    PROGRESS FILL
 ========================================================== */
 
-.progress-fill{
+.progress-fill {
 
-    position:relative;
+    position: relative;
 
-    width:0%;
+    width: 0%;
 
-    height:100%;
+    height: 100%;
 
-    min-width:0;
+    min-width: 0;
 
-    border-radius:999px;
+    border-radius: 999px;
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #2563eb 25%,
-
             #3b82f6 25%,
-
             #3b82f6 50%,
-
             #2563eb 50%,
-
             #2563eb 75%,
-
             #3b82f6 75%
-
         );
 
-    background-size:40px 40px;
+    background-size: 40px 40px;
 
     box-shadow:
-
-        0 4px 14px
-        rgba(37,99,235,.28);
+        0 4px 14px rgba(37, 99, 235, .28);
 
     transition:
-
         width .35s linear;
 
     animation:
-
         progress-stripes 1s linear infinite;
 
 }
 
 
 /* ==========================================================
-   MOVING STRIPES
+   MOVING BLUE STRIPES
 ========================================================== */
 
-@keyframes progress-stripes{
+@keyframes progress-stripes {
 
-    from{
+    from {
 
-        background-position:0 0;
+        background-position: 0 0;
 
     }
 
-    to{
+    to {
 
-        background-position:40px 0;
+        background-position: 40px 0;
 
     }
 
@@ -796,46 +812,28 @@ button{
    PROGRESS PERCENTAGE
 ========================================================== */
 
-.progress-label{
+.progress-label {
 
-    position:absolute;
+    position: absolute;
 
-    right:12px;
+    right: 12px;
 
-    top:50%;
+    top: 50%;
 
-    transform:translateY(-50%);
+    transform: translateY(-50%);
 
-    color:#ffffff;
+    color: #ffffff;
 
-    font-size:13px;
+    font-size: 13px;
 
-    font-weight:800;
+    font-weight: 800;
 
-    line-height:1;
+    line-height: 1;
 
     text-shadow:
-        0 1px 3px rgba(0,0,0,.25);
+        0 1px 3px rgba(0, 0, 0, .25);
 
-    white-space:nowrap;
-
-}
-
-
-/*
-    When the progress is very small, the percentage
-    should remain visible instead of disappearing.
-*/
-
-.progress-fill[style*="width:0%"] .progress-label{
-
-    color:#2563eb;
-
-    right:auto;
-
-    left:12px;
-
-    text-shadow:none;
+    white-space: nowrap;
 
 }
 
@@ -844,35 +842,35 @@ button{
    LOADING BOX
 ========================================================== */
 
-.loading-box{
+.loading-box {
 
-    width:100%;
+    width: 100%;
 
-    text-align:center;
+    text-align: center;
 
-    padding:20px 10px 10px;
-
-}
-
-
-.loading-box h2{
-
-    font-size:26px;
-
-    font-weight:800;
-
-    color:#111827;
-
-    margin:15px 0 10px;
+    padding: 20px 10px 10px;
 
 }
 
 
-.loading-box > p{
+.loading-box h2 {
 
-    color:#64748b;
+    font-size: 26px;
 
-    font-size:15px;
+    font-weight: 800;
+
+    color: #111827;
+
+    margin: 15px 0 10px;
+
+}
+
+
+.loading-box > p {
+
+    color: #64748b;
+
+    font-size: 15px;
 
 }
 
@@ -881,50 +879,48 @@ button{
    LOADING STATUS
 ========================================================== */
 
-.loading-status{
+.loading-status {
 
-    min-height:28px;
+    min-height: 28px;
 
-    margin:12px 0 5px !important;
+    margin: 12px 0 5px !important;
 
-    color:#2563eb !important;
+    color: #2563eb !important;
 
-    font-size:16px !important;
+    font-size: 16px !important;
 
-    font-weight:700;
+    font-weight: 700;
 
     transition:
-
         opacity .25s ease,
-
         transform .25s ease;
 
 }
 
 
 /* ==========================================================
-   WEBSITE URL DURING ANALYSIS
+   WEBSITE URL
 ========================================================== */
 
-.loading-url{
+.loading-url {
 
-    display:inline-block;
+    display: inline-block;
 
-    max-width:100%;
+    max-width: 100%;
 
-    margin:5px auto 20px !important;
+    margin: 5px auto 20px !important;
 
-    padding:8px 14px;
+    padding: 8px 14px;
 
-    background:#f1f5f9;
+    background: #f1f5f9;
 
-    border-radius:8px;
+    border-radius: 8px;
 
-    color:#475569 !important;
+    color: #475569 !important;
 
-    font-size:13px !important;
+    font-size: 13px !important;
 
-    word-break:break-all;
+    word-break: break-all;
 
 }
 
@@ -933,68 +929,59 @@ button{
    AI PLATFORM STATUS
 ========================================================== */
 
-.loading-platforms{
+.loading-platforms {
 
-    max-width:420px;
+    max-width: 420px;
 
-    margin:20px auto 0;
+    margin: 20px auto 0;
 
-    padding:18px 22px;
+    padding: 18px 22px;
 
-    background:#f8fafc;
+    background: #f8fafc;
 
-    border:1px solid #e2e8f0;
+    border: 1px solid #e2e8f0;
 
-    border-radius:14px;
+    border-radius: 14px;
 
-    text-align:left;
+    text-align: left;
 
-    color:#475569;
+    color: #475569;
 
-    font-size:14px;
+    font-size: 14px;
 
-    line-height:2;
+    line-height: 2;
 
     box-shadow:
-        0 6px 20px rgba(15,23,42,.05);
+        0 6px 20px rgba(15, 23, 42, .05);
 
 }
 
 
 /* ==========================================================
-   ANALYSIS COMPLETE STATE
+   ANALYSIS COMPLETE
 ========================================================== */
 
-.analysis-complete{
+.analysis-complete {
 
-    color:#16a34a;
+    color: #16a34a;
 
 }
 
 
-.analysis-complete .progress-fill{
+.analysis-complete .progress-fill {
 
     background:
-
         linear-gradient(
-
             135deg,
-
             #16a34a 25%,
-
             #22c55e 25%,
-
             #22c55e 50%,
-
             #16a34a 50%,
-
             #16a34a 75%,
-
             #22c55e 75%
-
         );
 
-    background-size:40px 40px;
+    background-size: 40px 40px;
 
 }
 
@@ -1003,1223 +990,104 @@ button{
    SUMMARY GRID
 ========================================================== */
 
-.summary-grid{
+.summary-grid {
 
-    display:grid;
+    display: grid;
 
     grid-template-columns:
-        repeat(4,minmax(0,1fr));
+        repeat(4, minmax(0, 1fr));
 
-    gap:20px;
+    gap: 20px;
 
-    margin-top:25px;
-
-}
-
-
-.summary-card{
-
-    background:#f8fafc;
-
-    border:1px solid #e2e8f0;
-
-    border-radius:16px;
-
-    padding:22px;
-
-    text-align:center;
-
-    transition:.25s ease;
+    margin-top: 25px;
 
 }
 
 
-.summary-card:hover{
+/* ==========================================================
+   SUMMARY CARD
+========================================================== */
 
-    transform:translateY(-3px);
+.summary-card {
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 16px;
+
+    padding: 22px;
+
+    text-align: center;
+
+    transition: .25s ease;
+
+}
+
+
+.summary-card:hover {
+
+    transform: translateY(-3px);
 
     box-shadow:
-        0 10px 25px rgba(15,23,42,.08);
+        0 10px 25px rgba(15, 23, 42, .08);
 
 }
 
 
-.summary-card h3{
+.summary-card h3 {
 
-    font-size:16px;
+    font-size: 16px;
 
-    margin-bottom:10px;
-
-}
-
-
-.summary-card h1{
-
-    font-size:34px;
-
-    color:#2563eb;
-
-    margin-bottom:5px;
+    margin-bottom: 10px;
 
 }
 
 
-.summary-card span{
+.summary-card h1 {
 
-    color:#64748b;
+    font-size: 34px;
 
-    font-size:13px;
+    color: #2563eb;
+
+    margin-bottom: 5px;
+
+}
+
+
+.summary-card span {
+
+    color: #64748b;
+
+    font-size: 13px;
 
 }
 
 
 /* ==========================================================
-   OVERALL SCORE
+   LOADER TABLET
 ========================================================== */
 
-.overall-card{
+@media (max-width: 992px) {
 
-    display:flex;
+    .progress-track {
 
-    align-items:center;
-
-    justify-content:space-between;
-
-    gap:30px;
-
-    padding:30px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #eff6ff,
-            #f8fafc
-        );
-
-    border:1px solid #dbeafe;
-
-    border-radius:18px;
-
-}
-
-
-.overall-left{
-
-    min-width:160px;
-
-    text-align:center;
-
-}
-
-
-.overall-left h1{
-
-    font-size:64px;
-
-    line-height:1;
-
-    color:#2563eb;
-
-    font-weight:800;
-
-}
-
-
-.grade{
-
-    display:inline-block;
-
-    margin-top:12px;
-
-    padding:7px 14px;
-
-    border-radius:999px;
-
-    background:#dbeafe;
-
-    color:#1d4ed8;
-
-    font-size:14px;
-
-    font-weight:700;
-
-}
-
-
-.overall-right{
-
-    flex:1;
-
-}
-
-
-.overall-right p{
-
-    color:#64748b;
-
-    font-size:16px;
-
-}
-
-/* ==========================================================
-   RESULTS AREA
-========================================================== */
-
-#results{
-
-    margin-top:35px;
-
-}
-
-
-/* ==========================================================
-   OVERALL SCORE
-========================================================== */
-
-.overall-card{
-
-    display:flex;
-
-    justify-content:space-between;
-
-    align-items:center;
-
-    gap:40px;
-
-    flex-wrap:wrap;
-
-}
-
-
-.overall-left{
-
-    flex:1;
-
-}
-
-
-.overall-left h2{
-
-    font-size:30px;
-
-    color:#111827;
-
-}
-
-
-.overall-left h1{
-
-    font-size:90px;
-
-    font-weight:800;
-
-    color:#2563eb;
-
-    margin:20px 0;
-
-}
-
-
-.grade{
-
-    display:inline-flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    padding:10px 22px;
-
-    border-radius:40px;
-
-    background:#16a34a;
-
-    color:#ffffff;
-
-    font-size:18px;
-
-    font-weight:700;
-
-}
-
-
-.overall-right{
-
-    flex:1;
-
-    min-width:320px;
-
-}
-
-
-.overall-right p{
-
-    font-size:17px;
-
-    line-height:1.9;
-
-    color:#475569;
-
-}
-
-
-/* ==========================================================
-   SUMMARY GRID
-========================================================== */
-
-.summary-grid{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(auto-fit,minmax(220px,1fr));
-
-    gap:22px;
-
-    margin-top:35px;
-
-}
-
-
-.summary-card{
-
-    background:#ffffff;
-
-    border:1px solid #e5e7eb;
-
-    border-radius:18px;
-
-    padding:28px;
-
-    text-align:center;
-
-    transition:.3s;
-
-    box-shadow:
-        0 8px 22px rgba(0,0,0,.05);
-
-}
-
-
-.summary-card:hover{
-
-    transform:translateY(-6px);
-
-    box-shadow:
-        0 18px 35px rgba(0,0,0,.10);
-
-}
-
-
-.summary-card h3{
-
-    color:#475569;
-
-    font-size:18px;
-
-    margin-bottom:14px;
-
-}
-
-
-.summary-card h1{
-
-    font-size:48px;
-
-    color:#2563eb;
-
-    margin-bottom:10px;
-
-}
-
-
-.summary-card span{
-
-    color:#64748b;
-
-    font-size:15px;
-
-}
-
-
-/* ==========================================================
-   AI PLATFORM CARDS
-========================================================== */
-
-.score-grid{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(auto-fit,minmax(240px,1fr));
-
-    gap:24px;
-
-    margin-top:30px;
-
-}
-
-
-.score-card{
-
-    background:#ffffff;
-
-    border-radius:18px;
-
-    padding:30px;
-
-    text-align:center;
-
-    border:1px solid #e5e7eb;
-
-    box-shadow:
-        0 10px 25px rgba(0,0,0,.06);
-
-    transition:.3s;
-
-}
-
-
-.score-card:hover{
-
-    transform:translateY(-6px);
-
-    box-shadow:
-        0 18px 40px rgba(0,0,0,.12);
-
-}
-
-
-.score-card h3{
-
-    font-size:20px;
-
-    color:#374151;
-
-    margin-bottom:18px;
-
-    
-}
-
-
-.score-card h1{
-
-    font-size:52px;
-
-    color:#2563eb;
-
-    margin-bottom:10px;
-
-}
-
-
-.score-card p{
-
-    color:#64748b;
-
-}
-
-
-/* ==========================================================
-   TECHNOLOGY GRID
-========================================================== */
-
-.technology-wrapper{
-
-    width:100%;
-
-}
-
-
-.technology-section{
-
-    margin-bottom:35px;
-
-}
-
-
-.technology-section > h3{
-
-    margin-bottom:5px;
-
-}
-
-
-.technology-grid{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(auto-fit,minmax(240px,1fr));
-
-    gap:24px;
-
-    margin-top:30px;
-
-}
-
-
-.technology-card{
-
-    background:#ffffff;
-
-    border-left:5px solid #2563eb;
-
-    border-radius:16px;
-
-    padding:24px;
-
-    box-shadow:
-        0 10px 25px rgba(0,0,0,.06);
-
-    transition:.3s;
-
-}
-
-
-.technology-card:hover{
-
-    transform:translateY(-5px);
-
-    box-shadow:
-        0 16px 32px rgba(0,0,0,.10);
-
-}
-
-
-.technology-card h3{
-
-    font-size:19px;
-
-    color:#111827;
-
-    margin-bottom:12px;
-
-}
-
-
-.technology-card p{
-
-    color:#64748b;
-
-    margin-bottom:15px;
-
-}
-
-
-.technology-card span{
-
-    display:inline-block;
-
-    background:#2563eb;
-
-    color:#ffffff;
-
-    padding:7px 15px;
-
-    border-radius:30px;
-
-    font-size:13px;
-
-    font-weight:700;
-
-}
-
-
-/* ==========================================================
-   INFORMATION TABLE
-========================================================== */
-
-.info-table{
-
-    width:100%;
-
-    border-collapse:collapse;
-
-    margin-top:25px;
-
-    background:#ffffff;
-
-    border-radius:18px;
-
-    overflow:hidden;
-
-}
-
-
-.info-table tr{
-
-    border-bottom:1px solid #e5e7eb;
-
-}
-
-
-.info-table tr:last-child{
-
-    border-bottom:none;
-
-}
-
-
-.info-table td{
-
-    padding:16px 18px;
-
-    vertical-align:top;
-
-    font-size:14px;
-
-}
-
-
-.info-table td:first-child{
-
-    width:30%;
-
-    font-weight:700;
-
-    color:#374151;
-
-    background:#f8fafc;
-
-}
-
-
-.info-table td:last-child{
-
-    color:#64748b;
-
-    word-break:break-word;
-
-}
-
-
-.info-table tr:hover td{
-
-    background:#f8fafc;
-
-}
-
-
-.info-table img{
-
-    max-height:40px;
-
-    width:auto;
-
-    border-radius:6px;
-
-}
-
-
-/* ==========================================================
-   RECOMMENDATION LIST
-========================================================== */
-
-.recommendation-list{
-
-    list-style:none;
-
-    margin-top:20px;
-
-    display:flex;
-
-    flex-direction:column;
-
-    gap:12px;
-
-}
-
-
-.recommendation-list li{
-
-    position:relative;
-
-    padding:15px 18px 15px 45px;
-
-    background:#f8fafc;
-
-    border:1px solid #e2e8f0;
-
-    border-radius:12px;
-
-    color:#475569;
-
-    line-height:1.6;
-
-}
-
-
-.recommendation-list li::before{
-
-    content:"✓";
-
-    position:absolute;
-
-    left:17px;
-
-    top:50%;
-
-    transform:translateY(-50%);
-
-    width:22px;
-
-    height:22px;
-
-    display:flex;
-
-    align-items:center;
-
-    justify-content:center;
-
-    border-radius:50%;
-
-    background:#2563eb;
-
-    color:#ffffff;
-
-    font-size:12px;
-
-    font-weight:800;
-
-}
-
-
-/* ==========================================================
-   ENTITY LIST
-========================================================== */
-
-.entity-list{
-
-    list-style:none;
-
-    display:flex;
-
-    flex-wrap:wrap;
-
-    gap:10px;
-
-    margin:15px 0 25px;
-
-}
-
-
-.entity-list li{
-
-    padding:8px 14px;
-
-    border-radius:30px;
-
-    background:#eff6ff;
-
-    border:1px solid #dbeafe;
-
-    color:#1d4ed8;
-
-    font-size:13px;
-
-    font-weight:600;
-
-}
-
-
-/* ==========================================================
-   TECHNOLOGY WRAPPER
-========================================================== */
-
-.technology-wrapper{
-
-    width:100%;
-
-}
-
-
-.technology-section{
-
-    width:100%;
-
-}
-
-
-/* ==========================================================
-   LLMs STATUS
-========================================================== */
-
-.llms-status{
-
-    display:flex;
-
-    align-items:center;
-
-    gap:12px;
-
-    margin-top:20px;
-
-}
-
-
-.status-found{
-
-    color:#16a34a;
-
-    font-weight:700;
-
-}
-
-
-.status-missing{
-
-    color:#dc2626;
-
-    font-weight:700;
-
-}
-
-
-/* ==========================================================
-   E-E-A-T
-========================================================== */
-
-.eeat-grid{
-
-    display:grid;
-
-    grid-template-columns:
-        repeat(auto-fit,minmax(260px,1fr));
-
-    gap:22px;
-
-    margin-top:30px;
-
-}
-
-
-.eeat-card{
-
-    background:#ffffff;
-
-    border-radius:18px;
-
-    padding:26px;
-
-    border:1px solid #e5e7eb;
-
-    box-shadow:
-        0 8px 20px rgba(0,0,0,.05);
-
-}
-
-
-.eeat-card h3{
-
-    margin-bottom:12px;
-
-    color:#111827;
-
-}
-
-
-.eeat-card p{
-
-    color:#64748b;
-
-    line-height:1.8;
-
-}
-
-
-/* ==========================================================
-   ENTITIES
-========================================================== */
-
-.entity-count{
-
-    font-size:26px;
-
-    font-weight:700;
-
-    color:#2563eb;
-
-    margin-bottom:20px;
-
-}
-
-
-.entity-list{
-
-    padding-left:20px;
-
-    margin-top:15px;
-
-}
-
-
-.entity-list li{
-
-    margin-bottom:12px;
-
-    color:#475569;
-
-    line-height:1.8;
-
-}
-
-
-/* ==========================================================
-   RECOMMENDATIONS
-========================================================== */
-
-.recommendation-list{
-
-    padding-left:22px;
-
-    margin-top:20px;
-
-}
-
-
-.recommendation-list li{
-
-    margin-bottom:15px;
-
-    line-height:1.9;
-
-    color:#374151;
-
-}
-
-
-/* ==========================================================
-   NOTIFICATIONS
-========================================================== */
-
-.notification{
-
-    position:fixed;
-
-    top:25px;
-
-    right:25px;
-
-    min-width:320px;
-
-    max-width:430px;
-
-    padding:18px 22px;
-
-    border-radius:14px;
-
-    color:#ffffff;
-
-    font-weight:600;
-
-    box-shadow:
-        0 15px 40px rgba(0,0,0,.20);
-
-    opacity:0;
-
-    transform:translateY(-20px);
-
-    transition:.35s;
-
-    z-index:9999;
-
-}
-
-
-.notification.show{
-
-    opacity:1;
-
-    transform:translateY(0);
-
-}
-
-
-.notification.success{
-
-    background:#16a34a;
-
-}
-
-
-.notification.error{
-
-    background:#dc2626;
-
-}
-
-
-.notification.warning{
-
-    background:#d97706;
-
-}
-
-
-.notification.info{
-
-    background:#2563eb;
-
-}
-
-
-/* ==========================================================
-   BADGES
-========================================================== */
-
-.badge{
-
-    display:inline-block;
-
-    padding:6px 14px;
-
-    border-radius:30px;
-
-    font-size:13px;
-
-    font-weight:700;
-
-}
-
-
-.badge-success{
-
-    background:#dcfce7;
-
-    color:#166534;
-
-}
-
-
-.badge-warning{
-
-    background:#fef3c7;
-
-    color:#92400e;
-
-}
-
-
-.badge-danger{
-
-    background:#fee2e2;
-
-    color:#991b1b;
-
-}
-
-
-.badge-info{
-
-    background:#dbeafe;
-
-    color:#1d4ed8;
-
-}
-
-
-/* ==========================================================
-   UTILITIES
-========================================================== */
-
-.hidden{
-
-    display:none;
-
-}
-
-
-.text-center{
-
-    text-align:center;
-
-}
-
-
-.mt-20{
-
-    margin-top:20px;
-
-}
-
-
-.mt-30{
-
-    margin-top:30px;
-
-}
-
-
-.mb-20{
-
-    margin-bottom:20px;
-
-}
-
-
-.mb-30{
-
-    margin-bottom:30px;
-
-}
-
-
-/* ==========================================================
-   FOOTER
-========================================================== */
-
-.footer{
-
-    margin-top:45px;
-
-    padding:25px;
-
-    text-align:center;
-
-    color:#94a3b8;
-
-    font-size:14px;
-
-    border-top:1px solid #e5e7eb;
-
-}
-
-
-/* ==========================================================
-   SCROLLBAR
-========================================================== */
-
-::-webkit-scrollbar{
-
-    width:10px;
-
-    height:10px;
-
-}
-::-webkit-scrollbar-track{
-
-    background:#edf2f7;
-
-}
-
-
-::-webkit-scrollbar-thumb{
-
-    background:#94a3b8;
-
-    border-radius:20px;
-
-}
-
-
-::-webkit-scrollbar-thumb:hover{
-
-    background:#64748b;
-
-}
-
-
-/* ==========================================================
-   TABLET
-========================================================== */
-
-@media(max-width:992px){
-
-    .dashboard{
-
-        flex-direction:column;
+        height: 28px;
 
     }
 
 
-    .sidebar{
+    .loading-box {
 
-        width:100%;
-
-        padding:20px;
+        padding: 45px 20px 15px;
 
     }
 
 
-    .menu{
+    .summary-grid {
 
-        flex-direction:row;
-
-        flex-wrap:wrap;
-
-        gap:10px;
-
-    }
-
-
-    .menu li{
-
-        margin:0;
-
-    }
-
-
-    .logout-menu{
-
-        margin-top:0;
-
-    }
-
-
-    .main-content{
-
-        padding:25px;
-
-    }
-
-
-    .topbar{
-
-        flex-direction:column;
-
-        align-items:flex-start;
-
-    }
-
-
-    .profile-card{
-
-        width:100%;
-
-    }
-
-
-    .overall-card{
-
-        flex-direction:column;
-
-        text-align:center;
-
-    }
-
-
-    .overall-left h1{
-
-        font-size:70px;
-
-    }
-
-
-    /* ----------------------------------------------
-       HORIZONTAL LOADER — TABLET
-    ---------------------------------------------- */
-
-    .progress-track{
-
-        height:28px;
-
-    }
-
-
-    .loading-box{
-
-        padding:55px 20px;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
 
     }
 
@@ -2227,168 +1095,78 @@ button{
 
 
 /* ==========================================================
-   MOBILE
+   LOADER MOBILE
 ========================================================== */
 
-@media(max-width:768px){
+@media (max-width: 768px) {
 
-    .main-content{
+    .analysis-progress {
 
-        padding:18px;
+        width: 100%;
 
-    }
-
-
-    .card,
-    .search-card{
-
-        padding:22px;
+        margin-top: 5px;
 
     }
 
 
-    .page-title h1{
+    .progress-track {
 
-        font-size:28px;
-
-    }
-
-
-    .page-title p{
-
-        font-size:15px;
+        height: 26px;
 
     }
 
 
-    .topbar{
+    .progress-label {
 
-        flex-direction:column;
+        font-size: 12px;
 
-        align-items:flex-start;
-
-        gap:18px;
+        right: 10px;
 
     }
 
 
-    .profile-card{
+    .loading-box {
 
-        width:100%;
-
-    }
-
-
-    .input-group{
-
-        flex-direction:column;
+        padding: 40px 5px 15px;
 
     }
 
 
-    .input-group input,
-    .analyze-btn,
-    .reset-btn{
+    .loading-box h2 {
 
-        width:100%;
-
-        min-width:100%;
+        font-size: 24px;
 
     }
 
 
-    .summary-grid,
-    .score-grid,
-    .technology-grid,
-    .eeat-grid{
+    .loading-status {
 
-        grid-template-columns:1fr;
+        font-size: 14px !important;
 
     }
 
 
-    .info-table td{
+    .loading-url {
 
-        display:block;
-
-        width:100%;
+        max-width: 95%;
 
     }
 
 
-    .info-table tr{
+    .loading-platforms {
 
-        display:block;
+        max-width: 100%;
 
-        margin-bottom:18px;
+        padding: 15px;
 
-    }
-
-
-    /* ----------------------------------------------
-       HORIZONTAL LOADER — MOBILE
-    ---------------------------------------------- */
-
-    .analysis-progress{
-
-        width:100%;
-
-        margin-top:5px;
+        font-size: 13px;
 
     }
 
 
-    .progress-track{
+    .summary-grid {
 
-        height:26px;
-
-    }
-
-
-    .progress-label{
-
-        font-size:12px;
-
-        right:10px;
-
-    }
-
-
-    .loading-box{
-
-        padding:45px 5px 15px;
-
-    }
-
-
-    .loading-box h2{
-
-        font-size:24px;
-
-    }
-
-
-    .loading-status{
-
-        font-size:14px !important;
-
-    }
-
-
-    .loading-url{
-
-        max-width:95%;
-
-    }
-
-
-    .loading-platforms{
-
-        max-width:100%;
-
-        padding:15px;
-
-        font-size:13px;
+        grid-template-columns: 1fr;
 
     }
 
@@ -2399,54 +1177,2210 @@ button{
    SMALL MOBILE
 ========================================================== */
 
-@media(max-width:480px){
+@media (max-width: 480px) {
 
-    .sidebar-top h2{
+    .progress-track {
 
-        font-size:24px;
+        height: 24px;
 
     }
 
 
-    .overall-left h1{
+    .progress-label {
 
-        font-size:52px;
+        font-size: 11px;
+
+        right: 8px;
+
+    }
+
+
+    .loading-box h2 {
+
+        font-size: 21px;
+
+    }
+
+
+    .loading-platforms {
+
+        font-size: 12px;
+
+        line-height: 1.8;
+
+    }
+
+}
+
+/* ==========================================================
+   PART 3
+   OVERALL AI VISIBILITY + AI PLATFORM SCORES
+========================================================== */
+
+
+/* ==========================================================
+   OVERALL SCORE CARD
+========================================================== */
+
+.overall-card {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 40px;
+
+    width: 100%;
+
+    padding: 30px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eff6ff,
+            #f8fafc
+        );
+
+    border: 1px solid #dbeafe;
+
+    border-radius: 18px;
+
+}
+
+
+/* ==========================================================
+   OVERALL SCORE LEFT
+========================================================== */
+
+.overall-left {
+
+    flex: 1;
+
+    min-width: 180px;
+
+    text-align: center;
+
+}
+
+
+.overall-left h1 {
+
+    font-size: 90px;
+
+    line-height: 1;
+
+    font-weight: 800;
+
+    color: #2563eb;
+
+    margin: 20px 0;
+
+}
+
+
+/* ==========================================================
+   GRADE BADGE
+========================================================== */
+
+.grade {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 10px 22px;
+
+    border-radius: 40px;
+
+    background: #16a34a;
+
+    color: #ffffff;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+}
+
+
+/* ==========================================================
+   OVERALL SCORE RIGHT
+========================================================== */
+
+.overall-right {
+
+    flex: 1;
+
+    min-width: 320px;
+
+}
+
+
+.overall-right p {
+
+    font-size: 17px;
+
+    line-height: 1.9;
+
+    color: #475569;
+
+}
+
+
+/* ==========================================================
+   AI PLATFORM SCORE SECTION
+========================================================== */
+
+.score-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+
+    gap: 24px;
+
+    margin-top: 30px;
+
+    width: 100%;
+
+}
+
+
+/* ==========================================================
+   AI SCORE CARD
+========================================================== */
+
+.score-card {
+
+    width: 100%;
+
+    min-width: 0;
+
+    min-height: 255px;
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, .06);
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition:
+        transform .3s ease,
+        box-shadow .3s ease;
+
+}
+
+
+.score-card:hover {
+
+    transform: translateY(-6px);
+
+    box-shadow:
+        0 18px 40px rgba(0, 0, 0, .12);
+
+}
+
+
+/* ==========================================================
+   PLATFORM NAME
+========================================================== */
+
+.score-card h3 {
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+    color: #374151;
+
+    margin-bottom: 18px;
+
+    line-height: 1.4;
+
+}
+
+
+/* ==========================================================
+   PLATFORM SCORE
+========================================================== */
+
+.score-card h1 {
+
+    font-size: 52px;
+
+    line-height: 1;
+
+    font-weight: 800;
+
+    color: #2563eb;
+
+    margin-bottom: 14px;
+
+}
+
+
+/* ==========================================================
+   PLATFORM DESCRIPTION
+========================================================== */
+
+.score-card p {
+
+    color: #64748b;
+
+    font-size: 15px;
+
+    margin: 0;
+
+}
+
+
+/* ==========================================================
+   SECOND ROW — LAST THREE CARDS
+========================================================== */
+
+/*
+    Cards 1–4:
+    ChatGPT
+    Gemini
+    Claude
+    Perplexity
+
+    Cards 5–7:
+    Grok
+    Google AI Mode
+    DeepSeek
+
+    The last three cards are positioned
+    in the center of the second row.
+*/
+
+
+.score-card:nth-child(5) {
+
+    grid-column: 1 / 2;
+
+    margin-left: 50%;
+
+}
+
+
+.score-card:nth-child(6) {
+
+    grid-column: 2 / 3;
+
+}
+
+
+.score-card:nth-child(7) {
+
+    grid-column: 3 / 4;
+
+    margin-right: 50%;
+
+}
+
+
+/* ==========================================================
+   AI PLATFORM SCORE LABEL
+========================================================== */
+
+.score-card::after {
+
+    content: "AI Visibility Score";
+
+    display: block;
+
+    margin-top: 2px;
+
+    color: #64748b;
+
+    font-size: 15px;
+
+}
+
+
+/* ==========================================================
+   OVERALL SCORE TABLET
+========================================================== */
+
+@media (max-width: 1100px) {
+
+    .score-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+
+    /*
+       Reset desktop positioning.
+       Tablet uses normal 2-column layout.
+    */
+
+    .score-card:nth-child(5),
+    .score-card:nth-child(6),
+    .score-card:nth-child(7) {
+
+        grid-column: auto;
+
+        margin-left: 0;
+
+        margin-right: 0;
+
+    }
+
+
+    .overall-card {
+
+        gap: 25px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   TABLET — OVERALL CARD
+========================================================== */
+
+@media (max-width: 992px) {
+
+    .overall-card {
+
+        flex-direction: column;
+
+        text-align: center;
+
+    }
+
+
+    .overall-left {
+
+        width: 100%;
+
+    }
+
+
+    .overall-right {
+
+        width: 100%;
+
+        min-width: 0;
+
+    }
+
+
+    .overall-left h1 {
+
+        font-size: 70px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .score-grid {
+
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+
+    }
+
+
+    .score-card {
+
+        min-height: 220px;
+
+        padding: 25px;
+
+    }
+
+
+    /*
+       Remove desktop row positioning.
+    */
+
+    .score-card:nth-child(5),
+    .score-card:nth-child(6),
+    .score-card:nth-child(7) {
+
+        grid-column: auto;
+
+        margin-left: 0;
+
+        margin-right: 0;
+
+    }
+
+
+    .overall-card {
+
+        padding: 25px;
+
+    }
+
+
+    .overall-left h1 {
+
+        font-size: 60px;
+
+    }
+
+
+    .overall-right p {
+
+        font-size: 15px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   SMALL MOBILE
+========================================================== */
+
+@media (max-width: 480px) {
+
+    .score-card {
+
+        min-height: 200px;
+
+        padding: 22px;
+
+    }
+
+
+    .score-card h3 {
+
+        font-size: 18px;
+
+    }
+
+
+    .score-card h1 {
+
+        font-size: 46px;
+
+    }
+
+
+    .score-card::after {
+
+        font-size: 13px;
+
+    }
+
+
+    .overall-left h1 {
+
+        font-size: 52px;
+
+    }
+
+
+    .grade {
+
+        font-size: 15px;
+
+        padding: 8px 18px;
+
+    }
+
+}
+
+/* ==========================================================
+   PART 4
+   TECHNOLOGY DETECTION
+========================================================== */
+
+
+/* ==========================================================
+   TECHNOLOGY MAIN WRAPPER
+========================================================== */
+
+.technology-wrapper {
+
+    width: 100%;
+
+}
+
+
+/* ==========================================================
+   TECHNOLOGY CATEGORY SECTION
+========================================================== */
+
+.technology-section {
+
+    width: 100%;
+
+    margin-bottom: 40px;
+
+}
+
+
+/* ==========================================================
+   CATEGORY TITLE
+========================================================== */
+
+.technology-section > h3 {
+
+    margin: 0 0 20px 0;
+
+    font-size: 20px;
+
+    font-weight: 700;
+
+    color: #111827;
+
+}
+
+
+/* ==========================================================
+   TECHNOLOGY GRID
+========================================================== */
+
+/*
+    IMPORTANT:
+
+    Exactly TWO technology cards per row
+    on desktop.
+
+    This prevents long vertical scrolling.
+*/
+
+.technology-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 24px;
+
+    width: 100%;
+
+    margin-top: 20px;
+
+}
+
+
+/* ==========================================================
+   TECHNOLOGY CARD
+========================================================== */
+
+.technology-card {
+
+    width: 100%;
+
+    min-width: 0;
+
+    min-height: 190px;
+
+    background: #ffffff;
+
+    border-left: 5px solid #2563eb;
+
+    border-radius: 16px;
+
+    padding: 24px;
+
+    box-shadow:
+        0 10px 25px rgba(0, 0, 0, .06);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+
+}
+
+
+/* ==========================================================
+   TECHNOLOGY CARD HOVER
+========================================================== */
+
+.technology-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 16px 32px rgba(0, 0, 0, .10);
+
+}
+
+
+/* ==========================================================
+   TECHNOLOGY NAME
+========================================================== */
+
+.technology-card h3 {
+
+    font-size: 19px;
+
+    font-weight: 700;
+
+    color: #111827;
+
+    margin-bottom: 14px;
+
+    line-height: 1.4;
+
+}
+
+
+/* ==========================================================
+   TECHNOLOGY DETAILS
+========================================================== */
+
+.technology-card p {
+
+    color: #64748b;
+
+    font-size: 15px;
+
+    line-height: 1.7;
+
+    margin-bottom: 10px;
+
+}
+
+
+/* ==========================================================
+   CONFIDENCE VALUE
+========================================================== */
+
+.technology-card strong {
+
+    color: #2563eb;
+
+    font-weight: 700;
+
+}
+
+
+/* ==========================================================
+   EVIDENCE
+========================================================== */
+
+.technology-card p:last-child {
+
+    margin-bottom: 0;
+
+}
+
+
+/* ==========================================================
+   TECHNOLOGY CARD — EMPTY STATE
+========================================================== */
+
+.technology-wrapper > p {
+
+    color: #64748b;
+
+    font-size: 15px;
+
+    padding: 20px 0;
+
+}
+
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 992px) {
+
+    .technology-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap: 20px;
+
+    }
+
+
+    .technology-card {
+
+        padding: 22px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .technology-grid {
+
+        grid-template-columns: 1fr;
+
+        gap: 18px;
+
+    }
+
+
+    .technology-card {
+
+        min-height: auto;
+
+        padding: 20px;
+
+    }
+
+
+    .technology-section {
+
+        margin-bottom: 30px;
+
+    }
+
+
+    .technology-section > h3 {
+
+        font-size: 19px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   SMALL MOBILE
+========================================================== */
+
+@media (max-width: 480px) {
+
+    .technology-grid {
+
+        grid-template-columns: 1fr;
+
+    }
+
+
+    .technology-card {
+
+        padding: 18px;
+
+        border-left-width: 4px;
+
+    }
+
+
+    .technology-card h3 {
+
+        font-size: 17px;
+
+    }
+
+
+    .technology-card p {
+
+        font-size: 14px;
+
+    }
+
+}
+
+/* ==========================================================
+   PART 5
+   INFORMATION TABLES
+   TECHNICAL SEO
+   WEBSITE AUDIT
+   OPEN GRAPH
+   TWITTER CARDS
+   LLMS.TXT
+========================================================== */
+
+
+/* ==========================================================
+   INFORMATION TABLE
+========================================================== */
+
+.info-table {
+
+    width: 100%;
+
+    border-collapse: collapse;
+
+    margin-top: 25px;
+
+    background: #ffffff;
+
+    border-radius: 16px;
+
+    overflow: hidden;
+
+}
+
+
+/* ==========================================================
+   TABLE ROW
+========================================================== */
+
+.info-table tr {
+
+    border-bottom: 1px solid #e5e7eb;
+
+}
+
+
+.info-table tr:last-child {
+
+    border-bottom: none;
+
+}
+
+
+/* ==========================================================
+   TABLE CELLS
+========================================================== */
+
+.info-table td {
+
+    padding: 16px 18px;
+
+    vertical-align: top;
+
+    font-size: 14px;
+
+    line-height: 1.7;
+
+}
+
+
+/* ==========================================================
+   FIRST COLUMN
+========================================================== */
+
+.info-table td:first-child {
+
+    width: 30%;
+
+    font-weight: 700;
+
+    color: #374151;
+
+    background: #f8fafc;
+
+}
+
+
+/* ==========================================================
+   SECOND COLUMN
+========================================================== */
+
+.info-table td:last-child {
+
+    color: #64748b;
+
+    word-break: break-word;
+
+}
+
+
+/* ==========================================================
+   TABLE HOVER
+========================================================== */
+
+.info-table tr:hover td {
+
+    background: #f8fafc;
+
+}
+
+
+/* ==========================================================
+   TABLE IMAGES
+========================================================== */
+
+.info-table img {
+
+    max-height: 40px;
+
+    width: auto;
+
+    border-radius: 6px;
+
+}
+
+
+/* ==========================================================
+   BASIC INFORMATION
+========================================================== */
+
+.basic-information {
+
+    width: 100%;
+
+}
+
+
+/* ==========================================================
+   TECHNICAL SEO
+========================================================== */
+
+.technical-seo {
+
+    width: 100%;
+
+}
+
+
+/* ==========================================================
+   WEBSITE AUDIT
+========================================================== */
+
+.website-audit {
+
+    width: 100%;
+
+}
+
+
+/* ==========================================================
+   STATUS TEXT
+========================================================== */
+
+.status-found {
+
+    color: #16a34a;
+
+    font-weight: 700;
+
+}
+
+
+.status-missing {
+
+    color: #dc2626;
+
+    font-weight: 700;
+
+}
+
+
+/* ==========================================================
+   SUCCESS STATUS
+========================================================== */
+
+.status-success {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    color: #16a34a;
+
+    font-weight: 700;
+
+}
+
+
+/* ==========================================================
+   WARNING STATUS
+========================================================== */
+
+.status-warning {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    color: #d97706;
+
+    font-weight: 700;
+
+}
+
+
+/* ==========================================================
+   ERROR STATUS
+========================================================== */
+
+.status-error {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 6px;
+
+    color: #dc2626;
+
+    font-weight: 700;
+
+}
+
+
+/* ==========================================================
+   OPEN GRAPH
+========================================================== */
+
+.open-graph {
+
+    width: 100%;
+
+}
+
+
+/* ==========================================================
+   OPEN GRAPH TAGS
+========================================================== */
+
+.open-graph-tags {
+
+    width: 100%;
+
+    margin-top: 20px;
+
+}
+
+
+/* ==========================================================
+   TWITTER CARDS
+========================================================== */
+
+.twitter-cards {
+
+    width: 100%;
+
+}
+
+
+/* ==========================================================
+   TWITTER META TAGS
+========================================================== */
+
+.twitter-meta-tags {
+
+    width: 100%;
+
+    margin-top: 20px;
+
+}
+
+
+/* ==========================================================
+   LLMS.TXT
+========================================================== */
+
+.llms-status {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin-top: 20px;
+
+}
+
+
+/* ==========================================================
+   LLMs URL
+========================================================== */
+
+.llms-url {
+
+    display: inline-block;
+
+    max-width: 100%;
+
+    padding: 8px 14px;
+
+    background: #f1f5f9;
+
+    border-radius: 8px;
+
+    color: #475569;
+
+    font-size: 13px;
+
+    word-break: break-all;
+
+}
+
+
+/* ==========================================================
+   LLMs PREVIEW
+========================================================== */
+
+.llms-preview {
+
+    margin-top: 20px;
+
+    padding: 18px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    color: #475569;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+
+    overflow-x: auto;
+
+}
+
+
+/* ==========================================================
+   CODE / URL TEXT
+========================================================== */
+
+.info-table code {
+
+    display: inline-block;
+
+    padding: 3px 7px;
+
+    background: #f1f5f9;
+
+    border-radius: 5px;
+
+    color: #334155;
+
+    font-size: 12px;
+
+    word-break: break-all;
+
+}
+
+
+/* ==========================================================
+   LONG TEXT
+========================================================== */
+
+.info-table td {
+
+    overflow-wrap: anywhere;
+
+}
+
+
+/* ==========================================================
+   TECHNICAL SEO — BADGES
+========================================================== */
+
+.seo-badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 5px 11px;
+
+    border-radius: 999px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+}
+
+
+.seo-badge.yes {
+
+    background: #dcfce7;
+
+    color: #166534;
+
+}
+
+
+.seo-badge.no {
+
+    background: #fee2e2;
+
+    color: #991b1b;
+
+}
+
+
+.seo-badge.warning {
+
+    background: #fef3c7;
+
+    color: #92400e;
+
+}
+
+
+/* ==========================================================
+   FAVICON
+========================================================== */
+
+.info-table .favicon {
+
+    width: 40px;
+
+    height: 40px;
+
+    object-fit: contain;
+
+    border-radius: 6px;
+
+    border: 1px solid #e5e7eb;
+
+    background: #ffffff;
+
+}
+
+
+/* ==========================================================
+   MOBILE TABLE
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .info-table {
+
+        display: block;
+
+        width: 100%;
+
+    }
+
+
+    .info-table tbody {
+
+        display: block;
+
+        width: 100%;
+
+    }
+
+
+    .info-table tr {
+
+        display: block;
+
+        width: 100%;
+
+        margin-bottom: 16px;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 12px;
+
+        overflow: hidden;
+
+        background: #ffffff;
+
+    }
+
+
+    .info-table td {
+
+        display: block;
+
+        width: 100% !important;
+
+        padding: 13px 15px;
+
+    }
+
+
+    .info-table td:first-child {
+
+        background: #f8fafc;
+
+        border-bottom: 1px solid #e5e7eb;
+
+    }
+
+
+    .info-table td:last-child {
+
+        background: #ffffff;
+
+    }
+
+
+    .llms-status {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    .llms-url {
+
+        max-width: 100%;
+
+    }
+
+}
+
+
+/* ==========================================================
+   SMALL MOBILE TABLE
+========================================================== */
+
+@media (max-width: 480px) {
+
+    .info-table td {
+
+        padding: 12px;
+
+        font-size: 13px;
+
+    }
+
+
+    .llms-preview {
+
+        padding: 14px;
+
+        font-size: 12px;
+
+    }
+
+}   
+
+
+/* ==========================================================
+   PART 6
+   E-E-A-T
+   ENTITY ANALYSIS
+   RECOMMENDATIONS
+   NOTIFICATIONS
+   BADGES
+   UTILITIES
+   FINAL RESPONSIVE
+   PRINT
+========================================================== */
+
+
+/* ==========================================================
+   E-E-A-T
+========================================================== */
+
+.eeat-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fit, minmax(260px, 1fr));
+
+    gap: 22px;
+
+    margin-top: 30px;
+
+}
+
+
+.eeat-card {
+
+    background: #ffffff;
+
+    border-radius: 18px;
+
+    padding: 26px;
+
+    border: 1px solid #e5e7eb;
+
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, .05);
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease;
+
+}
+
+
+.eeat-card:hover {
+
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 15px 30px rgba(0, 0, 0, .09);
+
+}
+
+
+.eeat-card h3 {
+
+    margin-bottom: 12px;
+
+    color: #111827;
+
+}
+
+
+.eeat-card p {
+
+    color: #64748b;
+
+    line-height: 1.8;
+
+}
+
+
+/* ==========================================================
+   E-E-A-T SCORE
+========================================================== */
+
+.eeat-score {
+
+    font-size: 42px;
+
+    font-weight: 800;
+
+    color: #2563eb;
+
+}
+
+
+/* ==========================================================
+   ENTITY ANALYSIS
+========================================================== */
+
+.entity-count {
+
+    font-size: 26px;
+
+    font-weight: 700;
+
+    color: #2563eb;
+
+    margin-bottom: 20px;
+
+}
+
+
+/* ==========================================================
+   ENTITY LIST
+========================================================== */
+
+.entity-list {
+
+    list-style: none;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin: 15px 0 25px;
+
+    padding: 0;
+
+}
+
+
+.entity-list li {
+
+    padding: 8px 14px;
+
+    border-radius: 30px;
+
+    background: #eff6ff;
+
+    border: 1px solid #dbeafe;
+
+    color: #1d4ed8;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    line-height: 1.5;
+
+}
+
+
+/* ==========================================================
+   ENTITY GROUP
+========================================================== */
+
+.entity-group {
+
+    margin-top: 25px;
+
+}
+
+
+.entity-group h3 {
+
+    margin-bottom: 12px;
+
+}
+
+
+/* ==========================================================
+   RECOMMENDATIONS
+========================================================== */
+
+.recommendation-list {
+
+    list-style: none;
+
+    padding: 0;
+
+    margin-top: 20px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 12px;
+
+}
+
+
+.recommendation-list li {
+
+    position: relative;
+
+    padding: 15px 18px 15px 48px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    color: #374151;
+
+    line-height: 1.7;
+
+}
+
+
+.recommendation-list li::before {
+
+    content: "✓";
+
+    position: absolute;
+
+    left: 17px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    width: 22px;
+
+    height: 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #2563eb;
+
+    color: #ffffff;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+}
+
+
+/* ==========================================================
+   RECOMMENDATION EMPTY STATE
+========================================================== */
+
+.recommendations-empty {
+
+    padding: 20px;
+
+    background: #f0fdf4;
+
+    border: 1px solid #bbf7d0;
+
+    border-radius: 12px;
+
+    color: #166534;
+
+    font-weight: 600;
+
+}
+
+
+/* ==========================================================
+   NOTIFICATIONS
+========================================================== */
+
+.notification {
+
+    position: fixed;
+
+    top: 25px;
+
+    right: 25px;
+
+    min-width: 320px;
+
+    max-width: 430px;
+
+    padding: 18px 22px;
+
+    border-radius: 14px;
+
+    color: #ffffff;
+
+    font-weight: 600;
+
+    box-shadow:
+        0 15px 40px rgba(0, 0, 0, .20);
+
+    opacity: 0;
+
+    transform: translateY(-20px);
+
+    transition: .35s ease;
+
+    z-index: 9999;
+
+}
+
+
+.notification.show {
+
+    opacity: 1;
+
+    transform: translateY(0);
+
+}
+
+
+.notification.success {
+
+    background: #16a34a;
+
+}
+
+
+.notification.error {
+
+    background: #dc2626;
+
+}
+
+
+.notification.warning {
+
+    background: #d97706;
+
+}
+
+
+.notification.info {
+
+    background: #2563eb;
+
+}
+
+
+/* ==========================================================
+   BADGES
+========================================================== */
+
+.badge {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 6px 14px;
+
+    border-radius: 30px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+
+}
+
+
+.badge-success {
+
+    background: #dcfce7;
+
+    color: #166534;
+
+}
+
+
+.badge-warning {
+
+    background: #fef3c7;
+
+    color: #92400e;
+
+}
+
+
+.badge-danger {
+
+    background: #fee2e2;
+
+    color: #991b1b;
+
+}
+
+
+.badge-info {
+
+    background: #dbeafe;
+
+    color: #1d4ed8;
+
+}
+
+
+/* ==========================================================
+   STATUS BADGES
+========================================================== */
+
+.status-found {
+
+    color: #16a34a;
+
+    font-weight: 700;
+
+}
+
+
+.status-missing {
+
+    color: #dc2626;
+
+    font-weight: 700;
+
+}
+
+
+/* ==========================================================
+   UTILITY CLASSES
+========================================================== */
+
+.hidden {
+
+    display: none !important;
+
+}
+
+
+.text-center {
+
+    text-align: center;
+
+}
+
+
+.mt-20 {
+
+    margin-top: 20px;
+
+}
+
+
+.mt-30 {
+
+    margin-top: 30px;
+
+}
+
+
+.mb-20 {
+
+    margin-bottom: 20px;
+
+}
+
+
+.mb-30 {
+
+    margin-bottom: 30px;
+
+}
+
+
+/* ==========================================================
+   GENERAL RESPONSIVE — TABLET
+========================================================== */
+
+@media (max-width: 992px) {
+
+    .dashboard {
+
+        flex-direction: column;
+
+    }
+
+
+    .sidebar {
+
+        width: 100%;
+
+        min-width: 100%;
+
+        padding: 20px;
+
+    }
+
+
+    .sidebar-top {
+
+        margin-bottom: 20px;
+
+    }
+
+
+    .menu {
+
+        flex-direction: row;
+
+        flex-wrap: wrap;
+
+        gap: 10px;
+
+    }
+
+
+    .menu li {
+
+        flex: 0 0 auto;
+
+    }
+
+
+    .logout-menu {
+
+        margin-top: 0;
+
+    }
+
+
+    .main-content {
+
+        padding: 25px;
+
+    }
+
+
+    .topbar {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    .profile-card {
+
+        width: 100%;
+
+    }
+
+
+    .eeat-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+
+    .notification {
+
+        right: 20px;
+
+        left: 20px;
+
+        min-width: 0;
+
+        max-width: none;
+
+    }
+
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .main-content {
+
+        padding: 18px;
+
+    }
+
+
+    .card,
+    .search-card {
+
+        padding: 22px;
+
+    }
+
+
+    .page-title h1 {
+
+        font-size: 28px;
+
+    }
+
+
+    .page-title p {
+
+        font-size: 15px;
+
+    }
+
+
+    .topbar {
+
+        gap: 18px;
+
+    }
+
+
+    .profile-card {
+
+        width: 100%;
 
     }
 
 
     /* ----------------------------------------------
-       LOADER — SMALL MOBILE
+       SEARCH
     ---------------------------------------------- */
 
-    .progress-track{
+    .input-group {
 
-        height:24px;
+        flex-direction: column;
 
-    }
-
-
-    .progress-label{
-
-        font-size:11px;
-
-        right:8px;
+        align-items: stretch;
 
     }
 
 
-    .loading-box h2{
+    .input-group input,
+    .analyze-btn,
+    .reset-btn {
 
-        font-size:21px;
+        width: 100%;
+
+        min-width: 100%;
 
     }
 
 
-    .loading-platforms{
+    /* ----------------------------------------------
+       E-E-A-T
+    ---------------------------------------------- */
 
-        font-size:12px;
+    .eeat-grid {
 
-        line-height:1.8;
+        grid-template-columns: 1fr;
+
+    }
+
+
+    /* ----------------------------------------------
+       ENTITY
+    ---------------------------------------------- */
+
+    .entity-list {
+
+        gap: 8px;
+
+    }
+
+
+    .entity-list li {
+
+        font-size: 12px;
+
+        padding: 7px 11px;
+
+    }
+
+
+    /* ----------------------------------------------
+       RECOMMENDATIONS
+    ---------------------------------------------- */
+
+    .recommendation-list li {
+
+        padding: 14px 15px 14px 44px;
+
+    }
+
+
+    /* ----------------------------------------------
+       NOTIFICATIONS
+    ---------------------------------------------- */
+
+    .notification {
+
+        top: 15px;
+
+        right: 15px;
+
+        left: 15px;
+
+        padding: 15px 17px;
+
+        font-size: 14px;
+
+    }
+
+}
+
+
+/* ==========================================================
+   SMALL MOBILE
+========================================================== */
+
+@media (max-width: 480px) {
+
+    .main-content {
+
+        padding: 14px;
+
+    }
+
+
+    .card,
+    .search-card {
+
+        padding: 18px;
+
+        border-radius: 16px;
+
+    }
+
+
+    .sidebar-top h2 {
+
+        font-size: 24px;
+
+    }
+
+
+    .menu li {
+
+        padding: 12px 14px;
+
+        font-size: 14px;
+
+    }
+
+
+    .menu-icon {
+
+        font-size: 17px;
+
+        width: 20px;
+
+    }
+
+
+    .user-card {
+
+        gap: 10px;
+
+    }
+
+
+    .profile-image {
+
+        width: 50px;
+
+        height: 50px;
+
+    }
+
+
+    .user-info h3 {
+
+        font-size: 15px;
+
+    }
+
+
+    .user-info p {
+
+        font-size: 12px;
+
+    }
+
+
+    .recommendation-list li {
+
+        font-size: 13px;
+
+        line-height: 1.6;
 
     }
 
@@ -2457,32 +3391,113 @@ button{
    PRINT
 ========================================================== */
 
-@media print{
+@media print {
 
     .sidebar,
     .analyze-btn,
     .reset-btn,
-    .notification{
+    .notification {
 
-        display:none;
-
-    }
-
-
-    .main-content{
-
-        padding:0;
+        display: none !important;
 
     }
 
 
-    .card{
+    .main-content {
 
-        box-shadow:none;
+        padding: 0;
 
-        border:1px solid #d1d5db;
+    }
 
-        page-break-inside:avoid;
+
+    .card {
+
+        box-shadow: none;
+
+        border: 1px solid #d1d5db;
+
+        page-break-inside: avoid;
+
+    }
+
+}
+
+
+/* ==========================================================
+   FINAL AI PLATFORM GRID FIX
+========================================================== */
+
+@media (min-width: 1101px) {
+
+    .score-grid {
+
+        grid-template-columns:
+            repeat(4, minmax(0, 1fr));
+
+    }
+
+
+    .score-card:nth-child(5) {
+
+        grid-column: 1 / 2;
+
+        margin-left: 50%;
+
+    }
+
+
+    .score-card:nth-child(6) {
+
+        grid-column: 2 / 3;
+
+        margin-left: 0;
+
+        margin-right: 0;
+
+    }
+
+
+    .score-card:nth-child(7) {
+
+        grid-column: 3 / 4;
+
+        margin-right: 50%;
+
+    }
+
+}
+
+
+@media (max-width: 1100px) {
+
+    .score-grid {
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+    }
+
+
+    .score-card:nth-child(5),
+    .score-card:nth-child(6),
+    .score-card:nth-child(7) {
+
+        grid-column: auto;
+
+        margin-left: 0;
+
+        margin-right: 0;
+
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .score-grid {
+
+        grid-template-columns: 1fr;
 
     }
 
