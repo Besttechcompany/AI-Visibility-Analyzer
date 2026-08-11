@@ -6,6 +6,7 @@ from services.chatgpt import ChatGPTAnalyzer
 from services.gemini import GeminiAnalyzer
 from services.claude import ClaudeAnalyzer
 from services.perplexity import PerplexityAnalyzer
+
 from services.entities import EntityAnalyzer
 from services.recommendations import RecommendationAnalyzer
 from services.score import ScoreAnalyzer
@@ -14,6 +15,7 @@ from services.audit import AuditAnalyzer
 from services.technical_seo import TechnicalSEOAnalyzer
 from services.technology.technology import TechnologyAnalyzer
 from services.browser.browser import BrowserManager
+
 from services.grok import GrokAnalyzer
 from services.google_ai_mode import GoogleAIModeAnalyzer
 from services.deepseek import DeepSeekAnalyzer
@@ -26,10 +28,15 @@ class WebsiteAnalyzer:
 
         try:
 
+            # =====================================================
+            # HTTP REQUEST
+            # =====================================================
+
             headers = {
                 "User-Agent": (
                     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "AppleWebKit/537.36 "
+                    "(KHTML, like Gecko) "
                     "Chrome/137.0 Safari/537.36"
                 )
             }
@@ -43,10 +50,18 @@ class WebsiteAnalyzer:
 
             response.raise_for_status()
 
+            # =====================================================
+            # PARSE WEBSITE
+            # =====================================================
+
             soup = BeautifulSoup(
                 response.text,
                 "lxml"
             )
+
+            # =====================================================
+            # BASIC INFORMATION
+            # =====================================================
 
             title = (
                 soup.title.string.strip()
@@ -58,17 +73,26 @@ class WebsiteAnalyzer:
 
             meta = soup.find(
                 "meta",
-                attrs={"name": "description"}
+                attrs={
+                    "name": "description"
+                }
             )
 
             if meta:
-                description = meta.get("content", "")
 
-            language = (
-                soup.html.get("lang")
-                if soup.html
-                else ""
-            )
+                description = meta.get(
+                    "content",
+                    ""
+                )
+
+            language = ""
+
+            if soup.html:
+
+                language = soup.html.get(
+                    "lang",
+                    ""
+                )
 
             canonical = ""
 
@@ -78,6 +102,7 @@ class WebsiteAnalyzer:
             )
 
             if canonical_tag:
+
                 canonical = canonical_tag.get(
                     "href",
                     ""
@@ -87,30 +112,45 @@ class WebsiteAnalyzer:
 
             robots_tag = soup.find(
                 "meta",
-                attrs={"name": "robots"}
+                attrs={
+                    "name": "robots"
+                }
             )
 
             if robots_tag:
+
                 robots = robots_tag.get(
                     "content",
                     ""
                 )
 
             h1 = [
-                h.get_text(strip=True)
+
+                h.get_text(
+                    strip=True
+                )
+
                 for h in soup.find_all("h1")
+
             ]
 
             h2 = [
-                h.get_text(strip=True)
+
+                h.get_text(
+                    strip=True
+                )
+
                 for h in soup.find_all("h2")
+
             ]
 
-            # ---------------------------------
-            # AI Modules
-            # ---------------------------------
+            # =====================================================
+            # AI ANALYZERS
+            # =====================================================
 
-            llms = LLMAnalyzer.analyze(url)
+            llms = LLMAnalyzer.analyze(
+                url
+            )
 
             chatgpt = ChatGPTAnalyzer.analyze(
                 url,
@@ -132,6 +172,29 @@ class WebsiteAnalyzer:
                 soup
             )
 
+            # =====================================================
+            # NEW AI PLATFORMS
+            # =====================================================
+
+            grok = GrokAnalyzer.analyze(
+                url,
+                soup
+            )
+
+            google_ai_mode = GoogleAIModeAnalyzer.analyze(
+                url,
+                soup
+            )
+
+            deepseek = DeepSeekAnalyzer.analyze(
+                url,
+                soup
+            )
+
+            # =====================================================
+            # OTHER ANALYZERS
+            # =====================================================
+
             entities = EntityAnalyzer.analyze(
                 soup
             )
@@ -151,29 +214,12 @@ class WebsiteAnalyzer:
                 soup
             )
 
-            grok = GrokAnalyzer.analyze(
-    url,
-    soup
-)
-            google_ai_mode = GoogleAIModeAnalyzer.analyze(
-    url,
-    soup
-)
-            deepseek = DeepSeekAnalyzer.analyze(
-    url,
-    soup
-)
-
-            # ---------------------------------
-            # Shared Browser
-            # ---------------------------------
-            # Browser is still required for
-            # technology detection.
-            #
-            # ScreenshotAnalyzer is completely
-            # removed. No screenshots are generated.
+            # =====================================================
+            # TECHNOLOGY DETECTION
+            # =====================================================
 
             browser_manager = BrowserManager()
+
             browser = browser_manager.start()
 
             try:
@@ -188,13 +234,17 @@ class WebsiteAnalyzer:
 
                 browser_manager.stop()
 
-            # ---------------------------------
-            # Build Result
-            # ---------------------------------
+            # =====================================================
+            # BUILD RESULT
+            # =====================================================
 
             result = {
 
                 "success": True,
+
+                # -------------------------------------------------
+                # BASIC
+                # -------------------------------------------------
 
                 "basic": {
 
@@ -214,7 +264,15 @@ class WebsiteAnalyzer:
 
                 },
 
+                # -------------------------------------------------
+                # LLMs
+                # -------------------------------------------------
+
                 "llms": llms,
+
+                # -------------------------------------------------
+                # AI PLATFORMS
+                # -------------------------------------------------
 
                 "chatgpt": chatgpt,
 
@@ -224,6 +282,16 @@ class WebsiteAnalyzer:
 
                 "perplexity": perplexity,
 
+                "grok": grok,
+
+                "google_ai_mode": google_ai_mode,
+
+                "deepseek": deepseek,
+
+                # -------------------------------------------------
+                # OTHER ANALYSIS
+                # -------------------------------------------------
+
                 "entities": entities,
 
                 "eeat": eeat,
@@ -232,33 +300,39 @@ class WebsiteAnalyzer:
 
                 "technical_seo": technical,
 
-                "technology": technology,
-
-                "grok": grok,
-
-                "google_ai_mode": google_ai_mode,
-
-                "deepseek": deepseek
+                "technology": technology
 
             }
 
-            # ---------------------------------
-            # AI Recommendations
-            # ---------------------------------
+            # =====================================================
+            # AI RECOMMENDATIONS
+            # =====================================================
 
             result["recommendations"] = (
-                RecommendationAnalyzer.analyze(result)
+
+                RecommendationAnalyzer.analyze(
+                    result
+                )
+
             )
 
-            # ---------------------------------
-            # Overall AI Visibility Score
-            # ---------------------------------
+            # =====================================================
+            # OVERALL AI VISIBILITY SCORE
+            # =====================================================
 
             result["overall_ai_visibility"] = (
-                ScoreAnalyzer.analyze(result)
+
+                ScoreAnalyzer.analyze(
+                    result
+                )
+
             )
 
             return result
+
+        # =========================================================
+        # ERROR HANDLING
+        # =========================================================
 
         except Exception as e:
 
