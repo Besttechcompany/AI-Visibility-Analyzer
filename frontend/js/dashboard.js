@@ -3204,3 +3204,360 @@ document.addEventListener(
 
     }
 );
+
+// ======================================================
+// DOWNLOAD PDF REPORT
+// ======================================================
+
+async function downloadPDF() {
+
+    const report =
+        document.getElementById("results");
+
+
+    const button =
+        document.getElementById(
+            "download-pdf-btn"
+        );
+
+
+    // ==================================================
+    // CHECK REPORT
+    // ==================================================
+
+    if (!report) {
+
+        showNotification(
+            "Report could not be found.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    // ==================================================
+    // CHECK PDF LIBRARY
+    // ==================================================
+
+    if (
+        typeof html2pdf === "undefined"
+    ) {
+
+        showNotification(
+            "PDF generator is still loading. Please try again.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    // ==================================================
+    // DISABLE BUTTON
+    // ==================================================
+
+    if (button) {
+
+        button.disabled = true;
+
+        button.innerHTML =
+            "⏳ Generating PDF...";
+
+    }
+
+
+    try {
+
+        // ==================================================
+        // CLONE REPORT
+        //
+        // We clone the report so the original dashboard
+        // remains unchanged.
+        // ==================================================
+
+        const pdfContent =
+            report.cloneNode(true);
+
+
+        // ==================================================
+        // REMOVE PDF BUTTON FROM PDF
+        // ==================================================
+
+        const pdfButton =
+            pdfContent.querySelector(
+                ".pdf-download-section"
+            );
+
+
+        if (pdfButton) {
+
+            pdfButton.remove();
+
+        }
+
+
+        // ==================================================
+        // CREATE PDF CONTAINER
+        // ==================================================
+
+        const wrapper =
+            document.createElement("div");
+
+
+        wrapper.style.background =
+            "#ffffff";
+
+        wrapper.style.width =
+            "100%";
+
+        wrapper.style.padding =
+            "20px";
+
+        wrapper.style.boxSizing =
+            "border-box";
+
+        wrapper.appendChild(
+            pdfContent
+        );
+
+
+        // ==================================================
+        // TEMPORARILY ADD TO PAGE
+        // ==================================================
+
+        wrapper.style.position =
+            "absolute";
+
+        wrapper.style.left =
+            "-100000px";
+
+        wrapper.style.top =
+            "0";
+
+
+        document.body.appendChild(
+            wrapper
+        );
+
+
+        // ==================================================
+        // WEBSITE NAME
+        // ==================================================
+
+        let websiteName =
+            "AI-Visibility-Report";
+
+
+        if (
+            websiteInput &&
+            websiteInput.value
+        ) {
+
+            try {
+
+                const parsed =
+                    new URL(
+                        websiteInput.value
+                    );
+
+
+                websiteName =
+                    parsed.hostname
+                        .replace(
+                            /^www\./,
+                            ""
+                        )
+                        .replace(
+                            /[^a-zA-Z0-9.-]/g,
+                            "-"
+                        );
+
+            }
+            catch (error) {
+
+                console.log(
+                    "Could not extract domain name."
+                );
+
+            }
+
+        }
+
+
+        // ==================================================
+        // DATE
+        // ==================================================
+
+        const today =
+            new Date();
+
+
+        const dateString =
+            today
+                .toISOString()
+                .split("T")[0];
+
+
+        // ==================================================
+        // PDF OPTIONS
+        // ==================================================
+
+        const options = {
+
+            margin: [
+                10,
+                10,
+                10,
+                10
+            ],
+
+            filename:
+                `${websiteName}-AI-Visibility-Report-${dateString}.pdf`,
+
+            image: {
+
+                type: "jpeg",
+
+                quality: 0.98
+
+            },
+
+            html2canvas: {
+
+                scale: 2,
+
+                useCORS: true,
+
+                allowTaint: true,
+
+                backgroundColor:
+                    "#ffffff",
+
+                logging: false
+
+            },
+
+            jsPDF: {
+
+                unit: "mm",
+
+                format: "a4",
+
+                orientation: "portrait"
+
+            },
+
+            pagebreak: {
+
+                mode: [
+                    "css",
+                    "legacy"
+                ]
+
+            }
+
+        };
+
+
+        // ==================================================
+        // GENERATE PDF
+        // ==================================================
+
+        await html2pdf()
+
+            .set(options)
+
+            .from(wrapper)
+
+            .save();
+
+
+        // ==================================================
+        // REMOVE TEMPORARY CONTAINER
+        // ==================================================
+
+        wrapper.remove();
+
+
+        // ==================================================
+        // RESTORE BUTTON
+        // ==================================================
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+            button.innerHTML =
+                "📄 Download PDF Report";
+
+        }
+
+
+        // ==================================================
+        // SUCCESS MESSAGE
+        // ==================================================
+
+        showNotification(
+            "PDF report downloaded successfully.",
+            "success"
+        );
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "PDF Generation Error:",
+            error
+        );
+
+
+        // ==================================================
+        // REMOVE TEMPORARY CONTAINER
+        // ==================================================
+
+        const temporary =
+            document.querySelector(
+                'body > div[style*="-100000px"]'
+            );
+
+
+        if (temporary) {
+
+            temporary.remove();
+
+        }
+
+
+        // ==================================================
+        // RESTORE BUTTON
+        // ==================================================
+
+        if (button) {
+
+            button.disabled =
+                false;
+
+            button.innerHTML =
+                "📄 Download PDF Report";
+
+        }
+
+
+        // ==================================================
+        // ERROR MESSAGE
+        // ==================================================
+
+        showNotification(
+            "Unable to generate the PDF. Please try again.",
+            "error"
+        );
+
+    }
+
+}
