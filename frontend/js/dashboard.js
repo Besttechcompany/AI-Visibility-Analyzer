@@ -61,6 +61,39 @@ let loaderProgress = 0;
 let loaderTimer = null;
 
 
+// ======================================================
+// PDF LIBRARY STATUS
+// ======================================================
+
+let pdfLibraryReady = false;
+
+
+// ======================================================
+// LOAD PDF LIBRARY
+// ======================================================
+
+function checkPDFLibrary() {
+
+    if (typeof html2pdf !== "undefined") {
+
+        pdfLibraryReady = true;
+
+        console.log(
+            "✅ PDF generator loaded successfully."
+        );
+
+        return true;
+
+    }
+
+    console.error(
+        "❌ html2pdf library is not available."
+    );
+
+    return false;
+}
+
+
 // ===========================================
 // Load User Profile
 // ===========================================
@@ -1287,16 +1320,18 @@ function showResults(data) {
 
     pdfSection.innerHTML = `
 
-        <button
-            class="pdf-btn"
-            onclick="downloadPDF()"
-        >
+    <button
+        type="button"
+        id="download-pdf-btn"
+        class="pdf-btn"
+        onclick="downloadPDF()"
+    >
 
-            📄 Download PDF Report
+        📄 Download PDF Report
 
-        </button>
+    </button>
 
-    `;
+`;
 
 
     results.appendChild(
@@ -3202,8 +3237,19 @@ document.addEventListener(
 
         loadProfile();
 
+        // Check PDF library after page loads
+        setTimeout(() => {
+
+            checkPDFLibrary();
+
+        }, 500);
+
     }
 );
+
+// ======================================================
+// DOWNLOAD PDF REPORT
+// ======================================================
 
 // ======================================================
 // DOWNLOAD PDF REPORT
@@ -3246,8 +3292,12 @@ async function downloadPDF() {
     ) {
 
         showNotification(
-            "PDF generator is still loading. Please try again.",
+            "PDF generator could not be loaded. Please refresh the page and try again.",
             "error"
+        );
+
+        console.error(
+            "html2pdf is not available."
         );
 
         return;
@@ -3266,16 +3316,22 @@ async function downloadPDF() {
         button.innerHTML =
             "⏳ Generating PDF...";
 
+        button.style.opacity =
+            "0.7";
+
+        button.style.cursor =
+            "wait";
+
     }
+
+
+    let wrapper = null;
 
 
     try {
 
         // ==================================================
-        // CLONE REPORT
-        //
-        // We clone the report so the original dashboard
-        // remains unchanged.
+        // CLONE RESULTS
         // ==================================================
 
         const pdfContent =
@@ -3283,7 +3339,7 @@ async function downloadPDF() {
 
 
         // ==================================================
-        // REMOVE PDF BUTTON FROM PDF
+        // REMOVE PDF BUTTON
         // ==================================================
 
         const pdfButton =
@@ -3300,10 +3356,10 @@ async function downloadPDF() {
 
 
         // ==================================================
-        // CREATE PDF CONTAINER
+        // CREATE PDF WRAPPER
         // ==================================================
 
-        const wrapper =
+        wrapper =
             document.createElement("div");
 
 
@@ -3319,15 +3375,6 @@ async function downloadPDF() {
         wrapper.style.boxSizing =
             "border-box";
 
-        wrapper.appendChild(
-            pdfContent
-        );
-
-
-        // ==================================================
-        // TEMPORARILY ADD TO PAGE
-        // ==================================================
-
         wrapper.style.position =
             "absolute";
 
@@ -3336,6 +3383,11 @@ async function downloadPDF() {
 
         wrapper.style.top =
             "0";
+
+
+        wrapper.appendChild(
+            pdfContent
+        );
 
 
         document.body.appendChild(
@@ -3376,10 +3428,11 @@ async function downloadPDF() {
                         );
 
             }
+
             catch (error) {
 
                 console.log(
-                    "Could not extract domain name."
+                    "Could not extract website name."
                 );
 
             }
@@ -3467,19 +3520,22 @@ async function downloadPDF() {
         // ==================================================
 
         await html2pdf()
-
             .set(options)
-
             .from(wrapper)
-
             .save();
 
 
         // ==================================================
-        // REMOVE TEMPORARY CONTAINER
+        // REMOVE TEMPORARY WRAPPER
         // ==================================================
 
-        wrapper.remove();
+        if (wrapper) {
+
+            wrapper.remove();
+
+            wrapper = null;
+
+        }
 
 
         // ==================================================
@@ -3493,6 +3549,12 @@ async function downloadPDF() {
 
             button.innerHTML =
                 "📄 Download PDF Report";
+
+            button.style.opacity =
+                "1";
+
+            button.style.cursor =
+                "pointer";
 
         }
 
@@ -3506,8 +3568,8 @@ async function downloadPDF() {
             "success"
         );
 
-    }
 
+    }
 
     catch (error) {
 
@@ -3518,18 +3580,14 @@ async function downloadPDF() {
 
 
         // ==================================================
-        // REMOVE TEMPORARY CONTAINER
+        // REMOVE TEMPORARY WRAPPER
         // ==================================================
 
-        const temporary =
-            document.querySelector(
-                'body > div[style*="-100000px"]'
-            );
+        if (wrapper) {
 
+            wrapper.remove();
 
-        if (temporary) {
-
-            temporary.remove();
+            wrapper = null;
 
         }
 
@@ -3545,6 +3603,12 @@ async function downloadPDF() {
 
             button.innerHTML =
                 "📄 Download PDF Report";
+
+            button.style.opacity =
+                "1";
+
+            button.style.cursor =
+                "pointer";
 
         }
 
