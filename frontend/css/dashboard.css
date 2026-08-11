@@ -202,7 +202,7 @@ button {
 
 .logout-menu {
 
-    margin-top: auto;
+    margin-top: 8px;
 
     background: #ef4444;
 
@@ -3499,6 +3499,155 @@ button {
 
         grid-template-columns: 1fr;
 
+    }
+
+}
+
+/* ==========================================================
+   FINAL FIX — AI PLATFORM SCORE CARDS
+   4 CARDS TOP + 3 CARDS CENTERED BELOW
+========================================================== */
+
+@media (min-width: 1101px) {
+
+    .score-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 24px;
+        width: 100%;
+    }
+
+    .score-card {
+        grid-column: span 3;
+        width: 100%;
+        margin: 0 !important;
+    }
+
+    /* Second row — perfectly centered */
+    .score-card:nth-child(5) {
+        grid-column: 2 / span 3;
+        margin: 0 !important;
+    }
+
+    .score-card:nth-child(6) {
+        grid-column: 5 / span 3;
+        margin: 0 !important;
+    }
+
+    .score-card:nth-child(7) {
+        grid-column: 8 / span 3;
+        margin: 0 !important;
+    }
+
+    /* Prevent duplicate label */
+    .score-card::after {
+        display: none !important;
+    }
+}
+
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 1100px) {
+
+    .score-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 20px;
+    }
+
+    .score-card,
+    .score-card:nth-child(5),
+    .score-card:nth-child(6),
+    .score-card:nth-child(7) {
+        grid-column: auto !important;
+        margin: 0 !important;
+        width: 100%;
+    }
+
+    .score-card::after {
+        display: none !important;
+    }
+}
+
+
+/* ==========================================================
+   MOBILE
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .score-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .score-card,
+    .score-card:nth-child(5),
+    .score-card:nth-child(6),
+    .score-card:nth-child(7) {
+        grid-column: auto !important;
+        margin: 0 !important;
+        width: 100%;
+    }
+
+    .score-card::after {
+        display: none !important;
+    }
+}
+
+/* ==========================================================
+   TECHNOLOGY DETECTION — 2 TECHNOLOGIES PER ROW
+========================================================== */
+
+@media (min-width: 769px) {
+
+    .technology-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        width: 100%;
+    }
+
+    .technology-card {
+        width: 100%;
+        margin: 0 !important;
+    }
+
+}
+
+
+/* ==========================================================
+   TABLET
+========================================================== */
+
+@media (max-width: 768px) {
+
+    .technology-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .technology-card {
+        width: 100%;
+        margin: 0 !important;
+    }
+
+}
+
+
+/* ==========================================================
+   SMALL MOBILE
+========================================================== */
+
+@media (max-width: 480px) {
+
+    .technology-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
     }
 
 }
