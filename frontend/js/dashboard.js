@@ -243,7 +243,14 @@ function showLoading(url) {
 
                     ⏳ Claude<br>
 
-                    ⏳ Perplexity
+                    ⏳ Perplexity<br>
+
+                    ⏳ Grok<br>
+
+                    ⏳ Google AI Mode<br>
+
+                    ⏳ DeepSeek
+
 
                 </div>
 
@@ -338,7 +345,7 @@ function startFakeLoader() {
             Faster at the beginning
         */
 
-        if (loaderProgress < 20) {
+        if (loaderProgress < 10) {
 
             loaderProgress += 0.35;
 
@@ -349,7 +356,7 @@ function startFakeLoader() {
             20 - 45%
         */
 
-        else if (loaderProgress < 45) {
+        else if (loaderProgress < 20) {
 
             loaderProgress += 0.28;
 
@@ -360,7 +367,7 @@ function startFakeLoader() {
             45 - 70%
         */
 
-        else if (loaderProgress < 70) {
+        else if (loaderProgress < 30) {
 
             loaderProgress += 0.22;
 
@@ -371,7 +378,7 @@ function startFakeLoader() {
             70 - 90%
         */
 
-        else if (loaderProgress < 90) {
+        else if (loaderProgress < 45) {
 
             loaderProgress += 0.16;
 
@@ -382,7 +389,7 @@ function startFakeLoader() {
             90 - 97%
         */
 
-        else if (loaderProgress < 97) {
+        else if (loaderProgress < 55) {
 
             loaderProgress += 0.10;
 
@@ -393,7 +400,7 @@ function startFakeLoader() {
             97 - 99%
         */
 
-        else if (loaderProgress < 99) {
+        else if (loaderProgress < 75) {
 
             loaderProgress += 0.04;
 
@@ -408,7 +415,7 @@ function startFakeLoader() {
         loaderProgress =
             Math.min(
                 loaderProgress,
-                99
+                90
             );
 
 
@@ -486,42 +493,66 @@ function startFakeLoader() {
         // AI PLATFORM STATUS
         // ==================================================
 
-        let html = "";
+       let html = "";
 
 
-        html +=
-            loaderProgress >= 20
+// ChatGPT
 
-                ? "✅ ChatGPT<br>"
-
-                : "⏳ ChatGPT<br>";
-
-
-        html +=
-            loaderProgress >= 40
-
-                ? "✅ Gemini<br>"
-
-                : "⏳ Gemini<br>";
+html +=
+    loaderProgress >= 15
+        ? "✅ ChatGPT<br>"
+        : "⏳ ChatGPT<br>";
 
 
-        html +=
-            loaderProgress >= 65
+// Gemini
 
-                ? "✅ Claude<br>"
-
-                : "⏳ Claude<br>";
-
-
-        html +=
-            loaderProgress >= 85
-
-                ? "✅ Perplexity"
-
-                : "⏳ Perplexity";
+html +=
+    loaderProgress >= 30
+        ? "✅ Gemini<br>"
+        : "⏳ Gemini<br>";
 
 
-        platforms.innerHTML = html;
+// Claude
+
+html +=
+    loaderProgress >= 45
+        ? "✅ Claude<br>"
+        : "⏳ Claude<br>";
+
+
+// Perplexity
+
+html +=
+    loaderProgress >= 60
+        ? "✅ Perplexity<br>"
+        : "⏳ Perplexity<br>";
+
+
+// Grok
+
+html +=
+    loaderProgress >= 70
+        ? "✅ Grok<br>"
+        : "⏳ Grok<br>";
+
+
+// Google AI Mode
+
+html +=
+    loaderProgress >= 80
+        ? "✅ Google AI Mode<br>"
+        : "⏳ Google AI Mode<br>";
+
+
+// DeepSeek
+
+html +=
+    loaderProgress >= 90
+        ? "✅ DeepSeek"
+        : "⏳ DeepSeek";
+
+
+platforms.innerHTML = html;
 
 
     }, 100);
@@ -696,7 +727,13 @@ function finishLoader(data) {
 
                         ✅ Claude<br>
 
-                        ✅ Perplexity
+                        ✅ Perplexity<br>
+
+                        ✅ Grok<br>
+
+                        ✅ Google AI Mode<br>
+
+                        ✅ DeepSeek
 
                               `;
 
@@ -1310,92 +1347,204 @@ function renderOverallScore(data) {
 // AI Platform Scores
 // ======================================================
 
+// ======================================================
+// AI PLATFORM SCORES
+// ======================================================
+
 function renderAIScores(data) {
 
     const card =
-        document.createElement(
-            "section"
-        );
+        document.createElement("section");
+
+    card.className = "card";
+
+    // ------------------------------------------
+    // Safely get platform scores
+    // ------------------------------------------
+
+    const chatgpt =
+        data.chatgpt?.score ?? 0;
+
+    const gemini =
+        data.gemini?.score ?? 0;
+
+    const claude =
+        data.claude?.score ?? 0;
+
+    const perplexity =
+        data.perplexity?.score ?? 0;
+
+    const grok =
+        data.grok?.score ?? 0;
+
+    const googleAIMode =
+        data.google_ai_mode?.score ?? 0;
+
+    const deepseek =
+        data.deepseek?.score ?? 0;
 
 
-    card.className =
-        "card";
-
+    // ------------------------------------------
+    // Build AI Platform Cards
+    // ------------------------------------------
 
     card.innerHTML = `
 
         <h2>
-
             AI Platform Scores
-
         </h2>
 
         <div class="score-grid">
 
+
+            <!-- =================================
+                 CHATGPT
+            ================================== -->
+
             <div class="score-card">
 
                 <h3>
-
                     ChatGPT
-
                 </h3>
 
                 <h1>
-
-                    ${data.chatgpt.score}
-
+                    ${chatgpt}
                 </h1>
 
+                <p>
+                    AI Visibility Score
+                </p>
+
             </div>
+
+
+            <!-- =================================
+                 GEMINI
+            ================================== -->
 
             <div class="score-card">
 
                 <h3>
-
                     Gemini
-
                 </h3>
 
                 <h1>
-
-                    ${data.gemini.score}
-
+                    ${gemini}
                 </h1>
 
+                <p>
+                    AI Visibility Score
+                </p>
+
             </div>
+
+
+            <!-- =================================
+                 CLAUDE
+            ================================== -->
 
             <div class="score-card">
 
                 <h3>
-
                     Claude
-
                 </h3>
 
                 <h1>
-
-                    ${data.claude.score}
-
+                    ${claude}
                 </h1>
 
+                <p>
+                    AI Visibility Score
+                </p>
+
             </div>
+
+
+            <!-- =================================
+                 PERPLEXITY
+            ================================== -->
 
             <div class="score-card">
 
                 <h3>
-
                     Perplexity
-
                 </h3>
 
                 <h1>
-
-                    ${data.perplexity.score}
-
+                    ${perplexity}
                 </h1>
 
+                <p>
+                    AI Visibility Score
+                </p>
+
             </div>
-</div>
+
+
+            <!-- =================================
+                 GROK
+            ================================== -->
+
+            <div class="score-card">
+
+                <h3>
+                    Grok
+                </h3>
+
+                <h1>
+                    ${grok}
+                </h1>
+
+                <p>
+                    AI Visibility Score
+                </p>
+
+            </div>
+
+
+            <!-- =================================
+                 GOOGLE AI MODE
+            ================================== -->
+
+            <div class="score-card">
+
+                <h3>
+                    Google AI Mode
+                </h3>
+
+                <h1>
+                    ${googleAIMode}
+                </h1>
+
+                <p>
+                    AI Visibility Score
+                </p>
+
+            </div>
+
+
+            <!-- =================================
+                 DEEPSEEK
+            ================================== -->
+
+            <div class="score-card">
+
+                <h3>
+                    DeepSeek
+                </h3>
+
+                <h1>
+                    ${deepseek}
+                </h1>
+
+                <p>
+                    AI Visibility Score
+                </p>
+
+            </div>
+
+
+        </div>
 
     `;
 
