@@ -14,6 +14,9 @@ from services.audit import AuditAnalyzer
 from services.technical_seo import TechnicalSEOAnalyzer
 from services.technology.technology import TechnologyAnalyzer
 from services.browser.browser import BrowserManager
+from services.grok import GrokAnalyzer
+from services.google_ai_mode import GoogleAIModeAnalyzer
+from services.deepseek import DeepSeekAnalyzer
 
 
 class WebsiteAnalyzer:
@@ -148,6 +151,19 @@ class WebsiteAnalyzer:
                 soup
             )
 
+            grok = GrokAnalyzer.analyze(
+    url,
+    soup
+)
+            google_ai_mode = GoogleAIModeAnalyzer.analyze(
+    url,
+    soup
+)
+            deepseek = DeepSeekAnalyzer.analyze(
+    url,
+    soup
+)
+
             # ---------------------------------
             # Shared Browser
             # ---------------------------------
@@ -216,7 +232,13 @@ class WebsiteAnalyzer:
 
                 "technical_seo": technical,
 
-                "technology": technology
+                "technology": technology,
+
+                "grok": grok,
+
+                "google_ai_mode": google_ai_mode,
+
+                "deepseek": deepseek
 
             }
 
