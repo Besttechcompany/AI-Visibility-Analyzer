@@ -1558,6 +1558,11 @@ function renderAIScores(data) {
 // Technology Detection
 // ======================================================
 
+// ======================================================
+// Technology Detection
+// ALL TECHNOLOGIES — 2 CARDS PER ROW
+// ======================================================
+
 function renderTechnology(data) {
 
     const card =
@@ -1574,12 +1579,14 @@ function renderTechnology(data) {
     `;
 
 
+    // ==================================================
+    // CHECK TECHNOLOGY DATA
+    // ==================================================
+
     if (
         !data.technology ||
         !data.technology.categories ||
-        Object.keys(
-            data.technology.categories
-        ).length === 0
+        Object.keys(data.technology.categories).length === 0
     ) {
 
         html += `
@@ -1590,92 +1597,108 @@ function renderTechnology(data) {
 
         `;
 
+        card.innerHTML = html;
+
+        return card;
     }
 
-    else {
 
-        html += `
+    // ==================================================
+    // CREATE ONE GLOBAL TECHNOLOGY GRID
+    // ==================================================
 
-            <div class="technology-wrapper">
+    html += `
 
-        `;
+        <div class="technology-grid">
 
-
-        Object.entries(
-            data.technology.categories
-        ).forEach(
-            ([category, technologies]) => {
-
-                html += `
-
-                    <div class="technology-section">
-
-                        <h3>
-                            ${category}
-                        </h3>
-
-                        <div class="technology-grid">
-
-                `;
+    `;
 
 
-                technologies.forEach(
-                    tech => {
+    // ==================================================
+    // LOOP THROUGH ALL CATEGORIES
+    // ==================================================
 
-                        html += `
+    Object.entries(
+        data.technology.categories
+    ).forEach(
+        ([category, technologies]) => {
 
-                            <div class="technology-card">
+            if (
+                !technologies ||
+                technologies.length === 0
+            ) {
 
-                                <h3>
-                                    ${tech.technology}
-                                </h3>
+                return;
 
-                                <p>
+            }
 
-                                    Confidence:
 
-                                    <strong>
-                                        ${tech.confidence}%
-                                    </strong>
+            // ==========================================
+            // ADD EVERY TECHNOLOGY TO SAME GRID
+            // ==========================================
 
-                                </p>
+            technologies.forEach(
+                tech => {
 
-                                <p>
+                    html += `
 
-                                    Evidence:
+                        <div class="technology-card">
 
-                                    ${(tech.evidence || [])
-                                        .join(", ")}
+                            <div class="technology-category">
 
-                                </p>
+                                ${category}
 
                             </div>
 
-                        `;
 
-                    }
-                );
+                            <h3>
+                                ${tech.technology || "Unknown Technology"}
+                            </h3>
 
 
-                html += `
+                            <p>
+
+                                Confidence:
+
+                                <strong>
+                                    ${tech.confidence || 0}%
+                                </strong>
+
+                            </p>
+
+
+                            <p>
+
+                                Evidence:
+
+                                ${
+                                    (tech.evidence || [])
+                                        .join(", ")
+                                    || "Not available"
+                                }
+
+                            </p>
 
                         </div>
 
-                    </div>
+                    `;
 
-                `;
+                }
+            );
 
-            }
-        );
+        }
+    );
 
 
-        html += `
+    // ==================================================
+    // CLOSE GLOBAL GRID
+    // ==================================================
 
-            </div>
+    html += `
 
-        `;
+        </div>
 
-    }
+    `;
 
 
     card.innerHTML = html;

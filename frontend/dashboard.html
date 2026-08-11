@@ -12,14 +12,20 @@
 
     <title>AI Visibility Analyzer Dashboard</title>
 
-    <!-- CSS -->
+
+    <!-- =====================================================
+         CSS
+    ====================================================== -->
 
     <link
         rel="stylesheet"
         href="css/dashboard.css"
     >
 
-    <!-- Google Fonts -->
+
+    <!-- =====================================================
+         GOOGLE FONTS
+    ====================================================== -->
 
     <link
         rel="preconnect"
@@ -39,97 +45,154 @@
 
 </head>
 
+
 <body>
+
 
 <div class="dashboard">
 
-   
 
-<!-- =====================================================
-     SIDEBAR
-====================================================== -->
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
 
-<aside class="sidebar">
+    <aside class="sidebar">
 
-    <div class="sidebar-top">
 
-        <h2>
+        <!-- SIDEBAR HEADER -->
 
-            AI Visibility
+        <div class="sidebar-top">
 
-        </h2>
+            <h2>
+                AI Visibility
+            </h2>
 
-        <p>
+            <p>
+                Dashboard
+            </p>
 
-            Dashboard
+        </div>
 
-        </p>
 
-    </div>
+        <!-- SIDEBAR MENU -->
 
-    <ul class="menu">
+        <ul class="menu">
 
-        <li class="active">
 
-            <span class="menu-icon">📊</span>
+            <!-- Dashboard -->
 
-            <span>Dashboard</span>
+            <li class="active">
 
-        </li>
+                <span class="menu-icon">
+                    📊
+                </span>
 
-        <li>
+                <span>
+                    Dashboard
+                </span>
 
-            <span class="menu-icon">🌐</span>
+            </li>
 
-            <span>Website Analysis</span>
 
-        </li>
+            <!-- Website Analysis -->
 
-        <li>
+            <li>
 
-            <span class="menu-icon">📈</span>
+                <span class="menu-icon">
+                    🌐
+                </span>
 
-            <span>Logs</span>
+                <span>
+                    Website Analysis
+                </span>
 
-        </li>
+            </li>
 
-        <li>
 
-            <span class="menu-icon">🤖</span>
+            <!-- Logs -->
 
-            <span>AI Visibility</span>
+            <li>
 
-        </li>
+                <span class="menu-icon">
+                    📈
+                </span>
 
-        <li>
+                <span>
+                    Logs
+                </span>
 
-            <span class="menu-icon">⚙</span>
+            </li>
 
-            <span>Settings</span>
 
-        </li>
+            <!-- AI Visibility -->
 
-        <li>
+            <li>
 
-            <span class="menu-icon">👤</span>
+                <span class="menu-icon">
+                    🤖
+                </span>
 
-            <span>Profile</span>
+                <span>
+                    AI Visibility
+                </span>
 
-        </li>
+            </li>
 
-        <li
-            class="logout-menu"
-            onclick="logout()">
 
-            <span class="menu-icon">🚪</span>
+            <!-- Settings -->
 
-            <span>Logout</span>
+            <li>
 
-        </li>
+                <span class="menu-icon">
+                    ⚙
+                </span>
 
-    </ul>
+                <span>
+                    Settings
+                </span>
 
-</aside>
+            </li>
+
+
+            <!-- Profile -->
+
+            <li>
+
+                <span class="menu-icon">
+                    👤
+                </span>
+
+                <span>
+                    Profile
+                </span>
+
+            </li>
+
+
+            <!-- Logout -->
+
+            <li
+                class="logout-menu"
+                onclick="logout()"
+            >
+
+                <span class="menu-icon">
+                    🚪
+                </span>
+
+                <span>
+                    Logout
+                </span>
+
+            </li>
+
+
+        </ul>
+
+
+    </aside>
+
+
 
     <!-- =====================================================
          MAIN CONTENT
@@ -137,31 +200,38 @@
 
     <main class="main-content">
 
-        <!-- ================================================
+
+        <!-- =================================================
              TOP BAR
-        ================================================= -->
+        ================================================== -->
 
         <header class="topbar">
+
+
+            <!-- PAGE TITLE -->
 
             <div class="page-title">
 
                 <h1>
-
                     AI Visibility Dashboard
-
                 </h1>
 
                 <p>
 
                     Analyze how ChatGPT, Gemini, Claude,
-                    Perplexity and other AI platforms
+                    Perplexity, Grok, Google AI Mode,
+                    DeepSeek and other AI platforms
                     understand your website.
 
                 </p>
 
             </div>
 
-            <!-- Profile loaded by dashboard.js -->
+
+            <!-- =================================================
+                 PROFILE
+                 Loaded automatically by dashboard.js
+            ================================================== -->
 
             <div
                 id="profile-card"
@@ -172,13 +242,17 @@
 
             </div>
 
+
         </header>
 
-                <!-- =====================================================
+
+
+        <!-- =====================================================
              WEBSITE ANALYZER
         ====================================================== -->
 
         <section class="search-card">
+
 
             <h2>
 
@@ -186,16 +260,21 @@
 
             </h2>
 
+
             <p>
 
                 Enter your website URL below and analyze how
                 leading AI platforms such as ChatGPT, Gemini,
-                Claude, Perplexity and other Large Language
-                Models understand your website.
+                Claude, Perplexity, Grok, Google AI Mode and
+                DeepSeek understand your website.
 
             </p>
 
+
+            <!-- INPUT -->
+
             <div class="input-group">
+
 
                 <input
                     id="website"
@@ -203,6 +282,9 @@
                     placeholder="https://example.com"
                     autocomplete="off"
                 >
+
+
+                <!-- ANALYZE -->
 
                 <button
                     class="analyze-btn"
@@ -213,6 +295,9 @@
 
                 </button>
 
+
+                <!-- RESET -->
+
                 <button
                     class="reset-btn"
                     onclick="resetDashboard()"
@@ -222,26 +307,38 @@
 
                 </button>
 
+
             </div>
+
 
         </section>
 
+
+
         <!-- =====================================================
              RESULTS
-             (Filled Automatically by dashboard.js)
+             Filled automatically by dashboard.js
         ====================================================== -->
 
         <div id="results">
 
+
+            <!-- =================================================
+                 WELCOME CARD
+            ================================================== -->
+
             <div class="card">
 
+
                 <div class="loading-box">
+
 
                     <h2>
 
                         🚀 Welcome to AI Visibility Analyzer
 
                     </h2>
+
 
                     <p>
 
@@ -251,111 +348,189 @@
 
                     </p>
 
+
                     <br>
+
+
+                    <!-- =================================================
+                         AI PLATFORM SUMMARY
+                    ================================================== -->
 
                     <div class="summary-grid">
 
+
+                        <!-- =================================================
+                             CHATGPT
+                        ================================================== -->
+
                         <div class="summary-card">
 
                             <h3>
-
                                 ChatGPT
-
                             </h3>
 
                             <h1>
-
                                 —
-
                             </h1>
 
                             <span>
-
                                 Waiting for Analysis
-
                             </span>
 
                         </div>
 
+
+
+                        <!-- =================================================
+                             GEMINI
+                        ================================================== -->
+
                         <div class="summary-card">
 
                             <h3>
-
                                 Gemini
-
                             </h3>
 
                             <h1>
-
                                 —
-
                             </h1>
 
                             <span>
-
                                 Waiting for Analysis
-
                             </span>
 
                         </div>
 
+
+
+                        <!-- =================================================
+                             CLAUDE
+                        ================================================== -->
+
                         <div class="summary-card">
 
                             <h3>
-
                                 Claude
-
                             </h3>
 
                             <h1>
-
                                 —
-
                             </h1>
 
                             <span>
-
                                 Waiting for Analysis
-
                             </span>
 
                         </div>
+
+
+
+                        <!-- =================================================
+                             PERPLEXITY
+                        ================================================== -->
 
                         <div class="summary-card">
 
                             <h3>
-
                                 Perplexity
-
                             </h3>
 
                             <h1>
-
                                 —
-
                             </h1>
 
                             <span>
-
                                 Waiting for Analysis
-
                             </span>
 
                         </div>
+
+
+
+                        <!-- =================================================
+                             GROK
+                        ================================================== -->
+
+                        <div class="summary-card">
+
+                            <h3>
+                                Grok
+                            </h3>
+
+                            <h1>
+                                —
+                            </h1>
+
+                            <span>
+                                Waiting for Analysis
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- =================================================
+                             GOOGLE AI MODE
+                        ================================================== -->
+
+                        <div class="summary-card">
+
+                            <h3>
+                                Google AI Mode
+                            </h3>
+
+                            <h1>
+                                —
+                            </h1>
+
+                            <span>
+                                Waiting for Analysis
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- =================================================
+                             DEEPSEEK
+                        ================================================== -->
+
+                        <div class="summary-card">
+
+                            <h3>
+                                DeepSeek
+                            </h3>
+
+                            <h1>
+                                —
+                            </h1>
+
+                            <span>
+                                Waiting for Analysis
+                            </span>
+
+                        </div>
+
 
                     </div>
+
 
                 </div>
 
+
             </div>
 
-                    </div>
+
+        </div>
+
+
 
         <!-- =====================================================
              FOOTER
         ====================================================== -->
 
         <footer class="footer">
+
 
             <p>
 
@@ -364,17 +539,23 @@
 
             </p>
 
+
         </footer>
+
 
     </main>
 
+
 </div>
+
+
 
 <!-- =====================================================
      DASHBOARD JAVASCRIPT
 ====================================================== -->
 
 <script src="js/dashboard.js"></script>
+
 
 </body>
 
