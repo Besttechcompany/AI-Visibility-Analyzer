@@ -3249,459 +3249,447 @@ document.addEventListener(
 
 // ======================================================
 // DOWNLOAD PDF REPORT
-// ======================================================
-
-// ======================================================
-// DOWNLOAD PDF REPORT
-// ======================================================
-
-// ======================================================
-// DOWNLOAD PDF REPORT
-// ======================================================
-// Robust PDF generator
-// Fixes blank PDF caused by off-screen rendering
-// ======================================================
-
-// ======================================================
-// DOWNLOAD PDF REPORT
-// STABLE VERSION
-// Fixes:
-// 1. Blank PDF
-// 2. Content pushed to bottom-left
-// 3. Large white pages
-// 4. Clipped cards
-// 5. Incorrect width
-// 6. Technology cards breaking incorrectly
+// FINAL WIDTH / BLANK PAGE FIX
 // ======================================================
 
 async function downloadPDF() {
 
-    const report = document.getElementById("results");
-    const button = document.getElementById("download-pdf-btn");
+    const results =
+        document.getElementById("results");
 
-    // ==================================================
-    // CHECK REPORT
-    // ==================================================
+    const button =
+        document.getElementById("download-pdf-btn");
 
-    if (!report) {
+
+    if (!results) {
 
         showNotification(
-            "Report could not be found.",
+            "Report not found.",
             "error"
         );
 
         return;
     }
 
-
-    // ==================================================
-    // CHECK PDF LIBRARY
-    // ==================================================
 
     if (typeof html2pdf === "undefined") {
 
         showNotification(
-            "PDF generator is not loaded. Please refresh the page and try again.",
-            "error"
-        );
-
-        console.error(
-            "html2pdf library is not available."
-        );
-
-        return;
-    }
-
-
-    // ==================================================
-    // CHECK REPORT CONTENT
-    // ==================================================
-
-    const reportText =
-        report.innerText.trim();
-
-    if (!reportText) {
-
-        showNotification(
-            "There is no report data available to export.",
+            "PDF generator is not loaded.",
             "error"
         );
 
         return;
     }
 
-
-    // ==================================================
-    // DISABLE BUTTON
-    // ==================================================
 
     if (button) {
 
         button.disabled = true;
+        button.innerHTML = "⏳ Generating PDF...";
 
-        button.innerHTML =
-            "⏳ Preparing PDF...";
-
-        button.style.opacity = "0.7";
-
-        button.style.cursor = "wait";
     }
 
 
-    let pdfContainer = null;
+    let exportArea = null;
 
 
     try {
 
-        // ==================================================
-        // HIDE DOWNLOAD BUTTON ON ORIGINAL PAGE
-        // ==================================================
+        // ==============================================
+        // CREATE CLEAN EXPORT AREA
+        // ==============================================
 
-        const originalButton =
-            report.querySelector(
-                ".pdf-download-section"
-            );
-
-        if (originalButton) {
-
-            originalButton.style.display =
-                "none";
-        }
-
-
-        // ==================================================
-        // CREATE PDF CONTAINER
-        // ==================================================
-
-        pdfContainer =
+        exportArea =
             document.createElement("div");
 
 
-        pdfContainer.id =
-            "pdf-export-container";
+        exportArea.id =
+            "pdf-export-area";
 
 
-        /*
-         * IMPORTANT
-         *
-         * Use absolute positioning.
-         * NOT fixed positioning.
-         *
-         * This prevents html2canvas from
-         * calculating the page incorrectly.
-         */
+        // A4 usable width.
+        // Do NOT use 794px + canvas width overrides.
 
-        pdfContainer.style.position =
-            "absolute";
+        exportArea.style.width =
+            "190mm";
 
-        pdfContainer.style.left =
+        exportArea.style.margin =
+            "0 auto";
+
+        exportArea.style.padding =
             "0";
 
-        pdfContainer.style.top =
-            "0";
-
-        pdfContainer.style.width =
-            "794px";
-
-        pdfContainer.style.minHeight =
-            "1123px";
-
-        pdfContainer.style.backgroundColor =
+        exportArea.style.background =
             "#ffffff";
 
-        pdfContainer.style.padding =
-            "30px";
-
-        pdfContainer.style.boxSizing =
-            "border-box";
-
-        pdfContainer.style.zIndex =
-            "-1";
-
-        pdfContainer.style.fontFamily =
-            "Arial, Helvetica, sans-serif";
-
-        pdfContainer.style.color =
+        exportArea.style.color =
             "#111827";
 
+        exportArea.style.fontFamily =
+            "Arial, Helvetica, sans-serif";
 
-        // ==================================================
-        // CLONE REPORT
-        // ==================================================
-
-        const pdfReport =
-            report.cloneNode(true);
-
-
-        pdfReport.removeAttribute("id");
-
-
-        pdfReport.style.display =
-            "block";
-
-        pdfReport.style.width =
-            "100%";
-
-        pdfReport.style.maxWidth =
-            "100%";
-
-        pdfReport.style.margin =
-            "0";
-
-        pdfReport.style.padding =
-            "0";
-
-        pdfReport.style.background =
-            "#ffffff";
-
-        pdfReport.style.boxSizing =
+        exportArea.style.boxSizing =
             "border-box";
 
 
-        // ==================================================
-        // REMOVE PDF BUTTON FROM CLONE
-        // ==================================================
+        // ==============================================
+        // CLONE RESULTS
+        // ==============================================
 
-        const clonedButton =
-            pdfReport.querySelector(
+        const clone =
+            results.cloneNode(true);
+
+
+        clone.removeAttribute("id");
+
+
+        // Remove download button
+
+        const downloadSection =
+            clone.querySelector(
                 ".pdf-download-section"
             );
 
-        if (clonedButton) {
 
-            clonedButton.remove();
+        if (downloadSection) {
+
+            downloadSection.remove();
+
         }
 
 
-        // ==================================================
-        // PDF-SPECIFIC STYLE
-        // ==================================================
+        // ==============================================
+        // FORCE FULL WIDTH
+        // ==============================================
 
-        const pdfStyle =
+        clone.style.width =
+            "100%";
+
+        clone.style.maxWidth =
+            "none";
+
+        clone.style.margin =
+            "0";
+
+        clone.style.padding =
+            "0";
+
+        clone.style.background =
+            "#ffffff";
+
+        clone.style.boxSizing =
+            "border-box";
+
+
+        // ==============================================
+        // PDF CSS
+        // ==============================================
+
+        const style =
             document.createElement("style");
 
 
-        pdfStyle.textContent = `
+        style.textContent = `
 
-            * {
+            #pdf-export-area,
+            #pdf-export-area * {
                 box-sizing: border-box !important;
             }
 
-            html,
-            body {
-                margin: 0 !important;
-                padding: 0 !important;
-                background: #ffffff !important;
+
+            #pdf-export-area {
+                width: 190mm !important;
+                max-width: 190mm !important;
+                background: white !important;
             }
 
-            #pdf-export-container {
-                width: 794px !important;
-                background: #ffffff !important;
-            }
 
-            #pdf-export-container .card {
-                width: 100% !important;
-                max-width: 100% !important;
-                margin-left: 0 !important;
-                margin-right: 0 !important;
-                padding: 24px !important;
-                background: #ffffff !important;
-                box-sizing: border-box !important;
-                overflow: visible !important;
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
+            #pdf-export-area .card {
 
-            #pdf-export-container .overall-card {
-                width: 100% !important;
-                max-width: 100% !important;
-                box-sizing: border-box !important;
-            }
-
-            #pdf-export-container .score-grid {
                 width: 100% !important;
                 max-width: 100% !important;
 
-                display: grid !important;
+                margin:
+                    0 0 6mm 0 !important;
+
+                padding:
+                    6mm !important;
+
+                background:
+                    #ffffff !important;
+
+                overflow:
+                    visible !important;
+
+                transform:
+                    none !important;
+            }
+
+
+            /* ========================================
+               OVERALL SCORE
+               ======================================== */
+
+            #pdf-export-area .overall-card {
+
+                width:
+                    100% !important;
+
+                max-width:
+                    100% !important;
+
+                display:
+                    flex !important;
+
+                box-sizing:
+                    border-box !important;
+            }
+
+
+            /* ========================================
+               AI SCORE GRID
+               ======================================== */
+
+            #pdf-export-area .score-grid {
+
+                width:
+                    100% !important;
+
+                max-width:
+                    100% !important;
+
+                display:
+                    grid !important;
 
                 grid-template-columns:
-                    repeat(2, minmax(0, 1fr)) !important;
+                    repeat(
+                        2,
+                        minmax(0, 1fr)
+                    ) !important;
 
-                gap: 18px !important;
-
-                box-sizing: border-box !important;
+                gap:
+                    4mm !important;
             }
 
-            #pdf-export-container .score-card {
-                width: 100% !important;
-                min-width: 0 !important;
-                max-width: 100% !important;
 
-                margin: 0 !important;
+            #pdf-export-area .score-card {
 
-                box-sizing: border-box !important;
+                width:
+                    auto !important;
 
-                break-inside: avoid;
-                page-break-inside: avoid;
+                min-width:
+                    0 !important;
+
+                max-width:
+                    none !important;
+
+                margin:
+                    0 !important;
+
+                break-inside:
+                    avoid !important;
+
+                page-break-inside:
+                    avoid !important;
             }
 
-            #pdf-export-container .technology-grid {
-                width: 100% !important;
-                max-width: 100% !important;
 
-                display: grid !important;
+            /* ========================================
+               TECHNOLOGY GRID
+               ======================================== */
+
+            #pdf-export-area .technology-grid {
+
+                width:
+                    100% !important;
+
+                max-width:
+                    100% !important;
+
+                display:
+                    grid !important;
 
                 grid-template-columns:
-                    repeat(2, minmax(0, 1fr)) !important;
+                    repeat(
+                        2,
+                        minmax(0, 1fr)
+                    ) !important;
 
-                gap: 18px !important;
-
-                box-sizing: border-box !important;
+                gap:
+                    4mm !important;
             }
 
-            #pdf-export-container .technology-card {
-                width: 100% !important;
-                min-width: 0 !important;
-                max-width: 100% !important;
 
-                margin: 0 !important;
+            #pdf-export-area .technology-card {
 
-                box-sizing: border-box !important;
+                width:
+                    auto !important;
 
-                break-inside: avoid;
-                page-break-inside: avoid;
+                min-width:
+                    0 !important;
+
+                max-width:
+                    none !important;
+
+                margin:
+                    0 !important;
+
+                break-inside:
+                    avoid !important;
+
+                page-break-inside:
+                    avoid !important;
             }
 
-            #pdf-export-container table {
-                width: 100% !important;
-                max-width: 100% !important;
 
-                border-collapse: collapse !important;
+            /* ========================================
+               TABLES
+               ======================================== */
 
-                table-layout: fixed !important;
+            #pdf-export-area table {
 
-                box-sizing: border-box !important;
+                width:
+                    100% !important;
 
-                break-inside: auto;
+                max-width:
+                    100% !important;
+
+                table-layout:
+                    fixed !important;
+
+                border-collapse:
+                    collapse !important;
             }
 
-            #pdf-export-container tr {
-                break-inside: avoid !important;
-                page-break-inside: avoid !important;
+
+            #pdf-export-area td,
+            #pdf-export-area th {
+
+                word-break:
+                    break-word !important;
+
+                overflow-wrap:
+                    anywhere !important;
             }
 
-            #pdf-export-container td,
-            #pdf-export-container th {
-                word-wrap: break-word !important;
-                overflow-wrap: anywhere !important;
-                max-width: 100% !important;
+
+            #pdf-export-area tr {
+
+                break-inside:
+                    avoid !important;
+
+                page-break-inside:
+                    avoid !important;
             }
 
-            #pdf-export-container img {
-                max-width: 100% !important;
-                height: auto !important;
+
+            /* ========================================
+               IMAGES
+               ======================================== */
+
+            #pdf-export-area img {
+
+                max-width:
+                    100% !important;
+
+                height:
+                    auto !important;
             }
 
-            #pdf-export-container h1,
-            #pdf-export-container h2,
-            #pdf-export-container h3,
-            #pdf-export-container p {
-                max-width: 100% !important;
-                overflow-wrap: break-word !important;
+
+            /* ========================================
+               TEXT
+               ======================================== */
+
+            #pdf-export-area h1,
+            #pdf-export-area h2,
+            #pdf-export-area h3,
+            #pdf-export-area p,
+            #pdf-export-area li {
+
+                overflow-wrap:
+                    anywhere !important;
             }
 
-            #pdf-export-container .recommendation-list,
-            #pdf-export-container .entity-list {
-                max-width: 100% !important;
-                overflow-wrap: anywhere !important;
-            }
 
-            #pdf-export-container .card,
-            #pdf-export-container .score-card,
-            #pdf-export-container .technology-card,
-            #pdf-export-container table {
-                transform: none !important;
+            /* ========================================
+               PAGE BREAK CONTROL
+               ======================================== */
+
+            #pdf-export-area .score-card,
+            #pdf-export-area .technology-card {
+
+                break-inside:
+                    avoid-page !important;
+
+                page-break-inside:
+                    avoid !important;
             }
 
         `;
 
 
-        pdfReport.prepend(
-            pdfStyle
+        exportArea.appendChild(
+            style
         );
 
 
-        // ==================================================
-        // ADD CLONE TO CONTAINER
-        // ==================================================
-
-        pdfContainer.appendChild(
-            pdfReport
+        exportArea.appendChild(
+            clone
         );
 
 
-        // ==================================================
-        // ADD CONTAINER TO BODY
-        // ==================================================
+        // ==============================================
+        // PUT INTO DOCUMENT
+        // ==============================================
 
         document.body.appendChild(
-            pdfContainer
+            exportArea
         );
 
 
-        // ==================================================
-        // FORCE BROWSER LAYOUT
-        // ==================================================
+        // ==============================================
+        // WAIT FOR BROWSER RENDER
+        // ==============================================
 
         await new Promise(
-            resolve => {
-
-                requestAnimationFrame(() => {
-
-                    requestAnimationFrame(() => {
-
-                        resolve();
-
-                    });
-
-                });
-
-            }
+            resolve =>
+                requestAnimationFrame(
+                    () =>
+                        requestAnimationFrame(
+                            resolve
+                        )
+                )
         );
 
 
-        // ==================================================
+        // ==============================================
         // WAIT FOR FONTS
-        // ==================================================
+        // ==============================================
 
-        if (
-            document.fonts &&
-            document.fonts.ready
-        ) {
+        if (document.fonts) {
 
             try {
 
                 await document.fonts.ready;
 
             }
-            catch (fontError) {
+            catch (e) {
 
-                console.warn(
-                    "Font loading warning:",
-                    fontError
-                );
+                console.warn(e);
 
             }
 
         }
 
 
-        // ==================================================
+        // ==============================================
         // WAIT FOR IMAGES
-        // ==================================================
+        // ==============================================
 
         const images =
-            pdfReport.querySelectorAll(
+            exportArea.querySelectorAll(
                 "img"
             );
 
@@ -3709,9 +3697,10 @@ async function downloadPDF() {
         await Promise.all(
 
             Array.from(images).map(
-                image => {
 
-                    if (image.complete) {
+                img => {
+
+                    if (img.complete) {
 
                         return Promise.resolve();
 
@@ -3719,82 +3708,47 @@ async function downloadPDF() {
 
 
                     return new Promise(
+
                         resolve => {
 
-                            image.onload =
+                            img.onload =
                                 resolve;
 
-                            image.onerror =
+                            img.onerror =
                                 resolve;
 
                         }
+
                     );
 
                 }
+
             )
 
         );
 
 
-        // ==================================================
-        // WAIT FOR FINAL LAYOUT
-        // ==================================================
+        // ==============================================
+        // SMALL FINAL WAIT
+        // ==============================================
 
         await new Promise(
+
             resolve =>
                 setTimeout(
                     resolve,
-                    1000
+                    500
                 )
+
         );
 
 
-        // ==================================================
-        // MEASURE CONTENT
-        // ==================================================
-
-        const contentWidth =
-            pdfReport.scrollWidth;
-
-
-        const contentHeight =
-            pdfReport.scrollHeight;
-
-
-        console.log(
-            "PDF content width:",
-            contentWidth
-        );
-
-
-        console.log(
-            "PDF content height:",
-            contentHeight
-        );
-
-
-        // ==================================================
-        // VALIDATE
-        // ==================================================
-
-        if (
-            contentWidth <= 0 ||
-            contentHeight <= 0
-        ) {
-
-            throw new Error(
-                "PDF content has zero dimensions."
-            );
-
-        }
-
-
-        // ==================================================
-        // WEBSITE NAME
-        // ==================================================
+        // ==============================================
+        // FILE NAME
+        // ==============================================
 
         let websiteName =
-            "AI-Visibility";
+            "AI-Visibility-Report";
 
 
         if (
@@ -3804,14 +3758,14 @@ async function downloadPDF() {
 
             try {
 
-                const parsedURL =
+                const url =
                     new URL(
                         websiteInput.value
                     );
 
 
                 websiteName =
-                    parsedURL.hostname
+                    url.hostname
                         .replace(
                             /^www\./,
                             ""
@@ -3822,47 +3776,24 @@ async function downloadPDF() {
                         );
 
             }
-            catch (error) {
+            catch (e) {
 
-                console.warn(
-                    "Website name error:",
-                    error
-                );
+                console.warn(e);
 
             }
 
         }
 
 
-        // ==================================================
-        // DATE
-        // ==================================================
-
-        const today =
-            new Date();
-
-
-        const dateString =
-            today
+        const date =
+            new Date()
                 .toISOString()
                 .split("T")[0];
 
 
-        // ==================================================
-        // UPDATE BUTTON
-        // ==================================================
-
-        if (button) {
-
-            button.innerHTML =
-                "⏳ Generating PDF...";
-
-        }
-
-
-        // ==================================================
-        // PDF OPTIONS
-        // ==================================================
+        // ==============================================
+        // HTML2PDF OPTIONS
+        // ==============================================
 
         const options = {
 
@@ -3875,60 +3806,65 @@ async function downloadPDF() {
 
 
             filename:
-                `${websiteName}-AI-Visibility-Report-${dateString}.pdf`,
+                `${websiteName}-AI-Visibility-Report-${date}.pdf`,
 
 
             image: {
 
-                type: "jpeg",
+                type:
+                    "jpeg",
 
-                quality: 0.95
+                quality:
+                    0.96
 
             },
 
 
             html2canvas: {
 
-                scale: 1.5,
+                scale:
+                    2,
 
-                useCORS: true,
+                useCORS:
+                    true,
 
-                allowTaint: false,
+                allowTaint:
+                    false,
 
                 backgroundColor:
                     "#ffffff",
 
-                logging: false,
+                logging:
+                    false,
 
-                imageTimeout: 20000,
+                scrollX:
+                    0,
 
-                removeContainer: true,
+                scrollY:
+                    0
 
-                scrollX: 0,
-
-                scrollY: 0,
-
-                windowWidth:
-                    794,
-
-                windowHeight:
-                    Math.max(
-                        1123,
-                        contentHeight
-                    )
+                // IMPORTANT:
+                // NO width
+                // NO height
+                // NO windowWidth
+                // NO windowHeight
 
             },
 
 
             jsPDF: {
 
-                unit: "mm",
+                unit:
+                    "mm",
 
-                format: "a4",
+                format:
+                    "a4",
 
-                orientation: "portrait",
+                orientation:
+                    "portrait",
 
-                compress: true
+                compress:
+                    true
 
             },
 
@@ -3946,8 +3882,6 @@ async function downloadPDF() {
 
                     ".technology-card",
 
-                    "table",
-
                     "tr"
 
                 ]
@@ -3957,82 +3891,22 @@ async function downloadPDF() {
         };
 
 
-        // ==================================================
-        // GENERATE PDF
-        // ==================================================
-
-        console.log(
-            "📄 Starting PDF generation..."
-        );
-
+        // ==============================================
+        // GENERATE
+        // ==============================================
 
         await html2pdf()
 
             .set(options)
 
-            .from(pdfReport)
-
-            .toCanvas()
-
-            .toPdf()
+            .from(exportArea)
 
             .save();
 
 
-        console.log(
-            "✅ PDF generated successfully."
-        );
-
-
-        // ==================================================
-        // REMOVE PDF CONTAINER
-        // ==================================================
-
-        if (pdfContainer) {
-
-            pdfContainer.remove();
-
-            pdfContainer = null;
-
-        }
-
-
-        // ==================================================
-        // RESTORE ORIGINAL BUTTON
-        // ==================================================
-
-        if (originalButton) {
-
-            originalButton.style.display =
-                "";
-
-        }
-
-
-        // ==================================================
-        // RESTORE DOWNLOAD BUTTON
-        // ==================================================
-
-        if (button) {
-
-            button.disabled =
-                false;
-
-            button.innerHTML =
-                "📄 Download PDF Report";
-
-            button.style.opacity =
-                "1";
-
-            button.style.cursor =
-                "pointer";
-
-        }
-
-
-        // ==================================================
+        // ==============================================
         // SUCCESS
-        // ==================================================
+        // ==============================================
 
         showNotification(
             "PDF report downloaded successfully.",
@@ -4044,47 +3918,29 @@ async function downloadPDF() {
     catch (error) {
 
         console.error(
-            "❌ PDF Generation Error:",
+            "PDF ERROR:",
             error
         );
 
 
-        // ==================================================
-        // REMOVE TEMPORARY CONTAINER
-        // ==================================================
+        showNotification(
+            "Unable to generate PDF.",
+            "error"
+        );
 
-        if (pdfContainer) {
+    }
+    finally {
 
-            pdfContainer.remove();
+        // ==============================================
+        // CLEANUP
+        // ==============================================
 
-            pdfContainer = null;
+        if (exportArea) {
 
-        }
-
-
-        // ==================================================
-        // RESTORE ORIGINAL BUTTON
-        // ==================================================
-
-        const originalButton =
-            report
-                ? report.querySelector(
-                    ".pdf-download-section"
-                )
-                : null;
-
-
-        if (originalButton) {
-
-            originalButton.style.display =
-                "";
+            exportArea.remove();
 
         }
 
-
-        // ==================================================
-        // RESTORE DOWNLOAD BUTTON
-        // ==================================================
 
         if (button) {
 
@@ -4101,16 +3957,6 @@ async function downloadPDF() {
                 "pointer";
 
         }
-
-
-        // ==================================================
-        // ERROR MESSAGE
-        // ==================================================
-
-        showNotification(
-            "Unable to generate the PDF. Please try again.",
-            "error"
-        );
 
     }
 
