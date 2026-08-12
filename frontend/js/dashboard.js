@@ -3250,29 +3250,30 @@ document.addEventListener(
 
 // ======================================================
 // DOWNLOAD PDF REPORT
-
-// ======================================================
-// DOWNLOAD PDF REPORT
-// PART 1 OF 4
 // ======================================================
 
 async function downloadPDF() {
 
-    const results =
+    const report =
         document.getElementById("results");
 
     const button =
-        document.getElementById("download-pdf-btn");
+        document.getElementById(
+            "download-pdf-btn"
+        );
+
+    const websiteInput =
+        document.getElementById("website");
 
 
     // ==================================================
     // CHECK REPORT
     // ==================================================
 
-    if (!results) {
+    if (!report) {
 
         showNotification(
-            "Report not found.",
+            "Report could not be found.",
             "error"
         );
 
@@ -3282,7 +3283,7 @@ async function downloadPDF() {
 
 
     // ==================================================
-    // CHECK HTML2PDF
+    // CHECK PDF LIBRARY
     // ==================================================
 
     if (
@@ -3290,12 +3291,8 @@ async function downloadPDF() {
     ) {
 
         showNotification(
-            "PDF generator is not loaded. Please refresh the page.",
+            "PDF generator is still loading. Please try again.",
             "error"
-        );
-
-        console.error(
-            "html2pdf library is not available."
         );
 
         return;
@@ -3304,12 +3301,13 @@ async function downloadPDF() {
 
 
     // ==================================================
-    // DISABLE DOWNLOAD BUTTON
+    // DISABLE BUTTON
     // ==================================================
 
     if (button) {
 
-        button.disabled = true;
+        button.disabled =
+            true;
 
         button.innerHTML =
             "⏳ Generating PDF...";
@@ -3323,141 +3321,122 @@ async function downloadPDF() {
     }
 
 
-    // ==================================================
-    // PDF EXPORT CONTAINER
-    // ==================================================
-
-    let exportArea = null;
+    let wrapper =
+        null;
 
 
     try {
 
-        exportArea =
-            document.createElement(
-                "div"
-            );
-
-
-        exportArea.id =
-            "pdf-export-area";
-
-
         // ==================================================
-        // A4 CONTENT WIDTH
+        // CLONE REPORT
         // ==================================================
 
-        exportArea.style.width =
-            "190mm";
-
-        exportArea.style.maxWidth =
-            "190mm";
-
-        exportArea.style.margin =
-            "0 auto";
-
-        exportArea.style.padding =
-            "0";
-
-        exportArea.style.background =
-            "#ffffff";
-
-        exportArea.style.color =
-            "#111827";
-
-        exportArea.style.fontFamily =
-            "Arial, Helvetica, sans-serif";
-
-        exportArea.style.boxSizing =
-            "border-box";
-
-        exportArea.style.overflow =
-            "visible";
-
-
-        // ==================================================
-        // CLONE COMPLETE REPORT
-        // ==================================================
-
-        const clone =
-            results.cloneNode(true);
-
-
-        clone.removeAttribute(
-            "id"
-        );
+        const pdfContent =
+            report.cloneNode(true);
 
 
         // ==================================================
         // REMOVE DOWNLOAD BUTTON
         // ==================================================
 
-        const downloadSection =
-            clone.querySelector(
+        const pdfButton =
+            pdfContent.querySelector(
                 ".pdf-download-section"
             );
 
 
-        if (downloadSection) {
+        if (pdfButton) {
 
-            downloadSection.remove();
+            pdfButton.remove();
 
         }
 
 
         // ==================================================
-        // CLEAN CLONE
+        // REMOVE NOTIFICATIONS
         // ==================================================
 
-        clone.style.width =
-            "100%";
+        const notifications =
+            pdfContent.querySelectorAll(
+                ".notification"
+            );
 
-        clone.style.maxWidth =
-            "none";
 
-        clone.style.margin =
+        notifications.forEach(
+            element => {
+
+                element.remove();
+
+            }
+        );
+
+
+        // ==================================================
+        // CREATE PDF WRAPPER
+        // ==================================================
+
+        wrapper =
+            document.createElement(
+                "div"
+            );
+
+
+        wrapper.id =
+            "pdf-export-area";
+
+
+        wrapper.style.width =
+            "190mm";
+
+
+        wrapper.style.maxWidth =
+            "190mm";
+
+
+        wrapper.style.margin =
+            "0 auto";
+
+
+        wrapper.style.padding =
             "0";
 
-        clone.style.padding =
-            "0";
 
-        clone.style.background =
+        wrapper.style.background =
             "#ffffff";
 
-        clone.style.boxSizing =
+
+        wrapper.style.color =
+            "#111827";
+
+
+        wrapper.style.boxSizing =
             "border-box";
 
-        clone.style.overflow =
+
+        wrapper.style.overflow =
             "visible";
 
 
+        wrapper.appendChild(
+            pdfContent
+        );
+
+
         // ==================================================
-        // PDF-SPECIFIC CSS
+        // PDF EXPORT CSS
         // ==================================================
 
-        const style =
+        const pdfStyle =
             document.createElement(
                 "style"
             );
 
 
-        style.textContent = `
+        pdfStyle.textContent = `
 
-            /* =========================================
-               GLOBAL PDF BOX SIZING
-            ========================================= */
-
-            #pdf-export-area,
-            #pdf-export-area * {
-
-                box-sizing:
-                    border-box !important;
-
-            }
-
-
-            /* =========================================
-               PDF MAIN CONTAINER
-            ========================================= */
+            /* ==========================================
+               PDF BASE
+            ========================================== */
 
             #pdf-export-area {
 
@@ -3476,15 +3455,34 @@ async function downloadPDF() {
                 background:
                     #ffffff !important;
 
+                color:
+                    #111827 !important;
+
+                box-sizing:
+                    border-box !important;
+
                 overflow:
                     visible !important;
+
+                font-family:
+                    Arial,
+                    Helvetica,
+                    sans-serif !important;
 
             }
 
 
-            /* =========================================
-               GENERAL REPORT CARD
-            ========================================= */
+            #pdf-export-area * {
+
+                box-sizing:
+                    border-box !important;
+
+            }
+
+
+            /* ==========================================
+               NORMAL REPORT CARDS
+            ========================================== */
 
             #pdf-export-area .card {
 
@@ -3495,35 +3493,45 @@ async function downloadPDF() {
                     100% !important;
 
                 margin:
-                    0 0 3mm 0 !important;
+                    0 0 4mm 0 !important;
 
                 padding:
-                    4mm !important;
+                    5mm !important;
 
                 background:
                     #ffffff !important;
 
-                overflow:
-                    visible !important;
-
                 transform:
                     none !important;
+
+                overflow:
+                    visible !important;
 
             }
 
 
-            /* =========================================
-               TEXT WRAPPING
-            ========================================= */
+            /* ==========================================
+               HEADINGS
+            ========================================== */
 
             #pdf-export-area h1,
             #pdf-export-area h2,
             #pdf-export-area h3,
-            #pdf-export-area h4,
-            #pdf-export-area p,
-            #pdf-export-area li,
-            #pdf-export-area td,
-            #pdf-export-area th {
+            #pdf-export-area h4 {
+
+                break-after:
+                    avoid !important;
+
+                page-break-after:
+                    avoid !important;
+
+                overflow-wrap:
+                    anywhere !important;
+
+            }
+
+
+            #pdf-export-area p {
 
                 overflow-wrap:
                     anywhere !important;
@@ -3534,32 +3542,12 @@ async function downloadPDF() {
             }
 
 
-            /* =========================================
-               HEADINGS
-            ========================================= */
+            /* ==========================================
+               AI PLATFORM SCORES
+               EXACTLY 2 CARDS PER ROW
+            ========================================== */
 
-            #pdf-export-area h1,
-            #pdf-export-area h2,
-            #pdf-export-area h3,
-            #pdf-export-area h4 {
-
-                page-break-after:
-                    avoid !important;
-
-                break-after:
-                    avoid !important;
-
-            }
-
-
-            /* =========================================
-               OVERALL AI VISIBILITY
-            ========================================= */
-
-            #pdf-export-area .overall-card {
-
-                width:
-                    100% !important;
+            #pdf-export-area .score-grid {
 
                 display:
                     flex !important;
@@ -3567,157 +3555,19 @@ async function downloadPDF() {
                 flex-direction:
                     row !important;
 
-                align-items:
-                    center !important;
+                flex-wrap:
+                    wrap !important;
 
                 justify-content:
-                    space-between !important;
+                    flex-start !important;
+
+                align-items:
+                    stretch !important;
+
+                width:
+                    100% !important;
 
                 gap:
-                    8mm !important;
-
-                padding:
-                    6mm !important;
-
-                margin:
-                    0 !important;
-
-                overflow:
-                    visible !important;
-
-            }
-
-
-            /* =========================================
-               OVERALL LEFT
-            ========================================= */
-
-            #pdf-export-area .overall-left {
-
-                flex:
-                    0 0 55mm !important;
-
-                width:
-                    55mm !important;
-
-                min-width:
-                    55mm !important;
-
-                text-align:
-                    center !important;
-
-            }
-
-
-            #pdf-export-area .overall-left h1 {
-
-                font-size:
-                    48px !important;
-
-                line-height:
-                    1 !important;
-
-                margin:
-                    0 0 4mm 0 !important;
-
-            }
-
-
-            /* =========================================
-               OVERALL GRADE
-            ========================================= */
-
-            #pdf-export-area .grade {
-
-                display:
-                    inline-flex !important;
-
-                align-items:
-                    center !important;
-
-                justify-content:
-                    center !important;
-
-                white-space:
-                    nowrap !important;
-
-                padding:
-                    2mm 5mm !important;
-
-            }
-
-
-            /* =========================================
-               OVERALL RIGHT
-            ========================================= */
-
-            #pdf-export-area .overall-right {
-
-                flex:
-                    1 1 auto !important;
-
-                min-width:
-                    0 !important;
-
-                text-align:
-                    left !important;
-
-            }
-
-
-            #pdf-export-area .overall-right p {
-
-                margin:
-                    0 !important;
-
-                font-size:
-                    14px !important;
-
-                line-height:
-                    1.6 !important;
-
-            }
-
-
-            /* =========================================
-               PAGE BREAK HEADING PROTECTION
-            ========================================= */
-
-            #pdf-export-area h2,
-            #pdf-export-area h3 {
-
-                break-after:
-                    avoid !important;
-
-                page-break-after:
-                    avoid !important;
-
-            }
-
-            #pdf-export-area .score-grid {
-
-                width:
-                    100% !important;
-
-                max-width:
-                    100% !important;
-
-                display:
-                    grid !important;
-
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr)) !important;
-
-                grid-template-rows:
-                    auto !important;
-
-                grid-auto-flow:
-                    row !important;
-
-                column-gap:
-                    5mm !important;
-
-                row-gap:
                     5mm !important;
 
                 margin:
@@ -3726,30 +3576,22 @@ async function downloadPDF() {
                 padding:
                     0 !important;
 
-                align-items:
-                    stretch !important;
-
-                justify-items:
-                    stretch !important;
-
             }
 
 
-            /* =========================================
-               AI PLATFORM CARD
-               SAME SIZE FOR ALL 7 PLATFORMS
-            ========================================= */
-
             #pdf-export-area .score-card {
 
+                flex:
+                    0 0 calc(50% - 2.5mm) !important;
+
                 width:
-                    100% !important;
+                    calc(50% - 2.5mm) !important;
 
                 min-width:
-                    0 !important;
+                    calc(50% - 2.5mm) !important;
 
                 max-width:
-                    none !important;
+                    calc(50% - 2.5mm) !important;
 
                 height:
                     30mm !important;
@@ -3759,6 +3601,12 @@ async function downloadPDF() {
 
                 max-height:
                     30mm !important;
+
+                margin:
+                    0 !important;
+
+                padding:
+                    4mm !important;
 
                 display:
                     flex !important;
@@ -3775,14 +3623,11 @@ async function downloadPDF() {
                 text-align:
                     center !important;
 
-                padding:
-                    4mm !important;
-
-                margin:
-                    0 !important;
-
                 overflow:
                     hidden !important;
+
+                transform:
+                    none !important;
 
                 break-inside:
                     avoid !important;
@@ -3790,20 +3635,19 @@ async function downloadPDF() {
                 page-break-inside:
                     avoid !important;
 
-                transform:
-                    none !important;
-
             }
 
-
-            /* =========================================
-               AI PLATFORM NAME
-            ========================================= */
 
             #pdf-export-area .score-card h3 {
 
                 width:
                     100% !important;
+
+                margin:
+                    0 0 2mm 0 !important;
+
+                padding:
+                    0 !important;
 
                 font-size:
                     14px !important;
@@ -3811,17 +3655,8 @@ async function downloadPDF() {
                 line-height:
                     1.2 !important;
 
-                font-weight:
-                    700 !important;
-
                 text-align:
                     center !important;
-
-                margin:
-                    0 0 2mm 0 !important;
-
-                padding:
-                    0 !important;
 
                 white-space:
                     nowrap !important;
@@ -3835,23 +3670,7 @@ async function downloadPDF() {
             }
 
 
-            /* =========================================
-               AI PLATFORM SCORE
-            ========================================= */
-
             #pdf-export-area .score-card h1 {
-
-                font-size:
-                    32px !important;
-
-                line-height:
-                    1 !important;
-
-                font-weight:
-                    800 !important;
-
-                text-align:
-                    center !important;
 
                 margin:
                     0 !important;
@@ -3859,34 +3678,41 @@ async function downloadPDF() {
                 padding:
                     0 !important;
 
+                font-size:
+                    32px !important;
+
+                line-height:
+                    1 !important;
+
+                text-align:
+                    center !important;
+
             }
 
 
-            /* =========================================
-               AI PLATFORM DESCRIPTION
-            ========================================= */
-
             #pdf-export-area .score-card p {
+
+                margin:
+                    1.5mm 0 0 0 !important;
+
+                padding:
+                    0 !important;
 
                 font-size:
                     10px !important;
 
                 line-height:
-                    1.25 !important;
+                    1.2 !important;
 
                 text-align:
                     center !important;
 
-                margin:
-                    1.5mm 0 0 0 !important;
-
             }
 
-
-            /* =========================================
+            /* ==========================================
                TECHNOLOGY DETECTION
                EXACTLY 2 TECHNOLOGIES PER ROW
-            ========================================= */
+            ========================================== */
 
             #pdf-export-area .technology-wrapper {
 
@@ -3924,55 +3750,53 @@ async function downloadPDF() {
                 width:
                     100% !important;
 
-                font-size:
-                    15px !important;
-
-                line-height:
-                    1.3 !important;
-
                 margin:
                     0 0 3mm 0 !important;
 
                 padding:
                     0 !important;
 
-                page-break-after:
-                    avoid !important;
+                font-size:
+                    15px !important;
+
+                line-height:
+                    1.3 !important;
 
                 break-after:
+                    avoid !important;
+
+                page-break-after:
                     avoid !important;
 
             }
 
 
-            /* =========================================
+            /* ==========================================
                TECHNOLOGY GRID
-            ========================================= */
+               FLEXBOX = STABLE PDF LAYOUT
+            ========================================== */
 
             #pdf-export-area .technology-grid {
+
+                display:
+                    flex !important;
+
+                flex-direction:
+                    row !important;
+
+                flex-wrap:
+                    wrap !important;
+
+                justify-content:
+                    flex-start !important;
+
+                align-items:
+                    stretch !important;
 
                 width:
                     100% !important;
 
-                max-width:
-                    100% !important;
-
-                display:
-                    grid !important;
-
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr)) !important;
-
-                grid-template-rows:
-                    auto !important;
-
-                grid-auto-flow:
-                    row !important;
-
-                column-gap:
-                    5mm !important;
-
-                row-gap:
+                gap:
                     5mm !important;
 
                 margin:
@@ -3981,30 +3805,27 @@ async function downloadPDF() {
                 padding:
                     0 !important;
 
-                align-items:
-                    stretch !important;
-
-                justify-items:
-                    stretch !important;
-
             }
 
 
-            /* =========================================
+            /* ==========================================
                TECHNOLOGY CARD
-               EQUAL WIDTH
-            ========================================= */
+               2 EQUAL CARDS PER ROW
+            ========================================== */
 
             #pdf-export-area .technology-card {
 
+                flex:
+                    0 0 calc(50% - 2.5mm) !important;
+
                 width:
-                    100% !important;
+                    calc(50% - 2.5mm) !important;
 
                 min-width:
-                    0 !important;
+                    calc(50% - 2.5mm) !important;
 
                 max-width:
-                    none !important;
+                    calc(50% - 2.5mm) !important;
 
                 min-height:
                     32mm !important;
@@ -4012,23 +3833,11 @@ async function downloadPDF() {
                 height:
                     auto !important;
 
-                padding:
-                    4mm !important;
-
                 margin:
                     0 !important;
 
-                overflow:
-                    hidden !important;
-
-                break-inside:
-                    avoid !important;
-
-                page-break-inside:
-                    avoid !important;
-
-                transform:
-                    none !important;
+                padding:
+                    4mm !important;
 
                 display:
                     flex !important;
@@ -4039,17 +3848,34 @@ async function downloadPDF() {
                 justify-content:
                     flex-start !important;
 
+                align-items:
+                    flex-start !important;
+
+                overflow:
+                    hidden !important;
+
+                transform:
+                    none !important;
+
+                break-inside:
+                    avoid !important;
+
+                page-break-inside:
+                    avoid !important;
+
             }
 
-
-            /* =========================================
-               TECHNOLOGY NAME
-            ========================================= */
 
             #pdf-export-area .technology-card h3 {
 
                 width:
                     100% !important;
+
+                margin:
+                    0 0 2mm 0 !important;
+
+                padding:
+                    0 !important;
 
                 font-size:
                     13px !important;
@@ -4060,38 +3886,31 @@ async function downloadPDF() {
                 font-weight:
                     700 !important;
 
-                margin:
-                    0 0 2mm 0 !important;
-
-                padding:
-                    0 !important;
-
                 overflow-wrap:
                     anywhere !important;
 
+                word-break:
+                    break-word !important;
+
             }
 
-
-            /* =========================================
-               TECHNOLOGY DETAILS
-            ========================================= */
 
             #pdf-export-area .technology-card p {
 
                 width:
                     100% !important;
 
-                font-size:
-                    9.5px !important;
-
-                line-height:
-                    1.4 !important;
-
                 margin:
                     0 0 1.5mm 0 !important;
 
                 padding:
                     0 !important;
+
+                font-size:
+                    9.5px !important;
+
+                line-height:
+                    1.4 !important;
 
                 overflow-wrap:
                     anywhere !important;
@@ -4102,10 +3921,6 @@ async function downloadPDF() {
             }
 
 
-            /* =========================================
-               TECHNOLOGY CONFIDENCE
-            ========================================= */
-
             #pdf-export-area .technology-card strong {
 
                 white-space:
@@ -4114,26 +3929,32 @@ async function downloadPDF() {
             }
 
 
-            /* =========================================
+            /* ==========================================
                E-E-A-T
-               2 CARDS PER ROW
-            ========================================= */
+               EXACTLY 2 CARDS PER ROW
+            ========================================== */
 
             #pdf-export-area .eeat-grid {
+
+                display:
+                    flex !important;
+
+                flex-direction:
+                    row !important;
+
+                flex-wrap:
+                    wrap !important;
+
+                justify-content:
+                    flex-start !important;
+
+                align-items:
+                    stretch !important;
 
                 width:
                     100% !important;
 
-                display:
-                    grid !important;
-
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr)) !important;
-
-                column-gap:
-                    5mm !important;
-
-                row-gap:
+                gap:
                     5mm !important;
 
                 margin:
@@ -4142,25 +3963,28 @@ async function downloadPDF() {
                 padding:
                     0 !important;
 
-                align-items:
-                    stretch !important;
-
             }
 
 
             #pdf-export-area .eeat-card {
 
+                flex:
+                    0 0 calc(50% - 2.5mm) !important;
+
                 width:
-                    100% !important;
+                    calc(50% - 2.5mm) !important;
 
                 min-width:
+                    calc(50% - 2.5mm) !important;
+
+                max-width:
+                    calc(50% - 2.5mm) !important;
+
+                margin:
                     0 !important;
 
                 padding:
                     4mm !important;
-
-                margin:
-                    0 !important;
 
                 break-inside:
                     avoid !important;
@@ -4174,72 +3998,78 @@ async function downloadPDF() {
             }
 
 
-            /* =========================================
-               FAVICON / ALL REPORT IMAGES
-            ========================================= */
+            /* ==========================================
+               SUMMARY CARDS
+               EXACTLY 2 PER ROW
+            ========================================== */
 
-            #pdf-export-area img {
-
-                display:
-                    inline-block !important;
-
-                visibility:
-                    visible !important;
-
-                opacity:
-                    1 !important;
-
-                max-width:
-                    100% !important;
-
-                height:
-                    auto !important;
-
-                object-fit:
-                    contain !important;
-
-            }
-
-
-            /* =========================================
-               FAVICON SPECIFIC
-            ========================================= */
-
-            #pdf-export-area .info-table img {
+            #pdf-export-area .summary-grid {
 
                 display:
-                    inline-block !important;
+                    flex !important;
+
+                flex-direction:
+                    row !important;
+
+                flex-wrap:
+                    wrap !important;
+
+                justify-content:
+                    flex-start !important;
+
+                align-items:
+                    stretch !important;
 
                 width:
-                    32px !important;
+                    100% !important;
 
-                height:
-                    32px !important;
+                gap:
+                    5mm !important;
 
-                max-width:
-                    32px !important;
+                margin:
+                    3mm 0 !important;
 
-                max-height:
-                    32px !important;
-
-                object-fit:
-                    contain !important;
-
-                vertical-align:
-                    middle !important;
-
-                visibility:
-                    visible !important;
-
-                opacity:
-                    1 !important;
+                padding:
+                    0 !important;
 
             }
 
 
-            /* =========================================
+            #pdf-export-area .summary-card {
+
+                flex:
+                    0 0 calc(50% - 2.5mm) !important;
+
+                width:
+                    calc(50% - 2.5mm) !important;
+
+                min-width:
+                    calc(50% - 2.5mm) !important;
+
+                max-width:
+                    calc(50% - 2.5mm) !important;
+
+                margin:
+                    0 !important;
+
+                padding:
+                    4mm !important;
+
+                break-inside:
+                    avoid !important;
+
+                page-break-inside:
+                    avoid !important;
+
+                transform:
+                    none !important;
+
+            }
+
+
+            /* ==========================================
                INFORMATION TABLE
-            ========================================= */
+            ========================================== */
 
             #pdf-export-area .info-table {
 
@@ -4275,6 +4105,12 @@ async function downloadPDF() {
                 vertical-align:
                     top !important;
 
+                overflow-wrap:
+                    anywhere !important;
+
+                word-break:
+                    break-word !important;
+
             }
 
 
@@ -4291,18 +4127,8 @@ async function downloadPDF() {
                 width:
                     68% !important;
 
-                overflow-wrap:
-                    anywhere !important;
-
-                word-break:
-                    break-word !important;
-
             }
 
-
-            /* =========================================
-               TABLE ROW PAGE BREAK
-            ========================================= */
 
             #pdf-export-area .info-table tr {
 
@@ -4315,9 +4141,63 @@ async function downloadPDF() {
             }
 
 
-            /* =========================================
+            /* ==========================================
+               FAVICON
+               KEEP WEBSITE FAVICON IN PDF
+            ========================================== */
+
+            #pdf-export-area img {
+
+                display:
+                    inline-block !important;
+
+                visibility:
+                    visible !important;
+
+                opacity:
+                    1 !important;
+
+                object-fit:
+                    contain !important;
+
+            }
+
+
+            #pdf-export-area .info-table img {
+
+                display:
+                    inline-block !important;
+
+                width:
+                    32px !important;
+
+                height:
+                    32px !important;
+
+                max-width:
+                    32px !important;
+
+                max-height:
+                    32px !important;
+
+                object-fit:
+                    contain !important;
+
+                vertical-align:
+                    middle !important;
+
+                visibility:
+                    visible !important;
+
+                opacity:
+                    1 !important;
+
+            }
+
+
+            /* ==========================================
                ENTITY LIST
-            ========================================= */
+            ========================================== */
 
             #pdf-export-area .entity-list {
 
@@ -4359,9 +4239,9 @@ async function downloadPDF() {
             }
 
 
-            /* =========================================
+            /* ==========================================
                RECOMMENDATIONS
-            ========================================= */
+            ========================================== */
 
             #pdf-export-area .recommendation-list {
 
@@ -4394,9 +4274,9 @@ async function downloadPDF() {
             }
 
 
-            /* =========================================
-               REMOVE PDF BUTTON
-            ========================================= */
+            /* ==========================================
+               REMOVE DOWNLOAD BUTTON
+            ========================================== */
 
             #pdf-export-area .pdf-download-section,
             #pdf-export-area .notification {
@@ -4406,62 +4286,9 @@ async function downloadPDF() {
 
             }
 
-                        /* =========================================
-               REMOVE EXCESSIVE SPACING
-            ========================================= */
-
-            #pdf-export-area .summary-grid {
-
-                width:
-                    100% !important;
-
-                display:
-                    grid !important;
-
-                grid-template-columns:
-                    repeat(2, minmax(0, 1fr)) !important;
-
-                column-gap:
-                    5mm !important;
-
-                row-gap:
-                    5mm !important;
-
-                margin:
-                    3mm 0 !important;
-
-                padding:
-                    0 !important;
-
-            }
-
-
-            #pdf-export-area .summary-card {
-
-                width:
-                    100% !important;
-
-                min-width:
-                    0 !important;
-
-                margin:
-                    0 !important;
-
-                padding:
-                    4mm !important;
-
-                break-inside:
-                    avoid !important;
-
-                page-break-inside:
-                    avoid !important;
-
-            }
-
-
-            /* =========================================
-               CARD HEADINGS
-            ========================================= */
+                        /* ==========================================
+               GENERAL PDF SPACING
+            ========================================== */
 
             #pdf-export-area .card h2 {
 
@@ -4496,9 +4323,96 @@ async function downloadPDF() {
             }
 
 
-            /* =========================================
+            #pdf-export-area br {
+
+                line-height:
+                    1 !important;
+
+            }
+
+
+            /* ==========================================
+               PREVENT CARD TRANSFORMATIONS
+            ========================================== */
+
+            #pdf-export-area .score-card,
+            #pdf-export-area .technology-card,
+            #pdf-export-area .eeat-card,
+            #pdf-export-area .summary-card {
+
+                transform:
+                    none !important;
+
+            }
+
+
+            /* ==========================================
+               PAGE-BREAK PROTECTION
+            ========================================== */
+
+            #pdf-export-area .score-card,
+            #pdf-export-area .technology-card,
+            #pdf-export-area .eeat-card,
+            #pdf-export-area .summary-card {
+
+                break-inside:
+                    avoid !important;
+
+                page-break-inside:
+                    avoid !important;
+
+            }
+
+
+            #pdf-export-area .info-table tr {
+
+                break-inside:
+                    avoid !important;
+
+                page-break-inside:
+                    avoid !important;
+
+            }
+
+
+            /* ==========================================
+               TECHNOLOGY SECTION HEADING
+            ========================================== */
+
+            #pdf-export-area .technology-section > h3 {
+
+                break-after:
+                    avoid !important;
+
+                page-break-after:
+                    avoid !important;
+
+            }
+
+
+            /* ==========================================
+               HORIZONTAL OVERFLOW
+            ========================================== */
+
+            #pdf-export-area {
+
+                overflow-x:
+                    hidden !important;
+
+            }
+
+
+            #pdf-export-area table {
+
+                overflow:
+                    hidden !important;
+
+            }
+
+
+            /* ==========================================
                FOOTER
-            ========================================= */
+            ========================================== */
 
             #pdf-export-area .footer {
 
@@ -4517,161 +4431,21 @@ async function downloadPDF() {
             }
 
 
-            /* =========================================
+            /* ==========================================
                LINKS
-            ========================================= */
+            ========================================== */
 
             #pdf-export-area a {
 
                 text-decoration:
                     none !important;
 
-                color:
-                    #1d4ed8 !important;
-
             }
 
 
-            /* =========================================
-               REMOVE HTML LINE-BREAK EXTRA HEIGHT
-            ========================================= */
-
-            #pdf-export-area br {
-
-                line-height:
-                    1 !important;
-
-            }
-
-
-            /* =========================================
-               PREVENT UNNECESSARY TRANSFORMS
-            ========================================= */
-
-            #pdf-export-area .score-card,
-            #pdf-export-area .technology-card,
-            #pdf-export-area .eeat-card,
-            #pdf-export-area .summary-card {
-
-                transform:
-                    none !important;
-
-            }
-
-
-            /* =========================================
-               PAGE BREAK PROTECTION
-            ========================================= */
-
-            #pdf-export-area .score-card,
-            #pdf-export-area .technology-card,
-            #pdf-export-area .eeat-card,
-            #pdf-export-area .summary-card,
-            #pdf-export-area tr {
-
-                break-inside:
-                    avoid !important;
-
-                page-break-inside:
-                    avoid !important;
-
-            }
-
-
-            /* =========================================
-               TECHNOLOGY SECTION PAGE PROTECTION
-            ========================================= */
-
-            #pdf-export-area .technology-section {
-
-                break-inside:
-                    auto !important;
-
-                page-break-inside:
-                    auto !important;
-
-            }
-
-
-            #pdf-export-area .technology-section > h3 {
-
-                break-after:
-                    avoid !important;
-
-                page-break-after:
-                    avoid !important;
-
-            }
-
-
-            /* =========================================
-               PREVENT HORIZONTAL OVERFLOW
-            ========================================= */
-
-            #pdf-export-area {
-
-                overflow-x:
-                    hidden !important;
-
-            }
-
-
-            #pdf-export-area table {
-
-                overflow:
-                    hidden !important;
-
-            }
-
-
-            /* =========================================
-               KEEP AI SCORE GRID TOGETHER
-            ========================================= */
-
-            #pdf-export-area .score-grid {
-
-                break-inside:
-                    auto !important;
-
-                page-break-inside:
-                    auto !important;
-
-            }
-
-
-            /* =========================================
-               KEEP TECHNOLOGY GRID TOGETHER
-            ========================================= */
-
-            #pdf-export-area .technology-grid {
-
-                break-inside:
-                    auto !important;
-
-                page-break-inside:
-                    auto !important;
-
-            }
-
-
-            /* =========================================
-               KEEP E-E-A-T GRID TOGETHER
-            ========================================= */
-
-            #pdf-export-area .eeat-grid {
-
-                break-inside:
-                    auto !important;
-
-                page-break-inside:
-                    auto !important;
-
-            }
-
-
-            /* =========================================
+            /* ==========================================
                FINAL IMAGE VISIBILITY
-            ========================================= */
+            ========================================== */
 
             #pdf-export-area img {
 
@@ -4690,26 +4464,17 @@ async function downloadPDF() {
         // ADD PDF CSS
         // ==================================================
 
-        exportArea.appendChild(
-            style
+        wrapper.appendChild(
+            pdfStyle
         );
 
 
         // ==================================================
-        // ADD REPORT CLONE
-        // ==================================================
-
-        exportArea.appendChild(
-            clone
-        );
-
-
-        // ==================================================
-        // ADD TEMPORARY PDF AREA
+        // ADD WRAPPER TO DOCUMENT
         // ==================================================
 
         document.body.appendChild(
-            exportArea
+            wrapper
         );
 
 
@@ -4767,14 +4532,14 @@ async function downloadPDF() {
 
         const images =
             Array.from(
-                exportArea.querySelectorAll(
+                wrapper.querySelectorAll(
                     "img"
                 )
             );
 
 
         // ==================================================
-        // WAIT FOR ALL IMAGES
+        // WAIT FOR IMAGES
         // INCLUDING FAVICON
         // ==================================================
 
@@ -4782,10 +4547,6 @@ async function downloadPDF() {
 
             images.map(
                 img => {
-
-                    // ----------------------------------
-                    // Already loaded
-                    // ----------------------------------
 
                     if (
                         img.complete &&
@@ -4796,10 +4557,6 @@ async function downloadPDF() {
 
                     }
 
-
-                    // ----------------------------------
-                    // Wait for image
-                    // ----------------------------------
 
                     return new Promise(
                         resolve => {
@@ -4823,7 +4580,6 @@ async function downloadPDF() {
                                     finished =
                                         true;
 
-
                                     resolve();
 
                                 };
@@ -4833,7 +4589,8 @@ async function downloadPDF() {
                                 "load",
                                 finish,
                                 {
-                                    once: true
+                                    once:
+                                        true
                                 }
                             );
 
@@ -4842,14 +4599,11 @@ async function downloadPDF() {
                                 "error",
                                 finish,
                                 {
-                                    once: true
+                                    once:
+                                        true
                                 }
                             );
 
-
-                            // --------------------------------
-                            // Safety timeout
-                            // --------------------------------
 
                             setTimeout(
                                 finish,
@@ -4879,7 +4633,7 @@ async function downloadPDF() {
 
 
         // ==================================================
-        // FORCE IMAGES VISIBLE
+        // FORCE IMAGE VISIBILITY
         // ==================================================
 
         images.forEach(
@@ -4902,11 +4656,11 @@ async function downloadPDF() {
         // FORCE FINAL LAYOUT CALCULATION
         // ==================================================
 
-        void exportArea.offsetHeight;
+        void wrapper.offsetHeight;
 
 
         // ==================================================
-        // GET WEBSITE NAME
+        // WEBSITE NAME
         // ==================================================
 
         let websiteName =
@@ -4920,14 +4674,14 @@ async function downloadPDF() {
 
             try {
 
-                const parsed =
+                const parsedURL =
                     new URL(
                         websiteInput.value
                     );
 
 
                 websiteName =
-                    parsed.hostname
+                    parsedURL.hostname
                         .replace(
                             /^www\./,
                             ""
@@ -4939,11 +4693,11 @@ async function downloadPDF() {
 
             }
 
-            catch (error) {
+            catch (urlError) {
 
                 console.warn(
-                    "Unable to determine website name:",
-                    error
+                    "Could not determine website name:",
+                    urlError
                 );
 
             }
@@ -4952,20 +4706,16 @@ async function downloadPDF() {
 
 
         // ==================================================
-        // CURRENT DATE
+        // REPORT DATE
         // ==================================================
 
-        const date =
+        const reportDate =
             new Date()
                 .toISOString()
                 .split("T")[0];
 
 
         // ==================================================
-        // PART 3 ENDS HERE
-        // ==================================================
-
-                // ==================================================
         // PDF OPTIONS
         // ==================================================
 
@@ -4979,7 +4729,7 @@ async function downloadPDF() {
             ],
 
             filename:
-                `${websiteName}-AI-Visibility-Report-${date}.pdf`,
+                `${websiteName}-AI-Visibility-Report-${reportDate}.pdf`,
 
             image: {
 
@@ -5035,39 +4785,34 @@ async function downloadPDF() {
 
             },
 
+
             pagebreak: {
 
-                mode: [
-                    "css",
-                    "legacy"
-                ],
+                mode:
+                    [
+                        "css"
+                    ],
 
-                avoid: [
-
-                    ".score-card",
-
-                    ".technology-card",
-
-                    ".eeat-card",
-
-                    ".summary-card",
-
-                    "tr"
-
-                ]
+                avoid:
+                    [
+                        ".score-card",
+                        ".technology-card",
+                        ".eeat-card",
+                        ".summary-card",
+                        "tr"
+                    ]
 
             }
 
         };
 
-
-        // ==================================================
-        // FINAL PDF GENERATION
+                // ==================================================
+        // GENERATE PDF
         // ==================================================
 
         await html2pdf()
             .set(options)
-            .from(exportArea)
+            .from(wrapper)
             .save();
 
 
@@ -5086,7 +4831,7 @@ async function downloadPDF() {
     catch (error) {
 
         // ==================================================
-        // PDF ERROR
+        // PDF GENERATION ERROR
         // ==================================================
 
         console.error(
@@ -5109,11 +4854,11 @@ async function downloadPDF() {
         // REMOVE TEMPORARY PDF AREA
         // ==================================================
 
-        if (exportArea) {
+        if (wrapper) {
 
             try {
 
-                exportArea.remove();
+                wrapper.remove();
 
             }
 
@@ -5155,8 +4900,3 @@ async function downloadPDF() {
     }
 
 }
-
-
-// ======================================================
-// END OF downloadPDF()
-// ======================================================
