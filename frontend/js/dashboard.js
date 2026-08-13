@@ -3533,8 +3533,7 @@ async function downloadPDF() {
 
     if (button) {
 
-        button.disabled =
-            true;
+        button.disabled = true;
 
         button.innerHTML =
             "⏳ Generating PDF...";
@@ -3553,7 +3552,7 @@ async function downloadPDF() {
     try {
 
         // =================================================
-        // CREATE PDF EXPORT AREA
+        // CREATE EXPORT AREA
         // =================================================
 
         exportArea =
@@ -3563,36 +3562,43 @@ async function downloadPDF() {
             "pdf-export-area";
 
 
-        exportArea.style.width =
-            "190mm";
+        Object.assign(
+            exportArea.style,
+            {
 
-        exportArea.style.maxWidth =
-            "190mm";
+                width:
+                    "190mm",
 
-        exportArea.style.margin =
-            "0 auto";
+                maxWidth:
+                    "190mm",
 
-        exportArea.style.padding =
-            "0";
+                margin:
+                    "0 auto",
 
-        exportArea.style.background =
-            "#ffffff";
+                padding:
+                    "0",
 
-        exportArea.style.color =
-            "#111827";
+                background:
+                    "#ffffff",
 
-        exportArea.style.fontFamily =
-            "Arial, Helvetica, sans-serif";
+                color:
+                    "#111827",
 
-        exportArea.style.boxSizing =
-            "border-box";
+                fontFamily:
+                    "Arial, Helvetica, sans-serif",
 
-        exportArea.style.overflow =
-            "visible";
+                boxSizing:
+                    "border-box",
+
+                overflow:
+                    "visible"
+
+            }
+        );
 
 
         // =================================================
-        // CLONE REPORT
+        // CLONE COMPLETE REPORT
         // =================================================
 
         const clone =
@@ -3604,23 +3610,30 @@ async function downloadPDF() {
         );
 
 
-        clone.style.width =
-            "100%";
+        Object.assign(
+            clone.style,
+            {
 
-        clone.style.maxWidth =
-            "none";
+                width:
+                    "100%",
 
-        clone.style.margin =
-            "0";
+                maxWidth:
+                    "none",
 
-        clone.style.padding =
-            "0";
+                margin:
+                    "0",
 
-        clone.style.background =
-            "#ffffff";
+                padding:
+                    "0",
 
-        clone.style.boxSizing =
-            "border-box";
+                background:
+                    "#ffffff",
+
+                boxSizing:
+                    "border-box"
+
+            }
+        );
 
 
         // =================================================
@@ -3632,11 +3645,8 @@ async function downloadPDF() {
                 ".pdf-download-section"
             )
             .forEach(
-                element => {
-
-                    element.remove();
-
-                }
+                element =>
+                    element.remove()
             );
 
 
@@ -3649,11 +3659,8 @@ async function downloadPDF() {
                 ".notification"
             )
             .forEach(
-                element => {
-
-                    element.remove();
-
-                }
+                element =>
+                    element.remove()
             );
 
 
@@ -3680,38 +3687,222 @@ async function downloadPDF() {
         scoreGrids.forEach(
             grid => {
 
-                grid.style.width =
-                    "100%";
+                const scoreCards =
+                    Array.from(
+                        grid.querySelectorAll(
+                            ":scope > .score-card"
+                        )
+                    );
 
-                grid.style.maxWidth =
-                    "100%";
 
-                grid.style.display =
-                    "grid";
+                if (
+                    scoreCards.length === 0
+                ) {
 
-                grid.style.gridTemplateColumns =
-                    "repeat(2, minmax(0, 1fr))";
+                    return;
 
-                grid.style.gridAutoFlow =
-                    "row";
+                }
 
-                grid.style.gridTemplateRows =
-                    "repeat(4, auto)";
 
-                grid.style.gap =
-                    "5mm";
+                const scoreWrapper =
+                    document.createElement(
+                        "div"
+                    );
 
-                grid.style.margin =
-                    "3mm 0";
 
-                grid.style.padding =
-                    "0";
+                scoreWrapper.className =
+                    "pdf-score-wrapper";
 
-                grid.style.boxSizing =
-                    "border-box";
 
-                grid.style.alignItems =
-                    "stretch";
+                // -----------------------------------------
+                // EXACTLY FOUR ROWS
+                // -----------------------------------------
+
+                for (
+                    let rowIndex = 0;
+                    rowIndex < 4;
+                    rowIndex++
+                ) {
+
+                    const row =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    row.className =
+                        "pdf-score-row";
+
+
+                    const firstIndex =
+                        rowIndex * 2;
+
+
+                    if (
+                        scoreCards[firstIndex]
+                    ) {
+
+                        row.appendChild(
+                            scoreCards[firstIndex]
+                        );
+
+                    }
+                    else {
+
+                        row.appendChild(
+                            createEmptyScoreCard()
+                        );
+
+                    }
+
+
+                    const secondIndex =
+                        firstIndex + 1;
+
+
+                    if (
+                        scoreCards[secondIndex]
+                    ) {
+
+                        row.appendChild(
+                            scoreCards[secondIndex]
+                        );
+
+                    }
+                    else {
+
+                        row.appendChild(
+                            createEmptyScoreCard()
+                        );
+
+                    }
+
+
+                    scoreWrapper.appendChild(
+                        row
+                    );
+
+                }
+
+
+                grid.replaceWith(
+                    scoreWrapper
+                );
+
+            }
+        );
+
+
+        // =================================================
+        // TOP ENTITIES
+        // =================================================
+
+        const entityContainers =
+            clone.querySelectorAll(
+                ".entities-list, " +
+                ".entity-list, " +
+                ".top-entities, " +
+                ".entities-section, " +
+                ".entity-section"
+            );
+
+
+        entityContainers.forEach(
+            container => {
+
+                const entityValues =
+                    extractEntityValues(
+                        container
+                    );
+
+
+                if (
+                    entityValues.length === 0
+                ) {
+
+                    return;
+
+                }
+
+
+                const pillContainer =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                pillContainer.className =
+                    "pdf-top-entities";
+
+
+                entityValues.forEach(
+                    value => {
+
+                        const pill =
+                            document.createElement(
+                                "span"
+                            );
+
+
+                        pill.className =
+                            "pdf-entity-pill";
+
+
+                        pill.textContent =
+                            value;
+
+
+                        pillContainer.appendChild(
+                            pill
+                        );
+
+                    }
+                );
+
+
+                const heading =
+                    container.querySelector(
+                        "h1, h2, h3, h4, h5"
+                    );
+
+
+                const replacement =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                replacement.className =
+                    "pdf-entities-wrapper";
+
+
+                if (heading) {
+
+                    const headingClone =
+                        heading.cloneNode(true);
+
+
+                    replacement.appendChild(
+                        headingClone
+                    );
+
+                }
+
+
+                replacement.appendChild(
+                    pillContainer
+                );
+
+
+                if (
+                    container.parentNode
+                ) {
+
+                    container.replaceWith(
+                        replacement
+                    );
+
+                }
 
             }
         );
@@ -3720,7 +3911,14 @@ async function downloadPDF() {
         // =================================================
         // TECHNOLOGY DETECTION
         //
-        // TWO TECHNOLOGY CARDS PER ROW
+        // IMPORTANT:
+        //
+        // TWO CARDS PER ROW.
+        //
+        // BUT THE ROW ITSELF IS NOT PROTECTED.
+        //
+        // This is the permanent fix for the large
+        // white space shown in your screenshot.
         // =================================================
 
         const technologyGrids =
@@ -3749,36 +3947,14 @@ async function downloadPDF() {
                 }
 
 
-                // -----------------------------------------
-                // REMOVE OLD TECHNOLOGY ROWS
-                // -----------------------------------------
-
-                grid
-                    .querySelectorAll(
-                        ".technology-row"
-                    )
-                    .forEach(
-                        row => {
-
-                            row.remove();
-
-                        }
+                const wrapper =
+                    document.createElement(
+                        "div"
                     );
 
 
-                // -----------------------------------------
-                // REMOVE ALL CURRENT CHILDREN
-                // -----------------------------------------
-
-                while (
-                    grid.firstChild
-                ) {
-
-                    grid.removeChild(
-                        grid.firstChild
-                    );
-
-                }
+                wrapper.className =
+                    "pdf-technology-wrapper";
 
 
                 // -----------------------------------------
@@ -3798,13 +3974,17 @@ async function downloadPDF() {
 
 
                     row.className =
-                        "technology-row";
+                        "pdf-technology-row";
 
+
+                    // FIRST CARD
 
                     row.appendChild(
                         cards[i]
                     );
 
+
+                    // SECOND CARD
 
                     if (
                         cards[i + 1]
@@ -3817,8 +3997,41 @@ async function downloadPDF() {
                     }
 
 
-                    grid.appendChild(
+                    /*
+                     *
+                     * IMPORTANT:
+                     *
+                     * DO NOT CREATE AN EMPTY CARD.
+                     *
+                     * An empty card creates unnecessary
+                     * vertical height and can contribute
+                     * to pagination gaps.
+                     *
+                     */
+
+
+                    wrapper.appendChild(
                         row
+                    );
+
+                }
+
+
+                grid.replaceWith(
+                    wrapper
+                );
+
+
+                const section =
+                    wrapper.closest(
+                        ".technology-section"
+                    );
+
+
+                if (section) {
+
+                    section.classList.add(
+                        "pdf-technology-section"
                     );
 
                 }
@@ -3828,50 +4041,7 @@ async function downloadPDF() {
 
 
         // =================================================
-        // NORMALIZE OTHER GRIDS
-        // =================================================
-
-        const gridsToNormalize = [
-
-            ".score-grid",
-
-            ".eeat-grid",
-
-            ".summary-grid"
-
-        ];
-
-
-        gridsToNormalize.forEach(
-            selector => {
-
-                clone
-                    .querySelectorAll(
-                        selector
-                    )
-                    .forEach(
-                        grid => {
-
-                            grid.style.width =
-                                "100%";
-
-                            grid.style.maxWidth =
-                                "100%";
-
-                            grid.style.boxSizing =
-                                "border-box";
-
-                        }
-                    );
-
-            }
-        );
-
-
-        // =================================================
         // PDF CSS
-        //
-        // EVERYTHING IS INSIDE THIS FUNCTION
         // =================================================
 
         const pdfStyle =
@@ -3883,7 +4053,7 @@ async function downloadPDF() {
         pdfStyle.textContent = `
 
             /* =================================================
-               PDF BASE
+               GLOBAL PDF
             ================================================= */
 
             #pdf-export-area,
@@ -3969,41 +4139,18 @@ async function downloadPDF() {
                 overflow-wrap:
                     anywhere !important;
 
-                word-break:
-                    normal !important;
-
             }
 
 
             /* =================================================
-               AI PLATFORM SCORES
-               
-               2 COLUMNS
-               4 ROWS
+               AI PLATFORM SCORE WRAPPER
             ================================================= */
 
-            #pdf-export-area .score-grid {
+            #pdf-export-area
+            .pdf-score-wrapper {
 
                 display:
-                    grid !important;
-
-                grid-template-columns:
-                    repeat(
-                        2,
-                        minmax(0, 1fr)
-                    ) !important;
-
-                grid-template-rows:
-                    repeat(
-                        4,
-                        auto
-                    ) !important;
-
-                grid-auto-flow:
-                    row !important;
-
-                gap:
-                    5mm !important;
+                    block !important;
 
                 width:
                     100% !important;
@@ -4017,8 +4164,50 @@ async function downloadPDF() {
                 padding:
                     0 !important;
 
+            }
+
+
+            /* =================================================
+               AI SCORE ROW
+               
+               2 COLUMNS
+               
+               SCORE ROWS CAN REMAIN TOGETHER
+               BECAUSE THEY ARE SMALL.
+            ================================================= */
+
+            #pdf-export-area
+            .pdf-score-row {
+
+                display:
+                    flex !important;
+
+                flex-direction:
+                    row !important;
+
+                width:
+                    100% !important;
+
+                min-width:
+                    100% !important;
+
+                margin:
+                    0 0 4mm 0 !important;
+
+                padding:
+                    0 !important;
+
+                gap:
+                    5mm !important;
+
                 align-items:
                     stretch !important;
+
+                break-inside:
+                    avoid !important;
+
+                page-break-inside:
+                    avoid !important;
 
             }
 
@@ -4027,16 +4216,27 @@ async function downloadPDF() {
                SCORE CARD
             ================================================= */
 
-            #pdf-export-area .score-card {
+            #pdf-export-area
+            .pdf-score-row
+            .score-card {
+
+                flex:
+                    0 0 calc(
+                        50% - 2.5mm
+                    ) !important;
 
                 width:
-                    100% !important;
+                    calc(
+                        50% - 2.5mm
+                    ) !important;
 
                 min-width:
                     0 !important;
 
                 max-width:
-                    none !important;
+                    calc(
+                        50% - 2.5mm
+                    ) !important;
 
                 min-height:
                     30mm !important;
@@ -4065,9 +4265,6 @@ async function downloadPDF() {
                 overflow:
                     hidden !important;
 
-                transform:
-                    none !important;
-
                 break-inside:
                     avoid !important;
 
@@ -4081,7 +4278,8 @@ async function downloadPDF() {
                SCORE TITLE
             ================================================= */
 
-            #pdf-export-area .score-card h3 {
+            #pdf-export-area
+            .score-card h3 {
 
                 width:
                     100% !important;
@@ -4111,7 +4309,8 @@ async function downloadPDF() {
                SCORE NUMBER
             ================================================= */
 
-            #pdf-export-area .score-card h1 {
+            #pdf-export-area
+            .score-card h1 {
 
                 margin:
                     0 !important;
@@ -4132,81 +4331,37 @@ async function downloadPDF() {
 
 
             /* =================================================
-               SCORE DESCRIPTION
+               EMPTY SCORE CARD
             ================================================= */
 
-            #pdf-export-area .score-card p {
+            #pdf-export-area
+            .pdf-empty-score-card {
 
-                margin:
-                    1mm 0 0 0 !important;
+                flex:
+                    0 0 calc(
+                        50% - 2.5mm
+                    ) !important;
 
-                padding:
-                    0 !important;
+                width:
+                    calc(
+                        50% - 2.5mm
+                    ) !important;
 
-                font-size:
-                    10px !important;
+                min-height:
+                    30mm !important;
 
-                line-height:
-                    1.2 !important;
-
-                text-align:
-                    center !important;
+                visibility:
+                    hidden !important;
 
             }
 
 
             /* =================================================
-               TECHNOLOGY SECTION
-               
-               IMPORTANT:
-               NO FORCED PAGE BREAK
+               TOP ENTITIES
             ================================================= */
 
             #pdf-export-area
-            .pdf-technology-section {
-
-                break-before:
-                    auto !important;
-
-                page-break-before:
-                    auto !important;
-
-                width:
-                    100% !important;
-
-                margin:
-                    0 0 4mm 0 !important;
-
-                padding:
-                    0 !important;
-
-            }
-
-
-            #pdf-export-area
-            .technology-section {
-
-                width:
-                    100% !important;
-
-                margin:
-                    0 0 4mm 0 !important;
-
-                padding:
-                    0 !important;
-
-            }
-
-
-            /* =================================================
-               TECHNOLOGY GRID
-            ================================================= */
-
-            #pdf-export-area
-            .technology-grid {
-
-                display:
-                    block !important;
+            .pdf-entities-wrapper {
 
                 width:
                     100% !important;
@@ -4215,7 +4370,7 @@ async function downloadPDF() {
                     100% !important;
 
                 margin:
-                    0 !important;
+                    0 0 4mm 0 !important;
 
                 padding:
                     0 !important;
@@ -4226,225 +4381,19 @@ async function downloadPDF() {
             }
 
 
-            /* =================================================
-               TECHNOLOGY ROW
-               
-               TWO COLUMNS
-               
-               IMPORTANT:
-               NO PAGE-BREAK AVOID HERE
-            ================================================= */
-
             #pdf-export-area
-            .technology-row {
-
-                display:
-                    grid !important;
-
-                grid-template-columns:
-                    minmax(0, 1fr)
-                    minmax(0, 1fr) !important;
-
-                column-gap:
-                    5mm !important;
-
-                width:
-                    100% !important;
+            .pdf-entities-wrapper h1,
+            #pdf-export-area
+            .pdf-entities-wrapper h2,
+            #pdf-export-area
+            .pdf-entities-wrapper h3,
+            #pdf-export-area
+            .pdf-entities-wrapper h4,
+            #pdf-export-area
+            .pdf-entities-wrapper h5 {
 
                 margin:
-                    0 0 5mm 0 !important;
-
-                padding:
-                    0 !important;
-
-                align-items:
-                    stretch !important;
-
-                /*
-                   IMPORTANT:
-                   The ROW may flow naturally
-                   between PDF pages.
-                */
-
-                break-inside:
-                    auto !important;
-
-                page-break-inside:
-                    auto !important;
-
-                break-before:
-                    auto !important;
-
-                break-after:
-                    auto !important;
-
-                page-break-before:
-                    auto !important;
-
-                page-break-after:
-                    auto !important;
-
-            }
-
-
-            /* =================================================
-               TECHNOLOGY CARD
-               
-               CARD CAN STAY TOGETHER
-               ROW DOES NOT HAVE TO
-            ================================================= */
-
-            #pdf-export-area
-            .technology-card {
-
-                width:
-                    100% !important;
-
-                min-width:
-                    0 !important;
-
-                max-width:
-                    none !important;
-
-                min-height:
-                    30mm !important;
-
-                margin:
-                    0 !important;
-
-                padding:
-                    4mm !important;
-
-                display:
-                    flex !important;
-
-                flex-direction:
-                    column !important;
-
-                justify-content:
-                    flex-start !important;
-
-                align-items:
-                    flex-start !important;
-
-                overflow:
-                    hidden !important;
-
-                transform:
-                    none !important;
-
-                break-inside:
-                    avoid !important;
-
-                page-break-inside:
-                    avoid !important;
-
-            }
-
-
-            /* =================================================
-               TECHNOLOGY CARD TITLE
-            ================================================= */
-
-            #pdf-export-area
-            .technology-card h3 {
-
-                width:
-                    100% !important;
-
-                margin:
-                    0 0 2mm 0 !important;
-
-                padding:
-                    0 !important;
-
-                font-size:
-                    13px !important;
-
-                line-height:
-                    1.25 !important;
-
-                font-weight:
-                    700 !important;
-
-                overflow-wrap:
-                    anywhere !important;
-
-                word-break:
-                    break-word !important;
-
-            }
-
-
-            /* =================================================
-               TECHNOLOGY CARD TEXT
-            ================================================= */
-
-            #pdf-export-area
-            .technology-card p {
-
-                width:
-                    100% !important;
-
-                margin:
-                    0 0 1.5mm 0 !important;
-
-                padding:
-                    0 !important;
-
-                font-size:
-                    9.5px !important;
-
-                line-height:
-                    1.4 !important;
-
-                overflow-wrap:
-                    anywhere !important;
-
-                word-break:
-                    break-word !important;
-
-            }
-
-
-            #pdf-export-area
-            .technology-card strong {
-
-                overflow-wrap:
-                    anywhere !important;
-
-                word-break:
-                    break-word !important;
-
-            }
-
-
-            /* =================================================
-               E-E-A-T
-               
-               2 COLUMNS
-            ================================================= */
-
-            #pdf-export-area
-            .eeat-grid {
-
-                display:
-                    grid !important;
-
-                grid-template-columns:
-                    repeat(
-                        2,
-                        minmax(0, 1fr)
-                    ) !important;
-
-                gap:
-                    5mm !important;
-
-                width:
-                    100% !important;
-
-                margin:
-                    3mm 0 !important;
+                    0 0 3mm 0 !important;
 
                 padding:
                     0 !important;
@@ -4453,107 +4402,7 @@ async function downloadPDF() {
 
 
             #pdf-export-area
-            .eeat-card {
-
-                width:
-                    100% !important;
-
-                min-width:
-                    0 !important;
-
-                margin:
-                    0 !important;
-
-                padding:
-                    4mm !important;
-
-                break-inside:
-                    avoid !important;
-
-                page-break-inside:
-                    avoid !important;
-
-                transform:
-                    none !important;
-
-            }
-
-
-            /* =================================================
-               SUMMARY
-               
-               2 COLUMNS
-            ================================================= */
-
-            #pdf-export-area
-            .summary-grid {
-
-                display:
-                    grid !important;
-
-                grid-template-columns:
-                    repeat(
-                        2,
-                        minmax(0, 1fr)
-                    ) !important;
-
-                gap:
-                    5mm !important;
-
-                width:
-                    100% !important;
-
-                margin:
-                    3mm 0 !important;
-
-                padding:
-                    0 !important;
-
-            }
-
-
-            #pdf-export-area
-            .summary-card {
-
-                width:
-                    100% !important;
-
-                min-width:
-                    0 !important;
-
-                margin:
-                    0 !important;
-
-                padding:
-                    4mm !important;
-
-                break-inside:
-                    avoid !important;
-
-                page-break-inside:
-                    avoid !important;
-
-                transform:
-                    none !important;
-
-            }
-
-
-            /* =================================================
-               TOP ENTITIES
-               
-               NATURAL WRAPPING
-               LIKE YOUR SCREENSHOT
-            ================================================= */
-
-            #pdf-export-area
-            .entities-list,
-
-            #pdf-export-area
-            .entity-list,
-
-            #pdf-export-area
-            .top-entities {
+            .pdf-top-entities {
 
                 display:
                     flex !important;
@@ -4582,8 +4431,8 @@ async function downloadPDF() {
                 height:
                     auto !important;
 
-                max-height:
-                    none !important;
+                min-height:
+                    0 !important;
 
                 margin:
                     0 !important;
@@ -4597,70 +4446,11 @@ async function downloadPDF() {
                 overflow:
                     visible !important;
 
-                position:
-                    static !important;
-
-                white-space:
-                    normal !important;
-
-                transform:
-                    none !important;
-
             }
 
 
-            /* =================================================
-               ENTITY SECTION
-            ================================================= */
-
             #pdf-export-area
-            .entities-section,
-
-            #pdf-export-area
-            .entity-section {
-
-                width:
-                    100% !important;
-
-                max-width:
-                    100% !important;
-
-                height:
-                    auto !important;
-
-                max-height:
-                    none !important;
-
-                margin:
-                    0 0 4mm 0 !important;
-
-                padding:
-                    0 !important;
-
-                overflow:
-                    visible !important;
-
-                transform:
-                    none !important;
-
-            }
-
-
-            /* =================================================
-               ENTITY PILLS
-            ================================================= */
-
-            #pdf-export-area
-            .entity-pill,
-
-            #pdf-export-area
-            .entity-tag,
-
-            #pdf-export-area
-            .entity-badge,
-
-            #pdf-export-area
-            .entity-chip {
+            .pdf-entity-pill {
 
                 display:
                     inline-flex !important;
@@ -4693,19 +4483,24 @@ async function downloadPDF() {
                     0 !important;
 
                 padding:
-                    2.3mm 4.5mm !important;
-
-                border-radius:
-                    7mm !important;
-
-                background:
-                    #f2f7ff !important;
+                    2.2mm 4.5mm !important;
 
                 border:
                     0.3mm solid #d7e6ff !important;
 
+                border-radius:
+                    8mm !important;
+
+                background:
+                    #f2f7ff !important;
+
                 color:
                     #1455d9 !important;
+
+                font-family:
+                    Arial,
+                    Helvetica,
+                    sans-serif !important;
 
                 font-size:
                     11px !important;
@@ -4722,9 +4517,6 @@ async function downloadPDF() {
                 text-align:
                     center !important;
 
-                vertical-align:
-                    middle !important;
-
                 overflow:
                     visible !important;
 
@@ -4734,14 +4526,352 @@ async function downloadPDF() {
                 page-break-inside:
                     avoid !important;
 
-                transform:
-                    none !important;
+            }
+
+
+            /* =================================================
+               TECHNOLOGY SECTION
+               
+               CRITICAL:
+               
+               NO FORCED NEW PAGE
+            ================================================= */
+
+            #pdf-export-area
+            .pdf-technology-section {
+
+                break-before:
+                    auto !important;
+
+                page-break-before:
+                    auto !important;
+
+                break-after:
+                    auto !important;
+
+                page-break-after:
+                    auto !important;
+
+                width:
+                    100% !important;
+
+                margin:
+                    0 0 3mm 0 !important;
+
+                padding:
+                    0 !important;
 
             }
 
 
             /* =================================================
-               INFORMATION TABLE
+               TECHNOLOGY WRAPPER
+            ================================================= */
+
+            #pdf-export-area
+            .pdf-technology-wrapper {
+
+                width:
+                    100% !important;
+
+                display:
+                    block !important;
+
+                margin:
+                    0 !important;
+
+                padding:
+                    0 !important;
+
+                overflow:
+                    visible !important;
+
+            }
+
+
+            /* =================================================
+               TECHNOLOGY ROW
+               
+               THIS IS THE MAIN FIX.
+               
+               DO NOT USE:
+               
+               break-inside: avoid
+               page-break-inside: avoid
+               
+               The PDF engine must be allowed to
+               continue naturally.
+            ================================================= */
+
+            #pdf-export-area
+            .pdf-technology-row {
+
+                display:
+                    flex !important;
+
+                flex-direction:
+                    row !important;
+
+                width:
+                    100% !important;
+
+                gap:
+                    5mm !important;
+
+                margin:
+                    0 0 3mm 0 !important;
+
+                padding:
+                    0 !important;
+
+                align-items:
+                    stretch !important;
+
+                /*
+                 * IMPORTANT:
+                 * The row itself MUST NOT be protected.
+                 */
+
+                break-inside:
+                    auto !important;
+
+                page-break-inside:
+                    auto !important;
+
+                break-before:
+                    auto !important;
+
+                page-break-before:
+                    auto !important;
+
+                break-after:
+                    auto !important;
+
+                page-break-after:
+                    auto !important;
+
+            }
+
+
+            /* =================================================
+               TECHNOLOGY CARD
+               
+               INDIVIDUAL CARDS ARE PROTECTED.
+               
+               ROW IS NOT PROTECTED.
+            ================================================= */
+
+            #pdf-export-area
+            .pdf-technology-row
+            .technology-card {
+
+                flex:
+                    0 0 calc(
+                        50% - 2.5mm
+                    ) !important;
+
+                width:
+                    calc(
+                        50% - 2.5mm
+                    ) !important;
+
+                min-width:
+                    0 !important;
+
+                max-width:
+                    calc(
+                        50% - 2.5mm
+                    ) !important;
+
+                min-height:
+                    25mm !important;
+
+                margin:
+                    0 !important;
+
+                padding:
+                    3.5mm !important;
+
+                overflow:
+                    hidden !important;
+
+                transform:
+                    none !important;
+
+                break-inside:
+                    avoid !important;
+
+                page-break-inside:
+                    avoid !important;
+
+            }
+
+
+            /* =================================================
+               TECHNOLOGY CARD HEADING
+            ================================================= */
+
+            #pdf-export-area
+            .technology-card h3 {
+
+                width:
+                    100% !important;
+
+                margin:
+                    0 0 1.5mm 0 !important;
+
+                padding:
+                    0 !important;
+
+                font-size:
+                    12.5px !important;
+
+                line-height:
+                    1.2 !important;
+
+                font-weight:
+                    700 !important;
+
+                overflow-wrap:
+                    anywhere !important;
+
+                word-break:
+                    break-word !important;
+
+            }
+
+
+            /* =================================================
+               TECHNOLOGY CARD TEXT
+            ================================================= */
+
+            #pdf-export-area
+            .technology-card p {
+
+                width:
+                    100% !important;
+
+                margin:
+                    0 0 1mm 0 !important;
+
+                padding:
+                    0 !important;
+
+                font-size:
+                    9.2px !important;
+
+                line-height:
+                    1.3 !important;
+
+                overflow-wrap:
+                    anywhere !important;
+
+                word-break:
+                    break-word !important;
+
+            }
+
+
+            #pdf-export-area
+            .technology-card strong {
+
+                overflow-wrap:
+                    anywhere !important;
+
+                word-break:
+                    break-word !important;
+
+            }
+
+
+            /* =================================================
+               E-E-A-T
+            ================================================= */
+
+            #pdf-export-area
+            .eeat-grid {
+
+                display:
+                    grid !important;
+
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(0, 1fr)
+                    ) !important;
+
+                gap:
+                    5mm !important;
+
+                width:
+                    100% !important;
+
+            }
+
+
+            #pdf-export-area
+            .eeat-card {
+
+                width:
+                    100% !important;
+
+                min-width:
+                    0 !important;
+
+                break-inside:
+                    avoid !important;
+
+                page-break-inside:
+                    avoid !important;
+
+            }
+
+
+            /* =================================================
+               SUMMARY
+            ================================================= */
+
+            #pdf-export-area
+            .summary-grid {
+
+                display:
+                    grid !important;
+
+                grid-template-columns:
+                    repeat(
+                        2,
+                        minmax(0, 1fr)
+                    ) !important;
+
+                gap:
+                    5mm !important;
+
+                width:
+                    100% !important;
+
+            }
+
+
+            #pdf-export-area
+            .summary-card {
+
+                width:
+                    100% !important;
+
+                min-width:
+                    0 !important;
+
+                break-inside:
+                    avoid !important;
+
+                page-break-inside:
+                    avoid !important;
+
+            }
+
+
+            /* =================================================
+               TABLES
             ================================================= */
 
             #pdf-export-area table {
@@ -4757,9 +4887,6 @@ async function downloadPDF() {
 
                 table-layout:
                     fixed !important;
-
-                overflow:
-                    visible !important;
 
             }
 
@@ -4791,7 +4918,7 @@ async function downloadPDF() {
 
 
             /* =================================================
-               IMAGES / FAVICON / LOGO
+               IMAGES
             ================================================= */
 
             #pdf-export-area img {
@@ -4827,22 +4954,11 @@ async function downloadPDF() {
 
 
             /* =================================================
-               BR
-            ================================================= */
-
-            #pdf-export-area br {
-
-                line-height:
-                    1 !important;
-
-            }
-
-
-            /* =================================================
-               IMPORTANT PAGE PROTECTION
+               FINAL PAGE PROTECTION
                
-               Notice:
-               TECHNOLOGY ROW IS NOT HERE.
+               NOTICE:
+               
+               .pdf-technology-row IS ABSENT.
                
                This is intentional.
             ================================================= */
@@ -4851,7 +4967,13 @@ async function downloadPDF() {
             .score-card,
 
             #pdf-export-area
+            .pdf-score-row,
+
+            #pdf-export-area
             .technology-card,
+
+            #pdf-export-area
+            .pdf-entity-pill,
 
             #pdf-export-area
             .eeat-card,
@@ -4865,8 +4987,23 @@ async function downloadPDF() {
                 page-break-inside:
                     avoid !important;
 
-                transform:
-                    none !important;
+            }
+
+
+            /* =================================================
+               NEVER FORCE TECHNOLOGY SECTION TO NEW PAGE
+            ================================================= */
+
+            #pdf-export-area
+            .technology-section,
+            #pdf-export-area
+            .pdf-technology-section {
+
+                break-before:
+                    auto !important;
+
+                page-break-before:
+                    auto !important;
 
             }
 
@@ -4883,7 +5020,7 @@ async function downloadPDF() {
 
 
         // =================================================
-        // ADD CLONED REPORT
+        // ADD REPORT
         // =================================================
 
         exportArea.appendChild(
@@ -4949,8 +5086,6 @@ async function downloadPDF() {
 
         // =================================================
         // WAIT FOR IMAGES
-        //
-        // FAVICON / LOGO INCLUDED
         // =================================================
 
         const images =
@@ -4979,7 +5114,7 @@ async function downloadPDF() {
                     return new Promise(
                         resolve => {
 
-                            let done =
+                            let completed =
                                 false;
 
 
@@ -4987,7 +5122,7 @@ async function downloadPDF() {
                                 () => {
 
                                     if (
-                                        done
+                                        completed
                                     ) {
 
                                         return;
@@ -4995,7 +5130,7 @@ async function downloadPDF() {
                                     }
 
 
-                                    done =
+                                    completed =
                                         true;
 
                                     resolve();
@@ -5048,13 +5183,13 @@ async function downloadPDF() {
             resolve =>
                 setTimeout(
                     resolve,
-                    500
+                    300
                 )
         );
 
 
         // =================================================
-        // CREATE FILE NAME
+        // FILE NAME
         // =================================================
 
         let domainName =
@@ -5098,11 +5233,11 @@ async function downloadPDF() {
                     );
 
         }
-        catch (nameError) {
+        catch (error) {
 
             console.warn(
                 "Could not determine PDF filename:",
-                nameError
+                error
             );
 
         }
@@ -5214,11 +5349,15 @@ async function downloadPDF() {
 
                 },
 
+
             // =================================================
-            // IMPORTANT:
+            // PAGE BREAK SETTINGS
             //
-            // NO "before" TECHNOLOGY SECTION
-            // NO "technology-row" IN AVOID
+            // CRITICAL:
+            //
+            // NO "before" RULE
+            //
+            // NO TECHNOLOGY ROW IN "avoid"
             // =================================================
 
             pagebreak:
@@ -5232,15 +5371,21 @@ async function downloadPDF() {
 
                     avoid:
                         [
+
                             ".score-card",
+
+                            ".pdf-score-row",
+
                             ".technology-card",
+
+                            ".pdf-entity-pill",
+
                             ".eeat-card",
+
                             ".summary-card",
-                            ".entity-pill",
-                            ".entity-tag",
-                            ".entity-badge",
-                            ".entity-chip",
+
                             "tr"
+
                         ]
 
                 }
@@ -5257,13 +5402,27 @@ async function downloadPDF() {
         );
 
         console.log(
-            "PDF generation started."
+            "PDF GENERATION"
         );
 
         console.log(
-            "AI Platform cards:",
+            "Score rows:",
+            exportArea.querySelectorAll(
+                ".pdf-score-row"
+            ).length
+        );
+
+        console.log(
+            "Score cards:",
             exportArea.querySelectorAll(
                 ".score-card"
+            ).length
+        );
+
+        console.log(
+            "Technology rows:",
+            exportArea.querySelectorAll(
+                ".pdf-technology-row"
             ).length
         );
 
@@ -5275,19 +5434,9 @@ async function downloadPDF() {
         );
 
         console.log(
-            "Technology rows:",
+            "Top entity pills:",
             exportArea.querySelectorAll(
-                ".technology-row"
-            ).length
-        );
-
-        console.log(
-            "Entity pills:",
-            exportArea.querySelectorAll(
-                ".entity-pill, " +
-                ".entity-tag, " +
-                ".entity-badge, " +
-                ".entity-chip"
+                ".pdf-entity-pill"
             ).length
         );
 
@@ -5316,11 +5465,6 @@ async function downloadPDF() {
         // =================================================
         // SUCCESS
         // =================================================
-
-        console.log(
-            "PDF generated successfully."
-        );
-
 
         showNotification(
             "PDF report generated successfully.",
@@ -5397,4 +5541,122 @@ async function downloadPDF() {
 
     }
 
+}
+
+
+/* =========================================================
+   CREATE EMPTY SCORE CARD
+   ========================================================= */
+
+function createEmptyScoreCard() {
+
+    const empty =
+        document.createElement(
+            "div"
+        );
+
+
+    empty.className =
+        "pdf-empty-score-card";
+
+
+    return empty;
+}
+
+
+/* =========================================================
+   EXTRACT TOP ENTITY VALUES
+   ========================================================= */
+
+function extractEntityValues(container) {
+
+    const values = [];
+
+
+    // -----------------------------------------------------
+    // FIRST: COMMON ENTITY ELEMENTS
+    // -----------------------------------------------------
+
+    const elements =
+        container.querySelectorAll(
+            ".entity-pill, " +
+            ".entity-tag, " +
+            ".entity-badge, " +
+            ".entity-chip, " +
+            "li"
+        );
+
+
+    elements.forEach(
+        element => {
+
+            const text =
+                element.textContent
+                    .replace(
+                        /\s+/g,
+                        " "
+                    )
+                    .trim();
+
+
+            if (
+                text &&
+                !values.includes(text)
+            ) {
+
+                values.push(
+                    text
+                );
+
+            }
+
+        }
+    );
+
+
+    // -----------------------------------------------------
+    // FALLBACK
+    // -----------------------------------------------------
+
+    if (
+        values.length === 0
+    ) {
+
+        const candidates =
+            container.querySelectorAll(
+                "span, a, button"
+            );
+
+
+        candidates.forEach(
+            element => {
+
+                const text =
+                    element.textContent
+                        .replace(
+                            /\s+/g,
+                            " "
+                        )
+                        .trim();
+
+
+                if (
+                    text &&
+                    text.length <= 60 &&
+                    !values.includes(text)
+                ) {
+
+                    values.push(
+                        text
+                    );
+
+                }
+
+            }
+        );
+
+    }
+
+
+    return values;
 }
