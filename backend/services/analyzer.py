@@ -1,4 +1,6 @@
 import requests
+import socket
+import ipaddress
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 
@@ -273,6 +275,163 @@ class WebsiteAnalyzer:
 
 
     # ==========================================================
+    # STRONG WEBSITE URL VALIDATION
+    #
+    # Only public website HOME PAGES are accepted.
+    # This prevents:
+    # - Google/search URLs
+    # - Render dashboard/event URLs
+    # - URLs with query strings/fragments
+    # - arbitrary page paths
+    # - localhost/private IPs
+    # - credential URLs
+    # - non-standard ports
+    # ==========================================================
+
+    @staticmethod
+    def validate_homepage_url(url: str):
+
+        url = str(url or "").strip()
+
+        if not url:
+            return False, None, "Website URL is required."
+
+        if not url.lower().startswith(("http://", "https://")):
+            url = "https://" + url
+
+        try:
+            parsed = urlparse(url)
+        except Exception:
+            return False, None, "Invalid website address."
+
+        if parsed.scheme.lower() not in ("http", "https"):
+            return False, None, "Only HTTP and HTTPS websites are allowed."
+
+        if not parsed.hostname:
+            return False, None, "A valid public website domain is required."
+
+        if parsed.username or parsed.password:
+            return False, None, "Website URLs containing usernames or passwords are not allowed."
+
+        if parsed.query or parsed.fragment:
+            return (
+                False,
+                None,
+                "Please enter the main website homepage only. "
+                "Search URLs, query parameters and fragments are not allowed."
+            )
+
+        # Website homepage only.
+        if parsed.path not in ("", "/"):
+            return (
+                False,
+                None,
+                "Please enter the main website homepage only. "
+                "Individual page URLs are not accepted."
+            )
+
+        if parsed.port not in (None, 80, 443):
+            return (
+                False,
+                None,
+                "Only standard HTTP/HTTPS ports are allowed."
+            )
+
+        hostname = parsed.hostname.lower().rstrip(".")
+
+        if hostname.startswith("www."):
+            domain_for_validation = hostname[4:]
+        else:
+            domain_for_validation = hostname
+
+        if (
+            hostname == "localhost"
+            or hostname.endswith(".localhost")
+            or hostname.endswith(".local")
+            or hostname.endswith(".internal")
+            or hostname == "127.0.0.1"
+            or hostname == "::1"
+        ):
+            return False, None, "Local or private websites cannot be analyzed."
+
+        # Reject literal IP addresses.
+        try:
+            ip = ipaddress.ip_address(hostname)
+            return False, None, "Please enter a public website domain, not an IP address."
+        except ValueError:
+            pass
+
+        # Basic domain validation.
+        if (
+            "." not in domain_for_validation
+            or domain_for_validation.startswith(".")
+            or domain_for_validation.endswith(".")
+            or ".." in domain_for_validation
+        ):
+            return False, None, "Please enter a valid public website domain."
+
+        labels = domain_for_validation.split(".")
+
+        if any(
+            not label
+            or len(label) > 63
+            or label.startswith("-")
+            or label.endswith("-")
+            or not re.fullmatch(r"[a-z0-9-]+", label)
+            for label in labels
+        ):
+            return False, None, "Please enter a valid public website domain."
+
+        if len(domain_for_validation) > 253:
+            return False, None, "The website domain is too long."
+
+        # DNS validation also blocks common SSRF/private-network targets.
+        try:
+            addresses = {
+                result[4][0]
+                for result in socket.getaddrinfo(
+                    hostname,
+                    parsed.port or (443 if parsed.scheme.lower() == "https" else 80),
+                    type=socket.SOCK_STREAM
+                )
+            }
+
+            if not addresses:
+                return False, None, "The website domain could not be resolved."
+
+            for address in addresses:
+                try:
+                    ip = ipaddress.ip_address(address)
+                    if (
+                        ip.is_private
+                        or ip.is_loopback
+                        or ip.is_link_local
+                        or ip.is_reserved
+                        or ip.is_multicast
+                        or ip.is_unspecified
+                    ):
+                        return (
+                            False,
+                            None,
+                            "This domain does not resolve to a public website."
+                        )
+                except ValueError:
+                    continue
+
+        except socket.gaierror:
+            return False, None, "The website domain could not be resolved."
+
+        normalized = (
+            parsed.scheme.lower()
+            + "://"
+            + parsed.hostname
+            + "/"
+        )
+
+        return True, normalized, ""
+
+
+    # ==========================================================
     # SAFE ANALYZER
     # ==========================================================
 
@@ -314,102 +473,27 @@ class WebsiteAnalyzer:
 
 
         # ======================================================
-        # NORMALIZE URL
+        # STRONG URL VALIDATION
         # ======================================================
 
-        url = (
-            str(url)
-            .strip()
+        is_valid, normalized_url, validation_error = (
+            WebsiteAnalyzer.validate_homepage_url(url)
         )
 
-
-        if not url:
-
-            return {
-
-                "success": False,
-
-                "website_status":
-                    "invalid",
-
-                "analysis_mode":
-                    "not_analyzed",
-
-                "live_website":
-                    False,
-
-                "error":
-                    "Website URL is required."
-
-            }
-
-
-        if not url.lower().startswith(
-            ("http://", "https://")
-        ):
-
-            url = (
-                "https://"
-                + url
-            )
-
-
-        # ======================================================
-        # PARSED URL
-        # ======================================================
-
-        try:
-
-            parsed_url = urlparse(
-                url
-            )
-
-            if not parsed_url.hostname:
-
-                return {
-
-                    "success": False,
-
-                    "website_status":
-                        "invalid",
-
-                    "analysis_mode":
-                        "not_analyzed",
-
-                    "live_website":
-                        False,
-
-                    "url":
-                        url,
-
-                    "error":
-                        "Invalid website address."
-
-                }
-
-        except Exception as exc:
+        if not is_valid:
 
             return {
-
                 "success": False,
-
-                "website_status":
-                    "invalid",
-
-                "analysis_mode":
-                    "not_analyzed",
-
-                "live_website":
-                    False,
-
-                "url":
-                    url,
-
-                "error":
-                    str(exc)
-
+                "website_status": "invalid",
+                "analysis_mode": "not_analyzed",
+                "live_website": False,
+                "url": str(url or "").strip(),
+                "website": str(url or "").strip(),
+                "website_url": str(url or "").strip(),
+                "error": validation_error
             }
 
+        url = normalized_url
 
         # ======================================================
         # REQUEST LIVE WEBSITE
@@ -581,6 +665,74 @@ class WebsiteAnalyzer:
 
             }
 
+
+        # ======================================================
+        # FINAL URL / REDIRECT VALIDATION
+        # ======================================================
+        #
+        # A website must not redirect the analyzer to a different
+        # domain or to a search/dashboard URL.
+        #
+
+        final_url = str(response.url or "").strip()
+
+        try:
+            final_parsed = urlparse(final_url)
+
+            original_host = (
+                urlparse(url).hostname or ""
+            ).lower().removeprefix("www.")
+
+            final_host = (
+                final_parsed.hostname or ""
+            ).lower().removeprefix("www.")
+
+            final_is_homepage = (
+                final_parsed.path in ("", "/")
+                and not final_parsed.query
+                and not final_parsed.fragment
+            )
+
+            if (
+                final_parsed.scheme.lower()
+                not in ("http", "https")
+                or not final_host
+                or final_host != original_host
+                or not final_is_homepage
+            ):
+
+                return {
+                    "success": False,
+                    "website_status": "inactive",
+                    "analysis_mode": "not_analyzed",
+                    "live_website": False,
+                    "url": url,
+                    "website": url,
+                    "website_url": url,
+                    "final_url": final_url,
+                    "http_status": response.status_code,
+                    "error": (
+                        "The website redirected to an invalid or "
+                        "different destination. No report was generated."
+                    )
+                }
+
+        except Exception as exc:
+
+            return {
+                "success": False,
+                "website_status": "inactive",
+                "analysis_mode": "not_analyzed",
+                "live_website": False,
+                "url": url,
+                "website": url,
+                "website_url": url,
+                "final_url": final_url,
+                "http_status": response.status_code,
+                "error": (
+                    "The final website destination could not be verified."
+                )
+            }
 
         # ======================================================
         # HTTP STATUS CHECK
