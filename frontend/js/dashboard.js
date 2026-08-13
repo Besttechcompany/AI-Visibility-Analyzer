@@ -3491,9 +3491,7 @@ async function downloadPDF() {
         document.getElementById("results");
 
     const button =
-        document.getElementById(
-            "download-pdf-btn"
-        );
+        document.getElementById("download-pdf-btn");
 
     const websiteInput =
         document.getElementById("website");
@@ -3539,8 +3537,7 @@ async function downloadPDF() {
 
     if (button) {
 
-        button.disabled =
-            true;
+        button.disabled = true;
 
         button.innerHTML =
             "⏳ Generating PDF...";
@@ -3554,8 +3551,7 @@ async function downloadPDF() {
     }
 
 
-    let wrapper =
-        null;
+    let wrapper = null;
 
 
     try {
@@ -3599,6 +3595,143 @@ async function downloadPDF() {
             element => {
 
                 element.remove();
+
+            }
+        );
+
+
+        // ==================================================
+        // IMPORTANT:
+        // NORMALIZE TECHNOLOGY DETECTION
+        //
+        // html2pdf can split Flexbox items when a section
+        // begins close to the bottom of a PDF page.
+        //
+        // We create explicit rows:
+        //
+        // CARD 1 | CARD 2
+        // CARD 3 | CARD 4
+        // CARD 5 | CARD 6
+        //
+        // This makes pagination much more stable.
+        // ==================================================
+
+        const technologyGrids =
+            pdfContent.querySelectorAll(
+                ".technology-grid"
+            );
+
+
+        technologyGrids.forEach(
+            grid => {
+
+                const cards =
+                    Array.from(
+                        grid.querySelectorAll(
+                            ".technology-card"
+                        )
+                    );
+
+
+                if (!cards.length) {
+
+                    return;
+
+                }
+
+
+                // ------------------------------------------
+                // Remove any existing row wrappers
+                // ------------------------------------------
+
+                const oldRows =
+                    grid.querySelectorAll(
+                        ".technology-row"
+                    );
+
+
+                oldRows.forEach(
+                    row => {
+
+                        const children =
+                            Array.from(
+                                row.children
+                            );
+
+
+                        children.forEach(
+                            child => {
+
+                                grid.appendChild(
+                                    child
+                                );
+
+                            }
+                        );
+
+
+                        row.remove();
+
+                    }
+                );
+
+
+                // ------------------------------------------
+                // Clear the technology grid
+                // ------------------------------------------
+
+                while (
+                    grid.firstChild
+                ) {
+
+                    grid.removeChild(
+                        grid.firstChild
+                    );
+
+                }
+
+
+                // ------------------------------------------
+                // Create exactly 2 cards per row
+                // ------------------------------------------
+
+                for (
+                    let i = 0;
+                    i < cards.length;
+                    i += 2
+                ) {
+
+                    const row =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    row.className =
+                        "technology-row";
+
+
+                    row.appendChild(
+                        cards[i]
+                    );
+
+
+                    if (
+                        cards[i + 1]
+                    ) {
+
+                        row.appendChild(
+                            cards[i + 1]
+                        );
+
+                    }
+
+
+                    grid.appendChild(
+                        row
+                    );
+
+                }
 
             }
         );
@@ -3777,7 +3910,7 @@ async function downloadPDF() {
 
             /* ==========================================
                AI PLATFORM SCORES
-               EXACTLY 2 CARDS PER ROW
+               2 CARDS PER ROW
             ========================================== */
 
             #pdf-export-area .score-grid {
@@ -3942,9 +4075,12 @@ async function downloadPDF() {
 
             }
 
+
             /* ==========================================
                TECHNOLOGY DETECTION
-               EXACTLY 2 TECHNOLOGIES PER ROW
+               ==========================================
+               IMPORTANT:
+               The section starts on a NEW PDF PAGE.
             ========================================== */
 
             #pdf-export-area .technology-wrapper {
@@ -3975,6 +4111,18 @@ async function downloadPDF() {
                 padding:
                     0 !important;
 
+                break-before:
+                    page !important;
+
+                page-break-before:
+                    always !important;
+
+                break-inside:
+                    auto !important;
+
+                page-break-inside:
+                    auto !important;
+
             }
 
 
@@ -3984,7 +4132,7 @@ async function downloadPDF() {
                     100% !important;
 
                 margin:
-                    0 0 3mm 0 !important;
+                    0 0 4mm 0 !important;
 
                 padding:
                     0 !important;
@@ -4006,31 +4154,15 @@ async function downloadPDF() {
 
             /* ==========================================
                TECHNOLOGY GRID
-               FLEXBOX = STABLE PDF LAYOUT
             ========================================== */
 
             #pdf-export-area .technology-grid {
 
                 display:
-                    flex !important;
-
-                flex-direction:
-                    row !important;
-
-                flex-wrap:
-                    wrap !important;
-
-                justify-content:
-                    flex-start !important;
-
-                align-items:
-                    stretch !important;
+                    block !important;
 
                 width:
                     100% !important;
-
-                gap:
-                    5mm !important;
 
                 margin:
                     0 !important;
@@ -4042,23 +4174,57 @@ async function downloadPDF() {
 
 
             /* ==========================================
+               TECHNOLOGY ROW
+               EXACTLY 2 CARDS
+            ========================================== */
+
+            #pdf-export-area .technology-row {
+
+                display:
+                    grid !important;
+
+                grid-template-columns:
+                    minmax(0, 1fr)
+                    minmax(0, 1fr) !important;
+
+                column-gap:
+                    5mm !important;
+
+                row-gap:
+                    0 !important;
+
+                width:
+                    100% !important;
+
+                margin:
+                    0 0 5mm 0 !important;
+
+                padding:
+                    0 !important;
+
+                break-inside:
+                    avoid !important;
+
+                page-break-inside:
+                    avoid !important;
+
+            }
+
+
+            /* ==========================================
                TECHNOLOGY CARD
-               2 EQUAL CARDS PER ROW
             ========================================== */
 
             #pdf-export-area .technology-card {
 
-                flex:
-                    0 0 calc(50% - 2.5mm) !important;
-
                 width:
-                    calc(50% - 2.5mm) !important;
+                    100% !important;
 
                 min-width:
-                    calc(50% - 2.5mm) !important;
+                    0 !important;
 
                 max-width:
-                    calc(50% - 2.5mm) !important;
+                    none !important;
 
                 min-height:
                     32mm !important;
@@ -4095,6 +4261,9 @@ async function downloadPDF() {
 
                 page-break-inside:
                     avoid !important;
+
+                box-sizing:
+                    border-box !important;
 
             }
 
@@ -4157,10 +4326,27 @@ async function downloadPDF() {
             #pdf-export-area .technology-card strong {
 
                 white-space:
-                    nowrap !important;
+                    normal !important;
+
+                overflow-wrap:
+                    anywhere !important;
+
+                word-break:
+                    break-word !important;
 
             }
 
+
+            #pdf-export-area .technology-row
+            .technology-card:only-child {
+
+                width:
+                    100% !important;
+
+                grid-column:
+                    1 !important;
+
+            }
 
             /* ==========================================
                E-E-A-T
@@ -4519,7 +4705,8 @@ async function downloadPDF() {
 
             }
 
-                        /* ==========================================
+
+            /* ==========================================
                GENERAL PDF SPACING
             ========================================== */
 
@@ -4570,6 +4757,7 @@ async function downloadPDF() {
 
             #pdf-export-area .score-card,
             #pdf-export-area .technology-card,
+            #pdf-export-area .technology-row,
             #pdf-export-area .eeat-card,
             #pdf-export-area .summary-card {
 
@@ -4585,6 +4773,7 @@ async function downloadPDF() {
 
             #pdf-export-area .score-card,
             #pdf-export-area .technology-card,
+            #pdf-export-area .technology-row,
             #pdf-export-area .eeat-card,
             #pdf-export-area .summary-card {
 
@@ -4597,10 +4786,30 @@ async function downloadPDF() {
             }
 
 
-            #pdf-export-area .info-table tr {
+            /* ==========================================
+               TECHNOLOGY ROW PROTECTION
+               
+               VERY IMPORTANT:
+               Never allow one 2-card technology row
+               to be divided between PDF pages.
+            ========================================== */
+
+            #pdf-export-area .technology-row {
+
+                break-before:
+                    auto !important;
+
+                break-after:
+                    auto !important;
 
                 break-inside:
-                    avoid !important;
+                    avoid-page !important;
+
+                page-break-before:
+                    auto !important;
+
+                page-break-after:
+                    auto !important;
 
                 page-break-inside:
                     avoid !important;
@@ -4614,7 +4823,13 @@ async function downloadPDF() {
 
             #pdf-export-area .technology-section > h3 {
 
+                break-before:
+                    avoid !important;
+
                 break-after:
+                    avoid !important;
+
+                page-break-before:
                     avoid !important;
 
                 page-break-after:
@@ -4864,73 +5079,71 @@ async function downloadPDF() {
                 )
         );
 
-
-        // ==================================================
-        // FORCE IMAGE VISIBILITY
-        // ==================================================
-
-        images.forEach(
-            img => {
-
-                img.style.visibility =
-                    "visible";
-
-                img.style.opacity =
-                    "1";
-
-                img.style.display =
-                    "inline-block";
-
-            }
-        );
-
-
-        // ==================================================
-        // FORCE FINAL LAYOUT CALCULATION
+                // ==================================================
+        // MARK TECHNOLOGY SECTION
+        //
+        // This makes sure the Technology Detection section
+        // starts cleanly on a new PDF page.
         // ==================================================
 
-        void wrapper.offsetHeight;
+        const technologyWrapper =
+            wrapper.querySelector(
+                ".technology-wrapper"
+            );
+
+
+        if (technologyWrapper) {
+
+            technologyWrapper.classList.add(
+                "technology-section"
+            );
+
+        }
 
 
         // ==================================================
-        // WEBSITE NAME
+        // FINAL TECHNOLOGY ROW CHECK
+        //
+        // Make sure every row contains no more than
+        // two technology cards.
         // ==================================================
 
-        let websiteName =
-            "AI-Visibility-Report";
+        if (technologyWrapper) {
+
+            const technologyGrid =
+                technologyWrapper.querySelector(
+                    ".technology-grid"
+                );
 
 
-        if (
-            websiteInput &&
-            websiteInput.value
-        ) {
+            if (technologyGrid) {
 
-            try {
-
-                const parsedURL =
-                    new URL(
-                        websiteInput.value
+                const rows =
+                    technologyGrid.querySelectorAll(
+                        ".technology-row"
                     );
 
 
-                websiteName =
-                    parsedURL.hostname
-                        .replace(
-                            /^www\./,
-                            ""
-                        )
-                        .replace(
-                            /[^a-zA-Z0-9.-]/g,
-                            "-"
-                        );
+                rows.forEach(
+                    row => {
 
-            }
+                        const rowCards =
+                            row.querySelectorAll(
+                                ".technology-card"
+                            );
 
-            catch (urlError) {
 
-                console.warn(
-                    "Could not determine website name:",
-                    urlError
+                        if (
+                            rowCards.length > 2
+                        ) {
+
+                            console.warn(
+                                "Technology row contains more than 2 cards."
+                            );
+
+                        }
+
+                    }
                 );
 
             }
@@ -4939,125 +5152,298 @@ async function downloadPDF() {
 
 
         // ==================================================
-        // REPORT DATE
+        // FORCE BROWSER REFLOW
+        //
+        // This is important before html2pdf measures
+        // the document.
         // ==================================================
+
+        void wrapper.offsetHeight;
+
+
+        // ==================================================
+        // WAIT FOR FINAL REFLOW
+        // ==================================================
+
+        await new Promise(
+            resolve =>
+                requestAnimationFrame(
+                    () => {
+
+                        requestAnimationFrame(
+                            resolve
+                        );
+
+                    }
+                )
+        );
+
+
+        // ==================================================
+        // PDF FILE NAME
+        // ==================================================
+
+        let domainName =
+            parsedURLFromWebsite(
+                websiteInput
+            );
+
+
+        if (!domainName) {
+
+            domainName =
+                "website";
+
+        }
+
+
+        // ==================================================
+        // CLEAN DOMAIN FOR FILE NAME
+        // ==================================================
+
+        domainName =
+            domainName
+                .replace(
+                    /^https?:\/\//i,
+                    ""
+                )
+                .replace(
+                    /^www\./i,
+                    ""
+                )
+                .replace(
+                    /[\/\\:*?"<>|]/g,
+                    "-"
+                )
+                .replace(
+                    /\s+/g,
+                    "-"
+                );
+
+
+        // ==================================================
+        // DATE
+        // ==================================================
+
+        const now =
+            new Date();
+
+
+        const year =
+            now.getFullYear();
+
+
+        const month =
+            String(
+                now.getMonth() + 1
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        const day =
+            String(
+                now.getDate()
+            ).padStart(
+                2,
+                "0"
+            );
+
 
         const reportDate =
-            new Date()
-                .toISOString()
-                .split("T")[0];
+            `${year}-${month}-${day}`;
 
 
         // ==================================================
-        // PDF OPTIONS
+        // FINAL FILE NAME
+        // ==================================================
+
+        const fileName =
+            `${domainName}-AI-Visibility-Report-${reportDate}.pdf`;
+
+
+        // ==================================================
+        // HTML2PDF OPTIONS
         // ==================================================
 
         const options = {
 
-            margin: [
-                7,
-                7,
-                7,
-                7
-            ],
+            margin:
+                [
+                    8,
+                    8,
+                    8,
+                    8
+                ],
 
             filename:
-                `${websiteName}-AI-Visibility-Report-${reportDate}.pdf`,
+                fileName,
 
-            image: {
+            image:
+                {
+                    type:
+                        "jpeg",
 
-                type:
-                    "jpeg",
+                    quality:
+                        0.98
+                },
 
-                quality:
-                    0.97
+            html2canvas:
+                {
 
-            },
+                    scale:
+                        2,
 
-            html2canvas: {
+                    useCORS:
+                        true,
 
-                scale:
-                    2,
+                    allowTaint:
+                        false,
 
-                useCORS:
-                    true,
+                    backgroundColor:
+                        "#ffffff",
 
-                allowTaint:
-                    false,
+                    logging:
+                        false,
 
-                backgroundColor:
-                    "#ffffff",
+                    imageTimeout:
+                        15000,
 
-                logging:
-                    false,
+                    scrollX:
+                        0,
 
-                scrollX:
-                    0,
+                    scrollY:
+                        0,
 
-                scrollY:
-                    0,
+                    windowWidth:
+                        794,
 
-                imageTimeout:
-                    15000
+                    windowHeight:
+                        1123
 
-            },
+                },
 
-            jsPDF: {
+            jsPDF:
+                {
 
-                unit:
-                    "mm",
+                    unit:
+                        "mm",
 
-                format:
-                    "a4",
+                    format:
+                        "a4",
 
-                orientation:
-                    "portrait",
+                    orientation:
+                        "portrait",
 
-                compress:
-                    true
+                    compress:
+                        true
 
-            },
+                },
 
+            pagebreak:
+                {
 
-            pagebreak: {
+                    mode:
+                        [
+                            "css",
+                            "legacy"
+                        ],
 
-                mode:
-                    [
-                        "css"
-                    ],
+                    before:
+                        [
+                            ".technology-section"
+                        ],
 
-                avoid:
-                    [
-                        ".score-card",
-                        ".technology-card",
-                        ".eeat-card",
-                        ".summary-card",
-                        "tr"
-                    ]
+                    avoid:
+                        [
+                            ".score-card",
+                            ".technology-card",
+                            ".technology-row",
+                            ".eeat-card",
+                            ".summary-card",
+                            "tr"
+                        ]
 
-            }
+                }
 
         };
 
-                // ==================================================
+
+        // ==================================================
         // GENERATE PDF
         // ==================================================
 
+        console.log(
+            "Starting PDF generation..."
+        );
+
+
+        console.log(
+            "PDF filename:",
+            fileName
+        );
+
+
+        console.log(
+            "Technology cards:",
+            wrapper.querySelectorAll(
+                ".technology-card"
+            ).length
+        );
+
+
+        console.log(
+            "Technology rows:",
+            wrapper.querySelectorAll(
+                ".technology-row"
+            ).length
+        );
+
+
         await html2pdf()
-            .set(options)
-            .from(wrapper)
+
+            .set(
+                options
+            )
+
+            .from(
+                wrapper
+            )
+
             .save();
 
 
         // ==================================================
-        // SUCCESS
+        // PDF GENERATED SUCCESSFULLY
         // ==================================================
 
+        console.log(
+            "PDF generated successfully."
+        );
+
+
         showNotification(
-            "PDF report downloaded successfully.",
+            "PDF report generated successfully.",
             "success"
         );
 
+                // ==================================================
+        // SUCCESS MESSAGE
+        // ==================================================
+
+        console.log(
+            "AI Visibility PDF created successfully:"
+        );
+
+        console.log(
+            fileName
+        );
+
+
+        // ==================================================
+        // CLOSE TRY BLOCK
+        // ==================================================
 
     }
 
@@ -5068,15 +5454,33 @@ async function downloadPDF() {
         // ==================================================
 
         console.error(
-            "PDF GENERATION ERROR:",
+            "PDF generation error:",
             error
         );
 
 
-        showNotification(
-            "Unable to generate PDF. Please try again.",
-            "error"
-        );
+        // ==================================================
+        // SHOW ERROR
+        // ==================================================
+
+        if (
+            typeof showNotification ===
+            "function"
+        ) {
+
+            showNotification(
+                "Unable to generate PDF. Please try again.",
+                "error"
+            );
+
+        }
+        else {
+
+            alert(
+                "Unable to generate PDF. Please try again."
+            );
+
+        }
 
     }
 
@@ -5129,6 +5533,113 @@ async function downloadPDF() {
                 "pointer";
 
         }
+
+    }
+
+}
+
+
+/* =========================================================
+   HELPER FUNCTION
+   =========================================================
+   
+   Gets a clean domain name from the website input.
+   
+   Example:
+   https://www.stcouer.com/
+   becomes:
+   stcouer.com
+========================================================= */
+
+function parsedURLFromWebsite(
+    inputElement
+) {
+
+    try {
+
+        if (
+            !inputElement ||
+            !inputElement.value
+        ) {
+
+            return "website";
+
+        }
+
+
+        let value =
+            inputElement.value.trim();
+
+
+        if (!value) {
+
+            return "website";
+
+        }
+
+
+        // ---------------------------------------------
+        // Add protocol if necessary
+        // ---------------------------------------------
+
+        if (
+            !/^https?:\/\//i.test(
+                value
+            )
+        ) {
+
+            value =
+                "https://" +
+                value;
+
+        }
+
+
+        const url =
+            new URL(
+                value
+            );
+
+
+        let hostname =
+            url.hostname;
+
+
+        // ---------------------------------------------
+        // Remove www.
+        // ---------------------------------------------
+
+        hostname =
+            hostname.replace(
+                /^www\./i,
+                ""
+            );
+
+
+        // ---------------------------------------------
+        // Safety fallback
+        // ---------------------------------------------
+
+        if (!hostname) {
+
+            return "website";
+
+        }
+
+
+        return hostname;
+
+    }
+
+    catch (error) {
+
+        console.warn(
+            "Could not parse website name:",
+            error
+        );
+
+
+        return "website";
 
     }
 
