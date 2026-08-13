@@ -859,9 +859,7 @@ function showError(message) {
 
 async function analyzeWebsite() {
 
-    let website =
-        websiteInput.value.trim();
-
+    let website = websiteInput.value.trim();
 
     // =====================================================
     // EMPTY INPUT
@@ -884,30 +882,24 @@ async function analyzeWebsite() {
     // NORMALIZE URL
     // =====================================================
 
-    if (
-        !/^https?:\/\//i.test(website)
-    ) {
+    if (!/^https?:\/\//i.test(website)) {
 
-        website =
-            "https://" + website;
+        website = "https://" + website;
 
     }
 
 
     // =====================================================
-    // VALIDATE URL FORMAT
+    // VALIDATE URL
     // =====================================================
 
     let parsedURL;
 
-
     try {
 
-        parsedURL =
-            new URL(website);
+        parsedURL = new URL(website);
 
     }
-
     catch (error) {
 
         showError(
@@ -923,7 +915,7 @@ async function analyzeWebsite() {
 
 
     // =====================================================
-    // CHECK DOMAIN
+    // VALIDATE DOMAIN
     // =====================================================
 
     if (
@@ -946,8 +938,7 @@ async function analyzeWebsite() {
     // UPDATE INPUT
     // =====================================================
 
-    websiteInput.value =
-        website;
+    websiteInput.value = website;
 
 
     // =====================================================
@@ -955,15 +946,12 @@ async function analyzeWebsite() {
     // =====================================================
 
     const analyzeBtn =
-        document.querySelector(
-            ".analyze-btn"
-        );
+        document.querySelector(".analyze-btn");
 
 
     if (analyzeBtn) {
 
-        analyzeBtn.disabled =
-            true;
+        analyzeBtn.disabled = true;
 
         analyzeBtn.innerHTML =
             "⏳ Analyzing...";
@@ -981,9 +969,7 @@ async function analyzeWebsite() {
     // SHOW LOADING
     // =====================================================
 
-    showLoading(
-        website
-    );
+    showLoading(website);
 
 
     try {
@@ -999,15 +985,14 @@ async function analyzeWebsite() {
 
                 {
 
-                    method:
-                        "POST",
+                    method: "POST",
 
                     headers: {
 
                         "Content-Type":
                             "application/json",
 
-                        Authorization:
+                        "Authorization":
                             `Bearer ${token}`
 
                     },
@@ -1015,8 +1000,7 @@ async function analyzeWebsite() {
                     body:
                         JSON.stringify({
 
-                            url:
-                                website
+                            url: website
 
                         })
 
@@ -1026,7 +1010,7 @@ async function analyzeWebsite() {
 
 
         // =================================================
-        // READ RESPONSE
+        // READ SERVER RESPONSE
         // =================================================
 
         let data = null;
@@ -1038,7 +1022,6 @@ async function analyzeWebsite() {
                 await response.json();
 
         }
-
         catch (jsonError) {
 
             console.error(
@@ -1082,9 +1065,7 @@ async function analyzeWebsite() {
             // 400
             // ---------------------------------------------
 
-            if (
-                response.status === 400
-            ) {
+            if (response.status === 400) {
 
                 throw new Error(
                     serverMessage ||
@@ -1098,9 +1079,7 @@ async function analyzeWebsite() {
             // 401
             // ---------------------------------------------
 
-            if (
-                response.status === 401
-            ) {
+            if (response.status === 401) {
 
                 throw new Error(
                     "Your login session has expired. Please log in again."
@@ -1113,9 +1092,7 @@ async function analyzeWebsite() {
             // 403
             // ---------------------------------------------
 
-            if (
-                response.status === 403
-            ) {
+            if (response.status === 403) {
 
                 throw new Error(
                     "Access to this website analysis is not permitted."
@@ -1128,9 +1105,7 @@ async function analyzeWebsite() {
             // 404
             // ---------------------------------------------
 
-            if (
-                response.status === 404
-            ) {
+            if (response.status === 404) {
 
                 throw new Error(
                     "The website analysis service could not be found. Please try again later."
@@ -1143,9 +1118,7 @@ async function analyzeWebsite() {
             // 408
             // ---------------------------------------------
 
-            if (
-                response.status === 408
-            ) {
+            if (response.status === 408) {
 
                 throw new Error(
                     "The website took too long to respond. Please try again."
@@ -1158,9 +1131,7 @@ async function analyzeWebsite() {
             // 429
             // ---------------------------------------------
 
-            if (
-                response.status === 429
-            ) {
+            if (response.status === 429) {
 
                 throw new Error(
                     "Too many analysis requests. Please wait a moment and try again."
@@ -1173,9 +1144,7 @@ async function analyzeWebsite() {
             // 500+
             // ---------------------------------------------
 
-            if (
-                response.status >= 500
-            ) {
+            if (response.status >= 500) {
 
                 throw new Error(
                     "Our analysis server is temporarily unavailable. Please try again in a few moments."
@@ -1200,7 +1169,7 @@ async function analyzeWebsite() {
 
 
         // =================================================
-        // MAKE SURE RESPONSE EXISTS
+        // VALIDATE RESPONSE
         // =================================================
 
         if (
@@ -1217,27 +1186,113 @@ async function analyzeWebsite() {
 
         // =================================================
         // IMPORTANT:
-        // CHECK WHETHER WEBSITE IS ACTUALLY LIVE
+        // WEBSITE MUST BE ACTUALLY LIVE
         // =================================================
 
-        if (
-            data.website_status ===
-                "unreachable"
-            ||
+        const websiteStatus =
+            String(
+                data.website_status ||
+                ""
+            ).toLowerCase();
 
-            data.live_website ===
-                false
-            ||
 
-            data.analysis_mode ===
-                "estimated"
-        ) {
+        const analysisMode =
+            String(
+                data.analysis_mode ||
+                ""
+            ).toLowerCase();
+
+
+        const fetchError =
+            String(
+                data.fetch_error ||
+                ""
+            ).toLowerCase();
+
+
+        // =================================================
+        // DETECT INACTIVE / UNREACHABLE WEBSITE
+        // =================================================
+
+        const inactiveStatuses = [
+
+            "inactive",
+            "unreachable",
+            "unavailable",
+            "offline",
+            "dead",
+            "parked",
+            "parking",
+            "domain_parked",
+            "dns_error",
+            "dns_failed",
+            "connection_failed",
+            "timeout",
+            "not_found",
+            "error"
+
+        ];
+
+
+        const inactiveModes = [
+
+            "estimated",
+            "not_analyzed",
+            "inactive",
+            "unavailable",
+            "offline"
+
+        ];
+
+
+        const isInactiveWebsite =
+
+            data.live_website === false ||
+
+            data.live_website === null ||
+
+            inactiveStatuses.includes(
+                websiteStatus
+            ) ||
+
+            inactiveModes.includes(
+                analysisMode
+            ) ||
+
+            fetchError !== "";
+
+
+        // =================================================
+        // STOP INACTIVE WEBSITE
+        // =================================================
+
+        if (isInactiveWebsite) {
+
+            console.warn(
+                "Inactive website rejected:",
+                {
+                    website: website,
+                    website_status:
+                        data.website_status,
+                    analysis_mode:
+                        data.analysis_mode,
+                    live_website:
+                        data.live_website,
+                    fetch_error:
+                        data.fetch_error
+                }
+            );
+
 
             throw new Error(
 
-                "This website is currently unavailable or could not be reached.<br><br>" +
+                "<strong>Website is currently inactive or unavailable.</strong><br><br>" +
 
-                "Please check the website address and make sure the website is active."
+                "We could not verify an active website at:<br>" +
+
+                `<strong>${website}</strong><br><br>` +
+
+                "Please make sure the website is currently live and accessible, then try again."
 
             );
 
@@ -1245,18 +1300,19 @@ async function analyzeWebsite() {
 
 
         // =================================================
-        // BACKEND REPORTED FAILURE
+        // BACKEND EXPLICIT FAILURE
         // =================================================
 
-        if (
-            data.success === false
-        ) {
+        if (data.success === false) {
 
             throw new Error(
 
                 data.error ||
+
                 data.message ||
+
                 data.detail ||
+
                 "The website could not be analyzed."
 
             );
@@ -1265,12 +1321,10 @@ async function analyzeWebsite() {
 
 
         // =================================================
-        // MAKE SURE SUCCESS EXISTS
+        // SUCCESS MUST BE TRUE
         // =================================================
 
-        if (
-            data.success !== true
-        ) {
+        if (data.success !== true) {
 
             throw new Error(
                 "The analysis server returned an incomplete result."
@@ -1280,13 +1334,46 @@ async function analyzeWebsite() {
 
 
         // =================================================
+        // FINAL LIVE WEBSITE SAFETY CHECK
+        // =================================================
+
+        if (
+            data.live_website !== true
+        ) {
+
+            throw new Error(
+
+                "<strong>Website verification failed.</strong><br><br>" +
+
+                "The website could not be confirmed as an active live website.<br><br>" +
+
+                "Please check the website and try again."
+
+            );
+
+        }
+
+
+        // =================================================
+        // WEBSITE IS CONFIRMED LIVE
+        // =================================================
+
+        console.log(
+            "Live website confirmed:",
+            website
+        );
+
+
+        // =================================================
         // FINISH LOADER
         //
+        // Only a confirmed live website reaches here.
+        //
         // 99%
-        // ↓
+        //   ↓
         // 100%
-        // ↓
-        // RESULT
+        //   ↓
+        // RESULTS
         // =================================================
 
         finishLoader(
@@ -1316,6 +1403,10 @@ async function analyzeWebsite() {
 
     }
 
+
+    // =====================================================
+    // ERROR HANDLING
+    // =====================================================
 
     catch (error) {
 
@@ -1370,7 +1461,7 @@ async function analyzeWebsite() {
 
             error.message ||
 
-            "We couldn't analyze this website. Please check the website address and try again."
+            "We couldn't analyze this website. Please check the website address and make sure it is active."
 
         );
 

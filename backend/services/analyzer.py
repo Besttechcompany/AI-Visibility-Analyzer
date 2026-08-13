@@ -2,11 +2,13 @@ import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 
+
 from services.llms import LLMAnalyzer
 from services.chatgpt import ChatGPTAnalyzer
 from services.gemini import GeminiAnalyzer
 from services.claude import ClaudeAnalyzer
 from services.perplexity import PerplexityAnalyzer
+
 
 from services.entities import EntityAnalyzer
 from services.recommendations import RecommendationAnalyzer
@@ -14,8 +16,11 @@ from services.score import ScoreAnalyzer
 from services.eeat import EEATAnalyzer
 from services.audit import AuditAnalyzer
 from services.technical_seo import TechnicalSEOAnalyzer
+
+
 from services.technology.technology import TechnologyAnalyzer
 from services.browser.browser import BrowserManager
+
 
 from services.grok import GrokAnalyzer
 from services.google_ai_mode import GoogleAIModeAnalyzer
@@ -24,88 +29,252 @@ from services.deepseek import DeepSeekAnalyzer
 
 class WebsiteAnalyzer:
 
+    # ==========================================================
+    # USER AGENT
+    # ==========================================================
+
     HEADERS = {
+
         "User-Agent": (
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-            "AppleWebKit/537.36 (KHTML, like Gecko) "
-            "Chrome/137.0 Safari/537.36"
-        )
+            "Mozilla/5.0 "
+            "(Windows NT 10.0; Win64; x64) "
+            "AppleWebKit/537.36 "
+            "(KHTML, like Gecko) "
+            "Chrome/137.0.0.0 Safari/537.36"
+        ),
+
+        "Accept": (
+            "text/html,"
+            "application/xhtml+xml,"
+            "application/xml;q=0.9,"
+            "image/avif,"
+            "image/webp,"
+            "image/apng,"
+            "*/*;q=0.8"
+        ),
+
+        "Accept-Language":
+            "en-US,en;q=0.9"
+
     }
 
 
-    # ======================================================
-    # CREATE FALLBACK HTML
-    # ======================================================
+    # ==========================================================
+    # PARKED / INACTIVE WEBSITE DETECTION
+    # ==========================================================
 
     @staticmethod
-    def create_fallback_html(url: str) -> str:
+    def is_inactive_or_parked_website(
+        response
+    ):
 
-        parsed = urlparse(url)
+        try:
 
-        domain = (
-            parsed.netloc
-            or parsed.path
-            or url
-        )
-
-        return f"""
-        <!DOCTYPE html>
-
-        <html lang="en">
-
-        <head>
-
-            <meta charset="UTF-8">
-
-            <title>{domain}</title>
-
-            <meta
-                name="description"
-                content="AI visibility analysis for {domain}"
-            >
-
-            <meta
-                name="robots"
-                content="index, follow"
-            >
-
-            <link
-                rel="canonical"
-                href="{url}"
-            >
-
-        </head>
-
-        <body>
-
-            <main>
-
-                <h1>
-                    {domain}
-                </h1>
-
-                <h2>
-                    AI Visibility Analysis
-                </h2>
-
-                <p>
-                    This website could not be reached directly
-                    during the analysis.
-                </p>
-
-            </main>
-
-        </body>
-
-        </html>
-        """
+            html = (
+                response.text or ""
+            ).lower()
 
 
-    # ======================================================
+            final_url = (
+                str(response.url or "")
+                .lower()
+            )
+
+
+            # ==================================================
+            # DOMAIN PARKING SIGNALS
+            # ==================================================
+
+            parking_signals = [
+
+                "this domain is registered",
+
+                "domain is registered",
+
+                "this domain may still be available",
+
+                "domain may still be available",
+
+                "get this domain",
+
+                "buy this domain",
+
+                "buy this domain name",
+
+                "domain for sale",
+
+                "this domain is for sale",
+
+                "domain parking",
+
+                "parked domain",
+
+                "this domain has been parked",
+
+                "domain name is for sale",
+
+                "purchase this domain",
+
+                "inquire about this domain",
+
+                "make an offer for this domain",
+
+                "domain available for purchase",
+
+                "this domain is available"
+
+            ]
+
+
+            # ==================================================
+            # PARKING PROVIDERS
+            # ==================================================
+
+            parking_providers = [
+
+                "godaddy.com",
+
+                "sedo.com",
+
+                "hugedomains.com",
+
+                "afternic.com",
+
+                "dan.com",
+
+                "parkingcrew.com",
+
+                "bodis.com",
+
+                "undeveloped.com",
+
+                "sav.com"
+
+            ]
+
+
+            parking_matches = 0
+
+
+            for signal in parking_signals:
+
+                if signal in html:
+
+                    parking_matches += 1
+
+
+            provider_match = False
+
+
+            for provider in parking_providers:
+
+                if provider in html:
+
+                    provider_match = True
+
+                    break
+
+
+                if provider in final_url:
+
+                    provider_match = True
+
+                    break
+
+
+            # ==================================================
+            # STRONG PARKED DOMAIN DETECTION
+            # ==================================================
+
+            if parking_matches >= 2:
+
+                return True
+
+
+            if (
+                parking_matches >= 1
+                and provider_match
+            ):
+
+                return True
+
+
+            # ==================================================
+            # GODADDY PARKING PAGE
+            # ==================================================
+
+            if (
+                "godaddy" in html
+                and (
+                    "get this domain" in html
+                    or
+                    "domain is registered" in html
+                    or
+                    "may still be available" in html
+                )
+            ):
+
+                return True
+
+
+            # ==================================================
+            # PLACEHOLDER WEBSITE SIGNALS
+            # ==================================================
+
+            placeholder_signals = [
+
+                "coming soon",
+
+                "website coming soon",
+
+                "site coming soon",
+
+                "under construction",
+
+                "site under construction",
+
+                "website under construction",
+
+                "default web page",
+
+                "default nginx page",
+
+                "welcome to nginx",
+
+                "welcome to apache",
+
+                "apache2 ubuntu default page",
+
+                "test page",
+
+                "sample page"
+
+            ]
+
+
+            for signal in placeholder_signals:
+
+                if signal in html:
+
+                    return True
+
+
+            return False
+
+
+        except Exception as exc:
+
+            print(
+                "Inactive website detection warning:",
+                str(exc)
+            )
+
+            return False
+
+
+    # ==========================================================
     # SAFE ANALYZER
-    #
-    # One failed analyzer should not stop the report.
-    # ======================================================
+    # ==========================================================
 
     @staticmethod
     def safe_analyze(
@@ -124,34 +293,127 @@ class WebsiteAnalyzer:
                 str(exc)
             )
 
+
             if default is not None:
 
                 return default
 
+
             return {}
 
-
-            # ======================================================
-    # MAIN ANALYSIS
-    # ======================================================
+            # ==========================================================
+    # MAIN WEBSITE ANALYSIS
+    # ==========================================================
 
     @staticmethod
-    def analyze(url: str):
+    def analyze(
+        url: str
+    ):
 
         response = None
 
-        live_website = True
 
-        website_status = "active"
+        # ======================================================
+        # NORMALIZE URL
+        # ======================================================
 
-        analysis_mode = "live"
+        url = (
+            str(url)
+            .strip()
+        )
 
-        fetch_error = ""
+
+        if not url:
+
+            return {
+
+                "success": False,
+
+                "website_status":
+                    "invalid",
+
+                "analysis_mode":
+                    "not_analyzed",
+
+                "live_website":
+                    False,
+
+                "error":
+                    "Website URL is required."
+
+            }
 
 
-        # ==================================================
-        # TRY TO FETCH LIVE WEBSITE
-        # ==================================================
+        if not url.lower().startswith(
+            ("http://", "https://")
+        ):
+
+            url = (
+                "https://"
+                + url
+            )
+
+
+        # ======================================================
+        # PARSED URL
+        # ======================================================
+
+        try:
+
+            parsed_url = urlparse(
+                url
+            )
+
+            if not parsed_url.hostname:
+
+                return {
+
+                    "success": False,
+
+                    "website_status":
+                        "invalid",
+
+                    "analysis_mode":
+                        "not_analyzed",
+
+                    "live_website":
+                        False,
+
+                    "url":
+                        url,
+
+                    "error":
+                        "Invalid website address."
+
+                }
+
+        except Exception as exc:
+
+            return {
+
+                "success": False,
+
+                "website_status":
+                    "invalid",
+
+                "analysis_mode":
+                    "not_analyzed",
+
+                "live_website":
+                    False,
+
+                "url":
+                    url,
+
+                "error":
+                    str(exc)
+
+            }
+
+
+        # ======================================================
+        # REQUEST LIVE WEBSITE
+        # ======================================================
 
         try:
 
@@ -168,86 +430,410 @@ class WebsiteAnalyzer:
 
             )
 
-            response.raise_for_status()
 
-
-        except Exception as exc:
-
-            # ==============================================
-            # WEBSITE NOT AVAILABLE
-            #
-            # DO NOT STOP THE REPORT
-            # ==============================================
-
-            live_website = False
-
-            website_status = "unreachable"
-
-            analysis_mode = "estimated"
-
-            fetch_error = str(exc)
-
+        except requests.exceptions.SSLError as exc:
 
             print(
-                "Website could not be reached:",
-                fetch_error
+                "SSL error:",
+                str(exc)
             )
 
 
-            # ==============================================
-            # CREATE FALLBACK HTML
-            # ==============================================
+            return {
 
-            fallback_html = (
-                WebsiteAnalyzer.create_fallback_html(
-                    url
+                "success": False,
+
+                "website_status":
+                    "inactive",
+
+                "analysis_mode":
+                    "not_analyzed",
+
+                "live_website":
+                    False,
+
+                "url":
+                    url,
+
+                "website":
+                    url,
+
+                "website_url":
+                    url,
+
+                "error": (
+                    "The website could not be reached "
+                    "because of an SSL/security error."
                 )
+
+            }
+
+
+        except requests.exceptions.ConnectionError as exc:
+
+            print(
+                "Connection error:",
+                str(exc)
             )
 
 
-            # ==============================================
-            # CREATE SAFE RESPONSE OBJECT
-            # ==============================================
+            return {
 
-            response = requests.Response()
+                "success": False,
 
-            response.status_code = 200
+                "website_status":
+                    "inactive",
 
-            response.url = url
+                "analysis_mode":
+                    "not_analyzed",
 
-            response._content = (
-                fallback_html.encode(
-                    "utf-8"
+                "live_website":
+                    False,
+
+                "url":
+                    url,
+
+                "website":
+                    url,
+
+                "website_url":
+                    url,
+
+                "error": (
+                    "This website is currently unavailable "
+                    "or could not be reached."
                 )
+
+            }
+
+
+        except requests.exceptions.Timeout as exc:
+
+            print(
+                "Timeout:",
+                str(exc)
             )
 
-            response.headers[
-                "content-type"
-            ] = "text/html; charset=utf-8"
+
+            return {
+
+                "success": False,
+
+                "website_status":
+                    "inactive",
+
+                "analysis_mode":
+                    "not_analyzed",
+
+                "live_website":
+                    False,
+
+                "url":
+                    url,
+
+                "website":
+                    url,
+
+                "website_url":
+                    url,
+
+                "error": (
+                    "The website took too long to respond. "
+                    "Please make sure the website is active."
+                )
+
+            }
 
 
-        # ==================================================
-        # PARSE HTML
-        # ==================================================
+        except requests.exceptions.RequestException as exc:
+
+            print(
+                "Request error:",
+                str(exc)
+            )
+
+
+            return {
+
+                "success": False,
+
+                "website_status":
+                    "inactive",
+
+                "analysis_mode":
+                    "not_analyzed",
+
+                "live_website":
+                    False,
+
+                "url":
+                    url,
+
+                "website":
+                    url,
+
+                "website_url":
+                    url,
+
+                "error": (
+                    "The website could not be reached."
+                )
+
+            }
+
+
+        # ======================================================
+        # HTTP STATUS CHECK
+        # ======================================================
+
+        if response.status_code >= 400:
+
+            return {
+
+                "success": False,
+
+                "website_status":
+                    "inactive",
+
+                "analysis_mode":
+                    "not_analyzed",
+
+                "live_website":
+                    False,
+
+                "url":
+                    url,
+
+                "website":
+                    url,
+
+                "website_url":
+                    url,
+
+                "http_status":
+                    response.status_code,
+
+                "error": (
+                    "The website returned HTTP "
+                    + str(
+                        response.status_code
+                    )
+                    + "."
+                )
+
+            }
+
+
+        # ======================================================
+        # CONTENT TYPE CHECK
+        # ======================================================
+
+        content_type = (
+            response.headers.get(
+                "content-type",
+                ""
+            )
+            .lower()
+        )
+
+
+        if (
+            "text/html" not in content_type
+            and
+            "application/xhtml+xml"
+            not in content_type
+        ):
+
+            return {
+
+                "success": False,
+
+                "website_status":
+                    "inactive",
+
+                "analysis_mode":
+                    "not_analyzed",
+
+                "live_website":
+                    False,
+
+                "url":
+                    url,
+
+                "website":
+                    url,
+
+                "website_url":
+                    url,
+
+                "error": (
+                    "The URL does not return a normal "
+                    "HTML website."
+                )
+
+            }
+
+
+        # ======================================================
+        # PARKED / PLACEHOLDER CHECK
+        # ======================================================
+
+        if WebsiteAnalyzer.is_inactive_or_parked_website(
+            response
+        ):
+
+            print(
+                "Parked/inactive website detected:",
+                url
+            )
+
+
+            return {
+
+                "success": False,
+
+                "website_status":
+                    "inactive",
+
+                "analysis_mode":
+                    "not_analyzed",
+
+                "live_website":
+                    False,
+
+                "url":
+                    url,
+
+                "website":
+                    url,
+
+                "website_url":
+                    url,
+
+                "final_url":
+                    str(
+                        response.url
+                    ),
+
+                "error": (
+                    "This domain is registered or parked, "
+                    "but it does not currently have an "
+                    "active website."
+                )
+
+            }
+
+
+        # ======================================================
+        # PARSE REAL WEBSITE
+        # ======================================================
 
         try:
 
             soup = BeautifulSoup(
+
                 response.text,
+
                 "lxml"
+
             )
 
-        except Exception:
+        except Exception as exc:
 
-            soup = BeautifulSoup(
-                "<html></html>",
-                "lxml"
+            print(
+                "HTML parsing error:",
+                str(exc)
             )
 
 
-        # ==================================================
+            return {
+
+                "success": False,
+
+                "website_status":
+                    "inactive",
+
+                "analysis_mode":
+                    "not_analyzed",
+
+                "live_website":
+                    False,
+
+                "url":
+                    url,
+
+                "error":
+                    "The website HTML could not be read."
+
+            }
+
+
+        # ======================================================
+        # BASIC WEBSITE CONTENT CHECK
+        # ======================================================
+
+        body_text = (
+            soup.get_text(
+                " ",
+                strip=True
+            )
+        )
+
+
+        title_tag = soup.find(
+            "title"
+        )
+
+
+        h1_tags = soup.find_all(
+            "h1"
+        )
+
+
+        # ======================================================
+        # EMPTY / NON-WEBSITE PAGE
+        # ======================================================
+
+        if (
+            not title_tag
+            and
+            not h1_tags
+            and
+            len(body_text) < 50
+        ):
+
+            return {
+
+                "success": False,
+
+                "website_status":
+                    "inactive",
+
+                "analysis_mode":
+                    "not_analyzed",
+
+                "live_website":
+                    False,
+
+                "url":
+                    url,
+
+                "website":
+                    url,
+
+                "website_url":
+                    url,
+
+                "error": (
+                    "The domain is reachable, but it does "
+                    "not appear to contain an active website."
+                )
+
+            }
+
+                # ======================================================
         # BASIC INFORMATION
-        # ==================================================
+        # ======================================================
 
         title = ""
 
@@ -258,7 +844,8 @@ class WebsiteAnalyzer:
         ):
 
             title = (
-                soup.title.string.strip()
+                soup.title.string
+                .strip()
             )
 
 
@@ -266,11 +853,14 @@ class WebsiteAnalyzer:
 
 
         meta = soup.find(
+
             "meta",
+
             attrs={
                 "name":
                     "description"
             }
+
         )
 
 
@@ -297,8 +887,11 @@ class WebsiteAnalyzer:
 
 
         canonical_tag = soup.find(
+
             "link",
+
             rel="canonical"
+
         )
 
 
@@ -314,11 +907,14 @@ class WebsiteAnalyzer:
 
 
         robots_tag = soup.find(
+
             "meta",
+
             attrs={
                 "name":
                     "robots"
             }
+
         )
 
 
@@ -336,7 +932,8 @@ class WebsiteAnalyzer:
                 strip=True
             )
 
-            for h in soup.find_all("h1")
+            for h in
+            soup.find_all("h1")
 
         ]
 
@@ -347,13 +944,15 @@ class WebsiteAnalyzer:
                 strip=True
             )
 
-            for h in soup.find_all("h2")
+            for h in
+            soup.find_all("h2")
 
         ]
 
-                # ==================================================
+
+        # ======================================================
         # LLM ANALYSIS
-        # ==================================================
+        # ======================================================
 
         llms = WebsiteAnalyzer.safe_analyze(
 
@@ -367,9 +966,9 @@ class WebsiteAnalyzer:
         )
 
 
-        # ==================================================
-        # AI PLATFORM ANALYSIS
-        # ==================================================
+        # ======================================================
+        # CHATGPT
+        # ======================================================
 
         chatgpt = WebsiteAnalyzer.safe_analyze(
 
@@ -384,6 +983,10 @@ class WebsiteAnalyzer:
         )
 
 
+        # ======================================================
+        # GEMINI
+        # ======================================================
+
         gemini = WebsiteAnalyzer.safe_analyze(
 
             lambda:
@@ -396,6 +999,10 @@ class WebsiteAnalyzer:
 
         )
 
+
+        # ======================================================
+        # CLAUDE
+        # ======================================================
 
         claude = WebsiteAnalyzer.safe_analyze(
 
@@ -410,6 +1017,10 @@ class WebsiteAnalyzer:
         )
 
 
+        # ======================================================
+        # PERPLEXITY
+        # ======================================================
+
         perplexity = WebsiteAnalyzer.safe_analyze(
 
             lambda:
@@ -422,6 +1033,10 @@ class WebsiteAnalyzer:
 
         )
 
+
+        # ======================================================
+        # GROK
+        # ======================================================
 
         grok = WebsiteAnalyzer.safe_analyze(
 
@@ -436,6 +1051,10 @@ class WebsiteAnalyzer:
         )
 
 
+        # ======================================================
+        # GOOGLE AI MODE
+        # ======================================================
+
         google_ai_mode = WebsiteAnalyzer.safe_analyze(
 
             lambda:
@@ -448,6 +1067,10 @@ class WebsiteAnalyzer:
 
         )
 
+
+        # ======================================================
+        # DEEPSEEK
+        # ======================================================
 
         deepseek = WebsiteAnalyzer.safe_analyze(
 
@@ -462,9 +1085,9 @@ class WebsiteAnalyzer:
         )
 
 
-        # ==================================================
+        # ======================================================
         # ENTITIES
-        # ==================================================
+        # ======================================================
 
         entities = WebsiteAnalyzer.safe_analyze(
 
@@ -478,9 +1101,9 @@ class WebsiteAnalyzer:
         )
 
 
-        # ==================================================
+        # ======================================================
         # E-E-A-T
-        # ==================================================
+        # ======================================================
 
         eeat = WebsiteAnalyzer.safe_analyze(
 
@@ -494,9 +1117,9 @@ class WebsiteAnalyzer:
         )
 
 
-        # ==================================================
+        # ======================================================
         # AUDIT
-        # ==================================================
+        # ======================================================
 
         audit = WebsiteAnalyzer.safe_analyze(
 
@@ -511,9 +1134,9 @@ class WebsiteAnalyzer:
         )
 
 
-        # ==================================================
+        # ======================================================
         # TECHNICAL SEO
-        # ==================================================
+        # ======================================================
 
         technical = WebsiteAnalyzer.safe_analyze(
 
@@ -529,71 +1152,74 @@ class WebsiteAnalyzer:
         )
 
 
-        # ==================================================
+        # ======================================================
         # TECHNOLOGY DETECTION
         #
-        # Only detect technologies when the actual website
-        # was successfully fetched.
-        # ==================================================
+        # ONLY runs after website has passed the
+        # active/parked/placeholder checks.
+        # ======================================================
 
         technology = []
 
 
-        if live_website:
-
-            browser_manager = None
+        browser_manager = None
 
 
-            try:
+        try:
 
-                browser_manager =BrowserManager()
-                    
-
-
-                browser =browser_manager.start()
-                    
+            browser_manager =BrowserManager()
+                
 
 
-                technology =WebsiteAnalyzer.safe_analyze(
-                    
+            browser = browser_manager.start()
+               
 
-                        lambda:
-                            TechnologyAnalyzer.analyze(
-                                browser,
-                                response,
-                                soup
-                            ),
 
-                        default=[]
+            technology = (
+                WebsiteAnalyzer.safe_analyze(
 
+                    lambda:
+                        TechnologyAnalyzer.analyze(
+                            browser,
+                            response,
+                            soup
+                        ),
+
+                    default=[]
+
+                )
+            )
+
+
+        except Exception as exc:
+
+            print(
+                "Technology detection warning:",
+                str(exc)
+            )
+
+
+            technology = []
+
+
+        finally:
+
+            if browser_manager:
+
+                try:
+
+                    browser_manager.stop()
+
+                except Exception as exc:
+
+                    print(
+                        "Browser cleanup warning:",
+                        str(exc)
                     )
 
-
-            except Exception as exc:
-
-                print(
-                    "Technology detection warning:",
-                    str(exc)
-                )
-
-                technology = []
-
-
-            finally:
-
-                if browser_manager:
-
-                    try:
-
-                        browser_manager.stop()
-
-                    except Exception:
-
-                        pass
-
-                            # ==================================================
-        # BUILD RESULT
-        # ==================================================
+                            # ======================================================
+        # BUILD FINAL RESULT
+        # ======================================================
 
         result = {
 
@@ -601,20 +1227,20 @@ class WebsiteAnalyzer:
                 True,
 
 
-            # ==============================================
+            # ==================================================
             # WEBSITE STATUS
-            # ==============================================
+            # ==================================================
 
             "website_status":
-                website_status,
+                "active",
 
 
             "analysis_mode":
-                analysis_mode,
+                "live",
 
 
             "live_website":
-                live_website,
+                True,
 
 
             "url":
@@ -629,45 +1255,25 @@ class WebsiteAnalyzer:
                 url,
 
 
-            # ==============================================
-            # FRONTEND NOTICE
-            # ==============================================
-
-            "analysis_notice": (
-
-                "Live website analysis completed successfully."
-
-                if live_website
-
-                else (
-
-                    "This website could not be reached directly. "
-                    "The report is an estimated AI visibility "
-                    "analysis and is not a live website audit."
-
-                )
-
-            ),
+            "final_url":
+                str(
+                    response.url
+                ),
 
 
-            # ==============================================
-            # FETCH ERROR
-            # ==============================================
-
-            "fetch_error": (
-
-                fetch_error
-
-                if not live_website
-
-                else ""
-
-            ),
+            "http_status":
+                response.status_code,
 
 
-            # ==============================================
-            # BASIC
-            # ==============================================
+            "analysis_notice":
+                (
+                    "Live website analysis completed successfully."
+                ),
+
+
+            # ==================================================
+            # BASIC INFORMATION
+            # ==================================================
 
             "basic": {
 
@@ -695,17 +1301,17 @@ class WebsiteAnalyzer:
             },
 
 
-            # ==============================================
-            # LLMs
-            # ==============================================
+            # ==================================================
+            # LLM
+            # ==================================================
 
             "llms":
                 llms,
 
 
-            # ==============================================
+            # ==================================================
             # AI PLATFORMS
-            # ==============================================
+            # ==================================================
 
             "chatgpt":
                 chatgpt,
@@ -729,9 +1335,9 @@ class WebsiteAnalyzer:
                 deepseek,
 
 
-            # ==============================================
+            # ==================================================
             # OTHER ANALYSIS
-            # ==============================================
+            # ==================================================
 
             "entities":
                 entities,
@@ -751,9 +1357,9 @@ class WebsiteAnalyzer:
         }
 
 
-        # ==================================================
-        # AI RECOMMENDATIONS
-        # ==================================================
+        # ======================================================
+        # RECOMMENDATIONS
+        # ======================================================
 
         result["recommendations"] = (
 
@@ -771,11 +1377,13 @@ class WebsiteAnalyzer:
         )
 
 
-        # ==================================================
+        # ======================================================
         # OVERALL AI VISIBILITY SCORE
-        # ==================================================
+        # ======================================================
 
-        result["overall_ai_visibility"] = (
+        result[
+            "overall_ai_visibility"
+        ] = (
 
             WebsiteAnalyzer.safe_analyze(
 
@@ -793,8 +1401,50 @@ class WebsiteAnalyzer:
         )
 
 
-        # ==================================================
+        # ======================================================
+        # LOGGING
+        # ======================================================
+
+        print(
+            "=================================================="
+        )
+
+        print(
+            "Website Analysis Completed"
+        )
+
+        print(
+            "URL:",
+            url
+        )
+
+        print(
+            "Final URL:",
+            response.url
+        )
+
+        print(
+            "HTTP Status:",
+            response.status_code
+        )
+
+        print(
+            "Website Status:",
+            "ACTIVE"
+        )
+
+        print(
+            "Analysis Mode:",
+            "LIVE"
+        )
+
+        print(
+            "=================================================="
+        )
+
+
+        # ======================================================
         # RETURN RESULT
-        # ==================================================
+        # ======================================================
 
         return result
