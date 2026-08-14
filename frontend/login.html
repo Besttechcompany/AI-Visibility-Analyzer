@@ -350,10 +350,10 @@
 
 
                         /* -------------------------------------
-                           0 - 20%
+                           0 - 10%
                         ------------------------------------- */
 
-                        if (progress < 20) {
+                        if (progress < 10) {
 
                             progress += 2.5;
 
@@ -361,10 +361,10 @@
 
 
                         /* -------------------------------------
-                           20 - 40%
+                           20 - 30%
                         ------------------------------------- */
 
-                        else if (progress < 40) {
+                        else if (progress < 30) {
 
                             progress += 2;
 
@@ -375,7 +375,7 @@
                            40 - 60%
                         ------------------------------------- */
 
-                        else if (progress < 60) {
+                        else if (progress < 50) {
 
                             progress += 1.5;
 
@@ -386,7 +386,7 @@
                            60 - 80%
                         ------------------------------------- */
 
-                        else if (progress < 80) {
+                        else if (progress < 70) {
 
                             progress += 1;
 
@@ -397,7 +397,7 @@
                            80 - 95%
                         ------------------------------------- */
 
-                        else if (progress < 95) {
+                        else if (progress < 90) {
 
                             progress += 0.5;
 
@@ -410,7 +410,7 @@
                            THIS FIXES THE OLD 95% STOP
                         ------------------------------------- */
 
-                        else if (progress < 99) {
+                        else if (progress < 95) {
 
                             progress += 0.15;
 
@@ -425,7 +425,7 @@
                         progress =
                             Math.min(
                                 progress,
-                                99
+                                95
                             );
 
 
@@ -452,7 +452,7 @@
                            STATUS MESSAGES
                         ================================================== */
 
-                        if (progress < 20) {
+                        if (progress < 10) {
 
 
                             message.innerHTML =
@@ -466,7 +466,7 @@
                         }
 
 
-                        else if (progress < 45) {
+                        else if (progress < 30) {
 
 
                             message.innerHTML =
@@ -480,7 +480,7 @@
                         }
 
 
-                        else if (progress < 70) {
+                        else if (progress < 50) {
 
 
                             message.innerHTML =
@@ -494,7 +494,7 @@
                         }
 
 
-                        else if (progress < 90) {
+                        else if (progress < 80) {
 
 
                             message.innerHTML =
@@ -528,7 +528,7 @@
                         ================================================== */
 
                         if (
-                            progress >= 99 &&
+                            progress >= 95 &&
                             !redirectStarted
                         ) {
 
@@ -549,11 +549,11 @@
                             --------------------------------------------- */
 
                             percentage.textContent =
-                                "99%";
+                                "95%";
 
 
                             progressBar.style.width =
-                                "99%";
+                                "95%";
 
 
 
