@@ -208,30 +208,71 @@
     const GOOGLE_LOGIN_URL =
         "https://ai-visibility-analyzer.onrender.com/google/login";
 
-    const MAX_PROGRESS = 92;
-    const PROGRESS_DURATION = 2600;
-    const MINIMUM_LOADER_TIME = 1600;
 
-    if (window.__googleLoginStarted === true) {
+    /* =========================================================
+       LOADER SETTINGS
+       ========================================================= */
+
+    const MAX_PROGRESS = 94;
+
+    const START_SPEED = 0.12;
+
+    const MIN_PROGRESS = 0;
+
+
+    /* =========================================================
+       PREVENT DOUBLE CLICK
+       ========================================================= */
+
+    if (
+        window.__googleLoginStarted === true
+    ) {
+
         return;
+
     }
+
 
     window.__googleLoginStarted = true;
 
+
+    /* =========================================================
+       GET LOADER ELEMENTS
+       ========================================================= */
+
     const overlay =
-        document.getElementById("loadingOverlay");
+        document.getElementById(
+            "loadingOverlay"
+        );
+
 
     const progressBar =
-        document.getElementById("loginProgressBar");
+        document.getElementById(
+            "loginProgressBar"
+        );
+
 
     const percentage =
-        document.getElementById("loadingPercentage");
+        document.getElementById(
+            "loadingPercentage"
+        );
+
 
     const message =
-        document.getElementById("loadingMessage");
+        document.getElementById(
+            "loadingMessage"
+        );
+
 
     const status =
-        document.getElementById("loginStatus");
+        document.getElementById(
+            "loginStatus"
+        );
+
+
+    /* =========================================================
+       SAFETY CHECK
+       ========================================================= */
 
     if (
         !overlay ||
@@ -240,204 +281,416 @@
         !message ||
         !status
     ) {
-        console.error("Login loader elements are missing.");
-        window.location.href = GOOGLE_LOGIN_URL;
+
+        console.error(
+            "Login loader elements are missing."
+        );
+
+
+        window.location.href =
+            GOOGLE_LOGIN_URL;
+
+
         return;
+
     }
 
-    overlay.style.display = "flex";
-    overlay.setAttribute("aria-hidden", "false");
 
-    document.body.classList.add("login-loading");
+    /* =========================================================
+       SHOW LOADER
+       ========================================================= */
+
+    overlay.style.display =
+        "flex";
+
+
+    overlay.setAttribute(
+        "aria-hidden",
+        "false"
+    );
+
+
+    document.body.classList.add(
+        "login-loading"
+    );
+
+
+    /* =========================================================
+       DISABLE GOOGLE BUTTON
+       ========================================================= */
 
     const googleButton =
-        document.querySelector(".google-btn");
+        document.querySelector(
+            ".google-btn"
+        );
+
 
     if (googleButton) {
-        googleButton.disabled = true;
-        googleButton.style.opacity = "0.7";
-        googleButton.style.cursor = "wait";
+
+        googleButton.disabled =
+            true;
+
+
+        googleButton.style.opacity =
+            "0.7";
+
+
+        googleButton.style.cursor =
+            "wait";
+
     }
+
+
+    /* =========================================================
+       DISABLE BACK HOME
+       ========================================================= */
 
     const backHome =
-        document.getElementById("backHome");
+        document.getElementById(
+            "backHome"
+        );
+
 
     if (backHome) {
-        backHome.style.pointerEvents = "none";
-        backHome.style.opacity = "0.6";
+
+        backHome.style.pointerEvents =
+            "none";
+
+
+        backHome.style.opacity =
+            "0.6";
+
     }
 
-    let animationFrame = null;
 
-    const startTime = performance.now();
+    /* =========================================================
+       INITIAL LOADER STATE
+       ========================================================= */
 
-    percentage.textContent = "0%";
-    progressBar.style.width = "0%";
+    let progress =
+        MIN_PROGRESS;
+
+
+    let animationFrame =
+        null;
+
+
+    let redirectStarted =
+        false;
+
+
+    percentage.textContent =
+        "0%";
+
+
+    progressBar.style.width =
+        "0%";
+
 
     message.innerHTML =
         "🔐 Initializing Secure Login...";
 
+
     status.innerHTML =
         "Preparing secure authentication...";
 
-    function updateStatus(currentProgress) {
 
-        if (currentProgress < 15) {
+    /* =========================================================
+       UPDATE LOGIN MESSAGE
+       ========================================================= */
+
+    function updateStatus(
+        currentProgress
+    ) {
+
+
+        if (
+            currentProgress < 15
+        ) {
 
             message.innerHTML =
                 "🔐 Initializing Secure Login...";
 
+
             status.innerHTML =
                 "Preparing secure authentication...";
 
+
             return;
+
         }
 
-        if (currentProgress < 35) {
+
+        if (
+            currentProgress < 30
+        ) {
 
             message.innerHTML =
                 "🌐 Connecting to Google...";
 
+
             status.innerHTML =
                 "Establishing secure connection...";
 
+
             return;
+
         }
 
-        if (currentProgress < 55) {
+
+        if (
+            currentProgress < 50
+        ) {
 
             message.innerHTML =
-                "🔍 Verifying Authentication...";
+                "🔍 Preparing Authentication...";
+
 
             status.innerHTML =
-                "Preparing your Google authentication session...";
+                "Preparing your secure Google session...";
+
 
             return;
+
         }
 
-        if (currentProgress < 75) {
+
+        if (
+            currentProgress < 70
+        ) {
 
             message.innerHTML =
-                "🛡 Securing Session...";
+                "🛡 Securing Login Session...";
+
 
             status.innerHTML =
-                "Creating your secure login session...";
+                "Creating a secure authentication session...";
+
 
             return;
+
         }
 
-        if (currentProgress < 90) {
+
+        if (
+            currentProgress < 85
+        ) {
 
             message.innerHTML =
                 "🚀 Almost Ready...";
 
+
             status.innerHTML =
-                "Preparing secure Google authentication...";
+                "Waiting for secure Google authentication...";
+
 
             return;
+
         }
 
+
         message.innerHTML =
-            "🚀 Connecting to Google...";
+            "🔐 Secure Google Sign-In";
+
 
         status.innerHTML =
-            "Opening secure authentication...";
+            "Waiting for Google authentication...";
+
     }
 
-    function animate(currentTime) {
 
-        const elapsed =
-            currentTime - startTime;
+    /* =========================================================
+       SMOOTH CONTINUOUS LOADER
+       =========================================================
 
-        const rawProgress =
-            Math.min(
-                elapsed / PROGRESS_DURATION,
-                1
+       IMPORTANT:
+
+       There is NO fixed timer here.
+
+       The loader continues moving while the browser is
+       preparing the Google redirect.
+
+       It gradually slows down near 94%.
+
+       It NEVER reaches 100% on the login page because
+       authentication has not completed yet.
+       ========================================================= */
+
+    function animateLoader() {
+
+
+        if (
+            redirectStarted
+        ) {
+
+            return;
+
+        }
+
+
+        const remaining =
+            MAX_PROGRESS -
+            progress;
+
+
+        /*
+         * The closer we get to MAX_PROGRESS,
+         * the slower the movement becomes.
+         */
+
+        const increment =
+            Math.max(
+                START_SPEED,
+                remaining * 0.008
             );
 
-        const easedProgress =
-            1 - Math.pow(
-                1 - rawProgress,
-                3
-            );
 
-        const progress =
-            MAX_PROGRESS * easedProgress;
+        progress +=
+            increment;
 
-        percentage.textContent =
-            Math.floor(progress) + "%";
+
+        if (
+            progress >= MAX_PROGRESS
+        ) {
+
+            progress =
+                MAX_PROGRESS;
+
+        }
+
 
         progressBar.style.width =
             progress + "%";
 
-        updateStatus(progress);
 
-        if (rawProgress < 1) {
+        percentage.textContent =
+            Math.floor(
+                progress
+            ) + "%";
 
-            animationFrame =
-                requestAnimationFrame(animate);
 
-        } else {
-
-            percentage.textContent =
-                MAX_PROGRESS + "%";
-
-            progressBar.style.width =
-                MAX_PROGRESS + "%";
-
-            updateStatus(MAX_PROGRESS);
-        }
-    }
-
-    animationFrame =
-        requestAnimationFrame(animate);
-
-    const elapsed =
-        performance.now() - startTime;
-
-    const remaining =
-        Math.max(
-            0,
-            MINIMUM_LOADER_TIME - elapsed
+        updateStatus(
+            progress
         );
 
-    setTimeout(
+
+        /*
+         * Keep running continuously.
+         */
+
+        animationFrame =
+            requestAnimationFrame(
+                animateLoader
+            );
+
+    }
+
+
+    /* =========================================================
+       START SMOOTH LOADER
+       ========================================================= */
+
+    animationFrame =
+        requestAnimationFrame(
+            animateLoader
+        );
+
+
+    /* =========================================================
+       REDIRECT TO GOOGLE
+       =========================================================
+
+       We DO NOT wait for a fake percentage.
+
+       We start the authentication redirect immediately.
+
+       The loader remains visible during navigation.
+       ========================================================= */
+
+    window.setTimeout(
         function () {
 
-            if (animationFrame !== null) {
+
+            if (
+                redirectStarted
+            ) {
+
+                return;
+
+            }
+
+
+            redirectStarted =
+                true;
+
+
+            /*
+             * Stop the animation just before redirect.
+             */
+
+            if (
+                animationFrame !== null
+            ) {
 
                 cancelAnimationFrame(
                     animationFrame
                 );
 
-                animationFrame = null;
+
+                animationFrame =
+                    null;
+
             }
 
-            percentage.textContent =
-                MAX_PROGRESS + "%";
+
+            /*
+             * Hold at current position.
+             *
+             * It may be 40%, 60%, 80%, 90%, etc.,
+             * depending on how quickly the browser
+             * reaches the redirect.
+             */
 
             progressBar.style.width =
-                MAX_PROGRESS + "%";
+                progress + "%";
+
+
+            percentage.textContent =
+                Math.floor(
+                    progress
+                ) + "%";
+
 
             message.innerHTML =
-                "🚀 Connecting to Google...";
+                "🔐 Connecting to Google...";
+
 
             status.innerHTML =
-                "Opening secure authentication...";
+                "Opening secure Google authentication...";
 
-            setTimeout(
+
+            /*
+             * Allow the browser to paint the final
+             * loader state before navigation.
+             */
+
+            window.setTimeout(
                 function () {
+
 
                     window.location.href =
                         GOOGLE_LOGIN_URL;
 
+
                 },
-                180
+                100
             );
 
+
         },
-        remaining
+        300
     );
+
 }
 
 
