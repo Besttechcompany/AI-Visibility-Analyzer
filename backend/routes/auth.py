@@ -1,83 +1,40 @@
-from fastapi import (
-    APIRouter,
-    Request,
-    Depends,
-    HTTPException
-)
-
+from fastapi import APIRouter, Request, Depends, HTTPException
 from fastapi.responses import RedirectResponse
-
 from sqlalchemy.orm import Session
 
 from auth.google_auth import oauth
 from database import get_db
 from models import User
-
 from utils.jwt_handler import create_access_token
-
 from dependencies import get_current_user
 
 import os
-from urllib.parse import quote
+from urllib.parse import urlencode
 
 
 router = APIRouter()
 
 
 # =========================================================
-# FRONTEND URL
-# =========================================================
-
-FRONTEND_URL = (
-    "https://ai-visibility-analyzer-coral.vercel.app"
-)
-
-
-# =========================================================
 # GOOGLE LOGIN
 # =========================================================
 
-@router.get(
-    "/google/login",
-    tags=["Authentication"]
-)
-async def google_login(
-    request: Request
-):
+@router.get("/google/login", tags=["Authentication"])
+async def google_login(request: Request):
 
-    redirect_uri = os.getenv(
-        "GOOGLE_REDIRECT_URI"
-    )
+    print("=" * 60)
+    print("GOOGLE LOGIN STARTED")
 
+    redirect_uri = os.getenv("GOOGLE_REDIRECT_URI")
+
+    print("Google Redirect URI:")
+    print(redirect_uri)
 
     if not redirect_uri:
-
         raise HTTPException(
             status_code=500,
-            detail=(
-                "GOOGLE_REDIRECT_URI "
-                "environment variable is not configured."
-            )
+            detail="GOOGLE_REDIRECT_URI is not configured."
         )
-
-
-    print(
-        "======================================"
-    )
-
-    print(
-        "GOOGLE LOGIN STARTED"
-    )
-
-    print(
-        "Google Redirect URI:",
-        redirect_uri
-    )
-
-    print(
-        "======================================"
-    )
-
 
     return await oauth.google.authorize_redirect(
         request,
@@ -89,104 +46,70 @@ async def google_login(
 # GOOGLE CALLBACK
 # =========================================================
 
-@router.get(
-    "/google/callback",
-    tags=["Authentication"]
-)
+@router.get("/google/callback", tags=["Authentication"])
 async def google_callback(
     request: Request,
     db: Session = Depends(get_db)
 ):
 
+    print("=" * 60)
+    print("GOOGLE CALLBACK STARTED")
+
     try:
 
-        print(
-            "======================================"
-        )
-
-        print(
-            "GOOGLE CALLBACK STARTED"
-        )
-
-        print(
-            "======================================"
-        )
-
-
         # -------------------------------------------------
-        # 1. EXCHANGE GOOGLE AUTHORIZATION CODE
+        # 1. EXCHANGE GOOGLE CODE FOR TOKEN
         # -------------------------------------------------
 
         token = await oauth.google.authorize_access_token(
             request
         )
 
-
-        print(
-            "Google authorization successful."
-        )
+        print("Google authorization successful.")
 
 
         # -------------------------------------------------
         # 2. GET GOOGLE USER INFORMATION
         # -------------------------------------------------
 
-        user_info = token.get(
-            "userinfo"
-        )
-
+        user_info = token.get("userinfo")
 
         if not user_info:
 
             print(
-                "ERROR: Google userinfo missing."
+                "ERROR: Google user information not found."
             )
 
             raise HTTPException(
                 status_code=400,
-                detail=(
-                    "Google user information "
-                    "was not returned."
-                )
+                detail="Google user information not found."
             )
 
 
-        google_id = user_info.get(
-            "sub"
-        )
+        email = user_info.get("email")
 
-        email = user_info.get(
-            "email"
-        )
+        google_id = user_info.get("sub")
 
-        name = user_info.get(
-            "name"
-        )
+        name = user_info.get("name")
 
-        picture = user_info.get(
-            "picture"
-        )
+        picture = user_info.get("picture")
 
 
-        if not google_id or not email:
+        if not email or not google_id:
 
             raise HTTPException(
                 status_code=400,
-                detail=(
-                    "Google account information "
-                    "is incomplete."
-                )
+                detail="Incomplete Google user information."
             )
 
 
         print(
-            "Google Email:",
-            email
+            f"Google Email: {email}"
         )
 
 
         # -------------------------------------------------
-        # 3. FIND USER IN NEON
+        # 3. FIND EXISTING USER
         # -------------------------------------------------
 
         user = (
@@ -204,10 +127,7 @@ async def google_callback(
 
         if not user:
 
-            print(
-                "Creating new user in Neon..."
-            )
-
+            print("Creating new user...")
 
             user = User(
 
@@ -215,10 +135,7 @@ async def google_callback(
 
                 email=email,
 
-                name=(
-                    name
-                    or email.split("@")[0]
-                ),
+                name=name or email.split("@")[0],
 
                 picture=picture,
 
@@ -226,42 +143,25 @@ async def google_callback(
 
             )
 
-
             db.add(user)
 
             db.commit()
 
             db.refresh(user)
 
-
             print(
-                "New user created:",
-                user.id
+                f"New user created: {user.id}"
             )
-
 
         else:
 
             print(
-                "Existing user found:",
-                user.id
+                f"Existing user found: {user.id}"
             )
 
 
         # -------------------------------------------------
-        # 5. CHECK USER STATUS
-        # -------------------------------------------------
-
-        if not user.is_active:
-
-            raise HTTPException(
-                status_code=403,
-                detail="User account is inactive."
-            )
-
-
-        # -------------------------------------------------
-        # 6. CREATE JWT
+        # 5. CREATE OUR APPLICATION JWT
         # -------------------------------------------------
 
         access_token = create_access_token(
@@ -274,48 +174,78 @@ async def google_callback(
         )
 
 
+        if not access_token:
+
+            raise HTTPException(
+                status_code=500,
+                detail="Unable to create access token."
+            )
+
+
+        print("JWT CREATED SUCCESSFULLY")
+
         print(
-            "JWT CREATED SUCCESSFULLY"
+            f"User ID: {user.id}"
         )
 
         print(
-            "User ID:",
-            user.id
-        )
-
-        print(
-            "Email:",
-            user.email
+            f"Email: {user.email}"
         )
 
 
         # -------------------------------------------------
-        # 7. CREATE DASHBOARD REDIRECT URL
+        # 6. BUILD FRONTEND REDIRECT URL
         # -------------------------------------------------
+
+        frontend_url = (
+            "https://ai-visibility-analyzer-coral.vercel.app"
+        )
 
         dashboard_url = (
-            f"{FRONTEND_URL}"
-            f"/dashboard.html"
-            f"?token={quote(access_token)}"
+            f"{frontend_url}/dashboard.html"
         )
 
 
+        # IMPORTANT:
+        # Send the JWT to the frontend.
+        #
+        # We use urlencode() so the token is safely
+        # placed inside the URL.
+
+        query_string = urlencode(
+            {
+                "token": access_token
+            }
+        )
+
+
+        redirect_url = (
+            f"{dashboard_url}?{query_string}"
+        )
+
+
+        # DO NOT PRINT THE ACTUAL TOKEN.
+        # Just confirm that the token is attached.
+
         print(
-            "Redirecting to:"
+            "Redirecting to dashboard with JWT token."
         )
 
         print(
-            FRONTEND_URL + "/dashboard.html"
+            f"Redirect URL: {dashboard_url}?token=[JWT]"
         )
 
 
         # -------------------------------------------------
-        # 8. REDIRECT TO DASHBOARD
+        # 7. REDIRECT TO VERCEL DASHBOARD
         # -------------------------------------------------
 
         return RedirectResponse(
-            url=dashboard_url,
+
+            url=redirect_url,
+
             status_code=302
+
         )
 
 
@@ -326,15 +256,12 @@ async def google_callback(
 
     except Exception as e:
 
-        db.rollback()
-
-
         print(
-            "======================================"
+            "=" * 60
         )
 
         print(
-            "GOOGLE CALLBACK ERROR"
+            "GOOGLE CALLBACK ERROR:"
         )
 
         print(
@@ -342,15 +269,15 @@ async def google_callback(
         )
 
         print(
-            "======================================"
+            "=" * 60
         )
 
-
         raise HTTPException(
+
             status_code=500,
-            detail=(
-                "Google authentication failed."
-            )
+
+            detail="Google login failed."
+
         )
 
 
@@ -358,10 +285,7 @@ async def google_callback(
 # PROFILE
 # =========================================================
 
-@router.get(
-    "/profile",
-    tags=["Authentication"]
-)
+@router.get("/profile", tags=["Authentication"])
 def get_profile(
     current_user: User = Depends(
         get_current_user

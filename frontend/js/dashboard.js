@@ -121,78 +121,170 @@ function checkPDFLibrary() {
 }
 
 
+/* =========================================================
+   AUTHENTICATION
+   RECEIVE JWT FROM GOOGLE CALLBACK
+========================================================= */
+
+function initializeAuthentication() {
+
+    const urlParams = new URLSearchParams(
+        window.location.search
+    );
+
+    // Get token sent by backend after Google login
+    const token = urlParams.get("token");
+
+    // If Google sent a token, save it
+    if (token) {
+
+        console.log("Google JWT received.");
+
+        localStorage.setItem(
+            "access_token",
+            token
+        );
+
+        // Remove ?token=... from browser URL
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+        );
+    }
+
+    // Check whether token now exists
+    const storedToken =
+        localStorage.getItem("access_token");
+
+    if (!storedToken) {
+
+        console.log(
+            "No access token found. Redirecting to login."
+        );
+
+        window.location.href = "login.html";
+
+        return false;
+    }
+
+    console.log(
+        "Authentication successful."
+    );
+
+    return true;
+}
+
 // ===========================================
 // Load User Profile
 // ===========================================
 
 async function loadProfile() {
 
+    const token =
+        localStorage.getItem("access_token");
+
+    if (!token) {
+
+        console.error(
+            "No access token found."
+        );
+
+        window.location.href =
+            "login.html";
+
+        return;
+    }
+
+
     try {
 
-        const response = await fetch(
+        const response =
+            await fetch(
+                `${API_URL}/profile`,
+                {
+                    method: "GET",
 
-            `${API_URL}/profile`,
-
-            {
-
-                method: "GET",
-
-                headers: {
-
-                    Authorization: `Bearer ${token}`
-
+                    headers: {
+                        "Authorization":
+                            `Bearer ${token}`
+                    }
                 }
+            );
 
-            }
 
-        );
+        if (response.status === 401) {
+
+            localStorage.removeItem(
+                "access_token"
+            );
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
 
         if (!response.ok) {
 
-            throw new Error("Unauthorized");
-
+            throw new Error(
+                `Profile request failed: ${response.status}`
+            );
         }
+
 
         const data =
             await response.json();
 
-        profileCard.innerHTML = `
 
-            <div class="user-card">
+        console.log(
+            "Profile loaded successfully:",
+            data
+        );
 
-                <img
-                    src="${data.user.picture}"
-                    class="profile-image"
-                    alt="Profile"
-                >
 
-                <div class="user-info">
+        if (profileCard) {
 
-                    <h3>
+            profileCard.innerHTML = `
 
-                        ${data.user.name}
+                <div class="user-card">
 
-                    </h3>
+                    <img
+                        src="${data.user.picture || ""}"
+                        class="profile-image"
+                        alt="Profile"
+                    >
 
-                    <p>
+                    <div class="user-info">
 
-                        ${data.user.email}
+                        <h3>
+                            ${data.user.name || ""}
+                        </h3>
 
-                    </p>
+                        <p>
+                            ${data.user.email || ""}
+                        </p>
+
+                    </div>
 
                 </div>
 
-            </div>
-
-        `;
+            `;
+        }
 
     }
-
     catch (error) {
 
-        console.error(error);
+        console.error(
+            "Profile loading error:",
+            error
+        );
 
-        logout();
+        /*
+         * Do NOT immediately logout for every
+         * network/server error.
+         */
 
     }
 
@@ -3488,21 +3580,46 @@ function showNotification(
 
 
 // ======================================================
-// Initialize Dashboard
+// INITIALIZE DASHBOARD
 // ======================================================
 
 document.addEventListener(
     "DOMContentLoaded",
     () => {
 
+        // =================================================
+        // 1. CHECK AUTHENTICATION
+        // =================================================
+
+        const authenticated =
+            initializeAuthentication();
+
+        // Stop if authentication failed
+        if (!authenticated) {
+
+            return;
+        }
+
+
+        // =================================================
+        // 2. LOAD USER PROFILE
+        // =================================================
+
         loadProfile();
 
-        // Check PDF library after page loads
-        setTimeout(() => {
 
-            checkPDFLibrary();
+        // =================================================
+        // 3. CHECK PDF LIBRARY
+        // =================================================
 
-        }, 500);
+        setTimeout(
+            () => {
+
+                checkPDFLibrary();
+
+            },
+            500
+        );
 
     }
 );
@@ -5589,6 +5706,11 @@ function createEmptyScoreCard() {
 
     return empty;
 }
+
+
+
+
+
 
 
 /* =========================================================
