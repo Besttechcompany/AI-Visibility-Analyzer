@@ -205,7 +205,6 @@
 
         function googleLogin() {
 
-
             /* =================================================
                GET ELEMENTS
             ================================================= */
@@ -314,8 +313,7 @@
             /* =================================================
                SMOOTH PROGRESS TIMER
 
-               The progress intentionally slows down
-               as it approaches 100%.
+               Progress becomes slower as it approaches 100%.
             ================================================= */
 
             const timer =
@@ -325,8 +323,6 @@
 
                         /* -------------------------------------
                            0% - 30%
-
-                           Faster initial movement
                         ------------------------------------- */
 
                         if (progress < 30) {
@@ -338,8 +334,6 @@
 
                         /* -------------------------------------
                            30% - 60%
-
-                           Medium speed
                         ------------------------------------- */
 
                         else if (progress < 60) {
@@ -351,8 +345,6 @@
 
                         /* -------------------------------------
                            60% - 80%
-
-                           Slower
                         ------------------------------------- */
 
                         else if (progress < 80) {
@@ -364,8 +356,6 @@
 
                         /* -------------------------------------
                            80% - 90%
-
-                           More gradual
                         ------------------------------------- */
 
                         else if (progress < 90) {
@@ -377,8 +367,6 @@
 
                         /* -------------------------------------
                            90% - 97%
-
-                           Slow progress
                         ------------------------------------- */
 
                         else if (progress < 97) {
@@ -391,7 +379,7 @@
                         /* -------------------------------------
                            97% - 100%
 
-                           Very smooth final movement
+                           Very slow final movement.
                         ------------------------------------- */
 
                         else if (progress < 100) {
@@ -402,7 +390,7 @@
 
 
                         /* -------------------------------------
-                           NEVER EXCEED 100%
+                           NEVER GO ABOVE 100%
                         ------------------------------------- */
 
                         progress =
@@ -412,17 +400,17 @@
                             );
 
 
-                        /* -------------------------------------
+                        /* =================================================
                            UPDATE PERCENTAGE
-                        ------------------------------------- */
+                        ================================================== */
 
                         percentage.textContent =
                             Math.floor(progress) + "%";
 
 
-                        /* -------------------------------------
+                        /* =================================================
                            UPDATE PROGRESS BAR
-                        ------------------------------------- */
+                        ================================================== */
 
                         progressBar.style.width =
                             progress + "%";
@@ -499,7 +487,10 @@
 
 
                         /* =================================================
-                           REACHED 100%
+                           EXACTLY 100%
+
+                           NO WAITING HERE.
+                           REDIRECT IMMEDIATELY.
                         ================================================== */
 
                         if (
@@ -518,8 +509,10 @@
 
 
                             /* ---------------------------------------------
-                               FORCE EXACT 100%
+                               FORCE EXACTLY 100%
                             --------------------------------------------- */
+
+                            progress = 100;
 
                             percentage.textContent =
                                 "100%";
@@ -540,31 +533,11 @@
 
 
                             /* ---------------------------------------------
-                               WAIT BRIEFLY SO USER CAN SEE 100%
+                               IMMEDIATE GOOGLE AUTHENTICATION
                             --------------------------------------------- */
 
-                            setTimeout(
-                                function () {
-
-
-                                    /*
-                                     * IMPORTANT:
-                                     *
-                                     * This starts your existing
-                                     * Google OAuth authentication.
-                                     *
-                                     * After successful authentication,
-                                     * your backend should redirect
-                                     * the user to the dashboard.
-                                     */
-
-                                    window.location.href =
-                                        "https://ai-visibility-analyzer.onrender.com/google/login";
-
-
-                                },
-                                700
-                            );
+                            window.location.href =
+                                "https://ai-visibility-analyzer.onrender.com/google/login";
 
                         }
 
@@ -574,7 +547,6 @@
                 );
 
         }
-
 
 
     </script>
