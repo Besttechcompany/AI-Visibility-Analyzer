@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Analysis Logs | AI Visibility Analyzer</title>
+
+    <link
+        rel="stylesheet"
+        href="css/logs.css"
+    >
+
+</head>
+
+<body>
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <h1>AI Visibility</h1>
+
+            <span>Dashboard</span>
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a
+                href="dashboard.html"
+                class="nav-item"
+            >
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+
+
+            <a
+                href="dashboard.html"
+                class="nav-item"
+            >
+                <span class="nav-icon">🌐</span>
+                <span>Website Analysis</span>
+            </a>
+
+
+            <a
+                href="logs.html"
+                class="nav-item active"
+            >
+                <span class="nav-icon">📈</span>
+                <span>Logs</span>
+            </a>
+
+
+            <a
+                href="dashboard.html"
+                class="nav-item"
+            >
+                <span class="nav-icon">🤖</span>
+                <span>AI Visibility</span>
+            </a>
+
+
+            <a
+                href="dashboard.html"
+                class="nav-item"
+            >
+                <span class="nav-icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+
+
+            <a
+                href="profile.html"
+                class="nav-item"
+            >
+                <span class="nav-icon">👤</span>
+                <span>Profile</span>
+            </a>
+
+        </nav>
+
+
+        <button
+            id="logoutBtn"
+            class="logout-btn"
+        >
+            🚪 Logout
+        </button>
+
+    </aside>
+
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
+
+    <main class="main-content">
+
+        <header class="page-header">
+
+            <div>
+
+                <h2>Analysis History</h2>
+
+                <p>
+                    View your previous website AI visibility analyses.
+                </p>
+
+            </div>
+
+        </header>
+
+
+        <!-- =================================================
+             LOADING
+        ================================================== -->
+
+        <section
+            id="loading"
+            class="loading-box"
+        >
+
+            <div class="loader"></div>
+
+            <p>
+                Loading your analysis history...
+            </p>
+
+        </section>
+
+
+        <!-- =================================================
+             ERROR
+        ================================================== -->
+
+        <section
+            id="errorBox"
+            class="error-box hidden"
+        >
+
+            <h3>Unable to load history</h3>
+
+            <p id="errorMessage">
+                Something went wrong.
+            </p>
+
+            <button
+                id="retryBtn"
+                class="retry-btn"
+            >
+                Try Again
+            </button>
+
+        </section>
+
+
+        <!-- =================================================
+             EMPTY
+        ================================================== -->
+
+        <section
+            id="emptyBox"
+            class="empty-box hidden"
+        >
+
+            <div class="empty-icon">
+                📊
+            </div>
+
+            <h3>No Analysis History</h3>
+
+            <p>
+                Your completed website analyses will appear here.
+            </p>
+
+            <a
+                href="dashboard.html"
+                class="analyze-btn"
+            >
+                🚀 Analyze a Website
+            </a>
+
+        </section>
+
+
+        <!-- =================================================
+             HISTORY
+        ================================================== -->
+
+        <section
+            id="historyContainer"
+            class="history-container hidden"
+        >
+
+            <div class="history-header">
+
+                <div>
+
+                    <h3>Your Previous Analyses</h3>
+
+                    <p id="historyCount">
+                        0 analyses
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="historyList"
+                class="history-list"
+            >
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="js/logs.js"></script>
+
+</body>
+
+</html>

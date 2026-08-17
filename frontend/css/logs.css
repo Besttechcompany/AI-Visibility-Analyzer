@@ -1,0 +1,707 @@
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background: #f4f7fb;
+
+    color: #0f172a;
+
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar {
+
+    position: fixed;
+
+    left: 0;
+    top: 0;
+
+    width: 280px;
+    height: 100vh;
+
+    background: #0d172d;
+
+    color: white;
+
+    display: flex;
+
+    flex-direction: column;
+
+    padding: 38px 22px;
+
+    z-index: 100;
+}
+
+
+/* =========================================================
+   BRAND
+========================================================= */
+
+.brand {
+
+    text-align: center;
+
+    margin-bottom: 38px;
+}
+
+
+.brand h1 {
+
+    font-size: 32px;
+
+    font-weight: 700;
+
+    margin-bottom: 18px;
+}
+
+
+.brand span {
+
+    color: #91a4c3;
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+.sidebar-nav {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 10px;
+
+    flex: 1;
+}
+
+
+.nav-item {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    padding: 19px 22px;
+
+    border-radius: 16px;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 18px;
+
+    font-weight: 600;
+
+    transition: 0.25s ease;
+}
+
+
+.nav-item:hover {
+
+    background: rgba(
+        255,
+        255,
+        255,
+        0.08
+    );
+}
+
+
+.nav-item.active {
+
+    background: #2864e8;
+
+    box-shadow:
+        0 10px 25px
+        rgba(
+            40,
+            100,
+            232,
+            0.25
+        );
+}
+
+
+.nav-icon {
+
+    width: 28px;
+
+    text-align: center;
+
+    font-size: 21px;
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+.logout-btn {
+
+    width: 100%;
+
+    border: none;
+
+    border-radius: 15px;
+
+    padding: 18px;
+
+    background: #f44343;
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.25s ease;
+}
+
+
+.logout-btn:hover {
+
+    background: #dc3030;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.main-content {
+
+    margin-left: 280px;
+
+    min-height: 100vh;
+
+    padding: 55px 40px;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.page-header {
+
+    margin-bottom: 35px;
+}
+
+
+.page-header h2 {
+
+    font-size: 42px;
+
+    margin-bottom: 12px;
+}
+
+
+.page-header p {
+
+    font-size: 18px;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading-box {
+
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 70px;
+
+    text-align: center;
+
+    box-shadow:
+        0 8px 30px
+        rgba(
+            15,
+            23,
+            42,
+            0.06
+        );
+}
+
+
+.loader {
+
+    width: 45px;
+
+    height: 45px;
+
+    border: 4px solid #e5eaf2;
+
+    border-top-color: #2864e8;
+
+    border-radius: 50%;
+
+    margin: 0 auto 20px;
+
+    animation:
+        spin 0.8s linear infinite;
+}
+
+
+@keyframes spin {
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+.loading-box p {
+
+    color: #64748b;
+
+    font-size: 17px;
+}
+
+
+/* =========================================================
+   HISTORY CONTAINER
+========================================================= */
+
+.history-container {
+
+    background: white;
+
+    border-radius: 22px;
+
+    padding: 30px;
+
+    box-shadow:
+        0 8px 30px
+        rgba(
+            15,
+            23,
+            42,
+            0.06
+        );
+}
+
+
+.history-header {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+
+.history-header h3 {
+
+    font-size: 25px;
+
+    margin-bottom: 6px;
+}
+
+
+.history-header p {
+
+    color: #64748b;
+
+    font-size: 15px;
+}
+
+
+/* =========================================================
+   HISTORY CARD
+========================================================= */
+
+.history-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 15px;
+}
+
+
+.history-card {
+
+    border: 1px solid #e4e9f1;
+
+    border-radius: 16px;
+
+    padding: 22px;
+
+    background: #fbfcfe;
+
+    transition: 0.25s ease;
+}
+
+
+.history-card:hover {
+
+    border-color: #2864e8;
+
+    box-shadow:
+        0 7px 20px
+        rgba(
+            40,
+            100,
+            232,
+            0.08
+        );
+}
+
+
+.history-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 20px;
+}
+
+
+.website {
+
+    font-size: 19px;
+
+    font-weight: 700;
+
+    color: #172554;
+
+    word-break: break-all;
+}
+
+
+.date-time {
+
+    white-space: nowrap;
+
+    color: #64748b;
+
+    font-size: 14px;
+}
+
+
+.history-bottom {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-top: 15px;
+
+    padding-top: 15px;
+
+    border-top: 1px solid #e9edf3;
+}
+
+
+.history-id {
+
+    color: #94a3b8;
+
+    font-size: 13px;
+}
+
+
+.view-btn {
+
+    border: none;
+
+    background: #2864e8;
+
+    color: white;
+
+    padding: 10px 17px;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    font-size: 14px;
+}
+
+
+.view-btn:hover {
+
+    background: #1e4fc1;
+}
+
+
+/* =========================================================
+   EMPTY
+========================================================= */
+
+.empty-box {
+
+    background: white;
+
+    border-radius: 22px;
+
+    padding: 80px 30px;
+
+    text-align: center;
+
+    box-shadow:
+        0 8px 30px
+        rgba(
+            15,
+            23,
+            42,
+            0.06
+        );
+}
+
+
+.empty-icon {
+
+    font-size: 55px;
+
+    margin-bottom: 20px;
+}
+
+
+.empty-box h3 {
+
+    font-size: 27px;
+
+    margin-bottom: 10px;
+}
+
+
+.empty-box p {
+
+    color: #64748b;
+
+    font-size: 17px;
+
+    margin-bottom: 25px;
+}
+
+
+.analyze-btn {
+
+    display: inline-block;
+
+    background: #2864e8;
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 14px 22px;
+
+    border-radius: 10px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   ERROR
+========================================================= */
+
+.error-box {
+
+    background: white;
+
+    border-radius: 20px;
+
+    padding: 60px;
+
+    text-align: center;
+
+    box-shadow:
+        0 8px 30px
+        rgba(
+            15,
+            23,
+            42,
+            0.06
+        );
+}
+
+
+.error-box h3 {
+
+    font-size: 25px;
+
+    margin-bottom: 10px;
+
+    color: #dc2626;
+}
+
+
+.error-box p {
+
+    color: #64748b;
+
+    margin-bottom: 20px;
+}
+
+
+.retry-btn {
+
+    border: none;
+
+    background: #2864e8;
+
+    color: white;
+
+    padding: 13px 24px;
+
+    border-radius: 9px;
+
+    cursor: pointer;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   HIDDEN
+========================================================= */
+
+.hidden {
+
+    display: none !important;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+
+        width: 220px;
+
+        padding: 25px 15px;
+    }
+
+
+    .main-content {
+
+        margin-left: 220px;
+
+        padding: 35px 25px;
+    }
+
+
+    .brand h1 {
+
+        font-size: 25px;
+    }
+
+
+    .nav-item {
+
+        font-size: 15px;
+
+        padding: 15px;
+    }
+
+
+    .page-header h2 {
+
+        font-size: 34px;
+    }
+}
+
+
+@media (max-width: 700px) {
+
+    .sidebar {
+
+        position: relative;
+
+        width: 100%;
+
+        height: auto;
+    }
+
+
+    .sidebar-nav {
+
+        flex-direction: row;
+
+        overflow-x: auto;
+    }
+
+
+    .nav-item {
+
+        white-space: nowrap;
+    }
+
+
+    .logout-btn {
+
+        margin-top: 15px;
+    }
+
+
+    .main-content {
+
+        margin-left: 0;
+
+        padding: 25px 15px;
+    }
+
+
+    .history-top {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+
+    .date-time {
+
+        white-space: normal;
+    }
+}

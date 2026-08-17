@@ -30,7 +30,6 @@ router = APIRouter()
 # =========================================================
 
 class WebsiteRequest(BaseModel):
-
     url: str
 
 
@@ -40,8 +39,88 @@ class WebsiteRequest(BaseModel):
 
 @router.post("/analyze")
 def analyze(
-
     request: WebsiteRequest,
+
+    current_user: User = Depends(
+        get_current_user
+    ),
+
+    db: Session = Depends(
+        get_db
+    )
+):
+
+    try:
+
+        # -------------------------------------------------
+        # 1. RUN WEBSITE ANALYZER
+        # -------------------------------------------------
+
+        result = WebsiteAnalyzer.analyze(
+            request.url
+        )
+
+        # -------------------------------------------------
+        # 2. CONVERT RESULT TO JSON SAFE DATA
+        # -------------------------------------------------
+
+        history_data = jsonable_encoder(
+            result
+        )
+
+        # -------------------------------------------------
+        # 3. SAVE ANALYSIS TO NEON
+        # -------------------------------------------------
+
+        history = AnalysisHistory(
+            user_id=current_user.id,
+            website_url=request.url,
+            analysis_data=history_data
+        )
+
+        db.add(history)
+
+        db.commit()
+
+        db.refresh(history)
+
+        print(
+            f"Analysis history saved successfully: "
+            f"user={current_user.id}, "
+            f"url={request.url}, "
+            f"id={history.id}"
+        )
+
+        # -------------------------------------------------
+        # 4. RETURN RESULT TO FRONTEND
+        # -------------------------------------------------
+
+        return result
+
+    except Exception as e:
+
+        db.rollback()
+
+        print(
+            "ANALYSIS HISTORY SAVE ERROR:",
+            repr(e)
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Analysis completed but could not "
+                "be saved to history."
+            )
+        )
+
+
+# =========================================================
+# GET ANALYSIS HISTORY
+# =========================================================
+
+@router.get("/analysis-history")
+def get_analysis_history(
 
     current_user: User = Depends(
         get_current_user
@@ -55,73 +134,39 @@ def analyze(
 
     try:
 
-        # -------------------------------------------------
-        # 1. RUN YOUR EXISTING ANALYZER
-        # -------------------------------------------------
-
-        result = WebsiteAnalyzer.analyze(
-            request.url
+        history = (
+            db.query(AnalysisHistory)
+            .filter(
+                AnalysisHistory.user_id == current_user.id
+            )
+            .order_by(
+                AnalysisHistory.created_at.desc()
+            )
+            .all()
         )
 
-
-        # -------------------------------------------------
-        # 2. CONVERT RESULT TO JSON-SAFE DATA
-        # -------------------------------------------------
-
-        history_data = jsonable_encoder(
-            result
-        )
-
-
-        # -------------------------------------------------
-        # 3. SAVE ANALYSIS TO NEON
-        # -------------------------------------------------
-
-        history = AnalysisHistory(
-
-            user_id=current_user.id,
-
-            website_url=request.url,
-
-            analysis_data=history_data
-
-        )
-
-
-        db.add(history)
-
-        db.commit()
-
-        db.refresh(history)
-
-
-        # -------------------------------------------------
-        # 4. RETURN ORIGINAL RESULT TO FRONTEND
-        # -------------------------------------------------
-
-        return result
-
+        return {
+            "success": True,
+            "count": len(history),
+            "history": [
+                {
+                    "id": item.id,
+                    "website_url": item.website_url,
+                    "analysis_data": item.analysis_data,
+                    "created_at": item.created_at
+                }
+                for item in history
+            ]
+        }
 
     except Exception as e:
 
-        # -------------------------------------------------
-        # ROLLBACK DATABASE TRANSACTION
-        # -------------------------------------------------
-
-        db.rollback()
-
         print(
-            "ANALYSIS HISTORY SAVE ERROR:",
+            "HISTORY FETCH ERROR:",
             repr(e)
         )
 
         raise HTTPException(
-
             status_code=500,
-
-            detail=(
-                "Analysis completed but could not "
-                "be saved to history."
-            )
-
+            detail="Unable to load analysis history."
         )

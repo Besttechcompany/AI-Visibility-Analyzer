@@ -8,6 +8,33 @@
 
 const API_URL = "https://ai-visibility-analyzer.onrender.com";
 
+// =========================================================
+// SAVE LOGIN TOKEN
+// =========================================================
+
+const urlParams =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const urlToken =
+    urlParams.get("token");
+
+if (urlToken) {
+
+    localStorage.setItem(
+        "access_token",
+        urlToken
+    );
+
+    // Remove token from browser URL
+    window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+    );
+}
+
 // ===========================================
 // Authentication
 // ===========================================
