@@ -215,30 +215,25 @@
                     "loadingOverlay"
                 );
 
-
             const progressBar =
                 document.getElementById(
                     "loginProgressBar"
                 );
-
 
             const percentage =
                 document.getElementById(
                     "loadingPercentage"
                 );
 
-
             const message =
                 document.getElementById(
                     "loadingMessage"
                 );
 
-
             const status =
                 document.getElementById(
                     "loginStatus"
                 );
-
 
 
             /* =================================================
@@ -261,13 +256,11 @@
             }
 
 
-
             /* =================================================
-               SHOW LOADER
+               SHOW LOADING OVERLAY
             ================================================= */
 
             overlay.style.display = "flex";
-
 
 
             /* =================================================
@@ -279,17 +272,17 @@
                     ".google-btn"
                 );
 
-
             if (googleButton) {
 
                 googleButton.disabled = true;
 
-                googleButton.style.opacity = "0.7";
+                googleButton.style.opacity =
+                    "0.7";
 
-                googleButton.style.cursor = "wait";
+                googleButton.style.cursor =
+                    "wait";
 
             }
-
 
 
             /* =================================================
@@ -301,14 +294,15 @@
             let redirectStarted = false;
 
 
-
             /* =================================================
                RESET UI
             ================================================= */
 
-            percentage.textContent = "0%";
+            percentage.textContent =
+                "0%";
 
-            progressBar.style.width = "0%";
+            progressBar.style.width =
+                "0%";
 
             message.innerHTML =
                 "🔐 Initializing Secure Login...";
@@ -317,32 +311,12 @@
                 "Preparing secure authentication...";
 
 
-
             /* =================================================
-               PROGRESS TIMER
+               SMOOTH PROGRESS TIMER
 
-               0%
-               ↓
-               20%
-               ↓
-               40%
-               ↓
-               60%
-               ↓
-               80%
-               ↓
-               95%
-               ↓
-               96%
-               ↓
-               97%
-               ↓
-               98%
-               ↓
-               99%
-               ↓
-               GOOGLE LOGIN
-            ================================================== */
+               The progress intentionally slows down
+               as it approaches 100%.
+            ================================================= */
 
             const timer =
                 setInterval(
@@ -350,84 +324,92 @@
 
 
                         /* -------------------------------------
-                           0 - 10%
+                           0% - 30%
+
+                           Faster initial movement
                         ------------------------------------- */
 
-                        if (progress < 10) {
+                        if (progress < 30) {
 
-                            progress += 2.5;
+                            progress += 0.65;
 
                         }
 
 
                         /* -------------------------------------
-                           20 - 30%
+                           30% - 60%
+
+                           Medium speed
                         ------------------------------------- */
 
-                        else if (progress < 30) {
+                        else if (progress < 60) {
 
-                            progress += 2;
+                            progress += 0.45;
 
                         }
 
 
                         /* -------------------------------------
-                           40 - 60%
+                           60% - 80%
+
+                           Slower
                         ------------------------------------- */
 
-                        else if (progress < 50) {
+                        else if (progress < 80) {
 
-                            progress += 1.5;
+                            progress += 0.30;
 
                         }
 
 
                         /* -------------------------------------
-                           60 - 80%
-                        ------------------------------------- */
+                           80% - 90%
 
-                        else if (progress < 70) {
-
-                            progress += 1;
-
-                        }
-
-
-                        /* -------------------------------------
-                           80 - 95%
+                           More gradual
                         ------------------------------------- */
 
                         else if (progress < 90) {
 
-                            progress += 0.5;
+                            progress += 0.20;
 
                         }
 
 
                         /* -------------------------------------
-                           95 - 99%
+                           90% - 97%
 
-                           THIS FIXES THE OLD 95% STOP
+                           Slow progress
                         ------------------------------------- */
 
-                        else if (progress < 95) {
+                        else if (progress < 97) {
 
-                            progress += 0.15;
+                            progress += 0.12;
 
                         }
 
 
+                        /* -------------------------------------
+                           97% - 100%
+
+                           Very smooth final movement
+                        ------------------------------------- */
+
+                        else if (progress < 100) {
+
+                            progress += 0.05;
+
+                        }
+
 
                         /* -------------------------------------
-                           NEVER EXCEED 99%
+                           NEVER EXCEED 100%
                         ------------------------------------- */
 
                         progress =
                             Math.min(
                                 progress,
-                                95
+                                100
                             );
-
 
 
                         /* -------------------------------------
@@ -438,7 +420,6 @@
                             Math.floor(progress) + "%";
 
 
-
                         /* -------------------------------------
                            UPDATE PROGRESS BAR
                         ------------------------------------- */
@@ -447,91 +428,84 @@
                             progress + "%";
 
 
-
                         /* =================================================
                            STATUS MESSAGES
                         ================================================== */
 
-                        if (progress < 10) {
-
+                        if (progress < 15) {
 
                             message.innerHTML =
                                 "🔐 Initializing Secure Login...";
 
-
                             status.innerHTML =
                                 "Preparing secure authentication...";
-
 
                         }
 
 
                         else if (progress < 30) {
 
-
                             message.innerHTML =
                                 "🌐 Connecting to Google...";
 
-
                             status.innerHTML =
                                 "Establishing secure connection...";
-
 
                         }
 
 
                         else if (progress < 50) {
 
-
                             message.innerHTML =
                                 "🔍 Verifying Authentication...";
-
 
                             status.innerHTML =
                                 "Waiting for Google authentication...";
 
-
                         }
 
 
-                        else if (progress < 80) {
-
+                        else if (progress < 70) {
 
                             message.innerHTML =
                                 "🛡 Securing Session...";
 
-
                             status.innerHTML =
                                 "Creating your secure session...";
-
 
                         }
 
 
-                        else {
+                        else if (progress < 90) {
 
+                            message.innerHTML =
+                                "⚙️ Preparing Dashboard...";
+
+                            status.innerHTML =
+                                "Loading your secure workspace...";
+
+                        }
+
+
+                        else if (progress < 100) {
 
                             message.innerHTML =
                                 "🚀 Almost Ready...";
 
-
                             status.innerHTML =
-                                "Redirecting to secure Google login...";
-
+                                "Finalizing secure login...";
 
                         }
 
 
-
                         /* =================================================
-                           REDIRECT AT 99%
+                           REACHED 100%
                         ================================================== */
 
                         if (
-                            progress >= 95 &&
+                            progress >= 100 &&
                             !redirectStarted
                         ) {
-
 
                             redirectStarted = true;
 
@@ -543,35 +517,30 @@
                             clearInterval(timer);
 
 
-
                             /* ---------------------------------------------
-                               FIX PROGRESS AT 99%
+                               FORCE EXACT 100%
                             --------------------------------------------- */
 
                             percentage.textContent =
-                                "95%";
-
+                                "100%";
 
                             progressBar.style.width =
-                                "95%";
-
+                                "100%";
 
 
                             /* ---------------------------------------------
-                               FINAL MESSAGE
+                               SUCCESS MESSAGE
                             --------------------------------------------- */
 
                             message.innerHTML =
-                                "🚀 Connecting to Google...";
-
+                                "✅ Login Successful!";
 
                             status.innerHTML =
-                                "Opening secure authentication...";
-
+                                "Opening your dashboard...";
 
 
                             /* ---------------------------------------------
-                               GIVE BROWSER TIME TO PAINT 99%
+                               WAIT BRIEFLY SO USER CAN SEE 100%
                             --------------------------------------------- */
 
                             setTimeout(
@@ -579,8 +548,14 @@
 
 
                                     /*
-                                     * KEEPING YOUR EXISTING
-                                     * GOOGLE AUTHENTICATION URL
+                                     * IMPORTANT:
+                                     *
+                                     * This starts your existing
+                                     * Google OAuth authentication.
+                                     *
+                                     * After successful authentication,
+                                     * your backend should redirect
+                                     * the user to the dashboard.
                                      */
 
                                     window.location.href =
@@ -588,9 +563,8 @@
 
 
                                 },
-                                150
+                                700
                             );
-
 
                         }
 
@@ -599,8 +573,8 @@
                     50
                 );
 
-
         }
+
 
 
     </script>
