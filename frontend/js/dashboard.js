@@ -8,63 +8,20 @@
 
 const API_URL = "https://ai-visibility-analyzer.onrender.com";
 
+
+
 // =========================================================
-// SAVE LOGIN TOKEN
+// AUTHENTICATION TOKEN HELPER
 // =========================================================
 
-const urlParams =
-    new URLSearchParams(
-        window.location.search
-    );
+function getAccessToken() {
 
-const urlToken =
-    urlParams.get("token");
-
-if (urlToken) {
-
-    localStorage.setItem(
-        "access_token",
-        urlToken
-    );
-
-    // Remove token from browser URL
-    window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname
-    );
-}
-
-// ===========================================
-// Authentication
-// ===========================================
-
-const params = new URLSearchParams(window.location.search);
-
-let token = params.get("token");
-
-if (token) {
-
-    localStorage.setItem("token", token);
-
-    window.history.replaceState(
-        {},
-        document.title,
-        "dashboard.html"
+    return localStorage.getItem(
+        "access_token"
     );
 
 }
-else {
 
-    token = localStorage.getItem("token");
-
-}
-
-if (!token) {
-
-    window.location.href = "login.html";
-
-}
 
 // ===========================================
 // DOM Elements
@@ -126,26 +83,34 @@ function checkPDFLibrary() {
    RECEIVE JWT FROM GOOGLE CALLBACK
 ========================================================= */
 
+/* =========================================================
+   AUTHENTICATION
+   RECEIVE JWT FROM GOOGLE CALLBACK
+========================================================= */
+
 function initializeAuthentication() {
 
-    const urlParams = new URLSearchParams(
-        window.location.search
-    );
+    const urlParams =
+        new URLSearchParams(
+            window.location.search
+        );
 
-    // Get token sent by backend after Google login
-    const token = urlParams.get("token");
+    const token =
+        urlParams.get("token");
 
-    // If Google sent a token, save it
+
     if (token) {
 
-        console.log("Google JWT received.");
+        console.log(
+            "Google JWT received successfully."
+        );
 
         localStorage.setItem(
             "access_token",
             token
         );
 
-        // Remove ?token=... from browser URL
+
         window.history.replaceState(
             {},
             document.title,
@@ -153,20 +118,25 @@ function initializeAuthentication() {
         );
     }
 
-    // Check whether token now exists
-    const storedToken =
-        localStorage.getItem("access_token");
 
-    if (!storedToken) {
+    const accessToken =
+        localStorage.getItem(
+            "access_token"
+        );
+
+
+    if (!accessToken) {
 
         console.log(
             "No access token found. Redirecting to login."
         );
 
-        window.location.href = "login.html";
+        window.location.href =
+            "login.html";
 
         return false;
     }
+
 
     console.log(
         "Authentication successful."
@@ -175,14 +145,25 @@ function initializeAuthentication() {
     return true;
 }
 
+
 // ===========================================
 // Load User Profile
+// ===========================================
+// ===========================================
+// LOAD USER PROFILE
 // ===========================================
 
 async function loadProfile() {
 
     const token =
-        localStorage.getItem("access_token");
+        localStorage.getItem(
+            "access_token"
+        );
+
+
+    // =====================================================
+    // CHECK TOKEN
+    // =====================================================
 
     if (!token) {
 
@@ -190,14 +171,21 @@ async function loadProfile() {
             "No access token found."
         );
 
+
         window.location.href =
             "login.html";
 
+
         return;
+
     }
 
 
     try {
+
+        // =================================================
+        // PROFILE REQUEST
+        // =================================================
 
         const response =
             await fetch(
@@ -206,33 +194,59 @@ async function loadProfile() {
                     method: "GET",
 
                     headers: {
+
                         "Authorization":
                             `Bearer ${token}`
+
                     }
+
                 }
             );
 
 
-        if (response.status === 401) {
+        // =================================================
+        // INVALID / EXPIRED TOKEN
+        // =================================================
+
+        if (
+            response.status === 401
+        ) {
+
+            console.error(
+                "Access token expired or invalid."
+            );
+
 
             localStorage.removeItem(
                 "access_token"
             );
 
+
             window.location.href =
                 "login.html";
 
+
             return;
+
         }
 
+
+        // =================================================
+        // OTHER ERROR
+        // =================================================
 
         if (!response.ok) {
 
             throw new Error(
                 `Profile request failed: ${response.status}`
             );
+
         }
 
+
+        // =================================================
+        // RESPONSE
+        // =================================================
 
         const data =
             await response.json();
@@ -243,6 +257,10 @@ async function loadProfile() {
             data
         );
 
+
+        // =================================================
+        // DISPLAY PROFILE
+        // =================================================
 
         if (profileCard) {
 
@@ -271,9 +289,11 @@ async function loadProfile() {
                 </div>
 
             `;
+
         }
 
     }
+
     catch (error) {
 
         console.error(
@@ -282,8 +302,8 @@ async function loadProfile() {
         );
 
         /*
-         * Do NOT immediately logout for every
-         * network/server error.
+         * Do not automatically delete the token
+         * for temporary network errors.
          */
 
     }
@@ -291,16 +311,34 @@ async function loadProfile() {
 }
 
 
-// ===========================================
-// Logout
-// ===========================================
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+// =========================================================
+// LOGOUT
+// =========================================================
 
 function logout() {
 
-    localStorage.removeItem("token");
+    console.log(
+        "Logging out..."
+    );
 
-    window.location.href = "login.html";
+    // Remove JWT
+    localStorage.removeItem(
+        "access_token"
+    );
 
+    // Remove temporary selected report
+    sessionStorage.removeItem(
+        "selected_analysis"
+    );
+
+    // Go back to login
+    window.location.href =
+        "login.html";
 }
 
 
@@ -1112,7 +1150,7 @@ async function analyzeWebsite() {
                             "application/json",
 
                         "Authorization":
-                            `Bearer ${token}`
+                            `Bearer ${accessToken}`
 
                     },
 
@@ -3580,6 +3618,10 @@ function showNotification(
 
 
 // ======================================================
+// Initialize Dashboard
+// ======================================================
+
+// ======================================================
 // INITIALIZE DASHBOARD
 // ======================================================
 
@@ -3594,15 +3636,20 @@ document.addEventListener(
         const authenticated =
             initializeAuthentication();
 
-        // Stop if authentication failed
+
+        // =================================================
+        // STOP IF NOT AUTHENTICATED
+        // =================================================
+
         if (!authenticated) {
 
             return;
+
         }
 
 
         // =================================================
-        // 2. LOAD USER PROFILE
+        // 2. LOAD PROFILE
         // =================================================
 
         loadProfile();
@@ -5706,11 +5753,6 @@ function createEmptyScoreCard() {
 
     return empty;
 }
-
-
-
-
-
 
 
 /* =========================================================
