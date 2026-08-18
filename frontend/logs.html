@@ -10,7 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Analysis Logs | AI Visibility Analyzer</title>
+    <title>Analysis History | AI Visibility Analyzer</title>
 
     <link
         rel="stylesheet"
@@ -19,7 +19,9 @@
 
 </head>
 
+
 <body>
+
 
     <!-- =====================================================
          SIDEBAR
@@ -38,12 +40,16 @@
 
         <nav class="sidebar-nav">
 
+
             <a
                 href="dashboard.html"
                 class="nav-item"
             >
+
                 <span class="nav-icon">📊</span>
+
                 <span>Dashboard</span>
+
             </a>
 
 
@@ -51,8 +57,11 @@
                 href="dashboard.html"
                 class="nav-item"
             >
+
                 <span class="nav-icon">🌐</span>
+
                 <span>Website Analysis</span>
+
             </a>
 
 
@@ -60,8 +69,11 @@
                 href="logs.html"
                 class="nav-item active"
             >
+
                 <span class="nav-icon">📈</span>
+
                 <span>Logs</span>
+
             </a>
 
 
@@ -69,8 +81,11 @@
                 href="dashboard.html"
                 class="nav-item"
             >
+
                 <span class="nav-icon">🤖</span>
+
                 <span>AI Visibility</span>
+
             </a>
 
 
@@ -78,8 +93,11 @@
                 href="dashboard.html"
                 class="nav-item"
             >
+
                 <span class="nav-icon">⚙️</span>
+
                 <span>Settings</span>
+
             </a>
 
 
@@ -87,21 +105,30 @@
                 href="profile.html"
                 class="nav-item"
             >
+
                 <span class="nav-icon">👤</span>
+
                 <span>Profile</span>
+
             </a>
+
 
         </nav>
 
 
         <button
+            type="button"
             id="logoutBtn"
             class="logout-btn"
         >
+
             🚪 Logout
+
         </button>
 
+
     </aside>
+
 
 
     <!-- =====================================================
@@ -110,6 +137,9 @@
 
     <main class="main-content">
 
+
+        <!-- PAGE HEADER -->
+
         <header class="page-header">
 
             <div>
@@ -117,12 +147,14 @@
                 <h2>Analysis History</h2>
 
                 <p>
-                    View your previous website AI visibility analyses.
+                    View and download your previous website AI
+                    visibility analysis reports.
                 </p>
 
             </div>
 
         </header>
+
 
 
         <!-- =================================================
@@ -143,6 +175,7 @@
         </section>
 
 
+
         <!-- =================================================
              ERROR
         ================================================== -->
@@ -152,24 +185,32 @@
             class="error-box hidden"
         >
 
-            <h3>Unable to load history</h3>
+            <h3>
+                Unable to load history
+            </h3>
+
 
             <p id="errorMessage">
                 Something went wrong.
             </p>
 
+
             <button
+                type="button"
                 id="retryBtn"
                 class="retry-btn"
             >
+
                 Try Again
+
             </button>
 
         </section>
 
 
+
         <!-- =================================================
-             EMPTY
+             EMPTY HISTORY
         ================================================== -->
 
         <section
@@ -181,20 +222,28 @@
                 📊
             </div>
 
-            <h3>No Analysis History</h3>
+
+            <h3>
+                No Analysis History
+            </h3>
+
 
             <p>
                 Your completed website analyses will appear here.
             </p>
 
+
             <a
                 href="dashboard.html"
                 class="analyze-btn"
             >
+
                 🚀 Analyze a Website
+
             </a>
 
         </section>
+
 
 
         <!-- =================================================
@@ -206,11 +255,17 @@
             class="history-container hidden"
         >
 
+
+            <!-- HISTORY HEADER -->
+
             <div class="history-header">
 
                 <div>
 
-                    <h3>Your Previous Analyses</h3>
+                    <h3>
+                        Your Previous Analyses
+                    </h3>
+
 
                     <p id="historyCount">
                         0 analyses
@@ -221,6 +276,19 @@
             </div>
 
 
+
+            <!-- =================================================
+                 HISTORY RECORDS ARE INSERTED HERE BY logs.js
+                 
+                 Each record should contain:
+
+                 Website
+                 Date
+                 Analysis ID
+                 Status
+                 Download PDF button
+            ================================================== -->
+
             <div
                 id="historyList"
                 class="history-list"
@@ -228,12 +296,23 @@
 
             </div>
 
+
         </section>
+
 
     </main>
 
 
-   <script src="js/logs.js?v=3" defer></script>
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script
+        src="js/logs.js"
+        defer
+    ></script>
+
 
 </body>
 

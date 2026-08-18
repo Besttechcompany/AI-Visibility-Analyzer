@@ -1,1469 +1,1414 @@
-// ============================================================
-// AI VISIBILITY ANALYZER
-// ANALYSIS HISTORY / LOGS
-// ============================================================
+/* =========================================================
+   AI VISIBILITY ANALYZER
+   ANALYSIS HISTORY
+========================================================= */
 
 "use strict";
 
 
-// ============================================================
-// CONFIGURATION
-// ============================================================
+/* =========================================================
+   DOM ELEMENTS
+========================================================= */
 
-const API_URL =
-    "https://ai-visibility-analyzer.onrender.com";
+const loading = document.getElementById("loading");
+const errorBox = document.getElementById("errorBox");
+const errorMessage = document.getElementById("errorMessage");
+const retryBtn = document.getElementById("retryBtn");
 
-const HISTORY_URL =
-    `${API_URL}/analysis-history`;
+const emptyBox = document.getElementById("emptyBox");
 
-const REQUEST_TIMEOUT =
-    30000;
+const historyContainer =
+    document.getElementById("historyContainer");
 
+const historyList =
+    document.getElementById("historyList");
 
-// ============================================================
-// DOM ELEMENTS
-// ============================================================
+const historyCount =
+    document.getElementById("historyCount");
 
-let loading;
-let errorBox;
-let errorMessage;
-let retryBtn;
-let emptyBox;
-let historyContainer;
-let historyList;
-let historyCount;
-let logoutBtn;
+const logoutBtn =
+    document.getElementById("logoutBtn");
 
 
-// ============================================================
-// INITIALIZE PAGE
-// ============================================================
+/* =========================================================
+   API BASE URL
+========================================================= */
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        console.log(
-            "========================================"
-        );
-
-        console.log(
-            "LOGS PAGE LOADED"
-        );
-
-        console.log(
-            "========================================"
-        );
+const API_BASE_URL =
+    window.API_BASE_URL ||
+    "";
 
 
-        // ----------------------------------------------------
-        // GET DOM ELEMENTS
-        // ----------------------------------------------------
-
-        loading =
-            document.getElementById("loading");
-
-        errorBox =
-            document.getElementById("errorBox");
-
-        errorMessage =
-            document.getElementById("errorMessage");
-
-        retryBtn =
-            document.getElementById("retryBtn");
-
-        emptyBox =
-            document.getElementById("emptyBox");
-
-        historyContainer =
-            document.getElementById(
-                "historyContainer"
-            );
-
-        historyList =
-            document.getElementById(
-                "historyList"
-            );
-
-        historyCount =
-            document.getElementById(
-                "historyCount"
-            );
-
-        logoutBtn =
-            document.getElementById(
-                "logoutBtn"
-            );
-
-
-        // ----------------------------------------------------
-        // VERIFY REQUIRED ELEMENTS
-        // ----------------------------------------------------
-
-        console.log(
-            "Loading element:",
-            !!loading
-        );
-
-        console.log(
-            "Error element:",
-            !!errorBox
-        );
-
-        console.log(
-            "Empty element:",
-            !!emptyBox
-        );
-
-        console.log(
-            "History container:",
-            !!historyContainer
-        );
-
-        console.log(
-            "History list:",
-            !!historyList
-        );
-
-
-        if (!loading) {
-
-            console.error(
-                "ERROR: #loading was not found."
-            );
-
-        }
-
-        if (!historyContainer) {
-
-            console.error(
-                "ERROR: #historyContainer was not found."
-            );
-
-        }
-
-        if (!historyList) {
-
-            console.error(
-                "ERROR: #historyList was not found."
-            );
-
-        }
-
-
-        // ----------------------------------------------------
-        // RETRY BUTTON
-        // ----------------------------------------------------
-
-        if (retryBtn) {
-
-            retryBtn.addEventListener(
-                "click",
-                function () {
-
-                    loadAnalysisHistory();
-
-                }
-            );
-
-        }
-
-
-        // ----------------------------------------------------
-        // LOGOUT BUTTON
-        // ----------------------------------------------------
-
-        if (logoutBtn) {
-
-            logoutBtn.addEventListener(
-                "click",
-                logout
-            );
-
-        }
-
-
-        // ----------------------------------------------------
-        // LOAD HISTORY
-        // ----------------------------------------------------
-
-        loadAnalysisHistory();
-
-    }
-);
-
-
-// ============================================================
-// GET ACCESS TOKEN
-// ============================================================
+/* =========================================================
+   AUTH TOKEN
+========================================================= */
 
 function getAccessToken() {
 
-    const tokenKeys = [
-        "access_token",
-        "accessToken",
-        "token",
-        "jwt"
-    ];
-
-
-    // --------------------------------------------------------
-    // LOCAL STORAGE
-    // --------------------------------------------------------
-
-    for (
-        const key of tokenKeys
-    ) {
-
-        const token =
-            localStorage.getItem(key);
-
-
-        if (
-            token &&
-            token !== "null" &&
-            token !== "undefined"
-        ) {
-
-            console.log(
-                "Token found in localStorage:",
-                key
-            );
-
-            return token;
-
-        }
-
-    }
-
-
-    // --------------------------------------------------------
-    // SESSION STORAGE
-    // --------------------------------------------------------
-
-    for (
-        const key of tokenKeys
-    ) {
-
-        const token =
-            sessionStorage.getItem(key);
-
-
-        if (
-            token &&
-            token !== "null" &&
-            token !== "undefined"
-        ) {
-
-            console.log(
-                "Token found in sessionStorage:",
-                key
-            );
-
-            return token;
-
-        }
-
-    }
-
-
-    // --------------------------------------------------------
-    // URL TOKEN
-    // --------------------------------------------------------
-
-    try {
-
-        const params =
-            new URLSearchParams(
-                window.location.search
-            );
-
-
-        const urlToken =
-            params.get("token");
-
-
-        if (urlToken) {
-
-            console.log(
-                "Token found in URL."
-            );
-
-
-            localStorage.setItem(
-                "access_token",
-                urlToken
-            );
-
-
-            return urlToken;
-
-        }
-
-    }
-    catch (error) {
-
-        console.warn(
-            "Unable to read URL token:",
-            error
-        );
-
-    }
-
-
-    // --------------------------------------------------------
-    // NO TOKEN
-    // --------------------------------------------------------
-
-    console.warn(
-        "No access token found."
+    return (
+        localStorage.getItem("accessToken") ||
+        localStorage.getItem("access_token") ||
+        localStorage.getItem("token") ||
+        localStorage.getItem("authToken") ||
+        sessionStorage.getItem("accessToken") ||
+        sessionStorage.getItem("access_token") ||
+        sessionStorage.getItem("token") ||
+        sessionStorage.getItem("authToken") ||
+        null
     );
-
-
-    return null;
-
 }
 
 
-// ============================================================
-// SHOW LOADING
-// ============================================================
+/* =========================================================
+   AUTH HEADERS
+========================================================= */
+
+function getAuthHeaders() {
+
+    const token = getAccessToken();
+
+    const headers = {
+        "Content-Type": "application/json"
+    };
+
+    if (token) {
+        headers["Authorization"] =
+            `Bearer ${token}`;
+    }
+
+    return headers;
+}
+
+
+/* =========================================================
+   SHOW / HIDE UI
+========================================================= */
 
 function showLoading() {
 
-    console.log(
-        "Showing history loading..."
-    );
+    loading.classList.remove("hidden");
 
+    errorBox.classList.add("hidden");
 
-    // Show loading section
+    emptyBox.classList.add("hidden");
 
-    if (loading) {
-
-        loading.classList.remove(
-            "hidden"
-        );
-
-    }
-
-
-    // Hide error
-
-    if (errorBox) {
-
-        errorBox.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    // Hide empty state
-
-    if (emptyBox) {
-
-        emptyBox.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    // Hide history
-
-    if (historyContainer) {
-
-        historyContainer.classList.add(
-            "hidden"
-        );
-
-    }
-
+    historyContainer.classList.add("hidden");
 }
 
-
-// ============================================================
-// HIDE LOADING
-// ============================================================
-
-function hideLoading() {
-
-    console.log(
-        "Hiding history loading..."
-    );
-
-
-    if (loading) {
-
-        loading.classList.add(
-            "hidden"
-        );
-
-    }
-
-}
-
-
-// ============================================================
-// SHOW ERROR
-// ============================================================
 
 function showError(message) {
 
-    console.error(
-        "History error:",
-        message
-    );
+    loading.classList.add("hidden");
 
+    errorBox.classList.remove("hidden");
 
-    // Hide loading
+    emptyBox.classList.add("hidden");
 
-    hideLoading();
+    historyContainer.classList.add("hidden");
 
-
-    // Hide empty
-
-    if (emptyBox) {
-
-        emptyBox.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    // Hide history
-
-    if (historyContainer) {
-
-        historyContainer.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    // Set error message
-
-    if (errorMessage) {
-
-        errorMessage.textContent =
-            message;
-
-    }
-
-
-    // Show error
-
-    if (errorBox) {
-
-        errorBox.classList.remove(
-            "hidden"
-        );
-
-    }
-
+    errorMessage.textContent =
+        message || "Unable to load analysis history.";
 }
 
 
-// ============================================================
-// SHOW EMPTY HISTORY
-// ============================================================
+function showEmpty() {
 
-function showEmptyHistory() {
+    loading.classList.add("hidden");
 
-    console.log(
-        "No analysis history found."
-    );
+    errorBox.classList.add("hidden");
 
+    emptyBox.classList.remove("hidden");
 
-    // Hide loading
-
-    hideLoading();
-
-
-    // Hide error
-
-    if (errorBox) {
-
-        errorBox.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    // Hide history
-
-    if (historyContainer) {
-
-        historyContainer.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    // Show empty
-
-    if (emptyBox) {
-
-        emptyBox.classList.remove(
-            "hidden"
-        );
-
-    }
-
+    historyContainer.classList.add("hidden");
 }
 
-
-// ============================================================
-// SHOW HISTORY
-// ============================================================
 
 function showHistory() {
 
-    console.log(
-        "Showing history."
-    );
+    loading.classList.add("hidden");
 
+    errorBox.classList.add("hidden");
 
-    // Hide loading
+    emptyBox.classList.add("hidden");
 
-    hideLoading();
-
-
-    // Hide error
-
-    if (errorBox) {
-
-        errorBox.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    // Hide empty
-
-    if (emptyBox) {
-
-        emptyBox.classList.add(
-            "hidden"
-        );
-
-    }
-
-
-    // Show history
-
-    if (historyContainer) {
-
-        historyContainer.classList.remove(
-            "hidden"
-        );
-
-    }
-
+    historyContainer.classList.remove("hidden");
 }
 
 
-// ============================================================
-// LOAD ANALYSIS HISTORY
-// ============================================================
+/* =========================================================
+   FORMAT DATE
+========================================================= */
 
-async function loadAnalysisHistory() {
+function formatDate(value) {
 
-    console.log(
-        "========================================"
+    if (!value) {
+        return "Date unavailable";
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return String(value);
+    }
+
+    return date.toLocaleString(
+        "en-IN",
+        {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        }
+    );
+}
+
+
+/* =========================================================
+   FORMAT WEBSITE URL
+========================================================= */
+
+function normalizeUrl(url) {
+
+    if (!url) {
+        return "Website unavailable";
+    }
+
+    return String(url);
+}
+
+
+/* =========================================================
+   CREATE HISTORY CARD
+========================================================= */
+
+function createHistoryCard(item) {
+
+    const card =
+        document.createElement("article");
+
+    card.className = "history-card";
+
+
+    const website =
+        normalizeUrl(item.website_url);
+
+
+    const createdAt =
+        formatDate(item.created_at);
+
+
+    const analysisId =
+        item.id ?? "N/A";
+
+
+    /* -----------------------------------------------
+       TOP
+    ------------------------------------------------ */
+
+    const top =
+        document.createElement("div");
+
+    top.className =
+        "history-card-top";
+
+
+    const left =
+        document.createElement("div");
+
+
+    const websiteTitle =
+        document.createElement("div");
+
+    websiteTitle.className =
+        "history-website";
+
+    websiteTitle.textContent =
+        website;
+
+
+    const date =
+        document.createElement("div");
+
+    date.className =
+        "history-date";
+
+    date.textContent =
+        createdAt;
+
+
+    left.appendChild(websiteTitle);
+
+    left.appendChild(date);
+
+
+    const status =
+        document.createElement("span");
+
+    status.className =
+        "history-status";
+
+    status.textContent =
+        "Completed";
+
+
+    top.appendChild(left);
+
+    top.appendChild(status);
+
+
+    /* -----------------------------------------------
+       DETAILS
+    ------------------------------------------------ */
+
+    const details =
+        document.createElement("div");
+
+    details.className =
+        "history-details";
+
+
+    const idDetail =
+        document.createElement("div");
+
+    idDetail.className =
+        "history-detail";
+
+    idDetail.innerHTML =
+        `<strong>Analysis ID:</strong> ${escapeHtml(analysisId)}`;
+
+
+    const urlDetail =
+        document.createElement("div");
+
+    urlDetail.className =
+        "history-detail history-url";
+
+    urlDetail.innerHTML =
+        `<strong>Website:</strong> ${escapeHtml(website)}`;
+
+
+    details.appendChild(idDetail);
+
+    details.appendChild(urlDetail);
+
+
+    /* -----------------------------------------------
+       PDF FOOTER
+    ------------------------------------------------ */
+
+    const footer =
+        document.createElement("div");
+
+    footer.className =
+        "history-card-footer";
+
+
+    const pdfButton =
+        document.createElement("button");
+
+    pdfButton.type =
+        "button";
+
+    pdfButton.className =
+        "download-pdf-btn";
+
+    pdfButton.innerHTML =
+        "📄 Download PDF Report";
+
+
+    pdfButton.addEventListener(
+        "click",
+        function () {
+
+            downloadHistoryPDF(
+                item,
+                pdfButton
+            );
+
+        }
     );
 
-    console.log(
-        "LOADING ANALYSIS HISTORY"
-    );
 
-    console.log(
-        "========================================"
-    );
+    footer.appendChild(pdfButton);
 
 
-    // --------------------------------------------------------
-    // SHOW LOADING
-    // --------------------------------------------------------
+    /* -----------------------------------------------
+       COMPLETE CARD
+    ------------------------------------------------ */
+
+    card.appendChild(top);
+
+    card.appendChild(details);
+
+    card.appendChild(footer);
+
+
+    return card;
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+========================================================= */
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* =========================================================
+   LOAD HISTORY
+========================================================= */
+
+async function loadHistory() {
 
     showLoading();
 
 
-    // --------------------------------------------------------
-    // GET TOKEN
-    // --------------------------------------------------------
-
-    const token =
-        getAccessToken();
-
-
-    console.log(
-        "Access token available:",
-        !!token
-    );
-
-
-    // --------------------------------------------------------
-    // TOKEN MISSING
-    // --------------------------------------------------------
-
-    if (!token) {
-
-        showError(
-            "Your login session has expired. Please login again."
-        );
-
-        return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // ABORT CONTROLLER
-    // --------------------------------------------------------
-
-    const controller =
-        new AbortController();
-
-
-    const timeoutId =
-        setTimeout(
-            function () {
-
-                controller.abort();
-
-            },
-            REQUEST_TIMEOUT
-        );
-
-
     try {
-
-        console.log(
-            "Requesting:",
-            HISTORY_URL
-        );
-
-
-        // ----------------------------------------------------
-        // API REQUEST
-        // ----------------------------------------------------
 
         const response =
             await fetch(
-                HISTORY_URL,
+                `${API_BASE_URL}/analysis-history`,
                 {
                     method: "GET",
 
-                    headers: {
+                    headers:
+                        getAuthHeaders(),
 
-                        "Authorization":
-                            `Bearer ${token}`,
-
-                        "Accept":
-                            "application/json",
-
-                        "Content-Type":
-                            "application/json"
-
-                    },
-
-                    cache:
-                        "no-store",
-
-                    signal:
-                        controller.signal
+                    credentials: "include"
                 }
             );
 
 
-        // ----------------------------------------------------
-        // CLEAR TIMEOUT
-        // ----------------------------------------------------
-
-        clearTimeout(
-            timeoutId
-        );
-
-
-        console.log(
-            "History HTTP status:",
-            response.status
-        );
-
-
-        // ----------------------------------------------------
-        // 401
-        // ----------------------------------------------------
-
-        if (
-            response.status === 401
-        ) {
-
-            console.error(
-                "401 Unauthorized."
-            );
-
-
-            removeAuthTokens();
-
-
-            showError(
-                "Your login session has expired. Please login again."
-            );
-
-
-            return;
-
-        }
-
-
-        // ----------------------------------------------------
-        // 403
-        // ----------------------------------------------------
-
-        if (
-            response.status === 403
-        ) {
-
-            console.error(
-                "403 Forbidden."
-            );
-
-
-            showError(
-                "You are not authorized to view analysis history."
-            );
-
-
-            return;
-
-        }
-
-
-        // ----------------------------------------------------
-        // OTHER HTTP ERROR
-        // ----------------------------------------------------
-
-        if (!response.ok) {
-
-            throw new Error(
-                `History request failed with status ${response.status}`
-            );
-
-        }
-
-
-        // ----------------------------------------------------
-        // READ RESPONSE TEXT FIRST
-        // ----------------------------------------------------
-
-        const responseText =
-            await response.text();
-
-
-        console.log(
-            "History response received."
-        );
-
-
-        console.log(
-            "Response length:",
-            responseText.length
-        );
-
-
-        // ----------------------------------------------------
-        // EMPTY RESPONSE
-        // ----------------------------------------------------
-
-        if (
-            !responseText ||
-            !responseText.trim()
-        ) {
-
-            console.warn(
-                "Server returned an empty response."
-            );
-
-
-            showEmptyHistory();
-
-            return;
-
-        }
-
-
-        // ----------------------------------------------------
-        // PARSE JSON
-        // ----------------------------------------------------
-
-        let data;
+        let data = null;
 
 
         try {
 
             data =
-                JSON.parse(
-                    responseText
-                );
+                await response.json();
 
-        }
-        catch (parseError) {
-
-            console.error(
-                "JSON parsing failed:",
-                parseError
-            );
-
-
-            console.error(
-                "Server response:",
-                responseText
-            );
-
+        } catch (jsonError) {
 
             throw new Error(
-                "The server returned an invalid history response."
+                `Server returned HTTP ${response.status}`
             );
-
         }
 
 
-        console.log(
-            "History API data:",
-            data
-        );
+        if (!response.ok) {
 
+            if (
+                response.status === 401 ||
+                response.status === 403
+            ) {
 
-        // ----------------------------------------------------
-        // NORMALIZE RESPONSE
-        // ----------------------------------------------------
+                throw new Error(
+                    "Your login session has expired. Please login again."
+                );
+            }
+
+            throw new Error(
+                data?.detail ||
+                data?.message ||
+                `Unable to load history. HTTP ${response.status}`
+            );
+        }
+
 
         const history =
-            normalizeHistory(
-                data
-            );
+            Array.isArray(data)
+                ? data
+                : (
+                    Array.isArray(data?.history)
+                        ? data.history
+                        : []
+                );
 
 
-        console.log(
-            "History records:",
-            history.length
-        );
+        historyList.innerHTML = "";
 
 
-        // ----------------------------------------------------
-        // NO HISTORY
-        // ----------------------------------------------------
+        if (history.length === 0) {
 
-        if (
-            history.length === 0
-        ) {
+            historyCount.textContent =
+                "0 analyses";
 
-            showEmptyHistory();
+            showEmpty();
 
             return;
-
         }
 
 
-        // ----------------------------------------------------
-        // DISPLAY HISTORY
-        // ----------------------------------------------------
+        /* ---------------------------------------------
+           NEWEST FIRST
+        --------------------------------------------- */
 
-        displayHistory(
-            history
+        history.sort(
+            function (a, b) {
+
+                const dateA =
+                    new Date(
+                        a.created_at || 0
+                    ).getTime();
+
+                const dateB =
+                    new Date(
+                        b.created_at || 0
+                    ).getTime();
+
+                return dateB - dateA;
+            }
         );
 
 
-        // ----------------------------------------------------
-        // SHOW HISTORY
-        // ----------------------------------------------------
+        history.forEach(
+            function (item) {
+
+                const card =
+                    createHistoryCard(item);
+
+                historyList.appendChild(card);
+
+            }
+        );
+
+
+        historyCount.textContent =
+            `${history.length} ${
+                history.length === 1
+                    ? "analysis"
+                    : "analyses"
+            }`;
+
 
         showHistory();
 
-
-        console.log(
-            "========================================"
-        );
-
-        console.log(
-            "HISTORY LOADED SUCCESSFULLY"
-        );
-
-        console.log(
-            "========================================"
-        );
-
-    }
-    catch (error) {
-
-        // Make sure loading is never left visible
-
-        clearTimeout(
-            timeoutId
-        );
-
+    } catch (error) {
 
         console.error(
-            "HISTORY LOAD ERROR:",
+            "Analysis history error:",
             error
         );
 
-
-        // ----------------------------------------------------
-        // TIMEOUT
-        // ----------------------------------------------------
-
-        if (
-            error.name === "AbortError"
-        ) {
-
-            showError(
-                "The history request timed out. Please try again."
-            );
-
-
-            return;
-
-        }
-
-
-        // ----------------------------------------------------
-        // NETWORK ERROR
-        // ----------------------------------------------------
-
-        if (
-            error instanceof TypeError
-        ) {
-
-            showError(
-                "Unable to connect to the server. Please check your internet connection and try again."
-            );
-
-
-            return;
-
-        }
-
-
-        // ----------------------------------------------------
-        // GENERAL ERROR
-        // ----------------------------------------------------
 
         showError(
             error.message ||
             "Unable to load analysis history."
         );
-
     }
-
 }
 
 
-// ============================================================
-// NORMALIZE API RESPONSE
-// ============================================================
+/* =========================================================
+   DOWNLOAD PDF
+========================================================= */
 
-function normalizeHistory(data) {
-
-    // --------------------------------------------------------
-    // RESPONSE IS DIRECT ARRAY
-    // --------------------------------------------------------
-
-    if (
-        Array.isArray(data)
-    ) {
-
-        return data;
-
-    }
-
-
-    // --------------------------------------------------------
-    // { history: [] }
-    // --------------------------------------------------------
-
-    if (
-        data &&
-        Array.isArray(
-            data.history
-        )
-    ) {
-
-        return data.history;
-
-    }
-
-
-    // --------------------------------------------------------
-    // { data: [] }
-    // --------------------------------------------------------
-
-    if (
-        data &&
-        Array.isArray(
-            data.data
-        )
-    ) {
-
-        return data.data;
-
-    }
-
-
-    // --------------------------------------------------------
-    // { results: [] }
-    // --------------------------------------------------------
-
-    if (
-        data &&
-        Array.isArray(
-            data.results
-        )
-    ) {
-
-        return data.results;
-
-    }
-
-
-    // --------------------------------------------------------
-    // { analyses: [] }
-    // --------------------------------------------------------
-
-    if (
-        data &&
-        Array.isArray(
-            data.analyses
-        )
-    ) {
-
-        return data.analyses;
-
-    }
-
-
-    // --------------------------------------------------------
-    // NOTHING FOUND
-    // --------------------------------------------------------
-
-    console.warn(
-        "Could not find history array in response."
-    );
-
-
-    return [];
-
-}
-
-
-// ============================================================
-// DISPLAY HISTORY
-// ============================================================
-
-function displayHistory(
-    history
+async function downloadHistoryPDF(
+    item,
+    button
 ) {
 
-    console.log(
-        "Displaying:",
-        history.length,
-        "history records."
-    );
+    const originalText =
+        button.innerHTML;
 
 
-    // --------------------------------------------------------
-    // VERIFY HISTORY LIST
-    // --------------------------------------------------------
+    try {
 
-    if (!historyList) {
+        button.disabled = true;
 
-        console.error(
-            "ERROR: #historyList does not exist."
-        );
+        button.innerHTML =
+            "⏳ Creating PDF...";
 
 
-        showError(
-            "History display area was not found."
-        );
+        if (
+            !window.jspdf ||
+            !window.jspdf.jsPDF
+        ) {
+
+            throw new Error(
+                "PDF library could not be loaded. Please refresh the page."
+            );
+        }
 
 
-        return;
-
-    }
-
-
-    // --------------------------------------------------------
-    // CLEAR OLD CONTENT
-    // --------------------------------------------------------
-
-    historyList.innerHTML =
-        "";
+        const {
+            jsPDF
+        } = window.jspdf;
 
 
-    // --------------------------------------------------------
-    // UPDATE COUNT
-    // --------------------------------------------------------
-
-    if (historyCount) {
-
-        const count =
-            history.length;
-
-
-        historyCount.textContent =
-            `${count} ${
-                count === 1
-                    ? "analysis"
-                    : "analyses"
-            }`;
-
-    }
-
-
-    // --------------------------------------------------------
-    // CREATE CARDS
-    // --------------------------------------------------------
-
-    history.forEach(
-        function (item) {
-
-            const card =
-                createHistoryCard(
-                    item
-                );
-
-
-            historyList.appendChild(
-                card
+        const doc =
+            new jsPDF(
+                {
+                    orientation: "portrait",
+                    unit: "mm",
+                    format: "a4"
+                }
             );
 
-        }
-    );
+
+        const pageWidth =
+            doc.internal.pageSize.getWidth();
+
+        const pageHeight =
+            doc.internal.pageSize.getHeight();
 
 
-    console.log(
-        "History cards created successfully."
-    );
+        const margin = 18;
 
-}
+        const contentWidth =
+            pageWidth - (margin * 2);
 
 
-// ============================================================
-// CREATE HISTORY CARD
-// ============================================================
+        let y = 20;
 
-function createHistoryCard(
-    item
-) {
 
-    const card =
-        document.createElement(
-            "article"
+        /* ---------------------------------------------
+           HEADER
+        --------------------------------------------- */
+
+        doc.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        doc.setFontSize(20);
+
+        doc.text(
+            "AI Visibility Analysis Report",
+            margin,
+            y
         );
 
 
-    card.className =
-        "history-card";
+        y += 9;
 
 
-    // --------------------------------------------------------
-    // WEBSITE URL
-    // --------------------------------------------------------
+        doc.setFont(
+            "helvetica",
+            "normal"
+        );
 
-    const website =
-        item.website_url ||
-        item.url ||
-        item.website ||
-        "Unknown website";
+        doc.setFontSize(10);
 
-
-    // --------------------------------------------------------
-    // ANALYSIS ID
-    // --------------------------------------------------------
-
-    const analysisId =
-        item.id ||
-        item.analysis_id ||
-        "-";
+        doc.setTextColor(
+            90,
+            105,
+            130
+        );
 
 
-    // --------------------------------------------------------
-    // DATE
-    // --------------------------------------------------------
+        doc.text(
+            "AI Visibility Analyzer",
+            margin,
+            y
+        );
 
-    let date =
-        "Date unavailable";
+
+        y += 12;
+
+
+        /* ---------------------------------------------
+           WEBSITE INFORMATION
+        --------------------------------------------- */
+
+        doc.setTextColor(
+            15,
+            23,
+            42
+        );
+
+        doc.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        doc.setFontSize(13);
+
+        doc.text(
+            "Analysis Information",
+            margin,
+            y
+        );
+
+
+        y += 8;
+
+
+        doc.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        doc.setFontSize(10);
+
+
+        addPDFField(
+            doc,
+            "Website",
+            item.website_url || "N/A",
+            margin,
+            contentWidth,
+            function (newY) {
+                y = newY;
+            },
+            y
+        );
+
+
+        addPDFField(
+            doc,
+            "Analysis ID",
+            item.id ?? "N/A",
+            margin,
+            contentWidth,
+            function (newY) {
+                y = newY;
+            },
+            y
+        );
+
+
+        addPDFField(
+            doc,
+            "Date",
+            formatDate(item.created_at),
+            margin,
+            contentWidth,
+            function (newY) {
+                y = newY;
+            },
+            y
+        );
+
+
+        addPDFField(
+            doc,
+            "Status",
+            "Completed",
+            margin,
+            contentWidth,
+            function (newY) {
+                y = newY;
+            },
+            y
+        );
+
+
+        y += 7;
+
+
+        /* ---------------------------------------------
+           ANALYSIS DATA
+        --------------------------------------------- */
+
+        doc.setFont(
+            "helvetica",
+            "bold"
+        );
+
+        doc.setFontSize(13);
+
+        doc.setTextColor(
+            15,
+            23,
+            42
+        );
+
+        y =
+            ensurePDFSpace(
+                doc,
+                y,
+                30,
+                margin
+            );
+
+
+        doc.text(
+            "Analysis Results",
+            margin,
+            y
+        );
+
+
+        y += 8;
+
+
+        const analysisData =
+            parseAnalysisData(
+                item.analysis_data
+            );
+
+
+        y =
+            renderObjectToPDF(
+                doc,
+                analysisData,
+                margin,
+                y,
+                contentWidth,
+                pageHeight
+            );
+
+
+        /* ---------------------------------------------
+           FOOTER
+        --------------------------------------------- */
+
+        addPDFFooter(
+            doc,
+            pageWidth,
+            pageHeight
+        );
+
+
+        /* ---------------------------------------------
+           FILE NAME
+        --------------------------------------------- */
+
+        const safeName =
+            makeSafeFileName(
+                item.website_url ||
+                "website"
+            );
+
+
+        const analysisId =
+            item.id ?? "analysis";
+
+
+        doc.save(
+            `AI-Visibility-${safeName}-${analysisId}.pdf`
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "PDF generation error:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Unable to generate PDF report."
+        );
+
+    } finally {
+
+        button.disabled = false;
+
+        button.innerHTML =
+            originalText;
+    }
+}
+
+
+/* =========================================================
+   PDF FIELD
+========================================================= */
+
+function addPDFField(
+    doc,
+    label,
+    value,
+    margin,
+    contentWidth,
+    setY,
+    currentY
+) {
+
+    doc.setFont(
+        "helvetica",
+        "bold"
+    );
+
+    doc.setFontSize(10);
+
+    doc.setTextColor(
+        35,
+        50,
+        75
+    );
+
+
+    doc.text(
+        `${label}:`,
+        margin,
+        currentY
+    );
+
+
+    const labelWidth =
+        doc.getTextWidth(
+            `${label}:`
+        );
+
+
+    doc.setFont(
+        "helvetica",
+        "normal"
+    );
+
+
+    const text =
+        String(value);
+
+
+    const lines =
+        doc.splitTextToSize(
+            text,
+            contentWidth - labelWidth - 3
+        );
+
+
+    doc.text(
+        lines,
+        margin + labelWidth + 3,
+        currentY
+    );
+
+
+    setY(
+        currentY +
+        Math.max(
+            6,
+            lines.length * 5
+        )
+    );
+}
+
+
+/* =========================================================
+   PARSE ANALYSIS DATA
+========================================================= */
+
+function parseAnalysisData(data) {
+
+    if (!data) {
+        return {};
+    }
+
+
+    if (typeof data === "object") {
+        return data;
+    }
+
+
+    if (typeof data === "string") {
+
+        try {
+
+            return JSON.parse(data);
+
+        } catch (error) {
+
+            return {
+                result: data
+            };
+        }
+    }
+
+
+    return {
+        result: String(data)
+    };
+}
+
+
+/* =========================================================
+   RENDER OBJECT TO PDF
+========================================================= */
+
+function renderObjectToPDF(
+    doc,
+    object,
+    margin,
+    y,
+    contentWidth,
+    pageHeight,
+    level = 0
+) {
+
+    if (
+        object === null ||
+        object === undefined
+    ) {
+
+        return y;
+    }
 
 
     if (
-        item.created_at ||
-        item.createdAt ||
-        item.date ||
-        item.timestamp
+        typeof object !== "object"
     ) {
 
-        const rawDate =
-            item.created_at ||
-            item.createdAt ||
-            item.date ||
-            item.timestamp;
+        return renderPDFText(
+            doc,
+            String(object),
+            margin,
+            y,
+            contentWidth,
+            pageHeight
+        );
+    }
 
 
-        const parsedDate =
-            new Date(
-                rawDate
+    const entries =
+        Array.isArray(object)
+            ? object.map(
+                (value, index) => [
+                    String(index + 1),
+                    value
+                ]
+            )
+            : Object.entries(object);
+
+
+    for (
+        const [key, value]
+        of entries
+    ) {
+
+        y =
+            ensurePDFSpace(
+                doc,
+                y,
+                15,
+                margin
             );
 
 
         if (
-            !Number.isNaN(
-                parsedDate.getTime()
-            )
+            value !== null &&
+            typeof value === "object"
         ) {
 
-            date =
-                parsedDate.toLocaleString(
-                    "en-IN",
-                    {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit"
-                    }
+            doc.setFont(
+                "helvetica",
+                "bold"
+            );
+
+            doc.setFontSize(
+                Math.max(
+                    10,
+                    12 - level
+                )
+            );
+
+            doc.setTextColor(
+                20,
+                45,
+                80
+            );
+
+
+            const heading =
+                prettifyKey(key);
+
+
+            doc.text(
+                heading,
+                margin + (level * 4),
+                y
+            );
+
+
+            y += 6;
+
+
+            y =
+                renderObjectToPDF(
+                    doc,
+                    value,
+                    margin,
+                    y,
+                    contentWidth,
+                    pageHeight,
+                    level + 1
                 );
 
-        }
-        else {
 
-            date =
-                String(
-                    rawDate
+            y += 3;
+
+        } else {
+
+            const label =
+                `${prettifyKey(key)}:`;
+
+
+            const text =
+                value === null
+                    ? "N/A"
+                    : String(value);
+
+
+            y =
+                renderPDFLabelValue(
+                    doc,
+                    label,
+                    text,
+                    margin + (level * 4),
+                    y,
+                    contentWidth - (level * 4),
+                    pageHeight
                 );
-
         }
-
     }
 
 
-    // --------------------------------------------------------
-    // STATUS
-    // --------------------------------------------------------
-
-    const status =
-        item.status ||
-        item.website_status ||
-        "Completed";
-
-
-    // --------------------------------------------------------
-    // CARD HTML
-    // --------------------------------------------------------
-
-    card.innerHTML = `
-
-        <div class="history-card-header">
-
-            <div>
-
-                <h3>
-                    ${escapeHTML(
-                        website
-                    )}
-                </h3>
-
-                <span class="history-date">
-
-                    ${escapeHTML(
-                        date
-                    )}
-
-                </span>
-
-            </div>
-
-        </div>
-
-
-        <div class="history-card-body">
-
-            <p>
-
-                <strong>
-                    Analysis ID:
-                </strong>
-
-                ${escapeHTML(
-                    String(
-                        analysisId
-                    )
-                )}
-
-            </p>
-
-
-            <p>
-
-                <strong>
-                    Website:
-                </strong>
-
-                ${escapeHTML(
-                    website
-                )}
-
-            </p>
-
-
-            <p>
-
-                <strong>
-                    Status:
-                </strong>
-
-                ${escapeHTML(
-                    String(
-                        status
-                    )
-                )}
-
-            </p>
-
-        </div>
-
-    `;
-
-
-    return card;
-
+    return y;
 }
 
 
-// ============================================================
-// ESCAPE HTML
-// ============================================================
+/* =========================================================
+   PDF LABEL / VALUE
+========================================================= */
 
-function escapeHTML(
-    value
+function renderPDFLabelValue(
+    doc,
+    label,
+    value,
+    x,
+    y,
+    width,
+    pageHeight
 ) {
 
-    if (
-        value === null ||
-        value === undefined
-    ) {
+    doc.setFont(
+        "helvetica",
+        "bold"
+    );
 
-        return "";
+    doc.setFontSize(9);
 
-    }
+    doc.setTextColor(
+        45,
+        60,
+        80
+    );
 
 
-    const div =
-        document.createElement(
-            "div"
+    const labelWidth =
+        Math.min(
+            55,
+            doc.getTextWidth(label)
         );
 
 
-    div.textContent =
-        String(value);
+    doc.text(
+        label,
+        x,
+        y
+    );
 
 
-    return div.innerHTML;
+    doc.setFont(
+        "helvetica",
+        "normal"
+    );
 
+
+    doc.setTextColor(
+        40,
+        40,
+        40
+    );
+
+
+    const lines =
+        doc.splitTextToSize(
+            value,
+            width - labelWidth - 3
+        );
+
+
+    doc.text(
+        lines,
+        x + labelWidth + 3,
+        y
+    );
+
+
+    return y +
+        Math.max(
+            5,
+            lines.length * 4.5
+        );
 }
 
 
-// ============================================================
-// REMOVE AUTH TOKENS
-// ============================================================
+/* =========================================================
+   PDF TEXT
+========================================================= */
 
-function removeAuthTokens() {
+function renderPDFText(
+    doc,
+    text,
+    margin,
+    y,
+    width,
+    pageHeight
+) {
 
-    const keys = [
-        "access_token",
-        "accessToken",
-        "token",
-        "jwt"
-    ];
+    const lines =
+        doc.splitTextToSize(
+            text,
+            width
+        );
 
 
-    keys.forEach(
-        function (key) {
+    for (
+        const line
+        of lines
+    ) {
+
+        y =
+            ensurePDFSpace(
+                doc,
+                y,
+                6,
+                margin
+            );
+
+
+        doc.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        doc.setFontSize(9);
+
+        doc.text(
+            line,
+            margin,
+            y
+        );
+
+
+        y += 5;
+    }
+
+
+    return y;
+}
+
+
+/* =========================================================
+   PAGE SPACE
+========================================================= */
+
+function ensurePDFSpace(
+    doc,
+    y,
+    requiredHeight,
+    margin
+) {
+
+    const pageHeight =
+        doc.internal.pageSize.getHeight();
+
+
+    if (
+        y + requiredHeight >
+        pageHeight - 18
+    ) {
+
+        doc.addPage();
+
+        addPDFFooter(
+            doc,
+            doc.internal.pageSize.getWidth(),
+            pageHeight
+        );
+
+
+        return margin;
+    }
+
+
+    return y;
+}
+
+
+/* =========================================================
+   PDF FOOTER
+========================================================= */
+
+function addPDFFooter(
+    doc,
+    pageWidth,
+    pageHeight
+) {
+
+    const pageCount =
+        doc.internal.getNumberOfPages();
+
+
+    for (
+        let i = 1;
+        i <= pageCount;
+        i++
+    ) {
+
+        doc.setPage(i);
+
+
+        doc.setDrawColor(
+            220,
+            225,
+            232
+        );
+
+
+        doc.line(
+            18,
+            pageHeight - 14,
+            pageWidth - 18,
+            pageHeight - 14
+        );
+
+
+        doc.setFont(
+            "helvetica",
+            "normal"
+        );
+
+        doc.setFontSize(8);
+
+        doc.setTextColor(
+            120,
+            130,
+            145
+        );
+
+
+        doc.text(
+            "AI Visibility Analyzer | Powered by Best Tech Company",
+            18,
+            pageHeight - 8
+        );
+
+
+        doc.text(
+            `Page ${i}`,
+            pageWidth - 30,
+            pageHeight - 8
+        );
+    }
+}
+
+
+/* =========================================================
+   SAFE FILE NAME
+========================================================= */
+
+function makeSafeFileName(
+    url
+) {
+
+    return String(url)
+        .replace(
+            /^https?:\/\//,
+            ""
+        )
+        .replace(
+            /[^a-zA-Z0-9]+/g,
+            "-"
+        )
+        .replace(
+            /^-+|-+$/g,
+            ""
+        )
+        .substring(
+            0,
+            60
+        ) || "website";
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+if (logoutBtn) {
+
+    logoutBtn.addEventListener(
+        "click",
+        function () {
 
             localStorage.removeItem(
-                key
+                "accessToken"
+            );
+
+            localStorage.removeItem(
+                "access_token"
+            );
+
+            localStorage.removeItem(
+                "token"
+            );
+
+            localStorage.removeItem(
+                "authToken"
+            );
+
+
+            sessionStorage.removeItem(
+                "accessToken"
             );
 
             sessionStorage.removeItem(
-                key
+                "access_token"
             );
 
+            sessionStorage.removeItem(
+                "token"
+            );
+
+            sessionStorage.removeItem(
+                "authToken"
+            );
+
+
+            window.location.href =
+                "index.html";
         }
     );
-
 }
 
 
-// ============================================================
-// LOGOUT
-// ============================================================
+/* =========================================================
+   RETRY
+========================================================= */
 
-function logout() {
+if (retryBtn) {
 
-    console.log(
-        "Logging out..."
+    retryBtn.addEventListener(
+        "click",
+        loadHistory
     );
-
-
-    removeAuthTokens();
-
-
-    // --------------------------------------------------------
-    // REDIRECT
-    // --------------------------------------------------------
-
-    window.location.href =
-        "index.html";
-
 }
 
 
-// ============================================================
-// GLOBAL ERROR HANDLER
-// ============================================================
+/* =========================================================
+   INITIALIZE
+========================================================= */
 
-window.addEventListener(
-    "error",
-    function (event) {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
-        console.error(
-            "Logs page JavaScript error:",
-            event.error ||
-            event.message
-        );
-
-    }
-);
-
-
-// ============================================================
-// UNHANDLED PROMISE ERROR
-// ============================================================
-
-window.addEventListener(
-    "unhandledrejection",
-    function (event) {
-
-        console.error(
-            "Logs page promise error:",
-            event.reason
-        );
+        loadHistory();
 
     }
 );
