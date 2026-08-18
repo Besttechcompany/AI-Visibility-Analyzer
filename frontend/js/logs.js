@@ -1,9 +1,196 @@
 // ============================================================
-// LOGS / ANALYSIS HISTORY
+// AI VISIBILITY ANALYZER
+// ANALYSIS HISTORY / LOGS
 // ============================================================
 
-const API_BASE_URL =
+"use strict";
+
+
+// ============================================================
+// CONFIGURATION
+// ============================================================
+
+const API_URL =
     "https://ai-visibility-analyzer.onrender.com";
+
+const HISTORY_URL =
+    `${API_URL}/analysis-history`;
+
+const REQUEST_TIMEOUT =
+    30000;
+
+
+// ============================================================
+// DOM ELEMENTS
+// ============================================================
+
+let loading;
+let errorBox;
+let errorMessage;
+let retryBtn;
+let emptyBox;
+let historyContainer;
+let historyList;
+let historyCount;
+let logoutBtn;
+
+
+// ============================================================
+// INITIALIZE PAGE
+// ============================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        console.log(
+            "========================================"
+        );
+
+        console.log(
+            "LOGS PAGE LOADED"
+        );
+
+        console.log(
+            "========================================"
+        );
+
+
+        // ----------------------------------------------------
+        // GET DOM ELEMENTS
+        // ----------------------------------------------------
+
+        loading =
+            document.getElementById("loading");
+
+        errorBox =
+            document.getElementById("errorBox");
+
+        errorMessage =
+            document.getElementById("errorMessage");
+
+        retryBtn =
+            document.getElementById("retryBtn");
+
+        emptyBox =
+            document.getElementById("emptyBox");
+
+        historyContainer =
+            document.getElementById(
+                "historyContainer"
+            );
+
+        historyList =
+            document.getElementById(
+                "historyList"
+            );
+
+        historyCount =
+            document.getElementById(
+                "historyCount"
+            );
+
+        logoutBtn =
+            document.getElementById(
+                "logoutBtn"
+            );
+
+
+        // ----------------------------------------------------
+        // VERIFY REQUIRED ELEMENTS
+        // ----------------------------------------------------
+
+        console.log(
+            "Loading element:",
+            !!loading
+        );
+
+        console.log(
+            "Error element:",
+            !!errorBox
+        );
+
+        console.log(
+            "Empty element:",
+            !!emptyBox
+        );
+
+        console.log(
+            "History container:",
+            !!historyContainer
+        );
+
+        console.log(
+            "History list:",
+            !!historyList
+        );
+
+
+        if (!loading) {
+
+            console.error(
+                "ERROR: #loading was not found."
+            );
+
+        }
+
+        if (!historyContainer) {
+
+            console.error(
+                "ERROR: #historyContainer was not found."
+            );
+
+        }
+
+        if (!historyList) {
+
+            console.error(
+                "ERROR: #historyList was not found."
+            );
+
+        }
+
+
+        // ----------------------------------------------------
+        // RETRY BUTTON
+        // ----------------------------------------------------
+
+        if (retryBtn) {
+
+            retryBtn.addEventListener(
+                "click",
+                function () {
+
+                    loadAnalysisHistory();
+
+                }
+            );
+
+        }
+
+
+        // ----------------------------------------------------
+        // LOGOUT BUTTON
+        // ----------------------------------------------------
+
+        if (logoutBtn) {
+
+            logoutBtn.addEventListener(
+                "click",
+                logout
+            );
+
+        }
+
+
+        // ----------------------------------------------------
+        // LOAD HISTORY
+        // ----------------------------------------------------
+
+        loadAnalysisHistory();
+
+    }
+);
 
 
 // ============================================================
@@ -12,90 +199,372 @@ const API_BASE_URL =
 
 function getAccessToken() {
 
-    // --------------------------------------------------------
-    // 1. Try localStorage
-    // --------------------------------------------------------
-
-    const possibleKeys = [
-        "accessToken",
+    const tokenKeys = [
         "access_token",
+        "accessToken",
         "token",
-        "jwt_token"
+        "jwt"
     ];
 
-    for (const key of possibleKeys) {
 
-        const token = localStorage.getItem(key);
+    // --------------------------------------------------------
+    // LOCAL STORAGE
+    // --------------------------------------------------------
 
-        if (token && token !== "undefined" && token !== "null") {
+    for (
+        const key of tokenKeys
+    ) {
+
+        const token =
+            localStorage.getItem(key);
+
+
+        if (
+            token &&
+            token !== "null" &&
+            token !== "undefined"
+        ) {
+
+            console.log(
+                "Token found in localStorage:",
+                key
+            );
+
             return token;
+
         }
+
     }
 
 
     // --------------------------------------------------------
-    // 2. Try sessionStorage
+    // SESSION STORAGE
     // --------------------------------------------------------
 
-    for (const key of possibleKeys) {
+    for (
+        const key of tokenKeys
+    ) {
 
-        const token = sessionStorage.getItem(key);
+        const token =
+            sessionStorage.getItem(key);
 
-        if (token && token !== "undefined" && token !== "null") {
+
+        if (
+            token &&
+            token !== "null" &&
+            token !== "undefined"
+        ) {
+
+            console.log(
+                "Token found in sessionStorage:",
+                key
+            );
+
             return token;
+
         }
+
     }
 
 
     // --------------------------------------------------------
-    // 3. Try URL parameter
+    // URL TOKEN
     // --------------------------------------------------------
 
-    const params = new URLSearchParams(
-        window.location.search
-    );
+    try {
 
-    const urlToken = params.get("token");
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
 
-    if (urlToken) {
 
-        // Save it permanently for other pages
-        localStorage.setItem(
-            "accessToken",
-            urlToken
+        const urlToken =
+            params.get("token");
+
+
+        if (urlToken) {
+
+            console.log(
+                "Token found in URL."
+            );
+
+
+            localStorage.setItem(
+                "access_token",
+                urlToken
+            );
+
+
+            return urlToken;
+
+        }
+
+    }
+    catch (error) {
+
+        console.warn(
+            "Unable to read URL token:",
+            error
         );
 
-        return urlToken;
     }
 
 
     // --------------------------------------------------------
-    // No token found
+    // NO TOKEN
     // --------------------------------------------------------
 
+    console.warn(
+        "No access token found."
+    );
+
+
     return null;
+
 }
 
 
 // ============================================================
-// SAVE TOKEN
+// SHOW LOADING
 // ============================================================
 
-function saveAccessToken(token) {
+function showLoading() {
 
-    if (!token) {
-        return;
+    console.log(
+        "Showing history loading..."
+    );
+
+
+    // Show loading section
+
+    if (loading) {
+
+        loading.classList.remove(
+            "hidden"
+        );
+
     }
 
-    localStorage.setItem(
-        "accessToken",
-        token
+
+    // Hide error
+
+    if (errorBox) {
+
+        errorBox.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    // Hide empty state
+
+    if (emptyBox) {
+
+        emptyBox.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    // Hide history
+
+    if (historyContainer) {
+
+        historyContainer.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// HIDE LOADING
+// ============================================================
+
+function hideLoading() {
+
+    console.log(
+        "Hiding history loading..."
     );
 
-    sessionStorage.setItem(
-        "accessToken",
-        token
+
+    if (loading) {
+
+        loading.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// SHOW ERROR
+// ============================================================
+
+function showError(message) {
+
+    console.error(
+        "History error:",
+        message
     );
+
+
+    // Hide loading
+
+    hideLoading();
+
+
+    // Hide empty
+
+    if (emptyBox) {
+
+        emptyBox.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    // Hide history
+
+    if (historyContainer) {
+
+        historyContainer.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    // Set error message
+
+    if (errorMessage) {
+
+        errorMessage.textContent =
+            message;
+
+    }
+
+
+    // Show error
+
+    if (errorBox) {
+
+        errorBox.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// SHOW EMPTY HISTORY
+// ============================================================
+
+function showEmptyHistory() {
+
+    console.log(
+        "No analysis history found."
+    );
+
+
+    // Hide loading
+
+    hideLoading();
+
+
+    // Hide error
+
+    if (errorBox) {
+
+        errorBox.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    // Hide history
+
+    if (historyContainer) {
+
+        historyContainer.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    // Show empty
+
+    if (emptyBox) {
+
+        emptyBox.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// SHOW HISTORY
+// ============================================================
+
+function showHistory() {
+
+    console.log(
+        "Showing history."
+    );
+
+
+    // Hide loading
+
+    hideLoading();
+
+
+    // Hide error
+
+    if (errorBox) {
+
+        errorBox.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    // Hide empty
+
+    if (emptyBox) {
+
+        emptyBox.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    // Show history
+
+    if (historyContainer) {
+
+        historyContainer.classList.remove(
+            "hidden"
+        );
+
+    }
+
 }
 
 
@@ -105,115 +574,228 @@ function saveAccessToken(token) {
 
 async function loadAnalysisHistory() {
 
-    const historyContainer =
-        document.getElementById("history-container");
+    console.log(
+        "========================================"
+    );
+
+    console.log(
+        "LOADING ANALYSIS HISTORY"
+    );
+
+    console.log(
+        "========================================"
+    );
+
+
+    // --------------------------------------------------------
+    // SHOW LOADING
+    // --------------------------------------------------------
+
+    showLoading();
+
+
+    // --------------------------------------------------------
+    // GET TOKEN
+    // --------------------------------------------------------
 
     const token =
         getAccessToken();
 
 
+    console.log(
+        "Access token available:",
+        !!token
+    );
+
+
     // --------------------------------------------------------
-    // Token missing
+    // TOKEN MISSING
     // --------------------------------------------------------
 
     if (!token) {
 
-        showHistoryError(
+        showError(
             "Your login session has expired. Please login again."
         );
 
         return;
+
     }
 
 
     // --------------------------------------------------------
-    // Show loading
+    // ABORT CONTROLLER
     // --------------------------------------------------------
 
-    if (historyContainer) {
+    const controller =
+        new AbortController();
 
-        historyContainer.innerHTML = `
-            <div class="history-loading">
-                <p>Loading analysis history...</p>
-            </div>
-        `;
-    }
+
+    const timeoutId =
+        setTimeout(
+            function () {
+
+                controller.abort();
+
+            },
+            REQUEST_TIMEOUT
+        );
 
 
     try {
+
+        console.log(
+            "Requesting:",
+            HISTORY_URL
+        );
+
 
         // ----------------------------------------------------
         // API REQUEST
         // ----------------------------------------------------
 
-        const response = await fetch(
-            `${API_BASE_URL}/analysis-history`,
-            {
-                method: "GET",
+        const response =
+            await fetch(
+                HISTORY_URL,
+                {
+                    method: "GET",
 
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                },
+                    headers: {
 
-                cache: "no-store"
-            }
+                        "Authorization":
+                            `Bearer ${token}`,
+
+                        "Accept":
+                            "application/json",
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    cache:
+                        "no-store",
+
+                    signal:
+                        controller.signal
+                }
+            );
+
+
+        // ----------------------------------------------------
+        // CLEAR TIMEOUT
+        // ----------------------------------------------------
+
+        clearTimeout(
+            timeoutId
+        );
+
+
+        console.log(
+            "History HTTP status:",
+            response.status
         );
 
 
         // ----------------------------------------------------
-        // UNAUTHORIZED
+        // 401
         // ----------------------------------------------------
 
-        if (response.status === 401) {
+        if (
+            response.status === 401
+        ) {
 
             console.error(
-                "Authentication failed: JWT rejected by backend."
+                "401 Unauthorized."
             );
 
-            localStorage.removeItem("accessToken");
-            sessionStorage.removeItem("accessToken");
 
-            showHistoryError(
+            removeAuthTokens();
+
+
+            showError(
                 "Your login session has expired. Please login again."
             );
 
+
             return;
+
         }
 
 
         // ----------------------------------------------------
-        // FORBIDDEN
+        // 403
         // ----------------------------------------------------
 
-        if (response.status === 403) {
+        if (
+            response.status === 403
+        ) {
 
-            showHistoryError(
+            console.error(
+                "403 Forbidden."
+            );
+
+
+            showError(
                 "You are not authorized to view analysis history."
             );
 
+
             return;
+
         }
 
 
         // ----------------------------------------------------
-        // OTHER SERVER ERROR
+        // OTHER HTTP ERROR
         // ----------------------------------------------------
 
         if (!response.ok) {
 
-            const errorText =
-                await response.text();
-
-            console.error(
-                "History API Error:",
-                response.status,
-                errorText
-            );
-
             throw new Error(
-                `Server returned ${response.status}`
+                `History request failed with status ${response.status}`
             );
+
+        }
+
+
+        // ----------------------------------------------------
+        // READ RESPONSE TEXT FIRST
+        // ----------------------------------------------------
+
+        const responseText =
+            await response.text();
+
+
+        console.log(
+            "History response received."
+        );
+
+
+        console.log(
+            "Response length:",
+            responseText.length
+        );
+
+
+        // ----------------------------------------------------
+        // EMPTY RESPONSE
+        // ----------------------------------------------------
+
+        if (
+            !responseText ||
+            !responseText.trim()
+        ) {
+
+            console.warn(
+                "Server returned an empty response."
+            );
+
+
+            showEmptyHistory();
+
+            return;
+
         }
 
 
@@ -221,33 +803,263 @@ async function loadAnalysisHistory() {
         // PARSE JSON
         // ----------------------------------------------------
 
-        const data =
-            await response.json();
+        let data;
+
+
+        try {
+
+            data =
+                JSON.parse(
+                    responseText
+                );
+
+        }
+        catch (parseError) {
+
+            console.error(
+                "JSON parsing failed:",
+                parseError
+            );
+
+
+            console.error(
+                "Server response:",
+                responseText
+            );
+
+
+            throw new Error(
+                "The server returned an invalid history response."
+            );
+
+        }
+
 
         console.log(
-            "Analysis history received:",
+            "History API data:",
             data
         );
 
 
         // ----------------------------------------------------
-        // DISPLAY RESULTS
+        // NORMALIZE RESPONSE
         // ----------------------------------------------------
 
-        displayHistory(data);
+        const history =
+            normalizeHistory(
+                data
+            );
 
 
-    } catch (error) {
+        console.log(
+            "History records:",
+            history.length
+        );
+
+
+        // ----------------------------------------------------
+        // NO HISTORY
+        // ----------------------------------------------------
+
+        if (
+            history.length === 0
+        ) {
+
+            showEmptyHistory();
+
+            return;
+
+        }
+
+
+        // ----------------------------------------------------
+        // DISPLAY HISTORY
+        // ----------------------------------------------------
+
+        displayHistory(
+            history
+        );
+
+
+        // ----------------------------------------------------
+        // SHOW HISTORY
+        // ----------------------------------------------------
+
+        showHistory();
+
+
+        console.log(
+            "========================================"
+        );
+
+        console.log(
+            "HISTORY LOADED SUCCESSFULLY"
+        );
+
+        console.log(
+            "========================================"
+        );
+
+    }
+    catch (error) {
+
+        // Make sure loading is never left visible
+
+        clearTimeout(
+            timeoutId
+        );
+
 
         console.error(
-            "LOAD HISTORY ERROR:",
+            "HISTORY LOAD ERROR:",
             error
         );
 
-        showHistoryError(
-            "Unable to load analysis history. Please try again."
+
+        // ----------------------------------------------------
+        // TIMEOUT
+        // ----------------------------------------------------
+
+        if (
+            error.name === "AbortError"
+        ) {
+
+            showError(
+                "The history request timed out. Please try again."
+            );
+
+
+            return;
+
+        }
+
+
+        // ----------------------------------------------------
+        // NETWORK ERROR
+        // ----------------------------------------------------
+
+        if (
+            error instanceof TypeError
+        ) {
+
+            showError(
+                "Unable to connect to the server. Please check your internet connection and try again."
+            );
+
+
+            return;
+
+        }
+
+
+        // ----------------------------------------------------
+        // GENERAL ERROR
+        // ----------------------------------------------------
+
+        showError(
+            error.message ||
+            "Unable to load analysis history."
         );
+
     }
+
+}
+
+
+// ============================================================
+// NORMALIZE API RESPONSE
+// ============================================================
+
+function normalizeHistory(data) {
+
+    // --------------------------------------------------------
+    // RESPONSE IS DIRECT ARRAY
+    // --------------------------------------------------------
+
+    if (
+        Array.isArray(data)
+    ) {
+
+        return data;
+
+    }
+
+
+    // --------------------------------------------------------
+    // { history: [] }
+    // --------------------------------------------------------
+
+    if (
+        data &&
+        Array.isArray(
+            data.history
+        )
+    ) {
+
+        return data.history;
+
+    }
+
+
+    // --------------------------------------------------------
+    // { data: [] }
+    // --------------------------------------------------------
+
+    if (
+        data &&
+        Array.isArray(
+            data.data
+        )
+    ) {
+
+        return data.data;
+
+    }
+
+
+    // --------------------------------------------------------
+    // { results: [] }
+    // --------------------------------------------------------
+
+    if (
+        data &&
+        Array.isArray(
+            data.results
+        )
+    ) {
+
+        return data.results;
+
+    }
+
+
+    // --------------------------------------------------------
+    // { analyses: [] }
+    // --------------------------------------------------------
+
+    if (
+        data &&
+        Array.isArray(
+            data.analyses
+        )
+    ) {
+
+        return data.analyses;
+
+    }
+
+
+    // --------------------------------------------------------
+    // NOTHING FOUND
+    // --------------------------------------------------------
+
+    console.warn(
+        "Could not find history array in response."
+    );
+
+
+    return [];
+
 }
 
 
@@ -255,191 +1067,346 @@ async function loadAnalysisHistory() {
 // DISPLAY HISTORY
 // ============================================================
 
-function displayHistory(data) {
+function displayHistory(
+    history
+) {
 
-    const historyContainer =
-        document.getElementById("history-container");
+    console.log(
+        "Displaying:",
+        history.length,
+        "history records."
+    );
 
 
-    if (!historyContainer) {
+    // --------------------------------------------------------
+    // VERIFY HISTORY LIST
+    // --------------------------------------------------------
+
+    if (!historyList) {
 
         console.error(
-            "Element #history-container was not found."
+            "ERROR: #historyList does not exist."
         );
 
+
+        showError(
+            "History display area was not found."
+        );
+
+
         return;
+
     }
 
 
     // --------------------------------------------------------
-    // No history
+    // CLEAR OLD CONTENT
     // --------------------------------------------------------
 
-    if (
-        !data ||
-        !data.history ||
-        data.history.length === 0
-    ) {
+    historyList.innerHTML =
+        "";
 
-        historyContainer.innerHTML = `
-            <div class="no-history">
-                <h3>No Analysis History</h3>
-                <p>
-                    You have not performed any website
-                    analysis yet.
-                </p>
-            </div>
-        `;
 
-        return;
+    // --------------------------------------------------------
+    // UPDATE COUNT
+    // --------------------------------------------------------
+
+    if (historyCount) {
+
+        const count =
+            history.length;
+
+
+        historyCount.textContent =
+            `${count} ${
+                count === 1
+                    ? "analysis"
+                    : "analyses"
+            }`;
+
     }
 
 
     // --------------------------------------------------------
-    // Create history HTML
+    // CREATE CARDS
     // --------------------------------------------------------
 
-    historyContainer.innerHTML = "";
-
-
-    data.history.forEach(
-        (item) => {
+    history.forEach(
+        function (item) {
 
             const card =
-                document.createElement("div");
-
-            card.className =
-                "history-card";
-
-
-            const createdAt =
-                item.created_at
-                    ? new Date(
-                        item.created_at
-                    ).toLocaleString()
-                    : "Date unavailable";
+                createHistoryCard(
+                    item
+                );
 
 
-            card.innerHTML = `
-
-                <div class="history-card-header">
-
-                    <h3>
-                        ${escapeHTML(
-                            item.website_url || "Website"
-                        )}
-                    </h3>
-
-                    <span class="history-date">
-                        ${escapeHTML(createdAt)}
-                    </span>
-
-                </div>
-
-                <div class="history-card-body">
-
-                    <p>
-                        <strong>Analysis ID:</strong>
-                        ${escapeHTML(
-                            String(item.id)
-                        )}
-                    </p>
-
-                    <p>
-                        <strong>Website:</strong>
-                        ${escapeHTML(
-                            item.website_url || "-"
-                        )}
-                    </p>
-
-                </div>
-
-            `;
-
-
-            historyContainer.appendChild(
+            historyList.appendChild(
                 card
             );
+
         }
     );
+
+
+    console.log(
+        "History cards created successfully."
+    );
+
 }
 
 
 // ============================================================
-// SHOW ERROR
+// CREATE HISTORY CARD
 // ============================================================
 
-function showHistoryError(message) {
+function createHistoryCard(
+    item
+) {
 
-    const historyContainer =
-        document.getElementById("history-container");
+    const card =
+        document.createElement(
+            "article"
+        );
 
 
-    if (!historyContainer) {
-        return;
+    card.className =
+        "history-card";
+
+
+    // --------------------------------------------------------
+    // WEBSITE URL
+    // --------------------------------------------------------
+
+    const website =
+        item.website_url ||
+        item.url ||
+        item.website ||
+        "Unknown website";
+
+
+    // --------------------------------------------------------
+    // ANALYSIS ID
+    // --------------------------------------------------------
+
+    const analysisId =
+        item.id ||
+        item.analysis_id ||
+        "-";
+
+
+    // --------------------------------------------------------
+    // DATE
+    // --------------------------------------------------------
+
+    let date =
+        "Date unavailable";
+
+
+    if (
+        item.created_at ||
+        item.createdAt ||
+        item.date ||
+        item.timestamp
+    ) {
+
+        const rawDate =
+            item.created_at ||
+            item.createdAt ||
+            item.date ||
+            item.timestamp;
+
+
+        const parsedDate =
+            new Date(
+                rawDate
+            );
+
+
+        if (
+            !Number.isNaN(
+                parsedDate.getTime()
+            )
+        ) {
+
+            date =
+                parsedDate.toLocaleString(
+                    "en-IN",
+                    {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                    }
+                );
+
+        }
+        else {
+
+            date =
+                String(
+                    rawDate
+                );
+
+        }
+
     }
 
 
-    historyContainer.innerHTML = `
+    // --------------------------------------------------------
+    // STATUS
+    // --------------------------------------------------------
 
-        <div class="history-error">
+    const status =
+        item.status ||
+        item.website_status ||
+        "Completed";
 
-            <h2>
-                Unable to load history
-            </h2>
+
+    // --------------------------------------------------------
+    // CARD HTML
+    // --------------------------------------------------------
+
+    card.innerHTML = `
+
+        <div class="history-card-header">
+
+            <div>
+
+                <h3>
+                    ${escapeHTML(
+                        website
+                    )}
+                </h3>
+
+                <span class="history-date">
+
+                    ${escapeHTML(
+                        date
+                    )}
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="history-card-body">
 
             <p>
-                ${escapeHTML(message)}
+
+                <strong>
+                    Analysis ID:
+                </strong>
+
+                ${escapeHTML(
+                    String(
+                        analysisId
+                    )
+                )}
+
             </p>
 
-            <button
-                type="button"
-                id="retry-history-btn"
-                class="retry-btn"
-            >
-                Try Again
-            </button>
+
+            <p>
+
+                <strong>
+                    Website:
+                </strong>
+
+                ${escapeHTML(
+                    website
+                )}
+
+            </p>
+
+
+            <p>
+
+                <strong>
+                    Status:
+                </strong>
+
+                ${escapeHTML(
+                    String(
+                        status
+                    )
+                )}
+
+            </p>
 
         </div>
 
     `;
 
 
-    const retryButton =
-        document.getElementById(
-            "retry-history-btn"
-        );
+    return card;
 
-
-    if (retryButton) {
-
-        retryButton.addEventListener(
-            "click",
-            () => {
-
-                loadAnalysisHistory();
-
-            }
-        );
-    }
 }
 
 
 // ============================================================
-// HTML ESCAPE
+// ESCAPE HTML
 // ============================================================
 
-function escapeHTML(value) {
+function escapeHTML(
+    value
+) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
 
     const div =
-        document.createElement("div");
+        document.createElement(
+            "div"
+        );
+
 
     div.textContent =
-        value == null
-            ? ""
-            : String(value);
+        String(value);
+
 
     return div.innerHTML;
+
+}
+
+
+// ============================================================
+// REMOVE AUTH TOKENS
+// ============================================================
+
+function removeAuthTokens() {
+
+    const keys = [
+        "access_token",
+        "accessToken",
+        "token",
+        "jwt"
+    ];
+
+
+    keys.forEach(
+        function (key) {
+
+            localStorage.removeItem(
+                key
+            );
+
+            sessionStorage.removeItem(
+                key
+            );
+
+        }
+    );
+
 }
 
 
@@ -449,75 +1416,54 @@ function escapeHTML(value) {
 
 function logout() {
 
-    localStorage.removeItem(
-        "accessToken"
-    );
-
-    localStorage.removeItem(
-        "access_token"
-    );
-
-    localStorage.removeItem(
-        "token"
-    );
-
-    localStorage.removeItem(
-        "jwt_token"
+    console.log(
+        "Logging out..."
     );
 
 
-    sessionStorage.removeItem(
-        "accessToken"
-    );
+    removeAuthTokens();
 
-    sessionStorage.removeItem(
-        "access_token"
-    );
 
-    sessionStorage.removeItem(
-        "token"
-    );
-
-    sessionStorage.removeItem(
-        "jwt_token"
-    );
-
+    // --------------------------------------------------------
+    // REDIRECT
+    // --------------------------------------------------------
 
     window.location.href =
         "index.html";
+
 }
 
 
 // ============================================================
-// INITIALIZE LOGS PAGE
+// GLOBAL ERROR HANDLER
 // ============================================================
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+window.addEventListener(
+    "error",
+    function (event) {
 
-        console.log(
-            "Logs page initialized."
+        console.error(
+            "Logs page JavaScript error:",
+            event.error ||
+            event.message
         );
 
-        const token =
-            getAccessToken();
+    }
+);
 
 
-        if (token) {
+// ============================================================
+// UNHANDLED PROMISE ERROR
+// ============================================================
 
-            console.log(
-                "JWT token found."
-            );
+window.addEventListener(
+    "unhandledrejection",
+    function (event) {
 
-        } else {
+        console.error(
+            "Logs page promise error:",
+            event.reason
+        );
 
-            console.warn(
-                "No JWT token found."
-            );
-        }
-
-
-        loadAnalysisHistory();
     }
 );
