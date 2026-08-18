@@ -1,393 +1,562 @@
 /* =========================================================
    AI VISIBILITY ANALYZER
    ANALYSIS HISTORY
-   ========================================================= */
-
-"use strict";
-
-/* ---------------------------------------------------------
-   CONFIGURATION
-   --------------------------------------------------------- */
-
-const API_BASE_URL = "https://ai-visibility-analyzer.onrender.com";
-
-/*
-   IMPORTANT:
-   Change this ONLY if your backend uses a different route.
-
-   Examples:
-   /analysis-history
-   /api/analysis-history
-   /history
-*/
-const HISTORY_API = "/analysis-history";
+========================================================= */
 
 
-/* ---------------------------------------------------------
+/* =========================================================
+   API
+========================================================= */
+
+const API_BASE_URL =
+    "https://ai-visibility-analyzer.onrender.com";
+
+
+/* =========================================================
    DOM ELEMENTS
-   --------------------------------------------------------- */
+========================================================= */
 
-const loading = document.getElementById("loading");
-const errorBox = document.getElementById("errorBox");
-const errorMessage = document.getElementById("errorMessage");
-const retryBtn = document.getElementById("retryBtn");
+const loading =
+    document.getElementById("loading");
 
-const emptyBox = document.getElementById("emptyBox");
-const historyContainer = document.getElementById("historyContainer");
+const errorBox =
+    document.getElementById("errorBox");
 
-const historyList = document.getElementById("historyList");
-const historyCount = document.getElementById("historyCount");
+const errorMessage =
+    document.getElementById("errorMessage");
 
-const logoutBtn = document.getElementById("logoutBtn");
+const retryBtn =
+    document.getElementById("retryBtn");
+
+const emptyBox =
+    document.getElementById("emptyBox");
+
+const historyContainer =
+    document.getElementById("historyContainer");
+
+const historyList =
+    document.getElementById("historyList");
+
+const historyCount =
+    document.getElementById("historyCount");
+
+const logoutBtn =
+    document.getElementById("logoutBtn");
 
 
-/* ---------------------------------------------------------
-   AUTHENTICATION
-   --------------------------------------------------------- */
+/* =========================================================
+   GET TOKEN
+========================================================= */
 
-function getAuthToken() {
+function getToken() {
 
-    const urlParams = new URLSearchParams(window.location.search);
-
-    const urlToken =
-        urlParams.get("token") ||
-        urlParams.get("access_token") ||
-        urlParams.get("accessToken");
-
-    if (urlToken) {
-
-        localStorage.setItem("token", urlToken);
-
-        /*
-         Remove token from browser address bar
-         after storing it.
-        */
-        window.history.replaceState(
-            {},
-            document.title,
-            window.location.pathname
+    let token =
+        localStorage.getItem(
+            "access_token"
         );
 
-        return urlToken;
+
+    /*
+       If token is not in localStorage,
+       check URL.
+    */
+
+    if (!token) {
+
+        const params =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        token =
+            params.get("token");
+
+
+        if (token) {
+
+            localStorage.setItem(
+                "access_token",
+                token
+            );
+
+
+            /*
+               Remove token from URL.
+            */
+
+            window.history.replaceState(
+                {},
+                document.title,
+                window.location.pathname
+            );
+
+        }
+
     }
 
 
-    const localToken =
-        localStorage.getItem("token") ||
-        localStorage.getItem("access_token") ||
-        localStorage.getItem("accessToken");
-
-    if (localToken) {
-        return localToken;
-    }
-
-
-    const sessionToken =
-        sessionStorage.getItem("token") ||
-        sessionStorage.getItem("access_token") ||
-        sessionStorage.getItem("accessToken");
-
-    if (sessionToken) {
-        return sessionToken;
-    }
-
-
-    return null;
+    return token;
 }
 
 
-/* ---------------------------------------------------------
-   UI STATES
-   --------------------------------------------------------- */
+/* =========================================================
+   LOAD HISTORY
+========================================================= */
 
-function hideAllStates() {
+async function loadHistory() {
 
-    if (loading) {
-        loading.classList.add("hidden");
+    /*
+       Reset interface.
+    */
+
+    loading.classList.remove(
+        "hidden"
+    );
+
+    errorBox.classList.add(
+        "hidden"
+    );
+
+    emptyBox.classList.add(
+        "hidden"
+    );
+
+    historyContainer.classList.add(
+        "hidden"
+    );
+
+
+    const token =
+        getToken();
+
+
+    /*
+       No token.
+    */
+
+    if (!token) {
+
+        showError(
+            "Your login session has expired. Please login again."
+        );
+
+        return;
     }
 
-    if (errorBox) {
-        errorBox.classList.add("hidden");
+
+    try {
+
+        const response =
+            await fetch(
+
+                `${API_BASE_URL}/analysis-history`,
+
+                {
+
+                    method: "GET",
+
+                    headers: {
+
+                        "Authorization":
+                            `Bearer ${token}`,
+
+                        "Accept":
+                            "application/json"
+
+                    }
+
+                }
+
+            );
+
+
+        /*
+           Unauthorized.
+        */
+
+        if (
+            response.status === 401
+        ) {
+
+            localStorage.removeItem(
+                "access_token"
+            );
+
+
+            showError(
+                "Your login session has expired. Please login again."
+            );
+
+
+            return;
+        }
+
+
+        /*
+           Other server errors.
+        */
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Server returned ${response.status}`
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Analysis history:",
+            data
+        );
+
+
+        displayHistory(
+            Array.isArray(data.history)
+                ? data.history
+                : []
+        );
+
+
+    }
+    catch (error) {
+
+        console.error(
+            "History loading error:",
+            error
+        );
+
+
+        showError(
+            "Unable to load your analysis history. Please try again."
+        );
+
     }
 
-    if (emptyBox) {
-        emptyBox.classList.add("hidden");
-    }
-
-    if (historyContainer) {
-        historyContainer.classList.add("hidden");
-    }
 }
 
 
-function showLoading() {
+/* =========================================================
+   DISPLAY HISTORY
+========================================================= */
 
-    hideAllStates();
+function displayHistory(
+    history
+) {
 
-    if (loading) {
-        loading.classList.remove("hidden");
-    }
-}
-
-
-function showError(message) {
-
-    hideAllStates();
-
-    if (errorMessage) {
-        errorMessage.textContent =
-            message || "Unable to load analysis history.";
-    }
-
-    if (errorBox) {
-        errorBox.classList.remove("hidden");
-    }
-}
+    loading.classList.add(
+        "hidden"
+    );
 
 
-function showEmpty() {
-
-    hideAllStates();
-
-    if (emptyBox) {
-        emptyBox.classList.remove("hidden");
-    }
-}
-
-
-function showHistory() {
-
-    hideAllStates();
-
-    if (historyContainer) {
-        historyContainer.classList.remove("hidden");
-    }
-}
-
-
-/* ---------------------------------------------------------
-   SECURITY
-   --------------------------------------------------------- */
-
-function escapeHTML(value) {
+    /*
+       Empty.
+    */
 
     if (
-        value === null ||
-        value === undefined
+        !history ||
+        history.length === 0
     ) {
-        return "";
+
+        historyContainer.classList.add(
+            "hidden"
+        );
+
+        emptyBox.classList.remove(
+            "hidden"
+        );
+
+        return;
     }
 
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
 
+    /*
+       Show history.
+    */
 
-/* ---------------------------------------------------------
-   DATA HELPERS
-   --------------------------------------------------------- */
-
-function getAnalysisId(item) {
-
-    return (
-        item?.id ??
-        item?.analysis_id ??
-        item?.analysisId ??
-        item?.ID ??
-        ""
+    emptyBox.classList.add(
+        "hidden"
     );
-}
 
-
-function getWebsite(item) {
-
-    return (
-        item?.url ??
-        item?.website ??
-        item?.website_url ??
-        item?.websiteUrl ??
-        ""
+    historyContainer.classList.remove(
+        "hidden"
     );
-}
 
 
-function getCreatedDate(item) {
+    /*
+       Count.
+    */
 
-    return (
-        item?.created_at ??
-        item?.createdAt ??
-        item?.date ??
-        item?.timestamp ??
-        item?.created ??
-        ""
+    historyCount.textContent =
+        `${history.length} ${
+            history.length === 1
+                ? "analysis"
+                : "analyses"
+        }`;
+
+
+    /*
+       Clear existing cards.
+    */
+
+    historyList.innerHTML = "";
+
+
+    /*
+       Create records.
+    */
+
+    history.forEach(
+        (
+            item,
+            index
+        ) => {
+
+            const card =
+                createHistoryCard(
+                    item,
+                    index
+                );
+
+
+            historyList.appendChild(
+                card
+            );
+
+        }
     );
+
 }
 
 
-function getStatus(item) {
+/* =========================================================
+   CREATE HISTORY CARD
+========================================================= */
 
-    return (
-        item?.status ??
-        item?.analysis_status ??
-        "Completed"
+function createHistoryCard(
+    item,
+    index
+) {
+
+    const card =
+        document.createElement(
+            "article"
+        );
+
+
+    card.className =
+        "history-card";
+
+
+    /*
+       Website.
+    */
+
+    const website =
+        document.createElement(
+            "div"
+        );
+
+    website.className =
+        "history-website";
+
+
+    website.textContent =
+        item.website_url ||
+        "Website unavailable";
+
+
+    /*
+       Date.
+    */
+
+    const date =
+        document.createElement(
+            "div"
+        );
+
+    date.className =
+        "history-date";
+
+
+    date.textContent =
+        formatDateTime(
+            item.created_at
+        );
+
+
+    /*
+       Analysis ID.
+    */
+
+    const id =
+        document.createElement(
+            "div"
+        );
+
+    id.className =
+        "history-id";
+
+
+    id.textContent =
+        `#${item.id}`;
+
+
+    /*
+       Status.
+    */
+
+    const status =
+        document.createElement(
+            "div"
+        );
+
+    status.className =
+        "history-status";
+
+
+    status.textContent =
+        "Completed";
+
+
+    /*
+       PDF button.
+    */
+
+    const pdfButton =
+        document.createElement(
+            "button"
+        );
+
+
+    pdfButton.type =
+        "button";
+
+
+    pdfButton.className =
+        "download-pdf-btn";
+
+
+    pdfButton.textContent =
+        "📄 Download PDF";
+
+
+    pdfButton.addEventListener(
+        "click",
+        () => {
+
+            downloadPDF(
+                item.id,
+                pdfButton
+            );
+
+        }
     );
+
+
+    /*
+       Assemble card.
+    */
+
+    card.appendChild(
+        website
+    );
+
+
+    card.appendChild(
+        date
+    );
+
+
+    card.appendChild(
+        id
+    );
+
+
+    card.appendChild(
+        status
+    );
+
+
+    card.appendChild(
+        pdfButton
+    );
+
+
+    return card;
 }
 
 
-/* ---------------------------------------------------------
-   DATE FORMAT
-   --------------------------------------------------------- */
+/* =========================================================
+   FORMAT DATE
+========================================================= */
 
-function formatDate(value) {
+function formatDateTime(
+    dateString
+) {
 
-    if (!value) {
+    if (!dateString) {
+
         return "Date unavailable";
     }
 
-    const date = new Date(value);
 
-    if (Number.isNaN(date.getTime())) {
-        return String(value);
+    const date =
+        new Date(
+            dateString
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return "Date unavailable";
     }
+
 
     return date.toLocaleString(
         "en-IN",
         {
+
             day: "2-digit",
+
             month: "short",
+
             year: "numeric",
+
             hour: "2-digit",
-            minute: "2-digit",
-            hour12: true
-        }
-    );
-}
 
+            minute: "2-digit"
 
-/* ---------------------------------------------------------
-   NORMALIZE API RESPONSE
-   --------------------------------------------------------- */
-
-function normalizeHistoryResponse(data) {
-
-    if (Array.isArray(data)) {
-        return data;
-    }
-
-    if (Array.isArray(data?.history)) {
-        return data.history;
-    }
-
-    if (Array.isArray(data?.analyses)) {
-        return data.analyses;
-    }
-
-    if (Array.isArray(data?.data)) {
-        return data.data;
-    }
-
-    if (Array.isArray(data?.results)) {
-        return data.results;
-    }
-
-    return [];
-}
-
-
-/* ---------------------------------------------------------
-   LOAD HISTORY FROM SERVER
-   --------------------------------------------------------- */
-
-async function fetchHistory() {
-
-    const token = getAuthToken();
-
-    if (!token) {
-
-        throw new Error(
-            "Your login session has expired. Please login again."
-        );
-    }
-
-
-    const response = await fetch(
-        `${API_BASE_URL}${HISTORY_API}`,
-        {
-            method: "GET",
-
-            headers: {
-                "Accept": "application/json",
-                "Authorization": `Bearer ${token}`
-            },
-
-            cache: "no-store"
         }
     );
 
-
-    console.log(
-        "History API:",
-        `${API_BASE_URL}${HISTORY_API}`
-    );
-
-    console.log(
-        "History response:",
-        response.status
-    );
-
-
-    if (response.status === 401) {
-
-        throw new Error(
-            "Your login session has expired. Please login again."
-        );
-    }
-
-
-    if (response.status === 404) {
-
-        throw new Error(
-            "History API returned HTTP 404. The backend history route does not exist or the frontend is using the wrong API route."
-        );
-    }
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            `Server returned HTTP ${response.status}.`
-        );
-    }
-
-
-    return await response.json();
 }
 
 
-/* ---------------------------------------------------------
-   PDF DOWNLOAD
-   --------------------------------------------------------- */
+/* =========================================================
+   DOWNLOAD PDF
+========================================================= */
 
 async function downloadPDF(
     analysisId,
     button
 ) {
 
-    if (!analysisId) {
-
-        alert(
-            "Analysis ID is missing. PDF cannot be downloaded."
-        );
-
-        return;
-    }
+    const token =
+        getToken();
 
 
-    const token = getAuthToken();
+    /*
+       Check login.
+    */
 
     if (!token) {
 
@@ -395,17 +564,47 @@ async function downloadPDF(
             "Your login session has expired. Please login again."
         );
 
+
+        window.location.href =
+            "login.html";
+
+
         return;
     }
 
 
+    /*
+       Validate analysis ID.
+    */
+
+    if (
+        analysisId === undefined ||
+        analysisId === null ||
+        analysisId === ""
+    ) {
+
+        alert(
+            "Invalid analysis ID."
+        );
+
+
+        return;
+    }
+
+
+    /*
+       Save original button text.
+    */
+
     const originalText =
-        button.innerHTML;
+        button.textContent;
 
 
-    button.disabled = true;
+    button.disabled =
+        true;
 
-    button.innerHTML =
+
+    button.textContent =
         "⏳ Preparing PDF...";
 
 
@@ -413,96 +612,230 @@ async function downloadPDF(
 
         /*
            IMPORTANT:
-           This is the expected PDF route.
 
-           If your backend uses another route,
-           change it here.
+           This MUST match the FastAPI route:
+
+           /analysis/{analysis_id}/pdf
         */
 
-        const pdfURL =
-            `${API_BASE_URL}/analysis/${encodeURIComponent(
-                analysisId
-            )}/pdf`;
+        const response =
+            await fetch(
+
+                `${API_BASE_URL}/analysis/${encodeURIComponent(analysisId)}/pdf`,
+
+                {
+
+                    method: "GET",
+
+                    headers: {
+
+                        "Authorization":
+                            `Bearer ${token}`,
+
+                        "Accept":
+                            "application/pdf"
+
+                    }
+
+                }
+
+            );
 
 
-        const response = await fetch(
-            pdfURL,
-            {
-                method: "GET",
+        /*
+           Unauthorized.
+        */
 
-                headers: {
-                    "Accept": "application/pdf",
-                    "Authorization": `Bearer ${token}`
-                },
+        if (
+            response.status === 401
+        ) {
 
-                cache: "no-store"
-            }
-        );
+            localStorage.removeItem(
+                "access_token"
+            );
 
 
-        if (response.status === 401) {
-
-            throw new Error(
+            alert(
                 "Your login session has expired. Please login again."
             );
+
+
+            window.location.href =
+                "login.html";
+
+
+            return;
         }
 
 
-        if (response.status === 404) {
+        /*
+           Analysis not found.
+        */
 
-            throw new Error(
-                "PDF endpoint was not found on the server."
+        if (
+            response.status === 404
+        ) {
+
+            let message =
+                "PDF report was not found.";
+
+
+            try {
+
+                const errorData =
+                    await response.json();
+
+
+                if (
+                    errorData &&
+                    errorData.detail
+                ) {
+
+                    message =
+                        errorData.detail;
+
+                }
+
+            }
+            catch (e) {
+
+                /*
+                   Ignore JSON parsing error.
+                */
+
+            }
+
+
+            alert(
+                message
             );
+
+
+            return;
         }
 
+
+        /*
+           Other server errors.
+        */
 
         if (!response.ok) {
 
+            let message =
+                `Unable to generate PDF. Server returned ${response.status}.`;
+
+
+            try {
+
+                const errorData =
+                    await response.json();
+
+
+                if (
+                    errorData &&
+                    errorData.detail
+                ) {
+
+                    message =
+                        errorData.detail;
+
+                }
+
+            }
+            catch (e) {
+
+                /*
+                   Ignore JSON parsing error.
+                */
+
+            }
+
+
             throw new Error(
-                `PDF download failed (${response.status}).`
+                message
             );
+
         }
 
+
+        /*
+           Get PDF as Blob.
+        */
 
         const blob =
             await response.blob();
 
 
-        const blobURL =
-            window.URL.createObjectURL(blob);
+        /*
+           Make sure we actually received PDF.
+        */
+
+        if (
+            !blob ||
+            blob.size === 0
+        ) {
+
+            throw new Error(
+                "The server returned an empty PDF file."
+            );
+
+        }
 
 
-        const downloadLink =
-            document.createElement("a");
+        /*
+           Create temporary download URL.
+        */
+
+        const blobUrl =
+            window.URL.createObjectURL(
+                blob
+            );
 
 
-        downloadLink.href =
-            blobURL;
+        /*
+           Create temporary anchor.
+        */
+
+        const link =
+            document.createElement(
+                "a"
+            );
 
 
-        downloadLink.download =
-            `AI-Visibility-Analysis-${analysisId}.pdf`;
+        link.href =
+            blobUrl;
+
+
+        link.download =
+            `AI_Visibility_Report_${analysisId}.pdf`;
 
 
         document.body.appendChild(
-            downloadLink
+            link
         );
 
 
-        downloadLink.click();
+        link.click();
 
 
-        downloadLink.remove();
+        link.remove();
 
+
+        /*
+           Release memory.
+        */
 
         setTimeout(
             () => {
+
                 window.URL.revokeObjectURL(
-                    blobURL
+                    blobUrl
                 );
+
             },
             1000
         );
+
 
     }
     catch (error) {
@@ -515,387 +848,77 @@ async function downloadPDF(
 
         alert(
             error.message ||
-            "Unable to download PDF report."
+            "Unable to download the PDF report."
         );
 
     }
     finally {
 
-        button.disabled = false;
+        button.disabled =
+            false;
 
-        button.innerHTML =
+
+        button.textContent =
             originalText;
+
     }
+
 }
 
 
-/* ---------------------------------------------------------
-   CREATE PDF BUTTON
-   --------------------------------------------------------- */
+/* =========================================================
+   SHOW ERROR
+========================================================= */
 
-function createPDFSection(
-    analysisId
+function showError(
+    message
 ) {
 
-    const footer =
-        document.createElement("div");
+    loading.classList.add(
+        "hidden"
+    );
 
-    footer.className =
-        "history-card-footer";
+    historyContainer.classList.add(
+        "hidden"
+    );
 
-
-    const button =
-        document.createElement("button");
-
-
-    button.type =
-        "button";
-
-
-    button.className =
-        "download-pdf-btn";
-
-
-    button.innerHTML =
-        "📄 Download PDF Report";
-
-
-    button.addEventListener(
-        "click",
-        () => {
-
-            downloadPDF(
-                analysisId,
-                button
-            );
-
-        }
+    emptyBox.classList.add(
+        "hidden"
     );
 
 
-    footer.appendChild(
-        button
+    errorMessage.textContent =
+        message;
+
+
+    errorBox.classList.remove(
+        "hidden"
     );
 
-
-    return footer;
 }
 
 
-/* ---------------------------------------------------------
-   CREATE HISTORY CARD
-   --------------------------------------------------------- */
-
-function createHistoryCard(
-    item
-) {
-
-    const analysisId =
-        getAnalysisId(item);
-
-
-    const website =
-        getWebsite(item);
-
-
-    const createdDate =
-        getCreatedDate(item);
-
-
-    const status =
-        getStatus(item);
-
-
-    const card =
-        document.createElement("article");
-
-
-    card.className =
-        "history-card";
-
-
-    /* -----------------------------------------
-       MAIN CONTENT
-       ----------------------------------------- */
-
-    const content =
-        document.createElement("div");
-
-
-    content.className =
-        "history-card-content";
-
-
-    /* WEBSITE */
-
-    const websiteTitle =
-        document.createElement("h4");
-
-
-    websiteTitle.className =
-        "history-website";
-
-
-    websiteTitle.textContent =
-        website ||
-        "Website unavailable";
-
-
-    content.appendChild(
-        websiteTitle
-    );
-
-
-    /* DATE */
-
-    const date =
-        document.createElement("p");
-
-
-    date.className =
-        "history-date";
-
-
-    date.textContent =
-        formatDate(createdDate);
-
-
-    content.appendChild(
-        date
-    );
-
-
-    /* DETAILS */
-
-    const details =
-        document.createElement("div");
-
-
-    details.className =
-        "history-details";
-
-
-    details.innerHTML = `
-
-        <p class="history-detail">
-
-            <strong>Analysis ID:</strong>
-
-            ${escapeHTML(analysisId)}
-
-        </p>
-
-
-        <p class="history-detail history-url">
-
-            <strong>Website:</strong>
-
-            ${escapeHTML(website)}
-
-        </p>
-
-
-        <p class="history-detail">
-
-            <strong>Status:</strong>
-
-            <span class="status-completed">
-
-                ${escapeHTML(status)}
-
-            </span>
-
-        </p>
-
-    `;
-
-
-    content.appendChild(
-        details
-    );
-
-
-    card.appendChild(
-        content
-    );
-
-
-    /* -----------------------------------------
-       PDF BUTTON AT END OF RECORD
-       ----------------------------------------- */
-
-    card.appendChild(
-        createPDFSection(
-            analysisId
-        )
-    );
-
-
-    return card;
-}
-
-
-/* ---------------------------------------------------------
-   LOAD HISTORY
-   --------------------------------------------------------- */
-
-async function loadHistory() {
-
-    showLoading();
-
-
-    try {
-
-        const data =
-            await fetchHistory();
-
-
-        const history =
-            normalizeHistoryResponse(
-                data
-            );
-
-
-        console.log(
-            "Analysis history:",
-            history
-        );
-
-
-        if (
-            !Array.isArray(history) ||
-            history.length === 0
-        ) {
-
-            if (historyList) {
-                historyList.innerHTML = "";
-            }
-
-            if (historyCount) {
-                historyCount.textContent =
-                    "0 analyses";
-            }
-
-            showEmpty();
-
-            return;
-        }
-
-
-        /* -----------------------------------------
-           NEWEST FIRST
-           ----------------------------------------- */
-
-        history.sort(
-            (a, b) => {
-
-                const dateA =
-                    new Date(
-                        getCreatedDate(a)
-                    ).getTime();
-
-
-                const dateB =
-                    new Date(
-                        getCreatedDate(b)
-                    ).getTime();
-
-
-                if (
-                    Number.isNaN(dateA) &&
-                    Number.isNaN(dateB)
-                ) {
-                    return 0;
-                }
-
-
-                if (
-                    Number.isNaN(dateA)
-                ) {
-                    return 1;
-                }
-
-
-                if (
-                    Number.isNaN(dateB)
-                ) {
-                    return -1;
-                }
-
-
-                return dateB - dateA;
-            }
-        );
-
-
-        historyList.innerHTML = "";
-
-
-        history.forEach(
-            item => {
-
-                const card =
-                    createHistoryCard(
-                        item
-                    );
-
-
-                historyList.appendChild(
-                    card
-                );
-
-            }
-        );
-
-
-        if (historyCount) {
-
-            historyCount.textContent =
-                `${history.length} ${
-                    history.length === 1
-                        ? "analysis"
-                        : "analyses"
-                }`;
-
-        }
-
-
-        showHistory();
-
-    }
-    catch (error) {
-
-        console.error(
-            "Analysis history error:",
-            error
-        );
-
-
-        showError(
-            error.message ||
-            "Unable to load analysis history."
-        );
-    }
-}
-
-
-/* ---------------------------------------------------------
+/* =========================================================
    RETRY
-   --------------------------------------------------------- */
+========================================================= */
 
 if (retryBtn) {
 
     retryBtn.addEventListener(
         "click",
-        loadHistory
+        () => {
+
+            loadHistory();
+
+        }
     );
 
 }
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    LOGOUT
-   --------------------------------------------------------- */
+========================================================= */
 
 if (logoutBtn) {
 
@@ -904,28 +927,11 @@ if (logoutBtn) {
         () => {
 
             localStorage.removeItem(
-                "token"
-            );
-
-            localStorage.removeItem(
-                "access_token"
-            );
-
-            localStorage.removeItem(
-                "accessToken"
-            );
-
-
-            sessionStorage.removeItem(
-                "token"
-            );
-
-            sessionStorage.removeItem(
                 "access_token"
             );
 
             sessionStorage.removeItem(
-                "accessToken"
+                "selected_analysis"
             );
 
 
@@ -938,9 +944,9 @@ if (logoutBtn) {
 }
 
 
-/* ---------------------------------------------------------
-   START
-   --------------------------------------------------------- */
+/* =========================================================
+   INITIALIZE
+========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
