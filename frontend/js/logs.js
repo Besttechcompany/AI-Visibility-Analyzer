@@ -1,21 +1,39 @@
 /* =========================================================
    AI VISIBILITY ANALYZER
    ANALYSIS HISTORY
-========================================================= */
+   ========================================================= */
 
-"use strict";
+
+/* =========================================================
+   BACKEND API
+   IMPORTANT:
+   Do NOT use relative API URLs here.
+   The frontend is hosted on Vercel.
+   The backend is hosted on Render.
+   ========================================================= */
+
+const API_BASE_URL =
+    "https://ai-visibility-analyzer.onrender.com";
 
 
 /* =========================================================
    DOM ELEMENTS
-========================================================= */
+   ========================================================= */
 
-const loading = document.getElementById("loading");
-const errorBox = document.getElementById("errorBox");
-const errorMessage = document.getElementById("errorMessage");
-const retryBtn = document.getElementById("retryBtn");
+const loading =
+    document.getElementById("loading");
 
-const emptyBox = document.getElementById("emptyBox");
+const errorBox =
+    document.getElementById("errorBox");
+
+const errorMessage =
+    document.getElementById("errorMessage");
+
+const retryBtn =
+    document.getElementById("retryBtn");
+
+const emptyBox =
+    document.getElementById("emptyBox");
 
 const historyContainer =
     document.getElementById("historyContainer");
@@ -31,113 +49,152 @@ const logoutBtn =
 
 
 /* =========================================================
-   API BASE URL
-========================================================= */
+   GET AUTH TOKEN
+   ========================================================= */
 
-const API_BASE_URL =
-    window.API_BASE_URL ||
-    "";
+function getAuthToken() {
 
+    /*
+       First check URL parameter.
 
-/* =========================================================
-   AUTH TOKEN
-========================================================= */
+       Google login in your application redirects with:
 
-function getAccessToken() {
+       dashboard.html?token=JWT
+    */
 
-    return (
-        localStorage.getItem("accessToken") ||
-        localStorage.getItem("access_token") ||
-        localStorage.getItem("token") ||
-        localStorage.getItem("authToken") ||
-        sessionStorage.getItem("accessToken") ||
-        sessionStorage.getItem("access_token") ||
-        sessionStorage.getItem("token") ||
-        sessionStorage.getItem("authToken") ||
-        null
-    );
-}
+    const urlParams =
+        new URLSearchParams(window.location.search);
+
+    const urlToken =
+        urlParams.get("token");
 
 
-/* =========================================================
-   AUTH HEADERS
-========================================================= */
+    if (urlToken) {
 
-function getAuthHeaders() {
+        localStorage.setItem(
+            "token",
+            urlToken
+        );
 
-    const token = getAccessToken();
+        /*
+           Remove token from browser URL
+           after saving it.
+        */
 
-    const headers = {
-        "Content-Type": "application/json"
-    };
+        window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname
+        );
 
-    if (token) {
-        headers["Authorization"] =
-            `Bearer ${token}`;
+        return urlToken;
     }
 
-    return headers;
+
+    /*
+       Otherwise use previously stored token.
+    */
+
+    return localStorage.getItem("token");
 }
 
 
 /* =========================================================
-   SHOW / HIDE UI
-========================================================= */
+   TOKEN
+   ========================================================= */
+
+const token =
+    getAuthToken();
+
+
+/* =========================================================
+   HIDE ALL STATES
+   ========================================================= */
+
+function hideAllStates() {
+
+    if (loading) {
+        loading.classList.add("hidden");
+    }
+
+    if (errorBox) {
+        errorBox.classList.add("hidden");
+    }
+
+    if (emptyBox) {
+        emptyBox.classList.add("hidden");
+    }
+
+    if (historyContainer) {
+        historyContainer.classList.add("hidden");
+    }
+}
+
+
+/* =========================================================
+   SHOW LOADING
+   ========================================================= */
 
 function showLoading() {
 
-    loading.classList.remove("hidden");
+    hideAllStates();
 
-    errorBox.classList.add("hidden");
-
-    emptyBox.classList.add("hidden");
-
-    historyContainer.classList.add("hidden");
+    if (loading) {
+        loading.classList.remove("hidden");
+    }
 }
 
+
+/* =========================================================
+   SHOW ERROR
+   ========================================================= */
 
 function showError(message) {
 
-    loading.classList.add("hidden");
+    hideAllStates();
 
-    errorBox.classList.remove("hidden");
+    if (errorMessage) {
+        errorMessage.textContent =
+            message || "Unable to load analysis history.";
+    }
 
-    emptyBox.classList.add("hidden");
-
-    historyContainer.classList.add("hidden");
-
-    errorMessage.textContent =
-        message || "Unable to load analysis history.";
+    if (errorBox) {
+        errorBox.classList.remove("hidden");
+    }
 }
 
+
+/* =========================================================
+   SHOW EMPTY
+   ========================================================= */
 
 function showEmpty() {
 
-    loading.classList.add("hidden");
+    hideAllStates();
 
-    errorBox.classList.add("hidden");
-
-    emptyBox.classList.remove("hidden");
-
-    historyContainer.classList.add("hidden");
+    if (emptyBox) {
+        emptyBox.classList.remove("hidden");
+    }
 }
 
 
+/* =========================================================
+   SHOW HISTORY
+   ========================================================= */
+
 function showHistory() {
 
-    loading.classList.add("hidden");
+    hideAllStates();
 
-    errorBox.classList.add("hidden");
-
-    emptyBox.classList.add("hidden");
-
-    historyContainer.classList.remove("hidden");
+    if (historyContainer) {
+        historyContainer.classList.remove("hidden");
+    }
 }
 
 
 /* =========================================================
    FORMAT DATE
-========================================================= */
+   ========================================================= */
 
 function formatDate(value) {
 
@@ -145,11 +202,15 @@ function formatDate(value) {
         return "Date unavailable";
     }
 
-    const date = new Date(value);
+
+    const date =
+        new Date(value);
+
 
     if (Number.isNaN(date.getTime())) {
-        return String(value);
+        return value;
     }
+
 
     return date.toLocaleString(
         "en-IN",
@@ -158,201 +219,22 @@ function formatDate(value) {
             month: "short",
             year: "numeric",
             hour: "2-digit",
-            minute: "2-digit"
+            minute: "2-digit",
+            hour12: true
         }
     );
 }
 
 
 /* =========================================================
-   FORMAT WEBSITE URL
-========================================================= */
+   SAFE HTML
+   ========================================================= */
 
-function normalizeUrl(url) {
+function escapeHTML(value) {
 
-    if (!url) {
-        return "Website unavailable";
+    if (value === null || value === undefined) {
+        return "";
     }
-
-    return String(url);
-}
-
-
-/* =========================================================
-   CREATE HISTORY CARD
-========================================================= */
-
-function createHistoryCard(item) {
-
-    const card =
-        document.createElement("article");
-
-    card.className = "history-card";
-
-
-    const website =
-        normalizeUrl(item.website_url);
-
-
-    const createdAt =
-        formatDate(item.created_at);
-
-
-    const analysisId =
-        item.id ?? "N/A";
-
-
-    /* -----------------------------------------------
-       TOP
-    ------------------------------------------------ */
-
-    const top =
-        document.createElement("div");
-
-    top.className =
-        "history-card-top";
-
-
-    const left =
-        document.createElement("div");
-
-
-    const websiteTitle =
-        document.createElement("div");
-
-    websiteTitle.className =
-        "history-website";
-
-    websiteTitle.textContent =
-        website;
-
-
-    const date =
-        document.createElement("div");
-
-    date.className =
-        "history-date";
-
-    date.textContent =
-        createdAt;
-
-
-    left.appendChild(websiteTitle);
-
-    left.appendChild(date);
-
-
-    const status =
-        document.createElement("span");
-
-    status.className =
-        "history-status";
-
-    status.textContent =
-        "Completed";
-
-
-    top.appendChild(left);
-
-    top.appendChild(status);
-
-
-    /* -----------------------------------------------
-       DETAILS
-    ------------------------------------------------ */
-
-    const details =
-        document.createElement("div");
-
-    details.className =
-        "history-details";
-
-
-    const idDetail =
-        document.createElement("div");
-
-    idDetail.className =
-        "history-detail";
-
-    idDetail.innerHTML =
-        `<strong>Analysis ID:</strong> ${escapeHtml(analysisId)}`;
-
-
-    const urlDetail =
-        document.createElement("div");
-
-    urlDetail.className =
-        "history-detail history-url";
-
-    urlDetail.innerHTML =
-        `<strong>Website:</strong> ${escapeHtml(website)}`;
-
-
-    details.appendChild(idDetail);
-
-    details.appendChild(urlDetail);
-
-
-    /* -----------------------------------------------
-       PDF FOOTER
-    ------------------------------------------------ */
-
-    const footer =
-        document.createElement("div");
-
-    footer.className =
-        "history-card-footer";
-
-
-    const pdfButton =
-        document.createElement("button");
-
-    pdfButton.type =
-        "button";
-
-    pdfButton.className =
-        "download-pdf-btn";
-
-    pdfButton.innerHTML =
-        "📄 Download PDF Report";
-
-
-    pdfButton.addEventListener(
-        "click",
-        function () {
-
-            downloadHistoryPDF(
-                item,
-                pdfButton
-            );
-
-        }
-    );
-
-
-    footer.appendChild(pdfButton);
-
-
-    /* -----------------------------------------------
-       COMPLETE CARD
-    ------------------------------------------------ */
-
-    card.appendChild(top);
-
-    card.appendChild(details);
-
-    card.appendChild(footer);
-
-
-    return card;
-}
-
-
-/* =========================================================
-   ESCAPE HTML
-========================================================= */
-
-function escapeHtml(value) {
 
     return String(value)
         .replace(/&/g, "&amp;")
@@ -364,39 +246,528 @@ function escapeHtml(value) {
 
 
 /* =========================================================
+   GET VALUES FROM DIFFERENT POSSIBLE API FORMATS
+   ========================================================= */
+
+function getAnalysisId(item) {
+
+    return (
+        item.id ??
+        item.analysis_id ??
+        item.analysisId ??
+        item.ID ??
+        ""
+    );
+}
+
+
+function getWebsite(item) {
+
+    return (
+        item.url ??
+        item.website ??
+        item.website_url ??
+        item.websiteUrl ??
+        ""
+    );
+}
+
+
+function getCreatedDate(item) {
+
+    return (
+        item.created_at ??
+        item.createdAt ??
+        item.date ??
+        item.timestamp ??
+        item.created ??
+        ""
+    );
+}
+
+
+function getStatus(item) {
+
+    return (
+        item.status ??
+        item.analysis_status ??
+        "Completed"
+    );
+}
+
+
+/* =========================================================
+   PDF DOWNLOAD
+   ========================================================= */
+
+function downloadAnalysisPDF(id, website) {
+
+    /*
+       IMPORTANT
+
+       This function first checks whether your application
+       already has a PDF endpoint.
+
+       If your backend PDF endpoint is different, change
+       PDF URL below.
+    */
+
+    if (!id) {
+
+        alert(
+            "Analysis ID is missing. PDF cannot be downloaded."
+        );
+
+        return;
+    }
+
+
+    const pdfURL =
+        `${API_BASE_URL}/analysis/${encodeURIComponent(id)}/pdf`;
+
+
+    /*
+       Open the PDF endpoint.
+
+       Authentication is included through a temporary
+       authenticated request because browsers do not allow
+       custom Authorization headers with window.open().
+    */
+
+    fetch(pdfURL, {
+
+        method: "GET",
+
+        headers: {
+
+            "Authorization":
+                `Bearer ${token}`
+
+        }
+
+    })
+
+    .then(async response => {
+
+        if (!response.ok) {
+
+            const text =
+                await response.text();
+
+            throw new Error(
+                `PDF download failed (${response.status})`
+            );
+        }
+
+
+        return response.blob();
+
+    })
+
+    .then(blob => {
+
+        const url =
+            window.URL.createObjectURL(blob);
+
+
+        const link =
+            document.createElement("a");
+
+
+        link.href = url;
+
+
+        link.download =
+            `analysis-${id}.pdf`;
+
+
+        document.body.appendChild(link);
+
+
+        link.click();
+
+
+        link.remove();
+
+
+        window.URL.revokeObjectURL(url);
+
+    })
+
+    .catch(error => {
+
+        console.error(
+            "PDF download error:",
+            error
+        );
+
+
+        alert(
+            "Unable to download the PDF report."
+        );
+
+    });
+}
+
+
+/* =========================================================
+   MAKE PDF BUTTON
+   ========================================================= */
+
+function createPDFButton(id, website) {
+
+    const wrapper =
+        document.createElement("div");
+
+
+    wrapper.className =
+        "history-pdf-section";
+
+
+    const button =
+        document.createElement("button");
+
+
+    button.type =
+        "button";
+
+
+    button.className =
+        "history-pdf-btn";
+
+
+    button.innerHTML =
+        "📄 Download PDF Report";
+
+
+    button.addEventListener(
+        "click",
+        function () {
+
+            downloadAnalysisPDF(
+                id,
+                website
+            );
+
+        }
+    );
+
+
+    wrapper.appendChild(button);
+
+
+    return wrapper;
+}
+
+
+/* =========================================================
+   CREATE HISTORY CARD
+   ========================================================= */
+
+function createHistoryCard(item) {
+
+    const id =
+        getAnalysisId(item);
+
+
+    const website =
+        getWebsite(item);
+
+
+    const createdDate =
+        getCreatedDate(item);
+
+
+    const status =
+        getStatus(item);
+
+
+    const card =
+        document.createElement("article");
+
+
+    card.className =
+        "history-card";
+
+
+    /* =====================================================
+       CARD CONTENT
+       ===================================================== */
+
+    const content =
+        document.createElement("div");
+
+
+    content.className =
+        "history-card-content";
+
+
+    const title =
+        document.createElement("h4");
+
+
+    title.className =
+        "history-website";
+
+
+    title.textContent =
+        website || "Website unavailable";
+
+
+    content.appendChild(title);
+
+
+    const date =
+        document.createElement("p");
+
+
+    date.className =
+        "history-date";
+
+
+    date.textContent =
+        formatDate(createdDate);
+
+
+    content.appendChild(date);
+
+
+    const analysisID =
+        document.createElement("p");
+
+
+    analysisID.className =
+        "history-detail";
+
+
+    analysisID.innerHTML =
+        `<strong>Analysis ID:</strong> ${escapeHTML(id)}`;
+
+
+    content.appendChild(analysisID);
+
+
+    const websiteRow =
+        document.createElement("p");
+
+
+    websiteRow.className =
+        "history-detail";
+
+
+    websiteRow.innerHTML =
+        `<strong>Website:</strong> ${escapeHTML(website)}`;
+
+
+    content.appendChild(websiteRow);
+
+
+    const statusRow =
+        document.createElement("p");
+
+
+    statusRow.className =
+        "history-detail";
+
+
+    statusRow.innerHTML =
+        `<strong>Status:</strong> ${escapeHTML(status)}`;
+
+
+    content.appendChild(statusRow);
+
+
+    card.appendChild(content);
+
+
+    /* =====================================================
+       PDF BUTTON AT THE END OF EACH RECORD
+       ===================================================== */
+
+    card.appendChild(
+        createPDFButton(
+            id,
+            website
+        )
+    );
+
+
+    return card;
+}
+
+
+/* =========================================================
+   NORMALIZE API RESPONSE
+   ========================================================= */
+
+function normalizeHistoryResponse(data) {
+
+    /*
+       Your backend may return:
+
+       []
+       OR
+       { history: [] }
+       OR
+       { analyses: [] }
+       OR
+       { data: [] }
+
+       Handle all common formats.
+    */
+
+    if (Array.isArray(data)) {
+        return data;
+    }
+
+
+    if (
+        data &&
+        Array.isArray(data.history)
+    ) {
+        return data.history;
+    }
+
+
+    if (
+        data &&
+        Array.isArray(data.analyses)
+    ) {
+        return data.analyses;
+    }
+
+
+    if (
+        data &&
+        Array.isArray(data.data)
+    ) {
+        return data.data;
+    }
+
+
+    if (
+        data &&
+        Array.isArray(data.results)
+    ) {
+        return data.results;
+    }
+
+
+    return [];
+}
+
+
+/* =========================================================
    LOAD HISTORY
-========================================================= */
+   ========================================================= */
 
 async function loadHistory() {
 
     showLoading();
 
 
+    /*
+       Check authentication.
+    */
+
+    const currentToken =
+        getAuthToken();
+
+
+    if (!currentToken) {
+
+        showError(
+            "Your login session has expired. Please login again."
+        );
+
+        return;
+    }
+
+
     try {
+
+        console.log(
+            "Loading analysis history..."
+        );
+
+
+        console.log(
+            "API:",
+            `${API_BASE_URL}/analysis-history`
+        );
+
+
+        /*
+           IMPORTANT:
+           Call Render backend directly.
+        */
 
         const response =
             await fetch(
                 `${API_BASE_URL}/analysis-history`,
                 {
+
                     method: "GET",
 
-                    headers:
-                        getAuthHeaders(),
+                    headers: {
 
-                    credentials: "include"
+                        "Accept":
+                            "application/json",
+
+                        "Authorization":
+                            `Bearer ${currentToken}`
+
+                    },
+
+                    cache: "no-store"
+
                 }
             );
 
 
-        let data = null;
+        console.log(
+            "History response status:",
+            response.status
+        );
 
 
-        try {
+        /* =================================================
+           HANDLE 401
+        ================================================= */
 
-            data =
-                await response.json();
+        if (response.status === 401) {
 
-        } catch (jsonError) {
+            localStorage.removeItem(
+                "token"
+            );
+
+
+            showError(
+                "Your login session has expired. Please login again."
+            );
+
+
+            return;
+        }
+
+
+        /* =================================================
+           HANDLE 404
+        ================================================= */
+
+        if (response.status === 404) {
+
+            throw new Error(
+                "History API was not found. Please check the Render backend URL and /analysis-history route."
+            );
+        }
+
+
+        /* =================================================
+           HANDLE OTHER SERVER ERRORS
+        ================================================= */
+
+        if (!response.ok) {
 
             throw new Error(
                 `Server returned HTTP ${response.status}`
@@ -404,95 +775,118 @@ async function loadHistory() {
         }
 
 
-        if (!response.ok) {
+        /* =================================================
+           READ JSON
+        ================================================= */
 
-            if (
-                response.status === 401 ||
-                response.status === 403
-            ) {
+        const data =
+            await response.json();
 
-                throw new Error(
-                    "Your login session has expired. Please login again."
-                );
-            }
 
-            throw new Error(
-                data?.detail ||
-                data?.message ||
-                `Unable to load history. HTTP ${response.status}`
-            );
-        }
+        console.log(
+            "History API response:",
+            data
+        );
 
 
         const history =
-            Array.isArray(data)
-                ? data
-                : (
-                    Array.isArray(data?.history)
-                        ? data.history
-                        : []
-                );
+            normalizeHistoryResponse(data);
 
 
-        historyList.innerHTML = "";
+        /* =================================================
+           EMPTY HISTORY
+        ================================================= */
 
-
-        if (history.length === 0) {
-
-            historyCount.textContent =
-                "0 analyses";
+        if (!history.length) {
 
             showEmpty();
+
+            if (historyCount) {
+                historyCount.textContent =
+                    "0 analyses";
+            }
 
             return;
         }
 
 
-        /* ---------------------------------------------
-           NEWEST FIRST
-        --------------------------------------------- */
+        /* =================================================
+           SORT NEWEST FIRST
+        ================================================= */
 
         history.sort(
             function (a, b) {
 
                 const dateA =
                     new Date(
-                        a.created_at || 0
+                        getCreatedDate(a)
                     ).getTime();
+
 
                 const dateB =
                     new Date(
-                        b.created_at || 0
+                        getCreatedDate(b)
                     ).getTime();
 
+
                 return dateB - dateA;
+
             }
         );
 
+
+        /* =================================================
+           CLEAR OLD RECORDS
+        ================================================= */
+
+        historyList.innerHTML = "";
+
+
+        /* =================================================
+           UPDATE COUNT
+        ================================================= */
+
+        if (historyCount) {
+
+            historyCount.textContent =
+                `${history.length} ${
+                    history.length === 1
+                        ? "analysis"
+                        : "analyses"
+                }`;
+
+        }
+
+
+        /* =================================================
+           CREATE CARDS
+        ================================================= */
 
         history.forEach(
             function (item) {
 
-                const card =
-                    createHistoryCard(item);
-
-                historyList.appendChild(card);
+                historyList.appendChild(
+                    createHistoryCard(item)
+                );
 
             }
         );
 
 
-        historyCount.textContent =
-            `${history.length} ${
-                history.length === 1
-                    ? "analysis"
-                    : "analyses"
-            }`;
-
+        /* =================================================
+           SHOW HISTORY
+        ================================================= */
 
         showHistory();
 
-    } catch (error) {
+
+        console.log(
+            `Loaded ${history.length} analysis records.`
+        );
+
+    }
+
+    catch (error) {
 
         console.error(
             "Analysis history error:",
@@ -504,841 +898,33 @@ async function loadHistory() {
             error.message ||
             "Unable to load analysis history."
         );
+
     }
+
 }
 
 
 /* =========================================================
-   DOWNLOAD PDF
-========================================================= */
+   RETRY
+   ========================================================= */
 
-async function downloadHistoryPDF(
-    item,
-    button
-) {
+if (retryBtn) {
 
-    const originalText =
-        button.innerHTML;
+    retryBtn.addEventListener(
+        "click",
+        function () {
 
+            loadHistory();
 
-    try {
-
-        button.disabled = true;
-
-        button.innerHTML =
-            "⏳ Creating PDF...";
-
-
-        if (
-            !window.jspdf ||
-            !window.jspdf.jsPDF
-        ) {
-
-            throw new Error(
-                "PDF library could not be loaded. Please refresh the page."
-            );
         }
-
-
-        const {
-            jsPDF
-        } = window.jspdf;
-
-
-        const doc =
-            new jsPDF(
-                {
-                    orientation: "portrait",
-                    unit: "mm",
-                    format: "a4"
-                }
-            );
-
-
-        const pageWidth =
-            doc.internal.pageSize.getWidth();
-
-        const pageHeight =
-            doc.internal.pageSize.getHeight();
-
-
-        const margin = 18;
-
-        const contentWidth =
-            pageWidth - (margin * 2);
-
-
-        let y = 20;
-
-
-        /* ---------------------------------------------
-           HEADER
-        --------------------------------------------- */
-
-        doc.setFont(
-            "helvetica",
-            "bold"
-        );
-
-        doc.setFontSize(20);
-
-        doc.text(
-            "AI Visibility Analysis Report",
-            margin,
-            y
-        );
-
-
-        y += 9;
-
-
-        doc.setFont(
-            "helvetica",
-            "normal"
-        );
-
-        doc.setFontSize(10);
-
-        doc.setTextColor(
-            90,
-            105,
-            130
-        );
-
-
-        doc.text(
-            "AI Visibility Analyzer",
-            margin,
-            y
-        );
-
-
-        y += 12;
-
-
-        /* ---------------------------------------------
-           WEBSITE INFORMATION
-        --------------------------------------------- */
-
-        doc.setTextColor(
-            15,
-            23,
-            42
-        );
-
-        doc.setFont(
-            "helvetica",
-            "bold"
-        );
-
-        doc.setFontSize(13);
-
-        doc.text(
-            "Analysis Information",
-            margin,
-            y
-        );
-
-
-        y += 8;
-
-
-        doc.setFont(
-            "helvetica",
-            "normal"
-        );
-
-        doc.setFontSize(10);
-
-
-        addPDFField(
-            doc,
-            "Website",
-            item.website_url || "N/A",
-            margin,
-            contentWidth,
-            function (newY) {
-                y = newY;
-            },
-            y
-        );
-
-
-        addPDFField(
-            doc,
-            "Analysis ID",
-            item.id ?? "N/A",
-            margin,
-            contentWidth,
-            function (newY) {
-                y = newY;
-            },
-            y
-        );
-
-
-        addPDFField(
-            doc,
-            "Date",
-            formatDate(item.created_at),
-            margin,
-            contentWidth,
-            function (newY) {
-                y = newY;
-            },
-            y
-        );
-
-
-        addPDFField(
-            doc,
-            "Status",
-            "Completed",
-            margin,
-            contentWidth,
-            function (newY) {
-                y = newY;
-            },
-            y
-        );
-
-
-        y += 7;
-
-
-        /* ---------------------------------------------
-           ANALYSIS DATA
-        --------------------------------------------- */
-
-        doc.setFont(
-            "helvetica",
-            "bold"
-        );
-
-        doc.setFontSize(13);
-
-        doc.setTextColor(
-            15,
-            23,
-            42
-        );
-
-        y =
-            ensurePDFSpace(
-                doc,
-                y,
-                30,
-                margin
-            );
-
-
-        doc.text(
-            "Analysis Results",
-            margin,
-            y
-        );
-
-
-        y += 8;
-
-
-        const analysisData =
-            parseAnalysisData(
-                item.analysis_data
-            );
-
-
-        y =
-            renderObjectToPDF(
-                doc,
-                analysisData,
-                margin,
-                y,
-                contentWidth,
-                pageHeight
-            );
-
-
-        /* ---------------------------------------------
-           FOOTER
-        --------------------------------------------- */
-
-        addPDFFooter(
-            doc,
-            pageWidth,
-            pageHeight
-        );
-
-
-        /* ---------------------------------------------
-           FILE NAME
-        --------------------------------------------- */
-
-        const safeName =
-            makeSafeFileName(
-                item.website_url ||
-                "website"
-            );
-
-
-        const analysisId =
-            item.id ?? "analysis";
-
-
-        doc.save(
-            `AI-Visibility-${safeName}-${analysisId}.pdf`
-        );
-
-
-    } catch (error) {
-
-        console.error(
-            "PDF generation error:",
-            error
-        );
-
-
-        alert(
-            error.message ||
-            "Unable to generate PDF report."
-        );
-
-    } finally {
-
-        button.disabled = false;
-
-        button.innerHTML =
-            originalText;
-    }
-}
-
-
-/* =========================================================
-   PDF FIELD
-========================================================= */
-
-function addPDFField(
-    doc,
-    label,
-    value,
-    margin,
-    contentWidth,
-    setY,
-    currentY
-) {
-
-    doc.setFont(
-        "helvetica",
-        "bold"
     );
 
-    doc.setFontSize(10);
-
-    doc.setTextColor(
-        35,
-        50,
-        75
-    );
-
-
-    doc.text(
-        `${label}:`,
-        margin,
-        currentY
-    );
-
-
-    const labelWidth =
-        doc.getTextWidth(
-            `${label}:`
-        );
-
-
-    doc.setFont(
-        "helvetica",
-        "normal"
-    );
-
-
-    const text =
-        String(value);
-
-
-    const lines =
-        doc.splitTextToSize(
-            text,
-            contentWidth - labelWidth - 3
-        );
-
-
-    doc.text(
-        lines,
-        margin + labelWidth + 3,
-        currentY
-    );
-
-
-    setY(
-        currentY +
-        Math.max(
-            6,
-            lines.length * 5
-        )
-    );
-}
-
-
-/* =========================================================
-   PARSE ANALYSIS DATA
-========================================================= */
-
-function parseAnalysisData(data) {
-
-    if (!data) {
-        return {};
-    }
-
-
-    if (typeof data === "object") {
-        return data;
-    }
-
-
-    if (typeof data === "string") {
-
-        try {
-
-            return JSON.parse(data);
-
-        } catch (error) {
-
-            return {
-                result: data
-            };
-        }
-    }
-
-
-    return {
-        result: String(data)
-    };
-}
-
-
-/* =========================================================
-   RENDER OBJECT TO PDF
-========================================================= */
-
-function renderObjectToPDF(
-    doc,
-    object,
-    margin,
-    y,
-    contentWidth,
-    pageHeight,
-    level = 0
-) {
-
-    if (
-        object === null ||
-        object === undefined
-    ) {
-
-        return y;
-    }
-
-
-    if (
-        typeof object !== "object"
-    ) {
-
-        return renderPDFText(
-            doc,
-            String(object),
-            margin,
-            y,
-            contentWidth,
-            pageHeight
-        );
-    }
-
-
-    const entries =
-        Array.isArray(object)
-            ? object.map(
-                (value, index) => [
-                    String(index + 1),
-                    value
-                ]
-            )
-            : Object.entries(object);
-
-
-    for (
-        const [key, value]
-        of entries
-    ) {
-
-        y =
-            ensurePDFSpace(
-                doc,
-                y,
-                15,
-                margin
-            );
-
-
-        if (
-            value !== null &&
-            typeof value === "object"
-        ) {
-
-            doc.setFont(
-                "helvetica",
-                "bold"
-            );
-
-            doc.setFontSize(
-                Math.max(
-                    10,
-                    12 - level
-                )
-            );
-
-            doc.setTextColor(
-                20,
-                45,
-                80
-            );
-
-
-            const heading =
-                prettifyKey(key);
-
-
-            doc.text(
-                heading,
-                margin + (level * 4),
-                y
-            );
-
-
-            y += 6;
-
-
-            y =
-                renderObjectToPDF(
-                    doc,
-                    value,
-                    margin,
-                    y,
-                    contentWidth,
-                    pageHeight,
-                    level + 1
-                );
-
-
-            y += 3;
-
-        } else {
-
-            const label =
-                `${prettifyKey(key)}:`;
-
-
-            const text =
-                value === null
-                    ? "N/A"
-                    : String(value);
-
-
-            y =
-                renderPDFLabelValue(
-                    doc,
-                    label,
-                    text,
-                    margin + (level * 4),
-                    y,
-                    contentWidth - (level * 4),
-                    pageHeight
-                );
-        }
-    }
-
-
-    return y;
-}
-
-
-/* =========================================================
-   PDF LABEL / VALUE
-========================================================= */
-
-function renderPDFLabelValue(
-    doc,
-    label,
-    value,
-    x,
-    y,
-    width,
-    pageHeight
-) {
-
-    doc.setFont(
-        "helvetica",
-        "bold"
-    );
-
-    doc.setFontSize(9);
-
-    doc.setTextColor(
-        45,
-        60,
-        80
-    );
-
-
-    const labelWidth =
-        Math.min(
-            55,
-            doc.getTextWidth(label)
-        );
-
-
-    doc.text(
-        label,
-        x,
-        y
-    );
-
-
-    doc.setFont(
-        "helvetica",
-        "normal"
-    );
-
-
-    doc.setTextColor(
-        40,
-        40,
-        40
-    );
-
-
-    const lines =
-        doc.splitTextToSize(
-            value,
-            width - labelWidth - 3
-        );
-
-
-    doc.text(
-        lines,
-        x + labelWidth + 3,
-        y
-    );
-
-
-    return y +
-        Math.max(
-            5,
-            lines.length * 4.5
-        );
-}
-
-
-/* =========================================================
-   PDF TEXT
-========================================================= */
-
-function renderPDFText(
-    doc,
-    text,
-    margin,
-    y,
-    width,
-    pageHeight
-) {
-
-    const lines =
-        doc.splitTextToSize(
-            text,
-            width
-        );
-
-
-    for (
-        const line
-        of lines
-    ) {
-
-        y =
-            ensurePDFSpace(
-                doc,
-                y,
-                6,
-                margin
-            );
-
-
-        doc.setFont(
-            "helvetica",
-            "normal"
-        );
-
-        doc.setFontSize(9);
-
-        doc.text(
-            line,
-            margin,
-            y
-        );
-
-
-        y += 5;
-    }
-
-
-    return y;
-}
-
-
-/* =========================================================
-   PAGE SPACE
-========================================================= */
-
-function ensurePDFSpace(
-    doc,
-    y,
-    requiredHeight,
-    margin
-) {
-
-    const pageHeight =
-        doc.internal.pageSize.getHeight();
-
-
-    if (
-        y + requiredHeight >
-        pageHeight - 18
-    ) {
-
-        doc.addPage();
-
-        addPDFFooter(
-            doc,
-            doc.internal.pageSize.getWidth(),
-            pageHeight
-        );
-
-
-        return margin;
-    }
-
-
-    return y;
-}
-
-
-/* =========================================================
-   PDF FOOTER
-========================================================= */
-
-function addPDFFooter(
-    doc,
-    pageWidth,
-    pageHeight
-) {
-
-    const pageCount =
-        doc.internal.getNumberOfPages();
-
-
-    for (
-        let i = 1;
-        i <= pageCount;
-        i++
-    ) {
-
-        doc.setPage(i);
-
-
-        doc.setDrawColor(
-            220,
-            225,
-            232
-        );
-
-
-        doc.line(
-            18,
-            pageHeight - 14,
-            pageWidth - 18,
-            pageHeight - 14
-        );
-
-
-        doc.setFont(
-            "helvetica",
-            "normal"
-        );
-
-        doc.setFontSize(8);
-
-        doc.setTextColor(
-            120,
-            130,
-            145
-        );
-
-
-        doc.text(
-            "AI Visibility Analyzer | Powered by Best Tech Company",
-            18,
-            pageHeight - 8
-        );
-
-
-        doc.text(
-            `Page ${i}`,
-            pageWidth - 30,
-            pageHeight - 8
-        );
-    }
-}
-
-
-/* =========================================================
-   SAFE FILE NAME
-========================================================= */
-
-function makeSafeFileName(
-    url
-) {
-
-    return String(url)
-        .replace(
-            /^https?:\/\//,
-            ""
-        )
-        .replace(
-            /[^a-zA-Z0-9]+/g,
-            "-"
-        )
-        .replace(
-            /^-+|-+$/g,
-            ""
-        )
-        .substring(
-            0,
-            60
-        ) || "website";
 }
 
 
 /* =========================================================
    LOGOUT
-========================================================= */
+   ========================================================= */
 
 if (logoutBtn) {
 
@@ -1347,62 +933,30 @@ if (logoutBtn) {
         function () {
 
             localStorage.removeItem(
-                "accessToken"
-            );
-
-            localStorage.removeItem(
-                "access_token"
-            );
-
-            localStorage.removeItem(
                 "token"
             );
+
 
             localStorage.removeItem(
                 "authToken"
             );
 
 
-            sessionStorage.removeItem(
-                "accessToken"
-            );
-
-            sessionStorage.removeItem(
-                "access_token"
-            );
-
-            sessionStorage.removeItem(
-                "token"
-            );
-
-            sessionStorage.removeItem(
-                "authToken"
-            );
+            sessionStorage.clear();
 
 
             window.location.href =
                 "index.html";
+
         }
     );
+
 }
 
 
 /* =========================================================
-   RETRY
-========================================================= */
-
-if (retryBtn) {
-
-    retryBtn.addEventListener(
-        "click",
-        loadHistory
-    );
-}
-
-
-/* =========================================================
-   INITIALIZE
-========================================================= */
+   START
+   ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
