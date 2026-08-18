@@ -95,9 +95,14 @@ function initializeAuthentication() {
             window.location.search
         );
 
+
     const token =
         urlParams.get("token");
 
+
+    // ==================================================
+    // RECEIVE TOKEN FROM GOOGLE CALLBACK
+    // ==================================================
 
     if (token) {
 
@@ -105,12 +110,18 @@ function initializeAuthentication() {
             "Google JWT received successfully."
         );
 
+
         localStorage.setItem(
             "access_token",
             token
         );
 
 
+        // Keep global variable updated
+        accessToken = token;
+
+
+        // Remove token from URL
         window.history.replaceState(
             {},
             document.title,
@@ -119,11 +130,19 @@ function initializeAuthentication() {
     }
 
 
-    const accessToken =
+    // ==================================================
+    // GET STORED TOKEN
+    // ==================================================
+
+    accessToken =
         localStorage.getItem(
             "access_token"
         );
 
+
+    // ==================================================
+    // NO TOKEN
+    // ==================================================
 
     if (!accessToken) {
 
@@ -131,16 +150,23 @@ function initializeAuthentication() {
             "No access token found. Redirecting to login."
         );
 
+
         window.location.href =
             "login.html";
+
 
         return false;
     }
 
 
+    // ==================================================
+    // AUTHENTICATED
+    // ==================================================
+
     console.log(
         "Authentication successful."
     );
+
 
     return true;
 }
@@ -1358,71 +1384,123 @@ async function analyzeWebsite() {
 
 function showResults(data) {
 
+    // ==================================================
+    // CLEAR PREVIOUS RESULTS
+    // ==================================================
+
     results.innerHTML = "";
 
+
+    // ==================================================
+    // RENDER OVERALL SCORE
+    // ==================================================
 
     results.appendChild(
         renderOverallScore(data)
     );
 
 
+    // ==================================================
+    // RENDER AI SCORES
+    // ==================================================
+
     results.appendChild(
         renderAIScores(data)
     );
 
+
+    // ==================================================
+    // RENDER TECHNOLOGY
+    // ==================================================
 
     results.appendChild(
         renderTechnology(data)
     );
 
 
+    // ==================================================
+    // RENDER BASIC INFORMATION
+    // ==================================================
+
     results.appendChild(
         renderBasicInformation(data)
     );
 
+
+    // ==================================================
+    // RENDER TECHNICAL SEO
+    // ==================================================
 
     results.appendChild(
         renderTechnicalSEO(data)
     );
 
 
+    // ==================================================
+    // RENDER AUDIT
+    // ==================================================
+
     results.appendChild(
         renderAudit(data)
     );
 
+
+    // ==================================================
+    // RENDER OPEN GRAPH
+    // ==================================================
 
     results.appendChild(
         renderOpenGraph(data)
     );
 
 
+    // ==================================================
+    // RENDER TWITTER CARDS
+    // ==================================================
+
     results.appendChild(
         renderTwitterCards(data)
     );
 
+
+    // ==================================================
+    // RENDER LLMS.TXT
+    // ==================================================
 
     results.appendChild(
         renderLLMS(data)
     );
 
 
+    // ==================================================
+    // RENDER E-E-A-T
+    // ==================================================
+
     results.appendChild(
         renderEEAT(data)
     );
 
+
+    // ==================================================
+    // RENDER ENTITIES
+    // ==================================================
 
     results.appendChild(
         renderEntities(data)
     );
 
 
+    // ==================================================
+    // RENDER RECOMMENDATIONS
+    // ==================================================
+
     results.appendChild(
         renderRecommendations(data)
     );
 
+
     // ==================================================
-    // DOWNLOAD PDF BUTTON
-    // APPEARS ONLY AFTER RESULTS
+    // DOWNLOAD PDF SECTION
     // ==================================================
 
     const pdfSection =
@@ -1433,21 +1511,25 @@ function showResults(data) {
         "pdf-download-section";
 
 
+    // ==================================================
+    // PDF BUTTON
+    // ==================================================
+
     pdfSection.innerHTML = `
+        <button
+            type="button"
+            id="download-pdf-btn"
+            class="pdf-btn"
+            onclick="downloadPDF()"
+        >
+            📄 Download PDF Report
+        </button>
+    `;
 
-    <button
-        type="button"
-        id="download-pdf-btn"
-        class="pdf-btn"
-        onclick="downloadPDF()"
-    >
 
-        📄 Download PDF Report
-
-    </button>
-
-`;
-
+    // ==================================================
+    // ADD PDF BUTTON TO RESULTS
+    // ==================================================
 
     results.appendChild(
         pdfSection
@@ -1524,9 +1606,6 @@ function renderOverallScore(data) {
 }
 
 
-// ======================================================
-// AI Platform Scores
-// ======================================================
 
 // ======================================================
 // AI PLATFORM SCORES
