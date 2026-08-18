@@ -1036,6 +1036,10 @@ function showError(message) {
 // ANALYZE WEBSITE
 // ======================================================
 
+// ======================================================
+// ANALYZE WEBSITE
+// ======================================================
+
 async function analyzeWebsite() {
 
     // ==================================================
@@ -1233,7 +1237,6 @@ async function analyzeWebsite() {
 
                         "Authorization":
                             `Bearer ${accessToken}`
-
                     },
 
                     body:
@@ -1329,9 +1332,11 @@ async function analyzeWebsite() {
 
         // ==================================================
         // DISPLAY RESULT
+        // IMPORTANT:
+        // FUNCTION NAME IS showResults
         // ==================================================
 
-        displayResults(
+        showResults(
             data
         );
 
@@ -1349,7 +1354,6 @@ async function analyzeWebsite() {
             "Analysis Failed<br><br>" +
             `<strong>${error.message}</strong>`
         );
-
 
     }
     finally {
