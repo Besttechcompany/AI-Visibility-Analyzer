@@ -3,84 +3,65 @@
    ANALYSIS HISTORY
    ========================================================= */
 
+"use strict";
 
-/* =========================================================
-   BACKEND API
+/* ---------------------------------------------------------
+   CONFIGURATION
+   --------------------------------------------------------- */
+
+const API_BASE_URL = "https://ai-visibility-analyzer.onrender.com";
+
+/*
    IMPORTANT:
-   Do NOT use relative API URLs here.
-   The frontend is hosted on Vercel.
-   The backend is hosted on Render.
-   ========================================================= */
+   Change this ONLY if your backend uses a different route.
 
-const API_BASE_URL =
-    "https://ai-visibility-analyzer.onrender.com";
+   Examples:
+   /analysis-history
+   /api/analysis-history
+   /history
+*/
+const HISTORY_API = "/analysis-history";
 
 
-/* =========================================================
+/* ---------------------------------------------------------
    DOM ELEMENTS
-   ========================================================= */
+   --------------------------------------------------------- */
 
-const loading =
-    document.getElementById("loading");
+const loading = document.getElementById("loading");
+const errorBox = document.getElementById("errorBox");
+const errorMessage = document.getElementById("errorMessage");
+const retryBtn = document.getElementById("retryBtn");
 
-const errorBox =
-    document.getElementById("errorBox");
+const emptyBox = document.getElementById("emptyBox");
+const historyContainer = document.getElementById("historyContainer");
 
-const errorMessage =
-    document.getElementById("errorMessage");
+const historyList = document.getElementById("historyList");
+const historyCount = document.getElementById("historyCount");
 
-const retryBtn =
-    document.getElementById("retryBtn");
-
-const emptyBox =
-    document.getElementById("emptyBox");
-
-const historyContainer =
-    document.getElementById("historyContainer");
-
-const historyList =
-    document.getElementById("historyList");
-
-const historyCount =
-    document.getElementById("historyCount");
-
-const logoutBtn =
-    document.getElementById("logoutBtn");
+const logoutBtn = document.getElementById("logoutBtn");
 
 
-/* =========================================================
-   GET AUTH TOKEN
-   ========================================================= */
+/* ---------------------------------------------------------
+   AUTHENTICATION
+   --------------------------------------------------------- */
 
 function getAuthToken() {
 
-    /*
-       First check URL parameter.
-
-       Google login in your application redirects with:
-
-       dashboard.html?token=JWT
-    */
-
-    const urlParams =
-        new URLSearchParams(window.location.search);
+    const urlParams = new URLSearchParams(window.location.search);
 
     const urlToken =
-        urlParams.get("token");
-
+        urlParams.get("token") ||
+        urlParams.get("access_token") ||
+        urlParams.get("accessToken");
 
     if (urlToken) {
 
-        localStorage.setItem(
-            "token",
-            urlToken
-        );
+        localStorage.setItem("token", urlToken);
 
         /*
-           Remove token from browser URL
-           after saving it.
+         Remove token from browser address bar
+         after storing it.
         */
-
         window.history.replaceState(
             {},
             document.title,
@@ -91,25 +72,33 @@ function getAuthToken() {
     }
 
 
-    /*
-       Otherwise use previously stored token.
-    */
+    const localToken =
+        localStorage.getItem("token") ||
+        localStorage.getItem("access_token") ||
+        localStorage.getItem("accessToken");
 
-    return localStorage.getItem("token");
+    if (localToken) {
+        return localToken;
+    }
+
+
+    const sessionToken =
+        sessionStorage.getItem("token") ||
+        sessionStorage.getItem("access_token") ||
+        sessionStorage.getItem("accessToken");
+
+    if (sessionToken) {
+        return sessionToken;
+    }
+
+
+    return null;
 }
 
 
-/* =========================================================
-   TOKEN
-   ========================================================= */
-
-const token =
-    getAuthToken();
-
-
-/* =========================================================
-   HIDE ALL STATES
-   ========================================================= */
+/* ---------------------------------------------------------
+   UI STATES
+   --------------------------------------------------------- */
 
 function hideAllStates() {
 
@@ -131,10 +120,6 @@ function hideAllStates() {
 }
 
 
-/* =========================================================
-   SHOW LOADING
-   ========================================================= */
-
 function showLoading() {
 
     hideAllStates();
@@ -144,10 +129,6 @@ function showLoading() {
     }
 }
 
-
-/* =========================================================
-   SHOW ERROR
-   ========================================================= */
 
 function showError(message) {
 
@@ -164,10 +145,6 @@ function showError(message) {
 }
 
 
-/* =========================================================
-   SHOW EMPTY
-   ========================================================= */
-
 function showEmpty() {
 
     hideAllStates();
@@ -177,10 +154,6 @@ function showEmpty() {
     }
 }
 
-
-/* =========================================================
-   SHOW HISTORY
-   ========================================================= */
 
 function showHistory() {
 
@@ -192,9 +165,82 @@ function showHistory() {
 }
 
 
-/* =========================================================
-   FORMAT DATE
-   ========================================================= */
+/* ---------------------------------------------------------
+   SECURITY
+   --------------------------------------------------------- */
+
+function escapeHTML(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* ---------------------------------------------------------
+   DATA HELPERS
+   --------------------------------------------------------- */
+
+function getAnalysisId(item) {
+
+    return (
+        item?.id ??
+        item?.analysis_id ??
+        item?.analysisId ??
+        item?.ID ??
+        ""
+    );
+}
+
+
+function getWebsite(item) {
+
+    return (
+        item?.url ??
+        item?.website ??
+        item?.website_url ??
+        item?.websiteUrl ??
+        ""
+    );
+}
+
+
+function getCreatedDate(item) {
+
+    return (
+        item?.created_at ??
+        item?.createdAt ??
+        item?.date ??
+        item?.timestamp ??
+        item?.created ??
+        ""
+    );
+}
+
+
+function getStatus(item) {
+
+    return (
+        item?.status ??
+        item?.analysis_status ??
+        "Completed"
+    );
+}
+
+
+/* ---------------------------------------------------------
+   DATE FORMAT
+   --------------------------------------------------------- */
 
 function formatDate(value) {
 
@@ -202,15 +248,11 @@ function formatDate(value) {
         return "Date unavailable";
     }
 
-
-    const date =
-        new Date(value);
-
+    const date = new Date(value);
 
     if (Number.isNaN(date.getTime())) {
-        return value;
+        return String(value);
     }
-
 
     return date.toLocaleString(
         "en-IN",
@@ -226,93 +268,116 @@ function formatDate(value) {
 }
 
 
-/* =========================================================
-   SAFE HTML
-   ========================================================= */
+/* ---------------------------------------------------------
+   NORMALIZE API RESPONSE
+   --------------------------------------------------------- */
 
-function escapeHTML(value) {
+function normalizeHistoryResponse(data) {
 
-    if (value === null || value === undefined) {
-        return "";
+    if (Array.isArray(data)) {
+        return data;
     }
 
-    return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+    if (Array.isArray(data?.history)) {
+        return data.history;
+    }
+
+    if (Array.isArray(data?.analyses)) {
+        return data.analyses;
+    }
+
+    if (Array.isArray(data?.data)) {
+        return data.data;
+    }
+
+    if (Array.isArray(data?.results)) {
+        return data.results;
+    }
+
+    return [];
 }
 
 
-/* =========================================================
-   GET VALUES FROM DIFFERENT POSSIBLE API FORMATS
-   ========================================================= */
+/* ---------------------------------------------------------
+   LOAD HISTORY FROM SERVER
+   --------------------------------------------------------- */
 
-function getAnalysisId(item) {
+async function fetchHistory() {
 
-    return (
-        item.id ??
-        item.analysis_id ??
-        item.analysisId ??
-        item.ID ??
-        ""
+    const token = getAuthToken();
+
+    if (!token) {
+
+        throw new Error(
+            "Your login session has expired. Please login again."
+        );
+    }
+
+
+    const response = await fetch(
+        `${API_BASE_URL}${HISTORY_API}`,
+        {
+            method: "GET",
+
+            headers: {
+                "Accept": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+
+            cache: "no-store"
+        }
     );
-}
 
 
-function getWebsite(item) {
-
-    return (
-        item.url ??
-        item.website ??
-        item.website_url ??
-        item.websiteUrl ??
-        ""
+    console.log(
+        "History API:",
+        `${API_BASE_URL}${HISTORY_API}`
     );
-}
 
-
-function getCreatedDate(item) {
-
-    return (
-        item.created_at ??
-        item.createdAt ??
-        item.date ??
-        item.timestamp ??
-        item.created ??
-        ""
+    console.log(
+        "History response:",
+        response.status
     );
+
+
+    if (response.status === 401) {
+
+        throw new Error(
+            "Your login session has expired. Please login again."
+        );
+    }
+
+
+    if (response.status === 404) {
+
+        throw new Error(
+            "History API returned HTTP 404. The backend history route does not exist or the frontend is using the wrong API route."
+        );
+    }
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            `Server returned HTTP ${response.status}.`
+        );
+    }
+
+
+    return await response.json();
 }
 
 
-function getStatus(item) {
-
-    return (
-        item.status ??
-        item.analysis_status ??
-        "Completed"
-    );
-}
-
-
-/* =========================================================
+/* ---------------------------------------------------------
    PDF DOWNLOAD
-   ========================================================= */
+   --------------------------------------------------------- */
 
-function downloadAnalysisPDF(id, website) {
+async function downloadPDF(
+    analysisId,
+    button
+) {
 
-    /*
-       IMPORTANT
-
-       This function first checks whether your application
-       already has a PDF endpoint.
-
-       If your backend PDF endpoint is different, change
-       PDF URL below.
-    */
-
-    if (!id) {
+    if (!analysisId) {
 
         alert(
             "Analysis ID is missing. PDF cannot be downloaded."
@@ -322,79 +387,125 @@ function downloadAnalysisPDF(id, website) {
     }
 
 
-    const pdfURL =
-        `${API_BASE_URL}/analysis/${encodeURIComponent(id)}/pdf`;
+    const token = getAuthToken();
+
+    if (!token) {
+
+        alert(
+            "Your login session has expired. Please login again."
+        );
+
+        return;
+    }
 
 
-    /*
-       Open the PDF endpoint.
+    const originalText =
+        button.innerHTML;
 
-       Authentication is included through a temporary
-       authenticated request because browsers do not allow
-       custom Authorization headers with window.open().
-    */
 
-    fetch(pdfURL, {
+    button.disabled = true;
 
-        method: "GET",
+    button.innerHTML =
+        "⏳ Preparing PDF...";
 
-        headers: {
 
-            "Authorization":
-                `Bearer ${token}`
+    try {
 
-        }
+        /*
+           IMPORTANT:
+           This is the expected PDF route.
 
-    })
+           If your backend uses another route,
+           change it here.
+        */
 
-    .then(async response => {
+        const pdfURL =
+            `${API_BASE_URL}/analysis/${encodeURIComponent(
+                analysisId
+            )}/pdf`;
 
-        if (!response.ok) {
 
-            const text =
-                await response.text();
+        const response = await fetch(
+            pdfURL,
+            {
+                method: "GET",
+
+                headers: {
+                    "Accept": "application/pdf",
+                    "Authorization": `Bearer ${token}`
+                },
+
+                cache: "no-store"
+            }
+        );
+
+
+        if (response.status === 401) {
 
             throw new Error(
-                `PDF download failed (${response.status})`
+                "Your login session has expired. Please login again."
             );
         }
 
 
-        return response.blob();
+        if (response.status === 404) {
 
-    })
+            throw new Error(
+                "PDF endpoint was not found on the server."
+            );
+        }
 
-    .then(blob => {
 
-        const url =
+        if (!response.ok) {
+
+            throw new Error(
+                `PDF download failed (${response.status}).`
+            );
+        }
+
+
+        const blob =
+            await response.blob();
+
+
+        const blobURL =
             window.URL.createObjectURL(blob);
 
 
-        const link =
+        const downloadLink =
             document.createElement("a");
 
 
-        link.href = url;
+        downloadLink.href =
+            blobURL;
 
 
-        link.download =
-            `analysis-${id}.pdf`;
+        downloadLink.download =
+            `AI-Visibility-Analysis-${analysisId}.pdf`;
 
 
-        document.body.appendChild(link);
+        document.body.appendChild(
+            downloadLink
+        );
 
 
-        link.click();
+        downloadLink.click();
 
 
-        link.remove();
+        downloadLink.remove();
 
 
-        window.URL.revokeObjectURL(url);
+        setTimeout(
+            () => {
+                window.URL.revokeObjectURL(
+                    blobURL
+                );
+            },
+            1000
+        );
 
-    })
-
-    .catch(error => {
+    }
+    catch (error) {
 
         console.error(
             "PDF download error:",
@@ -403,25 +514,34 @@ function downloadAnalysisPDF(id, website) {
 
 
         alert(
-            "Unable to download the PDF report."
+            error.message ||
+            "Unable to download PDF report."
         );
 
-    });
+    }
+    finally {
+
+        button.disabled = false;
+
+        button.innerHTML =
+            originalText;
+    }
 }
 
 
-/* =========================================================
-   MAKE PDF BUTTON
-   ========================================================= */
+/* ---------------------------------------------------------
+   CREATE PDF BUTTON
+   --------------------------------------------------------- */
 
-function createPDFButton(id, website) {
+function createPDFSection(
+    analysisId
+) {
 
-    const wrapper =
+    const footer =
         document.createElement("div");
 
-
-    wrapper.className =
-        "history-pdf-section";
+    footer.className =
+        "history-card-footer";
 
 
     const button =
@@ -433,7 +553,7 @@ function createPDFButton(id, website) {
 
 
     button.className =
-        "history-pdf-btn";
+        "download-pdf-btn";
 
 
     button.innerHTML =
@@ -442,31 +562,35 @@ function createPDFButton(id, website) {
 
     button.addEventListener(
         "click",
-        function () {
+        () => {
 
-            downloadAnalysisPDF(
-                id,
-                website
+            downloadPDF(
+                analysisId,
+                button
             );
 
         }
     );
 
 
-    wrapper.appendChild(button);
+    footer.appendChild(
+        button
+    );
 
 
-    return wrapper;
+    return footer;
 }
 
 
-/* =========================================================
+/* ---------------------------------------------------------
    CREATE HISTORY CARD
-   ========================================================= */
+   --------------------------------------------------------- */
 
-function createHistoryCard(item) {
+function createHistoryCard(
+    item
+) {
 
-    const id =
+    const analysisId =
         getAnalysisId(item);
 
 
@@ -490,9 +614,9 @@ function createHistoryCard(item) {
         "history-card";
 
 
-    /* =====================================================
-       CARD CONTENT
-       ===================================================== */
+    /* -----------------------------------------
+       MAIN CONTENT
+       ----------------------------------------- */
 
     const content =
         document.createElement("div");
@@ -502,20 +626,27 @@ function createHistoryCard(item) {
         "history-card-content";
 
 
-    const title =
+    /* WEBSITE */
+
+    const websiteTitle =
         document.createElement("h4");
 
 
-    title.className =
+    websiteTitle.className =
         "history-website";
 
 
-    title.textContent =
-        website || "Website unavailable";
+    websiteTitle.textContent =
+        website ||
+        "Website unavailable";
 
 
-    content.appendChild(title);
+    content.appendChild(
+        websiteTitle
+    );
 
+
+    /* DATE */
 
     const date =
         document.createElement("p");
@@ -529,65 +660,73 @@ function createHistoryCard(item) {
         formatDate(createdDate);
 
 
-    content.appendChild(date);
+    content.appendChild(
+        date
+    );
 
 
-    const analysisID =
-        document.createElement("p");
+    /* DETAILS */
+
+    const details =
+        document.createElement("div");
 
 
-    analysisID.className =
-        "history-detail";
+    details.className =
+        "history-details";
 
 
-    analysisID.innerHTML =
-        `<strong>Analysis ID:</strong> ${escapeHTML(id)}`;
+    details.innerHTML = `
+
+        <p class="history-detail">
+
+            <strong>Analysis ID:</strong>
+
+            ${escapeHTML(analysisId)}
+
+        </p>
 
 
-    content.appendChild(analysisID);
+        <p class="history-detail history-url">
+
+            <strong>Website:</strong>
+
+            ${escapeHTML(website)}
+
+        </p>
 
 
-    const websiteRow =
-        document.createElement("p");
+        <p class="history-detail">
+
+            <strong>Status:</strong>
+
+            <span class="status-completed">
+
+                ${escapeHTML(status)}
+
+            </span>
+
+        </p>
+
+    `;
 
 
-    websiteRow.className =
-        "history-detail";
+    content.appendChild(
+        details
+    );
 
-
-    websiteRow.innerHTML =
-        `<strong>Website:</strong> ${escapeHTML(website)}`;
-
-
-    content.appendChild(websiteRow);
-
-
-    const statusRow =
-        document.createElement("p");
-
-
-    statusRow.className =
-        "history-detail";
-
-
-    statusRow.innerHTML =
-        `<strong>Status:</strong> ${escapeHTML(status)}`;
-
-
-    content.appendChild(statusRow);
-
-
-    card.appendChild(content);
-
-
-    /* =====================================================
-       PDF BUTTON AT THE END OF EACH RECORD
-       ===================================================== */
 
     card.appendChild(
-        createPDFButton(
-            id,
-            website
+        content
+    );
+
+
+    /* -----------------------------------------
+       PDF BUTTON AT END OF RECORD
+       ----------------------------------------- */
+
+    card.appendChild(
+        createPDFSection(
+            analysisId
         )
     );
 
@@ -596,226 +735,59 @@ function createHistoryCard(item) {
 }
 
 
-/* =========================================================
-   NORMALIZE API RESPONSE
-   ========================================================= */
-
-function normalizeHistoryResponse(data) {
-
-    /*
-       Your backend may return:
-
-       []
-       OR
-       { history: [] }
-       OR
-       { analyses: [] }
-       OR
-       { data: [] }
-
-       Handle all common formats.
-    */
-
-    if (Array.isArray(data)) {
-        return data;
-    }
-
-
-    if (
-        data &&
-        Array.isArray(data.history)
-    ) {
-        return data.history;
-    }
-
-
-    if (
-        data &&
-        Array.isArray(data.analyses)
-    ) {
-        return data.analyses;
-    }
-
-
-    if (
-        data &&
-        Array.isArray(data.data)
-    ) {
-        return data.data;
-    }
-
-
-    if (
-        data &&
-        Array.isArray(data.results)
-    ) {
-        return data.results;
-    }
-
-
-    return [];
-}
-
-
-/* =========================================================
+/* ---------------------------------------------------------
    LOAD HISTORY
-   ========================================================= */
+   --------------------------------------------------------- */
 
 async function loadHistory() {
 
     showLoading();
 
 
-    /*
-       Check authentication.
-    */
-
-    const currentToken =
-        getAuthToken();
-
-
-    if (!currentToken) {
-
-        showError(
-            "Your login session has expired. Please login again."
-        );
-
-        return;
-    }
-
-
     try {
 
-        console.log(
-            "Loading analysis history..."
-        );
-
-
-        console.log(
-            "API:",
-            `${API_BASE_URL}/analysis-history`
-        );
-
-
-        /*
-           IMPORTANT:
-           Call Render backend directly.
-        */
-
-        const response =
-            await fetch(
-                `${API_BASE_URL}/analysis-history`,
-                {
-
-                    method: "GET",
-
-                    headers: {
-
-                        "Accept":
-                            "application/json",
-
-                        "Authorization":
-                            `Bearer ${currentToken}`
-
-                    },
-
-                    cache: "no-store"
-
-                }
-            );
-
-
-        console.log(
-            "History response status:",
-            response.status
-        );
-
-
-        /* =================================================
-           HANDLE 401
-        ================================================= */
-
-        if (response.status === 401) {
-
-            localStorage.removeItem(
-                "token"
-            );
-
-
-            showError(
-                "Your login session has expired. Please login again."
-            );
-
-
-            return;
-        }
-
-
-        /* =================================================
-           HANDLE 404
-        ================================================= */
-
-        if (response.status === 404) {
-
-            throw new Error(
-                "History API was not found. Please check the Render backend URL and /analysis-history route."
-            );
-        }
-
-
-        /* =================================================
-           HANDLE OTHER SERVER ERRORS
-        ================================================= */
-
-        if (!response.ok) {
-
-            throw new Error(
-                `Server returned HTTP ${response.status}`
-            );
-        }
-
-
-        /* =================================================
-           READ JSON
-        ================================================= */
-
         const data =
-            await response.json();
-
-
-        console.log(
-            "History API response:",
-            data
-        );
+            await fetchHistory();
 
 
         const history =
-            normalizeHistoryResponse(data);
+            normalizeHistoryResponse(
+                data
+            );
 
 
-        /* =================================================
-           EMPTY HISTORY
-        ================================================= */
+        console.log(
+            "Analysis history:",
+            history
+        );
 
-        if (!history.length) {
 
-            showEmpty();
+        if (
+            !Array.isArray(history) ||
+            history.length === 0
+        ) {
+
+            if (historyList) {
+                historyList.innerHTML = "";
+            }
 
             if (historyCount) {
                 historyCount.textContent =
                     "0 analyses";
             }
 
+            showEmpty();
+
             return;
         }
 
 
-        /* =================================================
-           SORT NEWEST FIRST
-        ================================================= */
+        /* -----------------------------------------
+           NEWEST FIRST
+           ----------------------------------------- */
 
         history.sort(
-            function (a, b) {
+            (a, b) => {
 
                 const dateA =
                     new Date(
@@ -829,22 +801,52 @@ async function loadHistory() {
                     ).getTime();
 
 
-                return dateB - dateA;
+                if (
+                    Number.isNaN(dateA) &&
+                    Number.isNaN(dateB)
+                ) {
+                    return 0;
+                }
 
+
+                if (
+                    Number.isNaN(dateA)
+                ) {
+                    return 1;
+                }
+
+
+                if (
+                    Number.isNaN(dateB)
+                ) {
+                    return -1;
+                }
+
+
+                return dateB - dateA;
             }
         );
 
 
-        /* =================================================
-           CLEAR OLD RECORDS
-        ================================================= */
-
         historyList.innerHTML = "";
 
 
-        /* =================================================
-           UPDATE COUNT
-        ================================================= */
+        history.forEach(
+            item => {
+
+                const card =
+                    createHistoryCard(
+                        item
+                    );
+
+
+                historyList.appendChild(
+                    card
+                );
+
+            }
+        );
+
 
         if (historyCount) {
 
@@ -858,34 +860,9 @@ async function loadHistory() {
         }
 
 
-        /* =================================================
-           CREATE CARDS
-        ================================================= */
-
-        history.forEach(
-            function (item) {
-
-                historyList.appendChild(
-                    createHistoryCard(item)
-                );
-
-            }
-        );
-
-
-        /* =================================================
-           SHOW HISTORY
-        ================================================= */
-
         showHistory();
 
-
-        console.log(
-            `Loaded ${history.length} analysis records.`
-        );
-
     }
-
     catch (error) {
 
         console.error(
@@ -898,55 +875,62 @@ async function loadHistory() {
             error.message ||
             "Unable to load analysis history."
         );
-
     }
-
 }
 
 
-/* =========================================================
+/* ---------------------------------------------------------
    RETRY
-   ========================================================= */
+   --------------------------------------------------------- */
 
 if (retryBtn) {
 
     retryBtn.addEventListener(
         "click",
-        function () {
-
-            loadHistory();
-
-        }
+        loadHistory
     );
 
 }
 
 
-/* =========================================================
+/* ---------------------------------------------------------
    LOGOUT
-   ========================================================= */
+   --------------------------------------------------------- */
 
 if (logoutBtn) {
 
     logoutBtn.addEventListener(
         "click",
-        function () {
+        () => {
 
             localStorage.removeItem(
                 "token"
             );
 
+            localStorage.removeItem(
+                "access_token"
+            );
 
             localStorage.removeItem(
-                "authToken"
+                "accessToken"
             );
 
 
-            sessionStorage.clear();
+            sessionStorage.removeItem(
+                "token"
+            );
+
+            sessionStorage.removeItem(
+                "access_token"
+            );
+
+            sessionStorage.removeItem(
+                "accessToken"
+            );
 
 
             window.location.href =
-                "index.html";
+                "login.html";
 
         }
     );
@@ -954,13 +938,13 @@ if (logoutBtn) {
 }
 
 
-/* =========================================================
+/* ---------------------------------------------------------
    START
-   ========================================================= */
+   --------------------------------------------------------- */
 
 document.addEventListener(
     "DOMContentLoaded",
-    function () {
+    () => {
 
         loadHistory();
 

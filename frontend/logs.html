@@ -12,9 +12,27 @@
 
     <title>Analysis History | AI Visibility Analyzer</title>
 
+    <!-- Main CSS -->
     <link
         rel="stylesheet"
         href="css/logs.css"
+    >
+
+    <!-- Google Font -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
     >
 
 </head>
@@ -40,6 +58,7 @@
 
         <nav class="sidebar-nav">
 
+            <!-- Dashboard -->
 
             <a
                 href="dashboard.html"
@@ -53,6 +72,8 @@
             </a>
 
 
+            <!-- Website Analysis -->
+
             <a
                 href="dashboard.html"
                 class="nav-item"
@@ -65,9 +86,12 @@
             </a>
 
 
+            <!-- Logs -->
+
             <a
                 href="logs.html"
                 class="nav-item active"
+                aria-current="page"
             >
 
                 <span class="nav-icon">📈</span>
@@ -76,6 +100,8 @@
 
             </a>
 
+
+            <!-- AI Visibility -->
 
             <a
                 href="dashboard.html"
@@ -89,6 +115,8 @@
             </a>
 
 
+            <!-- Settings -->
+
             <a
                 href="dashboard.html"
                 class="nav-item"
@@ -101,6 +129,8 @@
             </a>
 
 
+            <!-- Profile -->
+
             <a
                 href="profile.html"
                 class="nav-item"
@@ -112,9 +142,10 @@
 
             </a>
 
-
         </nav>
 
+
+        <!-- Logout -->
 
         <button
             type="button"
@@ -125,7 +156,6 @@
             🚪 Logout
 
         </button>
-
 
     </aside>
 
@@ -138,17 +168,21 @@
     <main class="main-content">
 
 
-        <!-- PAGE HEADER -->
+        <!-- =================================================
+             PAGE HEADER
+        ================================================== -->
 
         <header class="page-header">
 
             <div>
 
-                <h2>Analysis History</h2>
+                <h2>
+                    Analysis History
+                </h2>
 
                 <p>
-                    View and download your previous website AI
-                    visibility analysis reports.
+                    View and download your previous website
+                    AI visibility analysis reports.
                 </p>
 
             </div>
@@ -166,7 +200,10 @@
             class="loading-box"
         >
 
-            <div class="loader"></div>
+            <div
+                class="loader"
+                aria-hidden="true"
+            ></div>
 
             <p>
                 Loading your analysis history...
@@ -183,17 +220,16 @@
         <section
             id="errorBox"
             class="error-box hidden"
+            role="alert"
         >
 
             <h3>
                 Unable to load history
             </h3>
 
-
             <p id="errorMessage">
                 Something went wrong.
             </p>
-
 
             <button
                 type="button"
@@ -218,20 +254,20 @@
             class="empty-box hidden"
         >
 
-            <div class="empty-icon">
+            <div
+                class="empty-icon"
+                aria-hidden="true"
+            >
                 📊
             </div>
-
 
             <h3>
                 No Analysis History
             </h3>
 
-
             <p>
                 Your completed website analyses will appear here.
             </p>
-
 
             <a
                 href="dashboard.html"
@@ -247,7 +283,7 @@
 
 
         <!-- =================================================
-             HISTORY
+             HISTORY CONTAINER
         ================================================== -->
 
         <section
@@ -266,7 +302,6 @@
                         Your Previous Analyses
                     </h3>
 
-
                     <p id="historyCount">
                         0 analyses
                     </p>
@@ -278,23 +313,23 @@
 
 
             <!-- =================================================
-                 HISTORY RECORDS ARE INSERTED HERE BY logs.js
-                 
-                 Each record should contain:
+                 HISTORY RECORDS
 
-                 Website
-                 Date
-                 Analysis ID
-                 Status
-                 Download PDF button
+                 logs.js will insert each analysis here.
+
+                 Each record contains:
+
+                 • Website
+                 • Date
+                 • Analysis ID
+                 • Status
+                 • Download PDF button
             ================================================== -->
 
             <div
                 id="historyList"
                 class="history-list"
-            >
-
-            </div>
+            ></div>
 
 
         </section>
