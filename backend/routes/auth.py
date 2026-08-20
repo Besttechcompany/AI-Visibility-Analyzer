@@ -198,7 +198,7 @@ async def google_callback(
         # -------------------------------------------------
 
         frontend_url = (
-            "https://ai-visibility-analyzer-coral.vercel.app"
+            "https://webanalyzer.besttechcompany.com"
         )
 
         dashboard_url = (

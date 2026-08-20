@@ -28,7 +28,7 @@ app.add_middleware(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://ai-visibility-analyzer-coral.vercel.app"
+        "https://webanalyzer.besttechcompany.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
