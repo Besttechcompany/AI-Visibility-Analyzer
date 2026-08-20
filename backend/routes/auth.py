@@ -1,18 +1,277 @@
-from fastapi import APIRouter, Request, Depends, HTTPException
+from fastapi import APIRouter, Request, Depends, HTTPException, status
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 
 from auth.google_auth import oauth
 from database import get_db
 from models import User
 from utils.jwt_handler import create_access_token
 from dependencies import get_current_user
+from utils.password_handler import hash_password, verify_password
 
 import os
 from urllib.parse import urlencode
 
 
 router = APIRouter()
+
+
+# =========================================================
+# REQUEST MODELS
+# =========================================================
+
+class RegisterRequest(BaseModel):
+    name: str
+    email: str
+    password: str
+
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+# =========================================================
+# ORDINARY REGISTER
+# =========================================================
+
+@router.post("/register", tags=["Authentication"])
+def register(
+    data: RegisterRequest,
+    db: Session = Depends(get_db)
+):
+
+    # -----------------------------------------------------
+    # CLEAN INPUT
+    # -----------------------------------------------------
+
+    name = data.name.strip()
+    email = data.email.strip().lower()
+    password = data.password
+
+    # -----------------------------------------------------
+    # VALIDATE NAME
+    # -----------------------------------------------------
+
+    if not name:
+        raise HTTPException(
+            status_code=400,
+            detail="Name is required."
+        )
+
+    # -----------------------------------------------------
+    # VALIDATE EMAIL
+    # -----------------------------------------------------
+
+    if not email or "@" not in email:
+        raise HTTPException(
+            status_code=400,
+            detail="Please enter a valid email address."
+        )
+
+    # -----------------------------------------------------
+    # VALIDATE PASSWORD
+    # -----------------------------------------------------
+
+    if len(password) < 8:
+        raise HTTPException(
+            status_code=400,
+            detail="Password must be at least 8 characters."
+        )
+
+    # -----------------------------------------------------
+    # CHECK EXISTING USER
+    # -----------------------------------------------------
+
+    existing_user = (
+        db.query(User)
+        .filter(User.email == email)
+        .first()
+    )
+
+    if existing_user:
+
+        # Existing Google account
+        if existing_user.google_id:
+
+            raise HTTPException(
+                status_code=409,
+                detail=(
+                    "An account already exists with this email "
+                    "using Google login. Please continue with Google."
+                )
+            )
+
+        # Existing ordinary account
+        raise HTTPException(
+            status_code=409,
+            detail="An account already exists with this email."
+        )
+
+    # -----------------------------------------------------
+    # HASH PASSWORD
+    # -----------------------------------------------------
+
+    password_hash = hash_password(password)
+
+    # -----------------------------------------------------
+    # CREATE USER
+    # -----------------------------------------------------
+
+    user = User(
+        google_id=None,
+        email=email,
+        name=name,
+        password_hash=password_hash,
+        picture=None,
+        is_active=True
+    )
+
+    db.add(user)
+
+    try:
+
+        db.commit()
+
+        db.refresh(user)
+
+    except Exception:
+
+        db.rollback()
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to create account."
+        )
+
+    # -----------------------------------------------------
+    # CREATE JWT
+    # -----------------------------------------------------
+
+    access_token = create_access_token(
+        {
+            "user_id": user.id,
+            "email": user.email
+        }
+    )
+
+    # -----------------------------------------------------
+    # RESPONSE
+    # -----------------------------------------------------
+
+    return {
+        "message": "Registration successful.",
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "name": user.name,
+            "picture": user.picture
+        }
+    }
+
+
+# =========================================================
+# ORDINARY LOGIN
+# =========================================================
+
+@router.post("/login", tags=["Authentication"])
+def login(
+    data: LoginRequest,
+    db: Session = Depends(get_db)
+):
+
+    # -----------------------------------------------------
+    # CLEAN INPUT
+    # -----------------------------------------------------
+
+    email = data.email.strip().lower()
+    password = data.password
+
+    # -----------------------------------------------------
+    # FIND USER
+    # -----------------------------------------------------
+
+    user = (
+        db.query(User)
+        .filter(User.email == email)
+        .first()
+    )
+
+    if not user:
+
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password."
+        )
+
+    # -----------------------------------------------------
+    # CHECK ACCOUNT STATUS
+    # -----------------------------------------------------
+
+    if not user.is_active:
+
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Your account is inactive."
+        )
+
+    # -----------------------------------------------------
+    # GOOGLE-ONLY ACCOUNT
+    # -----------------------------------------------------
+
+    if not user.password_hash:
+
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=(
+                "This account uses Google login. "
+                "Please continue with Google."
+            )
+        )
+
+    # -----------------------------------------------------
+    # VERIFY PASSWORD
+    # -----------------------------------------------------
+
+    if not verify_password(
+        password,
+        user.password_hash
+    ):
+
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password."
+        )
+
+    # -----------------------------------------------------
+    # CREATE JWT
+    # -----------------------------------------------------
+
+    access_token = create_access_token(
+        {
+            "user_id": user.id,
+            "email": user.email
+        }
+    )
+
+    # -----------------------------------------------------
+    # RESPONSE
+    # -----------------------------------------------------
+
+    return {
+        "message": "Login successful.",
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "name": user.name,
+            "picture": user.picture
+        }
+    }
 
 
 # =========================================================
@@ -31,6 +290,7 @@ async def google_login(request: Request):
     print(redirect_uri)
 
     if not redirect_uri:
+
         raise HTTPException(
             status_code=500,
             detail="GOOGLE_REDIRECT_URI is not configured."
@@ -65,8 +325,9 @@ async def google_callback(
             request
         )
 
-        print("Google authorization successful.")
-
+        print(
+            "Google authorization successful."
+        )
 
         # -------------------------------------------------
         # 2. GET GOOGLE USER INFORMATION
@@ -76,24 +337,15 @@ async def google_callback(
 
         if not user_info:
 
-            print(
-                "ERROR: Google user information not found."
-            )
-
             raise HTTPException(
                 status_code=400,
                 detail="Google user information not found."
             )
 
-
         email = user_info.get("email")
-
         google_id = user_info.get("sub")
-
         name = user_info.get("name")
-
         picture = user_info.get("picture")
-
 
         if not email or not google_id:
 
@@ -102,45 +354,37 @@ async def google_callback(
                 detail="Incomplete Google user information."
             )
 
+        email = email.strip().lower()
 
         print(
             f"Google Email: {email}"
         )
 
-
         # -------------------------------------------------
-        # 3. FIND EXISTING USER
+        # 3. FIND USER BY EMAIL
         # -------------------------------------------------
 
         user = (
             db.query(User)
-            .filter(
-                User.email == email
-            )
+            .filter(User.email == email)
             .first()
         )
 
-
         # -------------------------------------------------
-        # 4. CREATE USER IF NOT EXISTS
+        # 4. CREATE NEW GOOGLE USER
         # -------------------------------------------------
 
         if not user:
 
-            print("Creating new user...")
+            print("Creating new Google user...")
 
             user = User(
-
                 google_id=google_id,
-
                 email=email,
-
                 name=name or email.split("@")[0],
-
+                password_hash=None,
                 picture=picture,
-
                 is_active=True
-
             )
 
             db.add(user)
@@ -150,7 +394,7 @@ async def google_callback(
             db.refresh(user)
 
             print(
-                f"New user created: {user.id}"
+                f"New Google user created: {user.id}"
             )
 
         else:
@@ -159,20 +403,63 @@ async def google_callback(
                 f"Existing user found: {user.id}"
             )
 
+            # ---------------------------------------------
+            # LINK GOOGLE TO EXISTING ORDINARY ACCOUNT
+            # ---------------------------------------------
+
+            if user.google_id is None:
+
+                print(
+                    "Linking Google account to existing user."
+                )
+
+                user.google_id = google_id
+
+                if name:
+                    user.name = name
+
+                if picture:
+                    user.picture = picture
+
+                db.commit()
+
+                db.refresh(user)
+
+            # ---------------------------------------------
+            # CHECK GOOGLE ID
+            # ---------------------------------------------
+
+            elif user.google_id != google_id:
+
+                raise HTTPException(
+                    status_code=409,
+                    detail=(
+                        "This email is already associated "
+                        "with a different Google account."
+                    )
+                )
 
         # -------------------------------------------------
-        # 5. CREATE OUR APPLICATION JWT
+        # 5. CHECK ACTIVE STATUS
+        # -------------------------------------------------
+
+        if not user.is_active:
+
+            raise HTTPException(
+                status_code=403,
+                detail="Your account is inactive."
+            )
+
+        # -------------------------------------------------
+        # 6. CREATE APPLICATION JWT
         # -------------------------------------------------
 
         access_token = create_access_token(
-
             {
                 "user_id": user.id,
                 "email": user.email
             }
-
         )
-
 
         if not access_token:
 
@@ -181,8 +468,9 @@ async def google_callback(
                 detail="Unable to create access token."
             )
 
-
-        print("JWT CREATED SUCCESSFULLY")
+        print(
+            "JWT CREATED SUCCESSFULLY"
+        )
 
         print(
             f"User ID: {user.id}"
@@ -192,25 +480,18 @@ async def google_callback(
             f"Email: {user.email}"
         )
 
-
         # -------------------------------------------------
-        # 6. BUILD FRONTEND REDIRECT URL
+        # 7. FRONTEND REDIRECT
         # -------------------------------------------------
 
-        frontend_url = (
+        frontend_url = os.getenv(
+            "FRONTEND_URL",
             "https://webanalyzer.besttechcompany.com"
-        )
+        ).rstrip("/")
 
         dashboard_url = (
             f"{frontend_url}/dashboard.html"
         )
-
-
-        # IMPORTANT:
-        # Send the JWT to the frontend.
-        #
-        # We use urlencode() so the token is safely
-        # placed inside the URL.
 
         query_string = urlencode(
             {
@@ -218,47 +499,30 @@ async def google_callback(
             }
         )
 
-
         redirect_url = (
             f"{dashboard_url}?{query_string}"
         )
 
-
-        # DO NOT PRINT THE ACTUAL TOKEN.
-        # Just confirm that the token is attached.
-
         print(
-            "Redirecting to dashboard with JWT token."
+            "Redirecting to dashboard with JWT."
         )
 
         print(
             f"Redirect URL: {dashboard_url}?token=[JWT]"
         )
 
-
-        # -------------------------------------------------
-        # 7. REDIRECT TO VERCEL DASHBOARD
-        # -------------------------------------------------
-
         return RedirectResponse(
-
             url=redirect_url,
-
             status_code=302
-
         )
-
 
     except HTTPException:
 
         raise
 
-
     except Exception as e:
 
-        print(
-            "=" * 60
-        )
+        print("=" * 60)
 
         print(
             "GOOGLE CALLBACK ERROR:"
@@ -268,16 +532,11 @@ async def google_callback(
             repr(e)
         )
 
-        print(
-            "=" * 60
-        )
+        print("=" * 60)
 
         raise HTTPException(
-
             status_code=500,
-
             detail="Google login failed."
-
         )
 
 
@@ -285,7 +544,10 @@ async def google_callback(
 # PROFILE
 # =========================================================
 
-@router.get("/profile", tags=["Authentication"])
+@router.get(
+    "/profile",
+    tags=["Authentication"]
+)
 def get_profile(
     current_user: User = Depends(
         get_current_user
@@ -319,7 +581,5 @@ def get_profile(
 
             "created_at":
                 current_user.created_at
-
         }
-
     }

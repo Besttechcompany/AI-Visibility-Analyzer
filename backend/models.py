@@ -23,17 +23,32 @@ class User(Base):
 
     __tablename__ = "users"
 
+    # -----------------------------------------------------
+    # PRIMARY KEY
+    # -----------------------------------------------------
+
     id = Column(
         Integer,
         primary_key=True,
         index=True
     )
 
+    # -----------------------------------------------------
+    # GOOGLE AUTHENTICATION
+    # -----------------------------------------------------
+    # NULL for normal email/password users.
+    # Contains Google's unique user ID for Google users.
+
     google_id = Column(
         String,
         unique=True,
-        nullable=False
+        nullable=True
     )
+
+    # -----------------------------------------------------
+    # EMAIL
+    # -----------------------------------------------------
+    # Required for both normal and Google users.
 
     email = Column(
         String,
@@ -42,23 +57,56 @@ class User(Base):
         index=True
     )
 
+    # -----------------------------------------------------
+    # NAME
+    # -----------------------------------------------------
+
     name = Column(
         String,
         nullable=False
     )
 
-    picture = Column(
-        String
+    # -----------------------------------------------------
+    # PASSWORD
+    # -----------------------------------------------------
+    # NULL for Google-only users.
+    # Contains the hashed password for normal users.
+    #
+    # NEVER store the actual password here.
+
+    password_hash = Column(
+        String,
+        nullable=True
     )
+
+    # -----------------------------------------------------
+    # PROFILE PICTURE
+    # -----------------------------------------------------
+    # Mainly populated from Google, but optional.
+
+    picture = Column(
+        String,
+        nullable=True
+    )
+
+    # -----------------------------------------------------
+    # ACCOUNT STATUS
+    # -----------------------------------------------------
 
     is_active = Column(
         Boolean,
-        default=True
+        default=True,
+        nullable=False
     )
+
+    # -----------------------------------------------------
+    # ACCOUNT CREATION DATE
+    # -----------------------------------------------------
 
     created_at = Column(
         DateTime(timezone=True),
-        server_default=func.now()
+        server_default=func.now(),
+        nullable=False
     )
 
 
@@ -70,11 +118,20 @@ class AnalysisHistory(Base):
 
     __tablename__ = "analysis_history"
 
+    # -----------------------------------------------------
+    # PRIMARY KEY
+    # -----------------------------------------------------
+
     id = Column(
         Integer,
         primary_key=True,
         index=True
     )
+
+    # -----------------------------------------------------
+    # USER ID
+    # -----------------------------------------------------
+    # Connects every analysis to the logged-in user.
 
     user_id = Column(
         Integer,
@@ -83,18 +140,32 @@ class AnalysisHistory(Base):
         index=True
     )
 
+    # -----------------------------------------------------
+    # WEBSITE ANALYZED
+    # -----------------------------------------------------
+
     website_url = Column(
         Text,
         nullable=False
     )
+
+    # -----------------------------------------------------
+    # ANALYSIS RESULT
+    # -----------------------------------------------------
+    # PostgreSQL JSONB stores the complete analysis result.
 
     analysis_data = Column(
         JSONB,
         nullable=False
     )
 
+    # -----------------------------------------------------
+    # ANALYSIS DATE
+    # -----------------------------------------------------
+
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now(),
+        nullable=False,
         index=True
     )
