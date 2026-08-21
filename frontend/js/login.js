@@ -1,6 +1,6 @@
 // ======================================================
 // AI VISIBILITY ANALYZER
-// LOGIN + REGISTER
+// LOGIN + REGISTRATION
 // ======================================================
 
 
@@ -28,17 +28,53 @@ const loginTab =
 const registerTab =
     document.getElementById("registerTab");
 
-const loginButton =
-    document.getElementById("loginButton");
-
-const registerButton =
-    document.getElementById("registerButton");
-
 const googleButton =
     document.getElementById("googleButton");
 
 const message =
     document.getElementById("message");
+
+
+// Login password
+
+const loginPassword =
+    document.getElementById("loginPassword");
+
+const loginPasswordToggle =
+    document.getElementById(
+        "loginPasswordToggle"
+    );
+
+
+// Register password
+
+const registerPassword =
+    document.getElementById(
+        "registerPassword"
+    );
+
+const registerPasswordToggle =
+    document.getElementById(
+        "registerPasswordToggle"
+    );
+
+
+// Password rules
+
+const ruleLength =
+    document.getElementById("ruleLength");
+
+const ruleUpper =
+    document.getElementById("ruleUpper");
+
+const ruleLower =
+    document.getElementById("ruleLower");
+
+const ruleNumber =
+    document.getElementById("ruleNumber");
+
+const ruleSpecial =
+    document.getElementById("ruleSpecial");
 
 
 // ======================================================
@@ -56,7 +92,6 @@ function showLogin() {
     registerTab.classList.remove("active");
 
     clearMessage();
-
 }
 
 
@@ -75,7 +110,6 @@ function showRegister() {
     registerTab.classList.add("active");
 
     clearMessage();
-
 }
 
 
@@ -104,120 +138,207 @@ function showMessage(
     type = "error"
 ) {
 
-    message.innerHTML = "";
+    message.textContent = text;
 
     message.className =
         "message " + type;
-
-    const textElement =
-        document.createElement("span");
-
-    textElement.textContent =
-        text;
-
-    message.appendChild(
-        textElement
-    );
-
 }
 
 
 function clearMessage() {
 
-    message.innerHTML = "";
+    message.textContent = "";
 
     message.className =
         "message";
-
 }
 
 
 // ======================================================
-// SMALL LOADER
+// PASSWORD SHOW / HIDE
 // ======================================================
 
-function addLoader() {
-
-    const loader =
-        document.createElement("span");
-
-    loader.className =
-        "small-loader";
-
-    loader.setAttribute(
-        "aria-label",
-        "Loading"
-    );
-
-    message.appendChild(
-        loader
-    );
-
-}
-
-
-// ======================================================
-// GET API ERROR
-// ======================================================
-
-async function getErrorMessage(
-    response
+function togglePassword(
+    input,
+    button
 ) {
 
-    try {
+    if (
+        input.type === "password"
+    ) {
 
-        const data =
-            await response.json();
+        input.type = "text";
 
-        if (
-            data &&
-            data.detail
-        ) {
+        button.textContent = "🙈";
 
-            if (
-                Array.isArray(
-                    data.detail
-                )
-            ) {
+        button.setAttribute(
+            "aria-label",
+            "Hide password"
+        );
 
-                return data.detail
-                    .map(
-                        item =>
-                            item.msg ||
-                            "Invalid request."
-                    )
-                    .join(", ");
+    } else {
 
-            }
+        input.type = "password";
 
-            return data.detail;
+        button.textContent = "👁";
 
-        }
-
-        if (
-            data &&
-            data.message
-        ) {
-
-            return data.message;
-
-        }
-
-    }
-
-    catch(error) {
-
-        console.error(
-            "ERROR READING API RESPONSE:",
-            error
+        button.setAttribute(
+            "aria-label",
+            "Show password"
         );
 
     }
 
+}
 
-    return "Something went wrong. Please try again.";
+
+loginPasswordToggle.addEventListener(
+    "click",
+    function() {
+
+        togglePassword(
+            loginPassword,
+            loginPasswordToggle
+        );
+
+    }
+);
+
+
+registerPasswordToggle.addEventListener(
+    "click",
+    function() {
+
+        togglePassword(
+            registerPassword,
+            registerPasswordToggle
+        );
+
+    }
+);
+
+
+// ======================================================
+// PASSWORD VALIDATION
+// ======================================================
+
+function validatePassword(password) {
+
+    const length =
+        password.length >= 8;
+
+    const upper =
+        /[A-Z]/.test(password);
+
+    const lower =
+        /[a-z]/.test(password);
+
+    const number =
+        /[0-9]/.test(password);
+
+    const special =
+        /[^A-Za-z0-9]/.test(password);
+
+
+    return {
+
+        length,
+        upper,
+        lower,
+        number,
+        special,
+
+        valid:
+            length &&
+            upper &&
+            lower &&
+            number &&
+            special
+
+    };
 
 }
+
+
+// ======================================================
+// UPDATE PASSWORD RULE UI
+// ======================================================
+
+function updateRule(
+    element,
+    valid
+) {
+
+    if (valid) {
+
+        element.classList.add(
+            "valid"
+        );
+
+        element.querySelector(
+            "span"
+        ).textContent = "✓";
+
+    } else {
+
+        element.classList.remove(
+            "valid"
+        );
+
+        element.querySelector(
+            "span"
+        ).textContent = "○";
+
+    }
+
+}
+
+
+// ======================================================
+// PASSWORD INPUT EVENT
+// ======================================================
+
+registerPassword.addEventListener(
+    "input",
+    function() {
+
+        const result =
+            validatePassword(
+                registerPassword.value
+            );
+
+
+        updateRule(
+            ruleLength,
+            result.length
+        );
+
+
+        updateRule(
+            ruleUpper,
+            result.upper
+        );
+
+
+        updateRule(
+            ruleLower,
+            result.lower
+        );
+
+
+        updateRule(
+            ruleNumber,
+            result.number
+        );
+
+
+        updateRule(
+            ruleSpecial,
+            result.special
+        );
+
+    }
+);
 
 
 // ======================================================
@@ -234,16 +355,13 @@ loginForm.addEventListener(
 
 
         const email =
-            document
-                .getElementById("loginEmail")
-                .value
-                .trim();
+            document.getElementById(
+                "loginEmail"
+            ).value.trim();
 
 
         const password =
-            document
-                .getElementById("loginPassword")
-                .value;
+            loginPassword.value;
 
 
         if (
@@ -252,7 +370,7 @@ loginForm.addEventListener(
         ) {
 
             showMessage(
-                "Please enter email and password."
+                "Please enter your email and password."
             );
 
             return;
@@ -260,14 +378,30 @@ loginForm.addEventListener(
         }
 
 
-        loginButton.disabled =
-            true;
+        const button =
+            document.getElementById(
+                "loginButton"
+            );
 
-        loginButton.innerHTML =
-            `
-            <span class="button-loader"></span>
-            Logging in...
-            `;
+        const loader =
+            document.getElementById(
+                "loginLoader"
+            );
+
+        const buttonText =
+            button.querySelector(
+                ".button-text"
+            );
+
+
+        button.disabled = true;
+
+        buttonText.textContent =
+            "Logging in...";
+
+        loader.classList.remove(
+            "hidden"
+        );
 
 
         try {
@@ -280,8 +414,10 @@ loginForm.addEventListener(
                         method: "POST",
 
                         headers: {
+
                             "Content-Type":
                                 "application/json"
+
                         },
 
                         body:
@@ -299,53 +435,49 @@ loginForm.addEventListener(
                 );
 
 
-            if (
-                !response.ok
-            ) {
+            let data = {};
 
-                const errorMessage =
-                    await getErrorMessage(
-                        response
-                    );
+            try {
 
-                throw new Error(
-                    errorMessage
-                );
+                data =
+                    await response.json();
+
+            } catch {
+
+                data = {};
 
             }
 
 
-            const data =
-                await response.json();
+            if (!response.ok) {
 
+                throw new Error(
 
-            // =========================================
-            // VERIFY JWT
-            // =========================================
+                    data.detail ||
+                    data.message ||
+                    "Login failed."
+
+                );
+
+            }
+
 
             if (
                 !data.access_token
             ) {
 
                 throw new Error(
-                    "Login succeeded, but the server did not return an access token."
+                    "Login succeeded but no access token was returned."
                 );
 
             }
 
 
-            // =========================================
             // SAVE JWT
-            // =========================================
 
             localStorage.setItem(
                 "access_token",
                 data.access_token
-            );
-
-
-            console.log(
-                "Login successful."
             );
 
 
@@ -355,12 +487,7 @@ loginForm.addEventListener(
             );
 
 
-            addLoader();
-
-
-            // =========================================
-            // GO TO DASHBOARD
-            // =========================================
+            // DASHBOARD
 
             setTimeout(
                 function() {
@@ -369,11 +496,11 @@ loginForm.addEventListener(
                         "dashboard.html";
 
                 },
-                1000
+                700
             );
 
-
         }
+
 
         catch(error) {
 
@@ -388,15 +515,15 @@ loginForm.addEventListener(
                 "Unable to login."
             );
 
-        }
 
-        finally {
+            button.disabled = false;
 
-            loginButton.disabled =
-                false;
-
-            loginButton.textContent =
+            buttonText.textContent =
                 "Login";
+
+            loader.classList.add(
+                "hidden"
+            );
 
         }
 
@@ -418,28 +545,24 @@ registerForm.addEventListener(
 
 
         const name =
-            document
-                .getElementById("registerName")
-                .value
-                .trim();
+            document.getElementById(
+                "registerName"
+            ).value.trim();
 
 
         const email =
-            document
-                .getElementById("registerEmail")
-                .value
-                .trim();
+            document.getElementById(
+                "registerEmail"
+            ).value.trim();
 
 
         const password =
-            document
-                .getElementById("registerPassword")
-                .value;
+            registerPassword.value;
 
 
-        // =========================================
-        // VALIDATION
-        // =========================================
+        // ===============================================
+        // BASIC VALIDATION
+        // ===============================================
 
         if (
             !name ||
@@ -456,12 +579,22 @@ registerForm.addEventListener(
         }
 
 
+        // ===============================================
+        // PASSWORD VALIDATION
+        // ===============================================
+
+        const passwordResult =
+            validatePassword(
+                password
+            );
+
+
         if (
-            password.length < 6
+            !passwordResult.valid
         ) {
 
             showMessage(
-                "Password must contain at least 6 characters."
+                "Please create a stronger password using all the rules shown above."
             );
 
             return;
@@ -469,14 +602,34 @@ registerForm.addEventListener(
         }
 
 
-        registerButton.disabled =
-            true;
+        // ===============================================
+        // BUTTON LOADER
+        // ===============================================
 
-        registerButton.innerHTML =
-            `
-            <span class="button-loader"></span>
-            Creating Account...
-            `;
+        const button =
+            document.getElementById(
+                "registerButton"
+            );
+
+        const loader =
+            document.getElementById(
+                "registerLoader"
+            );
+
+        const buttonText =
+            button.querySelector(
+                ".button-text"
+            );
+
+
+        button.disabled = true;
+
+        buttonText.textContent =
+            "Creating Account...";
+
+        loader.classList.remove(
+            "hidden"
+        );
 
 
         try {
@@ -489,8 +642,10 @@ registerForm.addEventListener(
                         method: "POST",
 
                         headers: {
+
                             "Content-Type":
                                 "application/json"
+
                         },
 
                         body:
@@ -511,74 +666,118 @@ registerForm.addEventListener(
                 );
 
 
-            // =========================================
-            // HANDLE ERROR
-            // =========================================
+            let data = {};
 
-            if (
-                !response.ok
-            ) {
+            try {
 
-                const errorMessage =
-                    await getErrorMessage(
-                        response
-                    );
+                data =
+                    await response.json();
+
+            } catch {
+
+                data = {};
+
+            }
+
+
+            if (!response.ok) {
 
                 throw new Error(
-                    errorMessage
+
+                    data.detail ||
+                    data.message ||
+                    "Registration failed."
+
                 );
 
             }
 
 
-            const data =
-                await response.json();
-
-
-            console.log(
-                "Registration successful.",
-                data
-            );
-
-
             // =========================================
-            // IMPORTANT
-            // =========================================
-            //
-            // DO NOT SAVE JWT HERE.
-            //
-            // Registration does NOT automatically
-            // log the user into the dashboard.
-            //
-            // The user must login separately.
+            // IMPORTANT:
+            // DO NOT SAVE JWT HERE
+            // DO NOT GO TO DASHBOARD HERE
             // =========================================
 
 
             showMessage(
-                "Account created successfully. Redirecting to Login...",
+                "Account created successfully. Please login.",
                 "success"
             );
 
 
-            addLoader();
+            // Clear registration fields
+
+            document.getElementById(
+                "registerName"
+            ).value = "";
+
+
+            document.getElementById(
+                "registerEmail"
+            ).value = "";
+
+
+            registerPassword.value = "";
+
+
+            // Reset password rules
+
+            updateRule(
+                ruleLength,
+                false
+            );
+
+            updateRule(
+                ruleUpper,
+                false
+            );
+
+            updateRule(
+                ruleLower,
+                false
+            );
+
+            updateRule(
+                ruleNumber,
+                false
+            );
+
+            updateRule(
+                ruleSpecial,
+                false
+            );
 
 
             // =========================================
-            // REDIRECT TO LOGIN PAGE
+            // GO TO LOGIN
             // =========================================
 
             setTimeout(
                 function() {
 
-                    window.location.href =
-                        "login.html";
+                    showLogin();
+
+                    document.getElementById(
+                        "loginEmail"
+                    ).value = email;
+
+                    document.getElementById(
+                        "loginPassword"
+                    ).focus();
+
+
+                    showMessage(
+                        "Registration successful. Please login.",
+                        "success"
+                    );
 
                 },
-                1500
+                1000
             );
 
-
         }
+
 
         catch(error) {
 
@@ -594,15 +793,14 @@ registerForm.addEventListener(
             );
 
 
-        }
+            button.disabled = false;
 
-        finally {
-
-            registerButton.disabled =
-                false;
-
-            registerButton.textContent =
+            buttonText.textContent =
                 "Create Account";
+
+            loader.classList.add(
+                "hidden"
+            );
 
         }
 
@@ -618,42 +816,21 @@ googleButton.addEventListener(
     "click",
     function() {
 
-        console.log(
-            "Starting Google Login..."
-        );
+        googleButton.disabled = true;
 
+        googleButton.innerHTML = `
 
-        googleButton.disabled =
-            true;
+            <span class="small-loader"></span>
 
+            <span>
+                Connecting to Google...
+            </span>
 
-        googleButton.innerHTML =
-            `
-            <span class="button-loader"></span>
-            Connecting to Google...
-            `;
+        `;
 
-
-        // =========================================
-        // GOOGLE OAUTH
-        // =========================================
 
         window.location.href =
             `${API_URL}/google/login`;
-
-    }
-);
-
-
-// ======================================================
-// INITIAL STATE
-// ======================================================
-
-document.addEventListener(
-    "DOMContentLoaded",
-    function() {
-
-        showLogin();
 
     }
 );

@@ -28,7 +28,6 @@ body {
     justify-content: center;
 
     padding: 30px;
-
 }
 
 
@@ -37,7 +36,6 @@ body {
     width: 100%;
 
     max-width: 480px;
-
 }
 
 
@@ -52,7 +50,6 @@ body {
     box-shadow:
         0 20px 60px
         rgba(20, 40, 90, 0.12);
-
 }
 
 
@@ -65,7 +62,6 @@ body {
     text-align: center;
 
     margin-bottom: 30px;
-
 }
 
 
@@ -74,7 +70,6 @@ body {
     font-size: 45px;
 
     margin-bottom: 10px;
-
 }
 
 
@@ -85,7 +80,6 @@ body {
     color: #10204a;
 
     font-size: 28px;
-
 }
 
 
@@ -96,7 +90,6 @@ body {
     margin-top: 10px;
 
     line-height: 1.5;
-
 }
 
 
@@ -117,7 +110,6 @@ body {
     border-radius: 12px;
 
     margin-bottom: 30px;
-
 }
 
 
@@ -140,7 +132,6 @@ body {
     font-weight: 600;
 
     color: #687792;
-
 }
 
 
@@ -153,14 +144,12 @@ body {
     box-shadow:
         0 3px 10px
         rgba(0, 0, 0, 0.08);
-
 }
 
 
 .auth-tab:hover {
 
     color: #2563eb;
-
 }
 
 
@@ -173,7 +162,6 @@ body {
     margin-bottom: 5px;
 
     color: #10204a;
-
 }
 
 
@@ -184,7 +172,6 @@ body {
     margin-bottom: 25px;
 
     color: #78859d;
-
 }
 
 
@@ -199,7 +186,6 @@ body {
     font-weight: 600;
 
     color: #263653;
-
 }
 
 
@@ -220,7 +206,6 @@ body {
     transition:
         border-color 0.2s ease,
         box-shadow 0.2s ease;
-
 }
 
 
@@ -231,7 +216,105 @@ body {
     box-shadow:
         0 0 0 3px
         rgba(37, 99, 235, 0.10);
+}
 
+
+/* =========================================
+   PASSWORD FIELD
+========================================= */
+
+.password-wrapper {
+
+    position: relative;
+
+    width: 100%;
+}
+
+
+.password-wrapper input {
+
+    padding-right: 48px;
+}
+
+
+.password-toggle {
+
+    position: absolute;
+
+    right: 12px;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    font-size: 18px;
+
+    padding: 4px;
+
+    color: #64748b;
+}
+
+
+.password-toggle:hover {
+
+    color: #2563eb;
+}
+
+
+/* =========================================
+   PASSWORD RULES
+========================================= */
+
+.password-rules {
+
+    margin-top: 10px;
+
+    padding: 10px 12px;
+
+    background: #f8fafc;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+
+    color: #64748b;
+
+    line-height: 1.8;
+}
+
+
+.password-rules div {
+
+    transition:
+        color 0.2s ease;
+}
+
+
+.password-rules div.valid {
+
+    color: #16a34a;
+
+    font-weight: 600;
+}
+
+
+.password-rules div.valid span {
+
+    color: #16a34a;
+}
+
+
+.password-rules span {
+
+    display: inline-block;
+
+    width: 18px;
 }
 
 
@@ -272,14 +355,12 @@ body {
     transition:
         background 0.2s ease,
         opacity 0.2s ease;
-
 }
 
 
 .primary-btn:hover {
 
     background: #1d4ed8;
-
 }
 
 
@@ -288,7 +369,6 @@ body {
     opacity: 0.65;
 
     cursor: not-allowed;
-
 }
 
 
@@ -309,7 +389,6 @@ body {
     color: #9aa6bb;
 
     font-size: 13px;
-
 }
 
 
@@ -323,7 +402,6 @@ body {
     height: 1px;
 
     background: #e2e7ef;
-
 }
 
 
@@ -362,7 +440,6 @@ body {
     transition:
         background 0.2s ease,
         border-color 0.2s ease;
-
 }
 
 
@@ -371,7 +448,6 @@ body {
     background: #f8faff;
 
     border-color: #cbd5e1;
-
 }
 
 
@@ -380,7 +456,6 @@ body {
     opacity: 0.65;
 
     cursor: not-allowed;
-
 }
 
 
@@ -389,7 +464,6 @@ body {
     width: 20px;
 
     height: 20px;
-
 }
 
 
@@ -416,70 +490,23 @@ body {
     justify-content: center;
 
     gap: 8px;
-
 }
 
 
 .message.error {
 
     color: #dc2626;
-
 }
 
 
 .message.success {
 
     color: #16a34a;
-
 }
 
 
 /* =========================================
-   SMALL LOADER
-========================================= */
-
-.small-loader {
-
-    display: inline-block;
-
-    width: 14px;
-
-    height: 14px;
-
-    border: 2px solid #dbe5f5;
-
-    border-top: 2px solid #2563eb;
-
-    border-radius: 50%;
-
-    animation:
-        smallLoaderSpin
-        0.7s linear infinite;
-
-}
-
-
-@keyframes smallLoaderSpin {
-
-    from {
-
-        transform:
-            rotate(0deg);
-
-    }
-
-    to {
-
-        transform:
-            rotate(360deg);
-
-    }
-
-}
-
-
-/* =========================================
-   BUTTON LOADER
+   LOADERS
 ========================================= */
 
 .button-loader {
@@ -500,26 +527,50 @@ body {
     animation:
         buttonLoaderSpin
         0.7s linear infinite;
+}
 
+
+.small-loader {
+
+    display: inline-block;
+
+    width: 14px;
+
+    height: 14px;
+
+    border: 2px solid #dbe5f5;
+
+    border-top: 2px solid #2563eb;
+
+    border-radius: 50%;
+
+    animation:
+        smallLoaderSpin
+        0.7s linear infinite;
 }
 
 
 @keyframes buttonLoaderSpin {
 
     from {
-
-        transform:
-            rotate(0deg);
-
+        transform: rotate(0deg);
     }
 
     to {
+        transform: rotate(360deg);
+    }
+}
 
-        transform:
-            rotate(360deg);
 
+@keyframes smallLoaderSpin {
+
+    from {
+        transform: rotate(0deg);
     }
 
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 
@@ -529,8 +580,7 @@ body {
 
 .hidden {
 
-    display: none;
-
+    display: none !important;
 }
 
 
@@ -551,14 +601,12 @@ body {
     text-decoration: none;
 
     font-weight: 600;
-
 }
 
 
 .back-home:hover {
 
     text-decoration: underline;
-
 }
 
 
@@ -571,21 +619,18 @@ body {
     body {
 
         padding: 15px;
-
     }
 
 
     .auth-card {
 
         padding: 25px;
-
     }
 
 
     .brand h1 {
 
         font-size: 24px;
-
     }
 
 }
