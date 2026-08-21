@@ -1,716 +1,421 @@
-/* ==========================================================
-   AI VISIBILITY ANALYZER
-   LOGIN PAGE
-========================================================== */
+* {
+    box-sizing: border-box;
+}
 
 
-/* ==========================================================
-   GLOBAL RESET
-========================================================== */
+body {
 
-*{
+    margin: 0;
 
-    margin:0;
-
-    padding:0;
-
-    box-sizing:border-box;
+    min-height: 100vh;
 
     font-family:
+        Inter,
         Arial,
-        Helvetica,
         sans-serif;
-
-}
-
-
-html{
-
-    min-height:100%;
-
-}
-
-
-body{
-
-    min-height:100vh;
 
     background:
         linear-gradient(
             135deg,
-            #2563eb,
-            #1d4ed8
+            #eef3ff,
+            #f8faff
         );
 
-    display:flex;
+    display: flex;
 
-    justify-content:center;
+    align-items: center;
 
-    align-items:center;
+    justify-content: center;
 
-    padding:20px;
+    padding: 30px;
 
 }
 
 
-/* ==========================================================
-   LOGIN CARD
-========================================================== */
+.auth-container {
 
-.login-card{
+    width: 100%;
 
-    width:100%;
+    max-width: 480px;
 
-    max-width:520px;
+}
 
-    background:#ffffff;
 
-    border-radius:22px;
+.auth-card {
 
-    padding:50px 40px;
+    background: white;
 
-    text-align:center;
+    border-radius: 22px;
+
+    padding: 40px;
 
     box-shadow:
         0 20px 60px
-        rgba(0,0,0,.20);
+        rgba(20, 40, 90, 0.12);
 
 }
 
 
-.login-card h1{
+.brand {
 
-    font-size:50px;
+    text-align: center;
 
-    line-height:1.15;
-
-    color:#2563eb;
-
-    margin-bottom:20px;
+    margin-bottom: 30px;
 
 }
 
 
-.login-card p{
+.brand-icon {
 
-    color:#666666;
+    font-size: 45px;
 
-    font-size:20px;
-
-    line-height:1.7;
-
-    margin-bottom:40px;
+    margin-bottom: 10px;
 
 }
 
 
-/* ==========================================================
-   GOOGLE BUTTON
-========================================================== */
+.brand h1 {
 
-.google-btn{
+    margin: 0;
 
-    width:100%;
+    color: #10204a;
 
-    height:62px;
-
-    border:none;
-
-    border-radius:12px;
-
-    background:#2563eb;
-
-    color:#ffffff;
-
-    font-size:22px;
-
-    font-weight:600;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    gap:15px;
-
-    cursor:pointer;
-
-    transition:
-
-        background .25s ease,
-
-        transform .25s ease,
-
-        box-shadow .25s ease,
-
-        opacity .25s ease;
+    font-size: 28px;
 
 }
 
 
-.google-btn:hover{
+.brand p {
 
-    background:#1d4ed8;
+    color: #6b7a99;
 
-    transform:translateY(-2px);
+    margin-top: 10px;
+
+    line-height: 1.5;
+
+}
+
+
+/* TABS */
+
+.auth-tabs {
+
+    display: flex;
+
+    gap: 5px;
+
+    background: #f1f4fa;
+
+    padding: 5px;
+
+    border-radius: 12px;
+
+    margin-bottom: 30px;
+
+}
+
+
+.auth-tab {
+
+    flex: 1;
+
+    border: none;
+
+    padding: 12px;
+
+    border-radius: 9px;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    color: #687792;
+
+}
+
+
+.auth-tab.active {
+
+    background: white;
+
+    color: #2563eb;
 
     box-shadow:
-        0 10px 25px
-        rgba(29,78,216,.30);
+        0 3px 10px
+        rgba(0,0,0,0.08);
 
 }
 
 
-.google-btn:active{
+/* FORM */
 
-    transform:translateY(0);
+.auth-form h2 {
 
-}
+    margin-bottom: 5px;
 
-
-.google-btn:disabled{
-
-    transform:none;
-
-    cursor:wait;
+    color: #10204a;
 
 }
 
 
-.google-btn img{
+.form-subtitle {
 
-    width:28px;
+    margin-top: 0;
 
-    height:28px;
+    margin-bottom: 25px;
 
-    background:#ffffff;
-
-    border-radius:50%;
-
-    padding:4px;
+    color: #78859d;
 
 }
 
 
-/* ==========================================================
-   BACK HOME
-========================================================== */
+.auth-form label {
 
-.back-home{
+    display: block;
 
-    display:inline-block;
+    margin-top: 16px;
 
-    margin-top:35px;
+    margin-bottom: 7px;
 
-    color:#2563eb;
+    font-weight: 600;
 
-    text-decoration:none;
-
-    font-size:18px;
-
-    font-weight:600;
-
-    transition:.2s ease;
+    color: #263653;
 
 }
 
 
-.back-home:hover{
+.auth-form input {
 
-    text-decoration:underline;
+    width: 100%;
 
-}
+    padding: 14px 15px;
 
+    border: 1px solid #d9e0ec;
 
-/* ==========================================================
-   LOADING OVERLAY
-========================================================== */
+    border-radius: 10px;
 
-.loading-overlay{
+    font-size: 15px;
 
-    position:fixed;
-
-    inset:0;
-
-    width:100%;
-
-    height:100%;
-
-    background:
-        rgba(12,25,55,.94);
-
-    display:none;
-
-    justify-content:center;
-
-    align-items:center;
-
-    padding:20px;
-
-    z-index:99999;
+    outline: none;
 
 }
 
 
-/* ==========================================================
-   LOADER CARD
-========================================================== */
+.auth-form input:focus {
 
-.loader-card{
-
-    width:100%;
-
-    max-width:520px;
-
-    background:#ffffff;
-
-    border-radius:22px;
-
-    padding:45px 40px;
-
-    text-align:center;
+    border-color: #2563eb;
 
     box-shadow:
-        0 25px 70px
-        rgba(0,0,0,.35);
-
-    animation:
-        loaderAppear .35s ease;
+        0 0 0 3px
+        rgba(37,99,235,0.10);
 
 }
 
 
-@keyframes loaderAppear{
+/* PRIMARY BUTTON */
 
-    from{
+.primary-btn {
 
-        opacity:0;
+    width: 100%;
 
-        transform:scale(.96);
+    margin-top: 25px;
 
-    }
+    padding: 14px;
 
-    to{
+    border: none;
 
-        opacity:1;
+    border-radius: 10px;
 
-        transform:scale(1);
+    background: #2563eb;
 
-    }
+    color: white;
 
-}
+    font-size: 16px;
 
+    font-weight: 700;
 
-/* ==========================================================
-   AI LOGO
-========================================================== */
-
-.ai-logo{
-
-    font-size:68px;
-
-    line-height:1;
-
-    margin-bottom:18px;
-
-    animation:
-        floatAI 2s ease-in-out infinite;
+    cursor: pointer;
 
 }
 
 
-@keyframes floatAI{
+.primary-btn:hover {
 
-    0%{
-
-        transform:translateY(0);
-
-    }
-
-    50%{
-
-        transform:translateY(-8px);
-
-    }
-
-    100%{
-
-        transform:translateY(0);
-
-    }
+    background: #1d4ed8;
 
 }
 
 
-/* ==========================================================
-   LOADER TITLE
-========================================================== */
+.primary-btn:disabled {
 
-.loader-card h2{
+    opacity: 0.6;
 
-    margin:0 0 30px;
-
-    font-size:32px;
-
-    line-height:1.25;
-
-    color:#2563eb;
+    cursor: not-allowed;
 
 }
 
 
-/* ==========================================================
-   LOGIN PROGRESS CONTAINER
-========================================================== */
+/* DIVIDER */
 
-.login-progress-container{
+.divider {
 
-    width:100%;
+    display: flex;
 
-    margin:0 auto 30px;
+    align-items: center;
 
-}
+    gap: 12px;
 
+    margin: 25px 0;
 
-/* ==========================================================
-   PROGRESS TRACK
-========================================================== */
+    color: #9aa6bb;
 
-.login-progress-track{
-
-    position:relative;
-
-    width:100%;
-
-    height:28px;
-
-    background:#e5e7eb;
-
-    border-radius:999px;
-
-    overflow:hidden;
-
-    border:1px solid #dbe3ef;
-
-    box-shadow:
-        inset 0 2px 5px
-        rgba(0,0,0,.08);
+    font-size: 13px;
 
 }
 
 
-/* ==========================================================
-   PROGRESS BAR
-========================================================== */
+.divider::before,
+.divider::after {
 
-.login-progress-bar{
+    content: "";
 
-    position:relative;
+    flex: 1;
 
-    width:0%;
+    height: 1px;
 
-    height:100%;
-
-    min-width:0;
-
-    border-radius:999px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #2563eb 25%,
-            #3b82f6 25%,
-            #3b82f6 50%,
-            #2563eb 50%,
-            #2563eb 75%,
-            #3b82f6 75%
-        );
-
-    background-size:40px 40px;
-
-    box-shadow:
-        0 4px 14px
-        rgba(37,99,235,.30);
-
-    transition:
-        width .12s linear;
-
-    animation:
-        loginProgressStripes
-        1s linear infinite;
+    background: #e2e7ef;
 
 }
 
 
-@keyframes loginProgressStripes{
+/* GOOGLE */
 
-    from{
+.google-btn {
 
-        background-position:0 0;
+    width: 100%;
 
-    }
+    padding: 13px;
 
-    to{
+    border: 1px solid #d9e0ec;
 
-        background-position:40px 0;
+    background: white;
 
-    }
+    border-radius: 10px;
 
-}
+    display: flex;
 
+    align-items: center;
 
-/* ==========================================================
-   PERCENTAGE
-========================================================== */
+    justify-content: center;
 
-.login-progress-text{
+    gap: 12px;
 
-    position:absolute;
+    cursor: pointer;
 
-    right:12px;
+    font-size: 15px;
 
-    top:50%;
+    font-weight: 600;
 
-    transform:translateY(-50%);
-
-    color:#ffffff;
-
-    font-size:13px;
-
-    font-weight:800;
-
-    line-height:1;
-
-    text-shadow:
-        0 1px 3px
-        rgba(0,0,0,.30);
+    color: #263653;
 
 }
 
 
-/* ==========================================================
-   LOADING MESSAGE
-========================================================== */
+.google-btn:hover {
 
-#loadingMessage{
-
-    margin:0;
-
-    font-size:20px;
-
-    line-height:1.5;
-
-    color:#374151;
-
-    font-weight:700;
+    background: #f8faff;
 
 }
 
 
-/* ==========================================================
-   LOGIN STATUS
-========================================================== */
+.google-btn img {
 
-.login-status{
+    width: 20px;
 
-    margin:10px 0 0;
-
-    color:#64748b;
-
-    font-size:14px;
-
-    line-height:1.6;
+    height: 20px;
 
 }
 
 
-/* ==========================================================
-   MOBILE
-========================================================== */
+/* MESSAGE */
 
-@media(max-width:768px){
+.message {
 
-    body{
+    min-height: 24px;
 
-        padding:15px;
+    margin-top: 20px;
 
-    }
+    text-align: center;
 
+    font-size: 14px;
 
-    .login-card{
-
-        width:100%;
-
-        padding:35px 25px;
-
-    }
-
-
-    .login-card h1{
-
-        font-size:38px;
-
-    }
-
-
-    .login-card p{
-
-        font-size:17px;
-
-        margin-bottom:30px;
-
-    }
-
-
-    .google-btn{
-
-        height:58px;
-
-        font-size:18px;
-
-    }
-
-
-    .loader-card{
-
-        width:100%;
-
-        padding:35px 25px;
-
-    }
-
-
-    .loader-card h2{
-
-        font-size:28px;
-
-        margin-bottom:25px;
-
-    }
-
-
-    .ai-logo{
-
-        font-size:60px;
-
-    }
-
-
-    .login-progress-track{
-
-        height:26px;
-
-    }
-
-
-    #loadingMessage{
-
-        font-size:17px;
-
-    }
-
-
-    .login-status{
-
-        font-size:13px;
-
-    }
+    font-weight: 600;
 
 }
 
 
-/* ==========================================================
-   SMALL MOBILE
-========================================================== */
+.message.error {
 
-@media(max-width:480px){
+    color: #dc2626;
 
-    .login-card{
-
-        padding:30px 20px;
-
-        border-radius:18px;
-
-    }
+}
 
 
-    .login-card h1{
+.message.success {
 
-        font-size:32px;
+    color: #16a34a;
 
-    }
-
-
-    .login-card p{
-
-        font-size:15px;
-
-        line-height:1.6;
-
-    }
+}
 
 
-    .google-btn{
+/* OTHER */
 
-        font-size:16px;
+.hidden {
 
-        height:55px;
+    display: none;
 
-    }
-
-
-    .google-btn img{
-
-        width:25px;
-
-        height:25px;
-
-    }
+}
 
 
-    .loader-card{
+.back-home {
 
-        padding:30px 20px;
+    display: block;
 
-        border-radius:18px;
+    text-align: center;
+
+    margin-top: 25px;
+
+    color: #2563eb;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+}
+
+
+.back-home:hover {
+
+    text-decoration: underline;
+
+}
+
+
+@media (max-width: 600px) {
+
+    body {
+
+        padding: 15px;
 
     }
 
+    .auth-card {
 
-    .loader-card h2{
-
-        font-size:24px;
-
-    }
-
-
-    .ai-logo{
-
-        font-size:52px;
-
-    }
-
-
-    .login-progress-track{
-
-        height:24px;
-
-    }
-
-
-    .login-progress-text{
-
-        right:9px;
-
-        font-size:11px;
-
-    }
-
-
-    #loadingMessage{
-
-        font-size:16px;
+        padding: 25px;
 
     }
 

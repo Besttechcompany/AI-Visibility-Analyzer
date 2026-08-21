@@ -10,14 +10,7 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>
-        Login | AI Visibility Analyzer
-    </title>
-
-
-    <!-- =====================================================
-         CSS
-    ====================================================== -->
+    <title>Login | AI Visibility Analyzer</title>
 
     <link
         rel="stylesheet"
@@ -29,32 +22,178 @@
 
 <body>
 
+<div class="auth-container">
 
-    <!-- =====================================================
-         LOGIN CARD
-    ====================================================== -->
+    <div class="auth-card">
 
-    <div class="login-card">
+        <!-- LOGO / BRAND -->
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🤖
+            </div>
+
+            <h1>
+                AI Visibility Analyzer
+            </h1>
+
+            <p>
+                Analyze how AI platforms understand your website.
+            </p>
+
+        </div>
 
 
-        <h1>
+        <!-- TABS -->
 
-            Welcome Back
+        <div class="auth-tabs">
 
-        </h1>
+            <button
+                id="loginTab"
+                class="auth-tab active"
+                onclick="showLogin()"
+            >
+                Login
+            </button>
+
+            <button
+                id="registerTab"
+                class="auth-tab"
+                onclick="showRegister()"
+            >
+                Register
+            </button>
+
+        </div>
 
 
-        <p>
+        <!-- =========================
+             LOGIN FORM
+        ========================== -->
 
-            Sign in with your Google account to access
-            your AI Visibility Dashboard.
+        <form
+            id="loginForm"
+            class="auth-form"
+        >
 
-        </p>
+            <h2>
+                Welcome Back
+            </h2>
+
+            <p class="form-subtitle">
+                Login to your AI Visibility Dashboard
+            </p>
 
 
-        <!-- =================================================
-             GOOGLE LOGIN BUTTON
-        ================================================== -->
+            <label>
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="loginEmail"
+                placeholder="Enter your email"
+                required
+            >
+
+
+            <label>
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="loginPassword"
+                placeholder="Enter your password"
+                required
+            >
+
+
+            <button
+                type="submit"
+                class="primary-btn"
+            >
+                Login
+            </button>
+
+        </form>
+
+
+        <!-- =========================
+             REGISTER FORM
+        ========================== -->
+
+        <form
+            id="registerForm"
+            class="auth-form hidden"
+        >
+
+            <h2>
+                Create Account
+            </h2>
+
+            <p class="form-subtitle">
+                Create your AI Visibility Analyzer account
+            </p>
+
+
+            <label>
+                Full Name
+            </label>
+
+            <input
+                type="text"
+                id="registerName"
+                placeholder="Enter your full name"
+                required
+            >
+
+
+            <label>
+                Email
+            </label>
+
+            <input
+                type="email"
+                id="registerEmail"
+                placeholder="Enter your email"
+                required
+            >
+
+
+            <label>
+                Password
+            </label>
+
+            <input
+                type="password"
+                id="registerPassword"
+                placeholder="Create a password"
+                required
+            >
+
+
+            <button
+                type="submit"
+                class="primary-btn"
+            >
+                Create Account
+            </button>
+
+        </form>
+
+
+        <!-- DIVIDER -->
+
+        <div class="divider">
+
+            <span>OR</span>
+
+        </div>
+
+
+        <!-- GOOGLE LOGIN -->
 
         <button
             type="button"
@@ -64,493 +203,37 @@
 
             <img
                 src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                alt="Google Logo"
+                alt="Google"
             >
 
             <span>
-
                 Continue with Google
-
             </span>
 
         </button>
 
 
-        <!-- =================================================
-             BACK HOME
-        ================================================== -->
+        <!-- MESSAGE -->
+
+        <div
+            id="message"
+            class="message"
+        ></div>
+
 
         <a
             href="index.html"
             class="back-home"
         >
-
             ← Back to Home
-
         </a>
 
-
     </div>
 
+</div>
 
 
-    <!-- =====================================================
-         LOADING OVERLAY
-    ====================================================== -->
-
-    <div
-        id="loadingOverlay"
-        class="loading-overlay"
-    >
-
-
-        <div class="loader-card">
-
-
-            <!-- =================================================
-                 AI ICON
-            ================================================== -->
-
-            <div class="ai-logo">
-
-                🤖
-
-            </div>
-
-
-            <!-- =================================================
-                 TITLE
-            ================================================== -->
-
-            <h2>
-
-                AI Visibility Analyzer
-
-            </h2>
-
-
-            <!-- =================================================
-                 HORIZONTAL PROGRESS BAR
-            ================================================== -->
-
-            <div class="login-progress-container">
-
-
-                <div class="login-progress-track">
-
-
-                    <div
-                        id="loginProgressBar"
-                        class="login-progress-bar"
-                    >
-
-                        <span
-                            id="loadingPercentage"
-                            class="login-progress-text"
-                        >
-
-                            0%
-
-                        </span>
-
-
-                    </div>
-
-
-                </div>
-
-
-            </div>
-
-
-
-            <!-- =================================================
-                 MAIN MESSAGE
-            ================================================== -->
-
-            <h3 id="loadingMessage">
-
-                🔐 Initializing Secure Login...
-
-            </h3>
-
-
-
-            <!-- =================================================
-                 SMALL STATUS
-            ================================================== -->
-
-            <p
-                id="loginStatus"
-                class="login-status"
-            >
-
-                Preparing secure authentication...
-
-            </p>
-
-
-        </div>
-
-
-    </div>
-
-
-
-    <!-- =====================================================
-         GOOGLE LOGIN SCRIPT
-    ====================================================== -->
-
-    <script>
-
-        function googleLogin() {
-
-            /* =================================================
-               GET ELEMENTS
-            ================================================= */
-
-            const overlay =
-                document.getElementById(
-                    "loadingOverlay"
-                );
-
-            const progressBar =
-                document.getElementById(
-                    "loginProgressBar"
-                );
-
-            const percentage =
-                document.getElementById(
-                    "loadingPercentage"
-                );
-
-            const message =
-                document.getElementById(
-                    "loadingMessage"
-                );
-
-            const status =
-                document.getElementById(
-                    "loginStatus"
-                );
-
-
-            /* =================================================
-               SAFETY CHECK
-            ================================================= */
-
-            if (
-                !overlay ||
-                !progressBar ||
-                !percentage ||
-                !message ||
-                !status
-            ) {
-
-                window.location.href =
-                    "https://ai-visibility-analyzer.onrender.com/google/login";
-
-                return;
-
-            }
-
-
-            /* =================================================
-               SHOW LOADING OVERLAY
-            ================================================= */
-
-            overlay.style.display = "flex";
-
-
-            /* =================================================
-               DISABLE GOOGLE BUTTON
-            ================================================= */
-
-            const googleButton =
-                document.querySelector(
-                    ".google-btn"
-                );
-
-            if (googleButton) {
-
-                googleButton.disabled = true;
-
-                googleButton.style.opacity =
-                    "0.7";
-
-                googleButton.style.cursor =
-                    "wait";
-
-            }
-
-
-            /* =================================================
-               INITIAL PROGRESS
-            ================================================= */
-
-            let progress = 0;
-
-            let redirectStarted = false;
-
-
-            /* =================================================
-               RESET UI
-            ================================================= */
-
-            percentage.textContent =
-                "0%";
-
-            progressBar.style.width =
-                "0%";
-
-            message.innerHTML =
-                "🔐 Initializing Secure Login...";
-
-            status.innerHTML =
-                "Preparing secure authentication...";
-
-
-            /* =================================================
-               SMOOTH PROGRESS TIMER
-
-               Progress becomes slower as it approaches 100%.
-            ================================================= */
-
-            const timer =
-                setInterval(
-                    function () {
-
-
-                        /* -------------------------------------
-                           0% - 30%
-                        ------------------------------------- */
-
-                        if (progress < 30) {
-
-                            progress += 0.65;
-
-                        }
-
-
-                        /* -------------------------------------
-                           30% - 60%
-                        ------------------------------------- */
-
-                        else if (progress < 60) {
-
-                            progress += 0.45;
-
-                        }
-
-
-                        /* -------------------------------------
-                           60% - 80%
-                        ------------------------------------- */
-
-                        else if (progress < 80) {
-
-                            progress += 0.30;
-
-                        }
-
-
-                        /* -------------------------------------
-                           80% - 90%
-                        ------------------------------------- */
-
-                        else if (progress < 90) {
-
-                            progress += 0.20;
-
-                        }
-
-
-                        /* -------------------------------------
-                           90% - 97%
-                        ------------------------------------- */
-
-                        else if (progress < 97) {
-
-                            progress += 0.12;
-
-                        }
-
-
-                        /* -------------------------------------
-                           97% - 100%
-
-                           Very slow final movement.
-                        ------------------------------------- */
-
-                        else if (progress < 100) {
-
-                            progress += 0.05;
-
-                        }
-
-
-                        /* -------------------------------------
-                           NEVER GO ABOVE 100%
-                        ------------------------------------- */
-
-                        progress =
-                            Math.min(
-                                progress,
-                                100
-                            );
-
-
-                        /* =================================================
-                           UPDATE PERCENTAGE
-                        ================================================== */
-
-                        percentage.textContent =
-                            Math.floor(progress) + "%";
-
-
-                        /* =================================================
-                           UPDATE PROGRESS BAR
-                        ================================================== */
-
-                        progressBar.style.width =
-                            progress + "%";
-
-
-                        /* =================================================
-                           STATUS MESSAGES
-                        ================================================== */
-
-                        if (progress < 15) {
-
-                            message.innerHTML =
-                                "🔐 Initializing Secure Login...";
-
-                            status.innerHTML =
-                                "Preparing secure authentication...";
-
-                        }
-
-
-                        else if (progress < 30) {
-
-                            message.innerHTML =
-                                "🌐 Connecting to Google...";
-
-                            status.innerHTML =
-                                "Establishing secure connection...";
-
-                        }
-
-
-                        else if (progress < 50) {
-
-                            message.innerHTML =
-                                "🔍 Verifying Authentication...";
-
-                            status.innerHTML =
-                                "Waiting for Google authentication...";
-
-                        }
-
-
-                        else if (progress < 70) {
-
-                            message.innerHTML =
-                                "🛡 Securing Session...";
-
-                            status.innerHTML =
-                                "Creating your secure session...";
-
-                        }
-
-
-                        else if (progress < 90) {
-
-                            message.innerHTML =
-                                "⚙️ Preparing Dashboard...";
-
-                            status.innerHTML =
-                                "Loading your secure workspace...";
-
-                        }
-
-
-                        else if (progress < 100) {
-
-                            message.innerHTML =
-                                "🚀 Almost Ready...";
-
-                            status.innerHTML =
-                                "Finalizing secure login...";
-
-                        }
-
-
-                        /* =================================================
-                           EXACTLY 100%
-
-                           NO WAITING HERE.
-                           REDIRECT IMMEDIATELY.
-                        ================================================== */
-
-                        if (
-                            progress >= 100 &&
-                            !redirectStarted
-                        ) {
-
-                            redirectStarted = true;
-
-
-                            /* ---------------------------------------------
-                               STOP TIMER
-                            --------------------------------------------- */
-
-                            clearInterval(timer);
-
-
-                            /* ---------------------------------------------
-                               FORCE EXACTLY 100%
-                            --------------------------------------------- */
-
-                            progress = 100;
-
-                            percentage.textContent =
-                                "100%";
-
-                            progressBar.style.width =
-                                "100%";
-
-
-                            /* ---------------------------------------------
-                               SUCCESS MESSAGE
-                            --------------------------------------------- */
-
-                            message.innerHTML =
-                                "✅ Login Successful!";
-
-                            status.innerHTML =
-                                "Opening your dashboard...";
-
-
-                            /* ---------------------------------------------
-                               IMMEDIATE GOOGLE AUTHENTICATION
-                            --------------------------------------------- */
-
-                            window.location.href =
-                                "https://ai-visibility-analyzer.onrender.com/google/login";
-
-                        }
-
-
-                    },
-                    50
-                );
-
-        }
-
-
-    </script>
-
+<script src="js/login.js"></script>
 
 </body>
 

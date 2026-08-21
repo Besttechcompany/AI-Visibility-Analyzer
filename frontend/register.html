@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Create Account | AI Visibility Analyzer</title>
+
+    <link
+        rel="stylesheet"
+        href="css/register.css"
+    >
+
+</head>
+
+
+<body>
+
+<div class="page-wrapper">
+
+
+    <!-- =====================================================
+         LEFT SECTION
+    ====================================================== -->
+
+    <section class="left-section">
+
+
+        <!-- BRAND -->
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🤖
+            </div>
+
+            <div>
+
+                <h1>
+                    AI Visibility Analyzer
+                </h1>
+
+                <p>
+                    AI-powered website visibility analysis
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- LEFT CONTENT -->
+
+        <div class="left-content">
+
+            <h2>
+                Make Your Website
+                <span>AI Visible.</span>
+            </h2>
+
+
+            <p>
+
+                Understand how ChatGPT, Gemini, Claude,
+                Perplexity and other AI platforms understand
+                and discover your website.
+
+            </p>
+
+
+            <div class="feature-list">
+
+
+                <div class="feature">
+
+                    <span>✓</span>
+
+                    <p>
+                        Analyze your website's AI visibility
+                    </p>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <span>✓</span>
+
+                    <p>
+                        Discover how AI platforms understand your brand
+                    </p>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <span>✓</span>
+
+                    <p>
+                        Identify content and visibility opportunities
+                    </p>
+
+                </div>
+
+
+                <div class="feature">
+
+                    <span>✓</span>
+
+                    <p>
+                        Generate detailed AI visibility reports
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         RIGHT SECTION
+    ====================================================== -->
+
+    <section class="right-section">
+
+
+        <div class="register-card">
+
+
+            <!-- MOBILE BRAND -->
+
+            <div class="mobile-brand">
+
+                <h1>
+                    🤖 AI Visibility Analyzer
+                </h1>
+
+            </div>
+
+
+
+            <!-- HEADER -->
+
+            <div class="card-header">
+
+                <h2>
+                    Create Your Account
+                </h2>
+
+                <p>
+                    Start analyzing your website's AI visibility
+                </p>
+
+            </div>
+
+
+
+            <!-- MESSAGE -->
+
+            <div
+                id="message"
+                class="message"
+            ></div>
+
+
+
+            <!-- REGISTER FORM -->
+
+            <form id="registerForm">
+
+
+                <!-- NAME -->
+
+                <div class="form-group">
+
+                    <label for="registerName">
+                        Full Name
+                    </label>
+
+                    <input
+                        type="text"
+                        id="registerName"
+                        placeholder="Enter your full name"
+                        autocomplete="name"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="registerEmail">
+                        Email Address
+                    </label>
+
+                    <input
+                        type="email"
+                        id="registerEmail"
+                        placeholder="Enter your email"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="registerPassword">
+                        Password
+                    </label>
+
+
+                    <div class="password-wrapper">
+
+                        <input
+                            type="password"
+                            id="registerPassword"
+                            placeholder="Create a password"
+                            autocomplete="new-password"
+                            minlength="6"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            onclick="togglePassword()"
+                        >
+                            👁
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TERMS -->
+
+                <div class="terms">
+
+                    <input
+                        type="checkbox"
+                        id="terms"
+                        required
+                    >
+
+                    <label for="terms">
+
+                        I agree to the Terms of Service
+                        and Privacy Policy.
+
+                    </label>
+
+                </div>
+
+
+
+                <!-- REGISTER BUTTON -->
+
+                <button
+                    type="submit"
+                    id="registerButton"
+                    class="register-button"
+                >
+
+                    <span
+                        id="loader"
+                        class="loader"
+                    ></span>
+
+                    <span id="buttonText">
+                        Create Account
+                    </span>
+
+                </button>
+
+
+            </form>
+
+
+
+            <!-- DIVIDER -->
+
+            <div class="divider">
+
+                <span></span>
+
+                <p>OR</p>
+
+                <span></span>
+
+            </div>
+
+
+
+            <!-- GOOGLE -->
+
+            <button
+                type="button"
+                class="google-button"
+                onclick="googleLogin()"
+            >
+
+                <span class="google-icon">
+                    G
+                </span>
+
+                Continue with Google
+
+            </button>
+
+
+
+            <!-- LOGIN -->
+
+            <div class="login-link">
+
+                <p>
+
+                    Already have an account?
+
+                    <a href="login.html">
+                        Login
+                    </a>
+
+                </p>
+
+            </div>
+
+
+
+            <!-- COPYRIGHT -->
+
+            <div class="copyright">
+
+                © 2026 AI Visibility Analyzer.
+                All rights reserved.
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+</div>
+
+
+
+<script src="js/register.js"></script>
+
+</body>
+
+</html>
