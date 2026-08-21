@@ -3771,3 +3771,23 @@ button {
 
 }
 
+
+/* =========================================
+   PROFILE LOADING
+========================================= */
+
+.profile-loading {
+
+    color: #64748b;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+
+}
+
+
+
+

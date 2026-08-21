@@ -14,6 +14,13 @@ const API_URL = "https://ai-visibility-analyzer.onrender.com";
 // AUTHENTICATION TOKEN HELPER
 // =========================================================
 
+// =========================================================
+// AUTHENTICATION TOKEN
+// =========================================================
+
+let accessToken = null;
+
+
 function getAccessToken() {
 
     return localStorage.getItem(
@@ -88,6 +95,11 @@ function checkPDFLibrary() {
    RECEIVE JWT FROM GOOGLE CALLBACK
 ========================================================= */
 
+/* =========================================================
+   AUTHENTICATION
+   HANDLE NORMAL LOGIN + GOOGLE LOGIN
+========================================================= */
+
 function initializeAuthentication() {
 
     const urlParams =
@@ -96,13 +108,17 @@ function initializeAuthentication() {
         );
 
 
+    // =====================================================
+    // CHECK FOR GOOGLE LOGIN TOKEN
+    // =====================================================
+
     const token =
         urlParams.get("token");
 
 
-    // ==================================================
-    // RECEIVE TOKEN FROM GOOGLE CALLBACK
-    // ==================================================
+    // =====================================================
+    // GOOGLE LOGIN
+    // =====================================================
 
     if (token) {
 
@@ -111,28 +127,30 @@ function initializeAuthentication() {
         );
 
 
+        // Save Google JWT
         localStorage.setItem(
             "access_token",
             token
         );
 
 
-        // Keep global variable updated
+        // Update global token
         accessToken = token;
 
 
-        // Remove token from URL
+        // Remove token from browser URL
         window.history.replaceState(
             {},
             document.title,
             window.location.pathname
         );
+
     }
 
 
-    // ==================================================
-    // GET STORED TOKEN
-    // ==================================================
+    // =====================================================
+    // NORMAL LOGIN / STORED TOKEN
+    // =====================================================
 
     accessToken =
         localStorage.getItem(
@@ -140,9 +158,9 @@ function initializeAuthentication() {
         );
 
 
-    // ==================================================
+    // =====================================================
     // NO TOKEN
-    // ==================================================
+    // =====================================================
 
     if (!accessToken) {
 
@@ -156,12 +174,13 @@ function initializeAuthentication() {
 
 
         return false;
+
     }
 
 
-    // ==================================================
+    // =====================================================
     // AUTHENTICATED
-    // ==================================================
+    // =====================================================
 
     console.log(
         "Authentication successful."
@@ -169,8 +188,8 @@ function initializeAuthentication() {
 
 
     return true;
-}
 
+}
 
 // ===========================================
 // Load User Profile
@@ -196,7 +215,7 @@ if (profileCard) {
                 src="${profilePicture}"
                 class="profile-image"
                 alt="Profile"
-                onerror="this.onerror=null; this.src='images/default-profile.png';"
+                onerror="this.onerror=null; this.src='assets/default-user.png';"
             >
 
             <div class="user-info">
@@ -3305,9 +3324,7 @@ function showNotification(
 }
 
 
-// ======================================================
-// Initialize Dashboard
-// ======================================================
+
 
 // ======================================================
 // INITIALIZE DASHBOARD
@@ -3358,6 +3375,282 @@ document.addEventListener(
 
     }
 );
+
+// =========================================================
+// LOAD USER PROFILE
+// =========================================================
+
+async function loadProfile() {
+
+    const token =
+        getAccessToken();
+
+
+    // =====================================================
+    // CHECK TOKEN
+    // =====================================================
+
+    if (!token) {
+
+        console.error(
+            "No access token found."
+        );
+
+
+        window.location.href =
+            "login.html";
+
+
+        return;
+
+    }
+
+
+    // =====================================================
+    // SHOW TEMPORARY PROFILE LOADING
+    // =====================================================
+
+    if (profileCard) {
+
+        profileCard.innerHTML = `
+
+            <div class="user-card">
+
+                <div class="profile-loading">
+                    Loading...
+                </div>
+
+            </div>
+
+        `;
+
+    }
+
+
+    try {
+
+        // =================================================
+        // PROFILE REQUEST
+        // =================================================
+
+        const response =
+            await fetch(
+                `${API_URL}/profile`,
+                {
+
+                    method: "GET",
+
+                    headers: {
+
+                        "Authorization":
+                            `Bearer ${token}`
+
+                    }
+
+                }
+            );
+
+
+        // =================================================
+        // INVALID TOKEN
+        // =================================================
+
+        if (
+            response.status === 401
+        ) {
+
+            console.error(
+                "Access token expired or invalid."
+            );
+
+
+            localStorage.removeItem(
+                "access_token"
+            );
+
+
+            window.location.href =
+                "login.html";
+
+
+            return;
+
+        }
+
+
+        // =================================================
+        // OTHER ERROR
+        // =================================================
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Profile request failed: ${response.status}`
+            );
+
+        }
+
+
+        // =================================================
+        // RESPONSE
+        // =================================================
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Profile loaded successfully:",
+            data
+        );
+
+
+        // =================================================
+        // USER DATA
+        // =================================================
+
+        const user =
+            data.user || {};
+
+
+        const name =
+            user.name ||
+            "User";
+
+
+        const email =
+            user.email ||
+            "";
+
+
+        // =================================================
+        // DEFAULT PROFILE IMAGE
+        // =================================================
+
+        const defaultProfileImage =
+            "assets/default-user.png";
+
+
+        const profileImage =
+            user.picture ||
+            defaultProfileImage;
+
+
+        // =================================================
+        // DISPLAY PROFILE
+        // =================================================
+
+        if (profileCard) {
+
+            profileCard.innerHTML = `
+
+                <div class="user-card">
+
+                    <img
+                        src="${profileImage}"
+                        class="profile-image"
+                        alt="Profile"
+                        onerror="this.onerror=null; this.src='assets/default-user.png';"
+                    >
+
+                    <div class="user-info">
+
+                        <h3>
+                            ${escapeHTML(name)}
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(email)}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Profile loading error:",
+            error
+        );
+
+
+        // =================================================
+        // FALLBACK PROFILE
+        // =================================================
+
+        if (profileCard) {
+
+            profileCard.innerHTML = `
+
+                <div class="user-card">
+
+                    <img
+                        src="images/default-profile.png"
+                        class="profile-image"
+                        alt="Profile"
+                    >
+
+                    <div class="user-info">
+
+                        <h3>
+                            User
+                        </h3>
+
+                        <p>
+                            Unable to load profile
+                        </p>
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }
+
+    }
+
+}
+
+
+// =========================================================
+// ESCAPE HTML
+// =========================================================
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
 
 
 // ======================================================
