@@ -191,51 +191,239 @@ function initializeAuthentication() {
 
 }
 
-// ===========================================
-// Load User Profile
-// ===========================================
-// ===========================================
+// =========================================================
 // LOAD USER PROFILE
-// ===========================================
+// =========================================================
 
-if (profileCard) {
+async function loadProfile() {
 
-    const profilePicture =
-        data.user.picture &&
-        data.user.picture.trim() !== ""
-            ? data.user.picture
-            : "images/default-profile.png";
+    const token =
+        getAccessToken();
 
 
-    profileCard.innerHTML = `
+    // =====================================================
+    // CHECK TOKEN
+    // =====================================================
 
-        <div class="user-card">
+    if (!token) {
 
-            <img
-                src="${profilePicture}"
-                class="profile-image"
-                alt="Profile"
-                onerror="this.onerror=null; this.src='assets/default-user.png';"
-            >
+        console.error(
+            "No access token found."
+        );
 
-            <div class="user-info">
+        window.location.href =
+            "login.html";
 
-                <h3>
-                    ${data.user.name || "User"}
-                </h3>
+        return;
+    }
 
-                <p>
-                    ${data.user.email || ""}
-                </p>
+
+    // =====================================================
+    // SHOW PROFILE LOADING
+    // =====================================================
+
+    if (profileCard) {
+
+        profileCard.innerHTML = `
+            <div class="user-card">
+
+                <div class="profile-loading">
+                    Loading...
+                </div>
 
             </div>
+        `;
+    }
 
-        </div>
 
-    `;
+    try {
+
+        // =================================================
+        // REQUEST PROFILE
+        // =================================================
+
+        const response =
+            await fetch(
+                `${API_URL}/profile`,
+                {
+
+                    method: "GET",
+
+                    headers: {
+
+                        "Authorization":
+                            `Bearer ${token}`
+
+                    }
+
+                }
+            );
+
+
+        // =================================================
+        // INVALID TOKEN
+        // =================================================
+
+        if (response.status === 401) {
+
+            console.error(
+                "Access token expired or invalid."
+            );
+
+            localStorage.removeItem(
+                "access_token"
+            );
+
+            window.location.href =
+                "login.html";
+
+            return;
+        }
+
+
+        // =================================================
+        // OTHER ERROR
+        // =================================================
+
+        if (!response.ok) {
+
+            throw new Error(
+                `Profile request failed: ${response.status}`
+            );
+
+        }
+
+
+        // =================================================
+        // GET RESPONSE
+        // =================================================
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Profile loaded successfully:",
+            data
+        );
+
+
+        // =================================================
+        // USER DATA
+        // =================================================
+
+        const user =
+            data.user || {};
+
+
+        const name =
+            user.name ||
+            "User";
+
+
+        const email =
+            user.email ||
+            "";
+
+
+        // =================================================
+        // DEFAULT PROFILE IMAGE
+        // =================================================
+
+        const defaultProfileImage =
+            "assets/default-user.png";
+
+
+        const profileImage =
+            user.picture &&
+            user.picture.trim() !== ""
+                ? user.picture
+                : defaultProfileImage;
+
+
+        // =================================================
+        // DISPLAY PROFILE
+        // =================================================
+
+        if (profileCard) {
+
+            profileCard.innerHTML = `
+
+                <div class="user-card">
+
+                    <img
+                        src="${profileImage}"
+                        class="profile-image"
+                        alt="Profile"
+                        onerror="
+                            this.onerror=null;
+                            this.src='assets/default-user.png';
+                        "
+                    >
+
+                    <div class="user-info">
+
+                        <h3>
+                            ${escapeHTML(name)}
+                        </h3>
+
+                        <p>
+                            ${escapeHTML(email)}
+                        </p>
+
+                    </div>
+
+                </div>
+
+            `;
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Profile loading error:",
+            error
+        );
+
+
+        // =================================================
+        // FALLBACK PROFILE
+        // =================================================
+
+        if (profileCard) {
+
+            profileCard.innerHTML = `
+
+                <div class="user-card">
+
+                    <img
+                        src="assets/default-user.png"
+                        class="profile-image"
+                        alt="Profile"
+                    >
+
+                    <div class="user-info">
+
+                        <h3>
+                            User
+                        </h3>
+
+                        <p>
+                            Unable to load profile
+                        </p>
+
+                    </div>
+
+                </div>
+
+            `;
+        }
+
+    }
+
 }
-
-
 
 /* =========================================================
    LOGOUT
