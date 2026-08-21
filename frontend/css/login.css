@@ -56,6 +56,10 @@ body {
 }
 
 
+/* =========================================
+   BRAND
+========================================= */
+
 .brand {
 
     text-align: center;
@@ -96,7 +100,9 @@ body {
 }
 
 
-/* TABS */
+/* =========================================
+   TABS
+========================================= */
 
 .auth-tabs {
 
@@ -146,12 +152,21 @@ body {
 
     box-shadow:
         0 3px 10px
-        rgba(0,0,0,0.08);
+        rgba(0, 0, 0, 0.08);
 
 }
 
 
-/* FORM */
+.auth-tab:hover {
+
+    color: #2563eb;
+
+}
+
+
+/* =========================================
+   FORM
+========================================= */
 
 .auth-form h2 {
 
@@ -202,6 +217,10 @@ body {
 
     outline: none;
 
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
 }
 
 
@@ -211,12 +230,14 @@ body {
 
     box-shadow:
         0 0 0 3px
-        rgba(37,99,235,0.10);
+        rgba(37, 99, 235, 0.10);
 
 }
 
 
-/* PRIMARY BUTTON */
+/* =========================================
+   PRIMARY BUTTON
+========================================= */
 
 .primary-btn {
 
@@ -240,6 +261,18 @@ body {
 
     cursor: pointer;
 
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    transition:
+        background 0.2s ease,
+        opacity 0.2s ease;
+
 }
 
 
@@ -252,14 +285,16 @@ body {
 
 .primary-btn:disabled {
 
-    opacity: 0.6;
+    opacity: 0.65;
 
     cursor: not-allowed;
 
 }
 
 
-/* DIVIDER */
+/* =========================================
+   DIVIDER
+========================================= */
 
 .divider {
 
@@ -292,7 +327,9 @@ body {
 }
 
 
-/* GOOGLE */
+/* =========================================
+   GOOGLE BUTTON
+========================================= */
 
 .google-btn {
 
@@ -322,12 +359,27 @@ body {
 
     color: #263653;
 
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+
 }
 
 
 .google-btn:hover {
 
     background: #f8faff;
+
+    border-color: #cbd5e1;
+
+}
+
+
+.google-btn:disabled {
+
+    opacity: 0.65;
+
+    cursor: not-allowed;
 
 }
 
@@ -341,7 +393,9 @@ body {
 }
 
 
-/* MESSAGE */
+/* =========================================
+   MESSAGE
+========================================= */
 
 .message {
 
@@ -354,6 +408,14 @@ body {
     font-size: 14px;
 
     font-weight: 600;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
 
 }
 
@@ -372,7 +434,98 @@ body {
 }
 
 
-/* OTHER */
+/* =========================================
+   SMALL LOADER
+========================================= */
+
+.small-loader {
+
+    display: inline-block;
+
+    width: 14px;
+
+    height: 14px;
+
+    border: 2px solid #dbe5f5;
+
+    border-top: 2px solid #2563eb;
+
+    border-radius: 50%;
+
+    animation:
+        smallLoaderSpin
+        0.7s linear infinite;
+
+}
+
+
+@keyframes smallLoaderSpin {
+
+    from {
+
+        transform:
+            rotate(0deg);
+
+    }
+
+    to {
+
+        transform:
+            rotate(360deg);
+
+    }
+
+}
+
+
+/* =========================================
+   BUTTON LOADER
+========================================= */
+
+.button-loader {
+
+    display: inline-block;
+
+    width: 15px;
+
+    height: 15px;
+
+    border: 2px solid
+        rgba(255, 255, 255, 0.45);
+
+    border-top: 2px solid white;
+
+    border-radius: 50%;
+
+    animation:
+        buttonLoaderSpin
+        0.7s linear infinite;
+
+}
+
+
+@keyframes buttonLoaderSpin {
+
+    from {
+
+        transform:
+            rotate(0deg);
+
+    }
+
+    to {
+
+        transform:
+            rotate(360deg);
+
+    }
+
+}
+
+
+/* =========================================
+   HIDDEN
+========================================= */
 
 .hidden {
 
@@ -380,6 +533,10 @@ body {
 
 }
 
+
+/* =========================================
+   BACK HOME
+========================================= */
 
 .back-home {
 
@@ -405,6 +562,10 @@ body {
 }
 
 
+/* =========================================
+   MOBILE
+========================================= */
+
 @media (max-width: 600px) {
 
     body {
@@ -413,9 +574,17 @@ body {
 
     }
 
+
     .auth-card {
 
         padding: 25px;
+
+    }
+
+
+    .brand h1 {
+
+        font-size: 24px;
 
     }
 

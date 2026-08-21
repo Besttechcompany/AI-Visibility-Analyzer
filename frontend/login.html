@@ -26,7 +26,7 @@
 
     <div class="auth-card">
 
-        <!-- LOGO / BRAND -->
+        <!-- BRAND -->
 
         <div class="brand">
 
@@ -50,17 +50,17 @@
         <div class="auth-tabs">
 
             <button
+                type="button"
                 id="loginTab"
                 class="auth-tab active"
-                onclick="showLogin()"
             >
                 Login
             </button>
 
             <button
+                type="button"
                 id="registerTab"
                 class="auth-tab"
-                onclick="showRegister()"
             >
                 Register
             </button>
@@ -86,7 +86,7 @@
             </p>
 
 
-            <label>
+            <label for="loginEmail">
                 Email
             </label>
 
@@ -94,11 +94,12 @@
                 type="email"
                 id="loginEmail"
                 placeholder="Enter your email"
+                autocomplete="email"
                 required
             >
 
 
-            <label>
+            <label for="loginPassword">
                 Password
             </label>
 
@@ -106,12 +107,14 @@
                 type="password"
                 id="loginPassword"
                 placeholder="Enter your password"
+                autocomplete="current-password"
                 required
             >
 
 
             <button
                 type="submit"
+                id="loginButton"
                 class="primary-btn"
             >
                 Login
@@ -138,7 +141,7 @@
             </p>
 
 
-            <label>
+            <label for="registerName">
                 Full Name
             </label>
 
@@ -146,11 +149,12 @@
                 type="text"
                 id="registerName"
                 placeholder="Enter your full name"
+                autocomplete="name"
                 required
             >
 
 
-            <label>
+            <label for="registerEmail">
                 Email
             </label>
 
@@ -158,11 +162,12 @@
                 type="email"
                 id="registerEmail"
                 placeholder="Enter your email"
+                autocomplete="email"
                 required
             >
 
 
-            <label>
+            <label for="registerPassword">
                 Password
             </label>
 
@@ -170,12 +175,15 @@
                 type="password"
                 id="registerPassword"
                 placeholder="Create a password"
+                autocomplete="new-password"
+                minlength="6"
                 required
             >
 
 
             <button
                 type="submit"
+                id="registerButton"
                 class="primary-btn"
             >
                 Create Account
@@ -197,8 +205,8 @@
 
         <button
             type="button"
+            id="googleButton"
             class="google-btn"
-            onclick="googleLogin()"
         >
 
             <img
@@ -218,8 +226,11 @@
         <div
             id="message"
             class="message"
+            role="alert"
         ></div>
 
+
+        <!-- BACK HOME -->
 
         <a
             href="index.html"
