@@ -179,161 +179,41 @@ function initializeAuthentication() {
 // LOAD USER PROFILE
 // ===========================================
 
-async function loadProfile() {
+if (profileCard) {
 
-    const token =
-        localStorage.getItem(
-            "access_token"
-        );
-
-
-    // =====================================================
-    // CHECK TOKEN
-    // =====================================================
-
-    if (!token) {
-
-        console.error(
-            "No access token found."
-        );
+    const profilePicture =
+        data.user.picture &&
+        data.user.picture.trim() !== ""
+            ? data.user.picture
+            : "images/default-profile.png";
 
 
-        window.location.href =
-            "login.html";
+    profileCard.innerHTML = `
 
+        <div class="user-card">
 
-        return;
+            <img
+                src="${profilePicture}"
+                class="profile-image"
+                alt="Profile"
+                onerror="this.onerror=null; this.src='images/default-profile.png';"
+            >
 
-    }
+            <div class="user-info">
 
+                <h3>
+                    ${data.user.name || "User"}
+                </h3>
 
-    try {
+                <p>
+                    ${data.user.email || ""}
+                </p>
 
-        // =================================================
-        // PROFILE REQUEST
-        // =================================================
+            </div>
 
-        const response =
-            await fetch(
-                `${API_URL}/profile`,
-                {
-                    method: "GET",
+        </div>
 
-                    headers: {
-
-                        "Authorization":
-                            `Bearer ${token}`
-
-                    }
-
-                }
-            );
-
-
-        // =================================================
-        // INVALID / EXPIRED TOKEN
-        // =================================================
-
-        if (
-            response.status === 401
-        ) {
-
-            console.error(
-                "Access token expired or invalid."
-            );
-
-
-            localStorage.removeItem(
-                "access_token"
-            );
-
-
-            window.location.href =
-                "login.html";
-
-
-            return;
-
-        }
-
-
-        // =================================================
-        // OTHER ERROR
-        // =================================================
-
-        if (!response.ok) {
-
-            throw new Error(
-                `Profile request failed: ${response.status}`
-            );
-
-        }
-
-
-        // =================================================
-        // RESPONSE
-        // =================================================
-
-        const data =
-            await response.json();
-
-
-        console.log(
-            "Profile loaded successfully:",
-            data
-        );
-
-
-        // =================================================
-        // DISPLAY PROFILE
-        // =================================================
-
-        if (profileCard) {
-
-            profileCard.innerHTML = `
-
-                <div class="user-card">
-
-                    <img
-                        src="${data.user.picture || ""}"
-                        class="profile-image"
-                        alt="Profile"
-                    >
-
-                    <div class="user-info">
-
-                        <h3>
-                            ${data.user.name || ""}
-                        </h3>
-
-                        <p>
-                            ${data.user.email || ""}
-                        </p>
-
-                    </div>
-
-                </div>
-
-            `;
-
-        }
-
-    }
-
-    catch (error) {
-
-        console.error(
-            "Profile loading error:",
-            error
-        );
-
-        /*
-         * Do not automatically delete the token
-         * for temporary network errors.
-         */
-
-    }
-
+    `;
 }
 
 
