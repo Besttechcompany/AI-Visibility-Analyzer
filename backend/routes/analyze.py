@@ -3,7 +3,6 @@ from fastapi.responses import Response
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from fastapi.encoders import jsonable_encoder
-
 from database import get_db
 from models import AnalysisHistory, User
 from dependencies import get_current_user
@@ -12,21 +11,32 @@ from services.analyzer import WebsiteAnalyzer
 from io import BytesIO
 from xml.sax.saxutils import escape
 
-from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.enums import TA_CENTER, TA_LEFT
+from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import mm
 from reportlab.platypus import (
-    SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle,
+    PageBreak,
+    KeepTogether,
 )
 
 router = APIRouter()
 
+# =========================================================
+# BRAND / REPORT COLORS
+# =========================================================
+
 NAVY = colors.HexColor("#0F172A")
 BLUE = colors.HexColor("#2563EB")
 LIGHT_BLUE = colors.HexColor("#EFF6FF")
-BORDER = colors.HexColor("#D9E2F0")
+PALE_BLUE = colors.HexColor("#F8FAFC")
+BORDER = colors.HexColor("#D8E1EC")
 TEXT = colors.HexColor("#1E293B")
 MUTED = colors.HexColor("#64748B")
 GREEN = colors.HexColor("#15803D")
@@ -39,6 +49,10 @@ class WebsiteRequest(BaseModel):
     url: str
 
 
+# =========================================================
+# ANALYSIS
+# =========================================================
+
 @router.post("/analyze")
 def analyze(
     request: WebsiteRequest,
@@ -47,23 +61,31 @@ def analyze(
 ):
     try:
         result = WebsiteAnalyzer.analyze(request.url)
+
         history = AnalysisHistory(
             user_id=current_user.id,
             website_url=request.url,
             analysis_data=jsonable_encoder(result),
         )
+
         db.add(history)
         db.commit()
         db.refresh(history)
+
         return result
-    except Exception as e:
+
+    except Exception as exc:
         db.rollback()
-        print("ANALYSIS HISTORY SAVE ERROR:", repr(e))
+        print("ANALYSIS HISTORY SAVE ERROR:", repr(exc))
         raise HTTPException(
             status_code=500,
             detail="Analysis completed but could not be saved to history.",
         )
 
+
+# =========================================================
+# ANALYSIS HISTORY
+# =========================================================
 
 @router.get("/analysis-history")
 def get_analysis_history(
@@ -77,26 +99,32 @@ def get_analysis_history(
             .order_by(AnalysisHistory.created_at.desc())
             .all()
         )
+
         return {
             "success": True,
             "count": len(history),
             "history": [
                 {
-                    "id": x.id,
-                    "website_url": x.website_url,
-                    "analysis_data": x.analysis_data,
-                    "created_at": x.created_at,
+                    "id": item.id,
+                    "website_url": item.website_url,
+                    "analysis_data": item.analysis_data,
+                    "created_at": item.created_at,
                 }
-                for x in history
+                for item in history
             ],
         }
-    except Exception as e:
-        print("HISTORY FETCH ERROR:", repr(e))
+
+    except Exception as exc:
+        print("HISTORY FETCH ERROR:", repr(exc))
         raise HTTPException(
             status_code=500,
             detail="Unable to load analysis history.",
         )
 
+
+# =========================================================
+# SAFE HELPERS
+# =========================================================
 
 def safe(value, default="-"):
     if value is None or value == "":
@@ -106,7 +134,7 @@ def safe(value, default="-"):
     return escape(str(value))
 
 
-def score(value):
+def number(value):
     try:
         return float(value)
     except (TypeError, ValueError):
@@ -114,140 +142,260 @@ def score(value):
 
 
 def score_colour(value):
-    n = score(value)
-    if n is None:
+    value = number(value)
+
+    if value is None:
         return MUTED
-    if n >= 80:
+    if value >= 80:
         return GREEN
-    if n >= 60:
+    if value >= 60:
         return BLUE
-    if n >= 40:
+    if value >= 40:
         return AMBER
     return RED
 
 
 def score_label(value):
-    n = score(value)
-    if n is None:
+    value = number(value)
+
+    if value is None:
         return "Not available"
-    if n >= 80:
+    if value >= 80:
         return "Strong"
-    if n >= 60:
+    if value >= 60:
         return "Good"
-    if n >= 40:
+    if value >= 40:
         return "Needs Improvement"
     return "Low"
 
 
-def styles():
-    s = getSampleStyleSheet()
+# =========================================================
+# REPORT STYLES
+# =========================================================
+
+def report_styles():
+    base = getSampleStyleSheet()
+
     return {
-        "title": ParagraphStyle(
-            "ReportTitle", parent=s["Title"], fontName="Helvetica-Bold",
-            fontSize=25, leading=31, textColor=NAVY, alignment=TA_CENTER
+        "cover_brand": ParagraphStyle(
+            "CoverBrand",
+            parent=base["BodyText"],
+            fontName="Helvetica-Bold",
+            fontSize=10,
+            leading=12,
+            textColor=BLUE,
+            alignment=TA_CENTER,
+            spaceAfter=4,
         ),
-        "subtitle": ParagraphStyle(
-            "ReportSubtitle", parent=s["BodyText"], fontName="Helvetica",
-            fontSize=10.5, leading=16, textColor=MUTED, alignment=TA_CENTER
+
+        "cover_title": ParagraphStyle(
+            "CoverTitle",
+            parent=base["Title"],
+            fontName="Helvetica-Bold",
+            fontSize=26,
+            leading=32,
+            textColor=NAVY,
+            alignment=TA_CENTER,
         ),
+
+        "cover_subtitle": ParagraphStyle(
+            "CoverSubtitle",
+            parent=base["BodyText"],
+            fontName="Helvetica",
+            fontSize=10,
+            leading=15,
+            textColor=MUTED,
+            alignment=TA_CENTER,
+        ),
+
         "section": ParagraphStyle(
-            "Section", parent=s["Heading1"], fontName="Helvetica-Bold",
-            fontSize=17, leading=21, textColor=NAVY, spaceBefore=5, spaceAfter=9
+            "Section",
+            parent=base["Heading1"],
+            fontName="Helvetica-Bold",
+            fontSize=17,
+            leading=21,
+            textColor=NAVY,
+            spaceBefore=2,
+            spaceAfter=8,
+            keepWithNext=True,
         ),
-        "sub": ParagraphStyle(
-            "Sub", parent=s["Heading2"], fontName="Helvetica-Bold",
-            fontSize=11, leading=14, textColor=BLUE, spaceBefore=5, spaceAfter=5
+
+        "subsection": ParagraphStyle(
+            "Subsection",
+            parent=base["Heading2"],
+            fontName="Helvetica-Bold",
+            fontSize=11,
+            leading=14,
+            textColor=BLUE,
+            spaceBefore=5,
+            spaceAfter=5,
+            keepWithNext=True,
         ),
+
         "body": ParagraphStyle(
-            "Body", parent=s["BodyText"], fontName="Helvetica",
-            fontSize=8.8, leading=13, textColor=TEXT, spaceAfter=4
+            "Body",
+            parent=base["BodyText"],
+            fontName="Helvetica",
+            fontSize=8.8,
+            leading=13,
+            textColor=TEXT,
+            spaceAfter=4,
         ),
+
         "small": ParagraphStyle(
-            "Small", parent=s["BodyText"], fontName="Helvetica",
-            fontSize=7.5, leading=10, textColor=MUTED
+            "Small",
+            parent=base["BodyText"],
+            fontName="Helvetica",
+            fontSize=7.2,
+            leading=9.5,
+            textColor=MUTED,
         ),
+
         "cell": ParagraphStyle(
-            "Cell", parent=s["BodyText"], fontName="Helvetica",
-            fontSize=7.8, leading=10, textColor=TEXT
+            "Cell",
+            parent=base["BodyText"],
+            fontName="Helvetica",
+            fontSize=7.5,
+            leading=9.5,
+            textColor=TEXT,
         ),
-        "cellbold": ParagraphStyle(
-            "CellBold", parent=s["BodyText"], fontName="Helvetica-Bold",
-            fontSize=7.8, leading=10, textColor=NAVY
+
+        "cell_bold": ParagraphStyle(
+            "CellBold",
+            parent=base["BodyText"],
+            fontName="Helvetica-Bold",
+            fontSize=7.5,
+            leading=9.5,
+            textColor=NAVY,
+        ),
+
+        "score": ParagraphStyle(
+            "Score",
+            parent=base["BodyText"],
+            fontName="Helvetica-Bold",
+            fontSize=10,
+            leading=12,
+            alignment=TA_CENTER,
         ),
     }
 
 
-def table(data, widths, header=True):
-    t = Table(data, colWidths=widths, repeatRows=1 if header else 0)
+# =========================================================
+# TABLE HELPERS
+# =========================================================
+
+def styled_table(rows, widths, header=True, repeat_header=True):
+    table = Table(
+        rows,
+        colWidths=widths,
+        repeatRows=1 if header and repeat_header else 0,
+        hAlign="CENTER",
+    )
+
     commands = [
-        ("GRID", (0, 0), (-1, -1), 0.45, BORDER),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("GRID", (0, 0), (-1, -1), 0.45, BORDER),
         ("LEFTPADDING", (0, 0), (-1, -1), 7),
         ("RIGHTPADDING", (0, 0), (-1, -1), 7),
         ("TOPPADDING", (0, 0), (-1, -1), 6),
         ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
     ]
+
     if header:
-        commands += [
+        commands.extend([
             ("BACKGROUND", (0, 0), (-1, 0), NAVY),
             ("TEXTCOLOR", (0, 0), (-1, 0), WHITE),
-        ]
-        for r in range(1, len(data)):
-            if r % 2 == 0:
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ])
+
+        for row in range(1, len(rows)):
+            if row % 2 == 0:
                 commands.append(
-                    ("BACKGROUND", (0, r), (-1, r), colors.HexColor("#F8FAFC"))
+                    ("BACKGROUND", (0, row), (-1, row), PALE_BLUE)
                 )
-    t.setStyle(TableStyle(commands))
-    return t
+
+    table.setStyle(TableStyle(commands))
+    return table
 
 
-def footer(canvas, doc):
+def metric_table(items, st):
+    rows = [
+        [
+            Paragraph("Metric", st["cell_bold"]),
+            Paragraph("Result", st["cell_bold"]),
+        ]
+    ]
+
+    for label, value in items:
+        rows.append([
+            Paragraph(escape(str(label)), st["cell_bold"]),
+            Paragraph(safe(value), st["cell"]),
+        ])
+
+    return styled_table(rows, [55 * mm, 115 * mm])
+
+
+def section_title(title, st):
+    return [
+        Spacer(1, 2 * mm),
+        Paragraph(escape(title), st["section"]),
+    ]
+
+
+# =========================================================
+# PAGE HEADER / FOOTER
+# =========================================================
+
+def draw_page_frame(canvas, doc):
     canvas.saveState()
-    w, h = A4
+
+    width, height = A4
+
+    # Top brand line
     canvas.setStrokeColor(BLUE)
-    canvas.setLineWidth(1.6)
-    canvas.line(18*mm, h-14*mm, w-18*mm, h-14*mm)
+    canvas.setLineWidth(1.4)
+    canvas.line(18 * mm, height - 14 * mm, width - 18 * mm, height - 14 * mm)
 
-    canvas.setFont("Helvetica-Bold", 8)
     canvas.setFillColor(NAVY)
-    canvas.drawString(18*mm, h-10*mm, "AI VISIBILITY ANALYZER")
-
-    canvas.setFont("Helvetica", 7)
-    canvas.setFillColor(MUTED)
-    canvas.drawRightString(
-        w-18*mm, h-10*mm, "AI Visibility Analysis Report"
+    canvas.setFont("Helvetica-Bold", 8)
+    canvas.drawString(
+        18 * mm,
+        height - 10 * mm,
+        "AI VISIBILITY ANALYZER",
     )
 
+    canvas.setFillColor(MUTED)
+    canvas.setFont("Helvetica", 7)
+    canvas.drawRightString(
+        width - 18 * mm,
+        height - 10 * mm,
+        "AI Visibility Analysis Report",
+    )
+
+    # Bottom line
     canvas.setStrokeColor(BORDER)
     canvas.setLineWidth(0.5)
-    canvas.line(18*mm, 13*mm, w-18*mm, 13*mm)
+    canvas.line(18 * mm, 13 * mm, width - 18 * mm, 13 * mm)
 
+    canvas.setFillColor(MUTED)
     canvas.setFont("Helvetica", 7)
     canvas.drawString(
-        18*mm, 8*mm, "Powered by Best Tech Company"
+        18 * mm,
+        8 * mm,
+        "Prepared by AI Visibility Analyzer",
     )
     canvas.drawRightString(
-        w-18*mm, 8*mm, f"Page {doc.page}"
+        width - 18 * mm,
+        8 * mm,
+        f"Page {doc.page}",
     )
+
     canvas.restoreState()
 
 
-def section(title, st):
-    return [Spacer(1, 3*mm), Paragraph(escape(title), st["section"])]
-
-
-def metric_rows(items, st):
-    rows = [
-        [Paragraph("<b>Metric</b>", st["cell"]),
-         Paragraph("<b>Result</b>", st["cell"])]
-    ]
-    for k, v in items:
-        rows.append([
-            Paragraph(escape(str(k)), st["cellbold"]),
-            Paragraph(safe(v), st["cell"]),
-        ])
-    return table(rows, [55*mm, 115*mm])
-
+# =========================================================
+# PDF REPORT
+# =========================================================
 
 @router.get("/analysis/{analysis_id}/pdf")
 def download_analysis_pdf(
@@ -271,89 +419,129 @@ def download_analysis_pdf(
         )
 
     data = analysis.analysis_data or {}
-    st = styles()
+    st = report_styles()
     buffer = BytesIO()
 
     doc = SimpleDocTemplate(
         buffer,
         pagesize=A4,
-        rightMargin=18*mm,
-        leftMargin=18*mm,
-        topMargin=21*mm,
-        bottomMargin=19*mm,
+        rightMargin=18 * mm,
+        leftMargin=18 * mm,
+        topMargin=21 * mm,
+        bottomMargin=19 * mm,
         title="AI Visibility Analysis Report",
         author="AI Visibility Analyzer",
+        subject="Website AI Visibility Analysis",
     )
 
     story = []
 
     created = analysis.created_at
+
     try:
         date_text = created.strftime("%d %B %Y, %I:%M %p")
     except Exception:
         date_text = str(created or "N/A")
 
-    # -----------------------------------------------------
-    # COVER
-    # -----------------------------------------------------
+    # =====================================================
+    # COVER PAGE
+    # =====================================================
 
-    story.append(Spacer(1, 28*mm))
-    story.append(Paragraph("AI VISIBILITY ANALYZER", ParagraphStyle(
-        "Brand", parent=st["subtitle"], fontName="Helvetica-Bold",
-        fontSize=10, textColor=BLUE
-    )))
-    story.append(Spacer(1, 3*mm))
-    story.append(Paragraph(
-        "AI Visibility<br/>Analysis Report", st["title"]
-    ))
-    story.append(Spacer(1, 4*mm))
-    story.append(Paragraph(
-        "Professional website visibility, AI platform, E-E-A-T and technical analysis",
-        st["subtitle"]
-    ))
-    story.append(Spacer(1, 16*mm))
+    story.append(Spacer(1, 24 * mm))
+    story.append(Paragraph("AI VISIBILITY ANALYZER", st["cover_brand"]))
+    story.append(Spacer(1, 4 * mm))
 
-    cover = [
-        [Paragraph("<b>Website</b>", st["cell"]),
-         Paragraph(safe(analysis.website_url), st["cell"])],
-        [Paragraph("<b>Analysis ID</b>", st["cell"]),
-         Paragraph(str(analysis.id), st["cell"])],
-        [Paragraph("<b>Generated</b>", st["cell"]),
-         Paragraph(escape(date_text), st["cell"])],
-        [Paragraph("<b>Status</b>", st["cell"]),
-         Paragraph("Completed", st["cell"])],
-    ]
-    ct = Table(cover, colWidths=[42*mm, 123*mm], hAlign="CENTER")
-    ct.setStyle(TableStyle([
-        ("BACKGROUND", (0,0), (0,-1), LIGHT_BLUE),
-        ("BOX", (0,0), (-1,-1), 0.8, BORDER),
-        ("INNERGRID", (0,0), (-1,-1), 0.45, BORDER),
-        ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
-        ("LEFTPADDING", (0,0), (-1,-1), 9),
-        ("RIGHTPADDING", (0,0), (-1,-1), 9),
-        ("TOPPADDING", (0,0), (-1,-1), 8),
-        ("BOTTOMPADDING", (0,0), (-1,-1), 8),
-    ]))
-    story.append(ct)
-    story.append(Spacer(1, 18*mm))
-    story.append(Paragraph(
-        "Prepared by AI Visibility Analyzer", ParagraphStyle(
-            "Prepared", parent=st["small"], alignment=TA_CENTER
+    story.append(
+        Paragraph(
+            "AI Visibility<br/>Analysis Report",
+            st["cover_title"],
         )
-    ))
+    )
+
+    story.append(Spacer(1, 6 * mm))
+
+    story.append(
+        Paragraph(
+            "Professional website visibility, AI platform, "
+            "E-E-A-T and technical analysis",
+            st["cover_subtitle"],
+        )
+    )
+
+    story.append(Spacer(1, 18 * mm))
+
+    # Cover information card
+    cover_rows = [
+        [
+            Paragraph("WEBSITE", st["cell_bold"]),
+            Paragraph(safe(analysis.website_url), st["cell"]),
+        ],
+        [
+            Paragraph("ANALYSIS ID", st["cell_bold"]),
+            Paragraph(str(analysis.id), st["cell"]),
+        ],
+        [
+            Paragraph("GENERATED", st["cell_bold"]),
+            Paragraph(escape(date_text), st["cell"]),
+        ],
+        [
+            Paragraph("STATUS", st["cell_bold"]),
+            Paragraph("Completed", st["cell"]),
+        ],
+    ]
+
+    cover_table = Table(
+        cover_rows,
+        colWidths=[42 * mm, 123 * mm],
+        hAlign="CENTER",
+    )
+
+    cover_table.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (0, -1), LIGHT_BLUE),
+            ("BACKGROUND", (1, 0), (1, -1), WHITE),
+            ("BOX", (0, 0), (-1, -1), 0.8, BORDER),
+            ("INNERGRID", (0, 0), (-1, -1), 0.45, BORDER),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+            ("LEFTPADDING", (0, 0), (-1, -1), 9),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 9),
+            ("TOPPADDING", (0, 0), (-1, -1), 8),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+        ])
+    )
+
+    story.append(cover_table)
+    story.append(Spacer(1, 20 * mm))
+
+    story.append(
+        Paragraph(
+            "Confidential analysis report",
+            ParagraphStyle(
+                "Confidential",
+                parent=st["small"],
+                alignment=TA_CENTER,
+                textColor=MUTED,
+            ),
+        )
+    )
+
     story.append(PageBreak())
 
-    # -----------------------------------------------------
+    # =====================================================
     # EXECUTIVE SUMMARY
-    # -----------------------------------------------------
+    # =====================================================
 
-    story += section("Executive Summary", st)
-    story.append(Paragraph(
-        "This report presents a structured analysis of the submitted website "
-        "across AI visibility, E-E-A-T signals, technical SEO indicators and "
-        "other website-level signals captured by the analyzer.",
-        st["body"]
-    ))
+    story += section_title("Executive Summary", st)
+
+    story.append(
+        Paragraph(
+            "This report presents a structured analysis of the submitted "
+            "website across AI visibility, E-E-A-T signals, technical SEO "
+            "indicators and website-level content signals captured by the "
+            "AI Visibility Analyzer.",
+            st["body"],
+        )
+    )
 
     platforms = [
         ("ChatGPT", "chatgpt"),
@@ -366,94 +554,133 @@ def download_analysis_pdf(
     ]
 
     scores = []
+
     for _, key in platforms:
         item = data.get(key)
-        if isinstance(item, dict) and score(item.get("score")) is not None:
-            scores.append(score(item.get("score")))
+        if isinstance(item, dict):
+            value = number(item.get("score"))
+            if value is not None:
+                scores.append(value)
 
-    if isinstance(data.get("eeat"), dict):
-        if score(data["eeat"].get("score")) is not None:
-            scores.append(score(data["eeat"].get("score")))
+    eeat = data.get("eeat")
+    if isinstance(eeat, dict):
+        value = number(eeat.get("score"))
+        if value is not None:
+            scores.append(value)
 
-    overall = round(sum(scores)/len(scores)) if scores else None
+    overall = round(sum(scores) / len(scores)) if scores else None
 
-    story.append(Spacer(1, 6*mm))
+    story.append(Spacer(1, 5 * mm))
+
     overall_text = str(overall) if overall is not None else "—"
-    overall_colour = score_colour(overall)
+    overall_color = score_colour(overall)
 
-    oc = Table([[
-        Paragraph(
-            f"<b>OVERALL VISIBILITY SCORE</b><br/><font size='28'>{overall_text}</font>"
-            f"<br/><font size='9'>{escape(score_label(overall))}</font>",
-            ParagraphStyle(
-                "Overall", parent=st["body"], alignment=TA_CENTER,
-                textColor=WHITE, leading=20
+    score_card = Table(
+        [[
+            Paragraph(
+                "OVERALL VISIBILITY SCORE<br/>"
+                f"<font size='30'>{overall_text}</font><br/>"
+                f"<font size='9'>{escape(score_label(overall))}</font>",
+                ParagraphStyle(
+                    "OverallScore",
+                    parent=st["body"],
+                    alignment=TA_CENTER,
+                    textColor=WHITE,
+                    leading=20,
+                ),
             )
-        )
-    ]], colWidths=[70*mm], rowHeights=[40*mm], hAlign="CENTER")
-    oc.setStyle(TableStyle([
-        ("BACKGROUND", (0,0), (-1,-1), overall_colour),
-        ("BOX", (0,0), (-1,-1), 0.8, overall_colour),
-        ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
-    ]))
-    story.append(oc)
-    story.append(Spacer(1, 8*mm))
+        ]],
+        colWidths=[72 * mm],
+        rowHeights=[42 * mm],
+        hAlign="CENTER",
+    )
 
-    # -----------------------------------------------------
-    # AI PLATFORM TABLE
-    # -----------------------------------------------------
+    score_card.setStyle(
+        TableStyle([
+            ("BACKGROUND", (0, 0), (-1, -1), overall_color),
+            ("BOX", (0, 0), (-1, -1), 0.8, overall_color),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ])
+    )
 
-    story += section("AI Platform Visibility", st)
+    story.append(score_card)
+    story.append(Spacer(1, 7 * mm))
 
-    rows = [[
-        Paragraph("<b>AI Platform</b>", st["cell"]),
-        Paragraph("<b>Score</b>", st["cell"]),
-        Paragraph("<b>Assessment</b>", st["cell"]),
+    # =====================================================
+    # AI PLATFORM VISIBILITY
+    # =====================================================
+
+    story += section_title("AI Platform Visibility", st)
+
+    platform_rows = [[
+        Paragraph("AI Platform", st["cell"]),
+        Paragraph("Score", st["cell"]),
+        Paragraph("Assessment", st["cell"]),
     ]]
 
     for name, key in platforms:
         item = data.get(key)
+
         if not isinstance(item, dict):
             continue
-        n = score(item.get("score"))
-        rows.append([
-            Paragraph(escape(name), st["cellbold"]),
+
+        current_score = number(item.get("score"))
+
+        platform_rows.append([
+            Paragraph(escape(name), st["cell_bold"]),
             Paragraph(
                 safe(item.get("score")),
                 ParagraphStyle(
-                    "PlatformScore", parent=st["cell"],
-                    alignment=TA_CENTER, fontName="Helvetica-Bold",
-                    textColor=score_colour(n)
-                )
+                    "PlatformScore",
+                    parent=st["cell"],
+                    alignment=TA_CENTER,
+                    fontName="Helvetica-Bold",
+                    textColor=score_colour(current_score),
+                ),
             ),
-            Paragraph(escape(score_label(n)), st["cell"]),
+            Paragraph(
+                escape(score_label(current_score)),
+                st["cell"],
+            ),
         ])
 
-    if len(rows) > 1:
-        story.append(table(rows, [70*mm, 30*mm, 60*mm]))
+    if len(platform_rows) > 1:
+        story.append(
+            styled_table(
+                platform_rows,
+                [70 * mm, 30 * mm, 60 * mm],
+            )
+        )
     else:
-        story.append(Paragraph(
-            "No AI platform score data is available.", st["body"]
-        ))
+        story.append(
+            Paragraph(
+                "No AI platform score data is available.",
+                st["body"],
+            )
+        )
 
     story.append(PageBreak())
 
-    # -----------------------------------------------------
+    # =====================================================
     # E-E-A-T
-    # -----------------------------------------------------
+    # =====================================================
 
-    story += section("E-E-A-T Analysis", st)
-    eeat = data.get("eeat", {})
+    story += section_title("E-E-A-T Analysis", st)
 
     if isinstance(eeat, dict):
-        story.append(Paragraph(
-            f"E-E-A-T score: <b>{safe(eeat.get('score'), 'Not available')}</b>",
-            st["body"]
-        ))
+        story.append(
+            Paragraph(
+                f"E-E-A-T score: "
+                f"<b>{safe(eeat.get('score'), 'Not available')}</b>",
+                st["body"],
+            )
+        )
+
         eeat_rows = [[
-            Paragraph("<b>Signal</b>", st["cell"]),
-            Paragraph("<b>Status</b>", st["cell"]),
+            Paragraph("Signal", st["cell"]),
+            Paragraph("Status", st["cell"]),
         ]]
+
         for label, key in [
             ("Author", "author"),
             ("About", "about"),
@@ -461,190 +688,355 @@ def download_analysis_pdf(
             ("Privacy Policy", "privacy"),
             ("Terms & Conditions", "terms"),
         ]:
-            value = bool(eeat.get(key))
+            present = bool(eeat.get(key))
+
             eeat_rows.append([
-                Paragraph(label, st["cellbold"]),
+                Paragraph(label, st["cell_bold"]),
                 Paragraph(
-                    "✓ Present" if value else "✗ Missing",
+                    "✓ Present" if present else "✗ Missing",
                     ParagraphStyle(
-                        "EeatStatus", parent=st["cell"],
-                        textColor=GREEN if value else RED,
-                        fontName="Helvetica-Bold"
+                        f"Eeat_{key}",
+                        parent=st["cell"],
+                        fontName="Helvetica-Bold",
+                        textColor=GREEN if present else RED,
+                    ),
+                ),
+            ])
+
+        story.append(
+            styled_table(
+                eeat_rows,
+                [85 * mm, 75 * mm],
+            )
+        )
+
+        recommendations = eeat.get("recommendations") or []
+
+        if recommendations:
+            story.append(Spacer(1, 5 * mm))
+            story.append(
+                Paragraph(
+                    "Recommendations",
+                    st["subsection"],
+                )
+            )
+
+            for recommendation in recommendations:
+                story.append(
+                    Paragraph(
+                        f"• {safe(recommendation)}",
+                        st["body"],
                     )
                 )
-            ])
-        story.append(table(eeat_rows, [85*mm, 75*mm]))
 
-        recs = eeat.get("recommendations") or []
-        if recs:
-            story.append(Spacer(1, 6*mm))
-            story.append(Paragraph("Recommendations", st["sub"]))
-            for r in recs:
-                story.append(Paragraph(
-                    f"• {safe(r)}", st["body"]
-                ))
+    # =====================================================
+    # TECHNICAL SEO
+    # =====================================================
 
-    # -----------------------------------------------------
-    # TECHNICAL SEO + AUDIT
-    # -----------------------------------------------------
+    story += section_title("Technical SEO", st)
 
-    story += section("Technical SEO", st)
     technical = data.get("technical_seo", {})
 
     if isinstance(technical, dict):
-        story.append(metric_rows([
-            ("HTTPS", "Yes" if technical.get("https") else "No"),
-            ("HTTP Status Code", technical.get("status_code")),
-            ("Response Time", f"{technical.get('response_time_ms', '-')} ms"),
-            ("Page Size", f"{technical.get('page_size_kb', '-')} KB"),
-            ("Redirected", "Yes" if technical.get("redirected") else "No"),
-            ("Robots.txt", "Yes" if technical.get("robots_txt") else "No"),
-            ("Sitemap", "Yes" if technical.get("sitemap") else "No"),
-            ("Final URL", technical.get("final_url")),
-        ], st))
+        story.append(
+            metric_table(
+                [
+                    ("HTTPS", "Yes" if technical.get("https") else "No"),
+                    ("HTTP Status Code", technical.get("status_code")),
+                    (
+                        "Response Time",
+                        f"{technical.get('response_time_ms', '-')} ms",
+                    ),
+                    (
+                        "Page Size",
+                        f"{technical.get('page_size_kb', '-')} KB",
+                    ),
+                    (
+                        "Redirected",
+                        "Yes" if technical.get("redirected") else "No",
+                    ),
+                    (
+                        "Robots.txt",
+                        "Yes" if technical.get("robots_txt") else "No",
+                    ),
+                    (
+                        "Sitemap",
+                        "Yes" if technical.get("sitemap") else "No",
+                    ),
+                    ("Final URL", technical.get("final_url")),
+                ],
+                st,
+            )
+        )
 
     audit = data.get("audit", {})
+
     if isinstance(audit, dict):
-        story.append(Spacer(1, 7*mm))
-        story.append(Paragraph("On-Page Audit", st["sub"]))
-        story.append(metric_rows([
-            ("Meta Description", "Yes" if audit.get("meta_description") else "No"),
-            ("Canonical", "Yes" if audit.get("canonical") else "No"),
-            ("Robots", "Yes" if audit.get("robots") else "No"),
-            ("H1 Count", audit.get("h1_count")),
-            ("Total Images", audit.get("images")),
-            ("Images Without Alt", audit.get("images_without_alt")),
-            ("Total Links", audit.get("total_links")),
-        ], st))
+        story.append(Spacer(1, 6 * mm))
+        story.append(
+            Paragraph(
+                "On-Page Audit",
+                st["subsection"],
+            )
+        )
+
+        story.append(
+            metric_table(
+                [
+                    (
+                        "Meta Description",
+                        "Yes" if audit.get("meta_description") else "No",
+                    ),
+                    (
+                        "Canonical",
+                        "Yes" if audit.get("canonical") else "No",
+                    ),
+                    (
+                        "Robots",
+                        "Yes" if audit.get("robots") else "No",
+                    ),
+                    ("H1 Count", audit.get("h1_count")),
+                    ("Total Images", audit.get("images")),
+                    (
+                        "Images Without Alt",
+                        audit.get("images_without_alt"),
+                    ),
+                    ("Total Links", audit.get("total_links")),
+                ],
+                st,
+            )
+        )
 
     story.append(PageBreak())
 
-    # -----------------------------------------------------
-    # AI SIGNALS
-    # -----------------------------------------------------
+    # =====================================================
+    # AI CONTENT SIGNALS
+    # =====================================================
 
-    story += section("AI Content Signals", st)
+    story += section_title("AI Content Signals", st)
 
     signal_rows = [[
-        Paragraph("<b>Platform</b>", st["cell"]),
-        Paragraph("<b>Score</b>", st["cell"]),
-        Paragraph("<b>Author</b>", st["cell"]),
-        Paragraph("<b>Schema</b>", st["cell"]),
-        Paragraph("<b>Recommendations</b>", st["cell"]),
+        Paragraph("Platform", st["cell"]),
+        Paragraph("Score", st["cell"]),
+        Paragraph("Author", st["cell"]),
+        Paragraph("Schema", st["cell"]),
+        Paragraph("Recommendations", st["cell"]),
     ]]
 
     for name, key in platforms:
         item = data.get(key)
+
         if not isinstance(item, dict):
             continue
-        recs = item.get("recommendations") or []
-        rec_text = "; ".join(str(x) for x in recs[:3]) if recs else "None"
+
+        recommendations = item.get("recommendations") or []
+        recommendation_text = (
+            "; ".join(str(x) for x in recommendations[:3])
+            if recommendations
+            else "None"
+        )
+
         signal_rows.append([
-            Paragraph(escape(name), st["cellbold"]),
+            Paragraph(escape(name), st["cell_bold"]),
             Paragraph(safe(item.get("score")), st["cell"]),
-            Paragraph("Yes" if item.get("author") else "No", st["cell"]),
-            Paragraph("Yes" if item.get("schema") else "No", st["cell"]),
-            Paragraph(escape(rec_text), st["cell"]),
+            Paragraph(
+                "Yes" if item.get("author") else "No",
+                st["cell"],
+            ),
+            Paragraph(
+                "Yes" if item.get("schema") else "No",
+                st["cell"],
+            ),
+            Paragraph(
+                escape(recommendation_text),
+                st["cell"],
+            ),
         ])
 
     if len(signal_rows) > 1:
-        story.append(table(
-            signal_rows,
-            [34*mm, 20*mm, 20*mm, 20*mm, 66*mm]
-        ))
+        story.append(
+            styled_table(
+                signal_rows,
+                [34 * mm, 20 * mm, 20 * mm, 20 * mm, 66 * mm],
+            )
+        )
 
-    # -----------------------------------------------------
-    # ENTITIES
-    # -----------------------------------------------------
+    # =====================================================
+    # ENTITY SIGNALS
+    # =====================================================
 
     entities = data.get("entities")
+
     if isinstance(entities, dict):
-        story += section("Entity & Topic Signals", st)
-        story.append(metric_rows([
-            ("Entity Count", entities.get("count")),
-            ("Organizations", ", ".join(map(str, (entities.get("organizations") or [])[:15])) or "-"),
-            ("Services", ", ".join(map(str, (entities.get("services") or [])[:15])) or "-"),
-            ("Topics", ", ".join(map(str, (entities.get("topics") or [])[:15])) or "-"),
-        ], st))
+        story += section_title("Entity & Topic Signals", st)
 
-        top = entities.get("top_entities") or []
-        if top:
-            story.append(Spacer(1, 6*mm))
-            story.append(Paragraph("Top Detected Entities", st["sub"]))
-            story.append(Paragraph(
-                escape(", ".join(map(str, top[:50]))),
-                st["small"]
-            ))
+        story.append(
+            metric_table(
+                [
+                    ("Entity Count", entities.get("count")),
+                    (
+                        "Organizations",
+                        ", ".join(
+                            map(
+                                str,
+                                (entities.get("organizations") or [])[:15],
+                            )
+                        ) or "-",
+                    ),
+                    (
+                        "Services",
+                        ", ".join(
+                            map(
+                                str,
+                                (entities.get("services") or [])[:15],
+                            )
+                        ) or "-",
+                    ),
+                    (
+                        "Topics",
+                        ", ".join(
+                            map(
+                                str,
+                                (entities.get("topics") or [])[:15],
+                            )
+                        ) or "-",
+                    ),
+                ],
+                st,
+            )
+        )
 
-    # -----------------------------------------------------
-    # LLMs.TXT
-    # -----------------------------------------------------
+        top_entities = entities.get("top_entities") or []
+
+        if top_entities:
+            story.append(Spacer(1, 5 * mm))
+            story.append(
+                Paragraph(
+                    "Top Detected Entities",
+                    st["subsection"],
+                )
+            )
+            story.append(
+                Paragraph(
+                    escape(", ".join(map(str, top_entities[:50]))),
+                    st["small"],
+                )
+            )
+
+    # =====================================================
+    # LLMS.TXT
+    # =====================================================
 
     llms = data.get("llms")
+
     if isinstance(llms, dict):
-        story += section("LLMs.txt", st)
-        story.append(metric_rows([
-            ("Exists", "Yes" if llms.get("exists") else "No"),
-            ("URL", llms.get("url")),
-            ("Size", f"{llms.get('size', '-')} bytes"),
-            ("Preview", llms.get("preview")),
-        ], st))
+        story += section_title("LLMs.txt", st)
 
-    # -----------------------------------------------------
+        story.append(
+            metric_table(
+                [
+                    (
+                        "Exists",
+                        "Yes" if llms.get("exists") else "No",
+                    ),
+                    ("URL", llms.get("url")),
+                    ("Size", f"{llms.get('size', '-')} bytes"),
+                    ("Preview", llms.get("preview")),
+                ],
+                st,
+            )
+        )
+
+    # =====================================================
     # PRIORITY RECOMMENDATIONS
-    # -----------------------------------------------------
+    # =====================================================
 
-    story += section("Priority Recommendations", st)
+    story += section_title("Priority Recommendations", st)
 
     recommendations = []
+
     if isinstance(eeat, dict):
-        recommendations += eeat.get("recommendations") or []
+        recommendations.extend(
+            eeat.get("recommendations") or []
+        )
 
     for _, key in platforms:
         item = data.get(key)
+
         if isinstance(item, dict):
-            recommendations += item.get("recommendations") or []
+            recommendations.extend(
+                item.get("recommendations") or []
+            )
 
-    unique = []
-    for r in recommendations:
-        text = str(r).strip()
-        if text and text not in unique:
-            unique.append(text)
+    unique_recommendations = []
 
-    if unique:
-        for i, r in enumerate(unique, 1):
-            story.append(Paragraph(
-                f"<b>{i}.</b> {escape(r)}", st["body"]
-            ))
+    for recommendation in recommendations:
+        text = str(recommendation).strip()
+
+        if text and text not in unique_recommendations:
+            unique_recommendations.append(text)
+
+    if unique_recommendations:
+        for index, recommendation in enumerate(
+            unique_recommendations,
+            1,
+        ):
+            story.append(
+                Paragraph(
+                    f"<b>{index}.</b> {escape(recommendation)}",
+                    st["body"],
+                )
+            )
     else:
-        story.append(Paragraph(
-            "No specific recommendations were returned by the analyzer.",
-            st["body"]
-        ))
+        story.append(
+            Paragraph(
+                "No specific recommendations were returned by the analyzer.",
+                st["body"],
+            )
+        )
 
-    story.append(Spacer(1, 6*mm))
-    story.append(Paragraph(
-        "Report notes", st["sub"]
-    ))
-    story.append(Paragraph(
-        "This report reflects the analysis data stored for the selected "
-        "analysis record. Scores and findings should be interpreted in "
-        "the context of the analyzed website and the time of analysis.",
-        st["body"]
-    ))
-    story.append(Paragraph(
-        f"Analysis #{analysis.id} • Generated {escape(date_text)}",
-        st["small"]
-    ))
+    # =====================================================
+    # REPORT NOTES
+    # =====================================================
+
+    story.append(Spacer(1, 5 * mm))
+    story.append(
+        Paragraph(
+            "Report Notes",
+            st["subsection"],
+        )
+    )
+
+    story.append(
+        Paragraph(
+            "This report reflects the analysis data stored for the "
+            "selected analysis record. Scores and findings should be "
+            "interpreted in the context of the analyzed website and "
+            "the time of analysis.",
+            st["body"],
+        )
+    )
+
+    story.append(
+        Paragraph(
+            f"Analysis #{analysis.id} • Generated {escape(date_text)}",
+            st["small"],
+        )
+    )
+
+    # =====================================================
+    # BUILD PDF
+    # =====================================================
 
     try:
         doc.build(
             story,
-            onFirstPage=footer,
-            onLaterPages=footer,
+            onFirstPage=draw_page_frame,
+            onLaterPages=draw_page_frame,
         )
-    except Exception as e:
-        print("PDF GENERATION ERROR:", repr(e))
+
+    except Exception as exc:
+        print("PDF GENERATION ERROR:", repr(exc))
         raise HTTPException(
             status_code=500,
             detail="Unable to generate PDF report.",
@@ -659,6 +1051,8 @@ def download_analysis_pdf(
         content=pdf_data,
         media_type="application/pdf",
         headers={
-            "Content-Disposition": f'attachment; filename="{filename}"'
+            "Content-Disposition": (
+                f'attachment; filename="{filename}"'
+            )
         },
     )
