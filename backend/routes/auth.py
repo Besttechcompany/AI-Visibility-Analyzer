@@ -14,6 +14,10 @@ import os
 from urllib.parse import urlencode
 
 
+# =========================================================
+# ROUTER
+# =========================================================
+
 router = APIRouter()
 
 
@@ -55,6 +59,7 @@ def register(
     # -----------------------------------------------------
 
     if not name:
+
         raise HTTPException(
             status_code=400,
             detail="Name is required."
@@ -65,6 +70,7 @@ def register(
     # -----------------------------------------------------
 
     if not email or "@" not in email:
+
         raise HTTPException(
             status_code=400,
             detail="Please enter a valid email address."
@@ -75,6 +81,7 @@ def register(
     # -----------------------------------------------------
 
     if len(password) < 8:
+
         raise HTTPException(
             status_code=400,
             detail="Password must be at least 8 characters."
@@ -92,7 +99,6 @@ def register(
 
     if existing_user:
 
-        # Existing Google account
         if existing_user.google_id:
 
             raise HTTPException(
@@ -103,7 +109,6 @@ def register(
                 )
             )
 
-        # Existing ordinary account
         raise HTTPException(
             status_code=409,
             detail="An account already exists with this email."
@@ -133,7 +138,6 @@ def register(
     try:
 
         db.commit()
-
         db.refresh(user)
 
     except Exception:
@@ -164,6 +168,7 @@ def register(
         "message": "Registration successful.",
         "access_token": access_token,
         "token_type": "bearer",
+
         "user": {
             "id": user.id,
             "email": user.email,
@@ -265,6 +270,7 @@ def login(
         "message": "Login successful.",
         "access_token": access_token,
         "token_type": "bearer",
+
         "user": {
             "id": user.id,
             "email": user.email,
@@ -284,7 +290,9 @@ async def google_login(request: Request):
     print("=" * 60)
     print("GOOGLE LOGIN STARTED")
 
-    redirect_uri = os.getenv("GOOGLE_REDIRECT_URI")
+    redirect_uri = os.getenv(
+        "GOOGLE_REDIRECT_URI"
+    )
 
     print("Google Redirect URI:")
     print(redirect_uri)
@@ -376,7 +384,9 @@ async def google_callback(
 
         if not user:
 
-            print("Creating new Google user...")
+            print(
+                "Creating new Google user..."
+            )
 
             user = User(
                 google_id=google_id,
@@ -541,12 +551,24 @@ async def google_callback(
 
 
 # =========================================================
-# PROFILE
+# PROFILE API
+# =========================================================
+#
+# FINAL PROFILE API:
+#
+# https://ai-visibility-analyzer.onrender.com/profile
+#
+# This endpoint uses the SAME authentication dependency
+# already used by the working authentication system.
+#
+# It does NOT change Google login.
+# It does NOT create another authentication system.
+#
 # =========================================================
 
 @router.get(
     "/profile",
-    tags=["Authentication"]
+    tags=["Profile"]
 )
 def get_profile(
     current_user: User = Depends(
@@ -556,8 +578,9 @@ def get_profile(
 
     return {
 
-        "message":
-            "Token Verified Successfully",
+        "success": True,
+
+        "authenticated": True,
 
         "user": {
 
@@ -573,6 +596,9 @@ def get_profile(
             "name":
                 current_user.name,
 
+            "mobile":
+                current_user.mobile,
+
             "picture":
                 current_user.picture,
 
@@ -581,5 +607,7 @@ def get_profile(
 
             "created_at":
                 current_user.created_at
+
         }
+
     }
