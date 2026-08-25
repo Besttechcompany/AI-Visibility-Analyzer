@@ -1,7 +1,14 @@
+/* =========================================================
+   GLOBAL
+========================================================= */
+
 * {
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
 
 body {
 
@@ -15,16 +22,28 @@ body {
         sans-serif;
 
     background:
-        #f5f7fb;
+        #f4f7fb;
 
-    color: #1e293b;
+    color:
+        #1e293b;
 
 }
 
 
-/* =====================================================
+/* =========================================================
+   DASHBOARD CONTAINER
+========================================================= */
+
+.dashboard-container {
+
+    min-height: 100vh;
+
+}
+
+
+/* =========================================================
    SIDEBAR
-===================================================== */
+========================================================= */
 
 .sidebar {
 
@@ -34,31 +53,34 @@ body {
 
     top: 0;
 
-    width: 250px;
+    width: 280px;
 
     height: 100vh;
 
+    padding: 30px 20px;
+
     background:
-        linear-gradient(
-            180deg,
-            #10204a,
-            #172b5d
-        );
+        #0f172a;
 
     color: white;
-
-    padding: 28px 18px;
 
     display: flex;
 
     flex-direction: column;
 
+    z-index: 100;
+
 }
 
 
+/* =========================================================
+   BRAND
+========================================================= */
+
 .brand {
 
-    padding: 0 14px 30px;
+    padding:
+        5px 16px 35px;
 
 }
 
@@ -67,9 +89,13 @@ body {
 
     margin: 0;
 
-    font-size: 23px;
+    font-size: 28px;
+
+    line-height: 1.2;
 
     font-weight: 800;
+
+    letter-spacing: -0.5px;
 
 }
 
@@ -78,14 +104,19 @@ body {
 
     display: block;
 
-    margin-top: 5px;
+    margin-top: 8px;
 
-    color: #aebbd6;
+    color:
+        #94a3b8;
 
-    font-size: 13px;
+    font-size: 14px;
 
 }
 
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
 
 .sidebar-nav {
 
@@ -93,7 +124,7 @@ body {
 
     flex-direction: column;
 
-    gap: 6px;
+    gap: 8px;
 
 }
 
@@ -104,23 +135,28 @@ body {
 
     align-items: center;
 
-    gap: 13px;
+    gap: 14px;
 
-    padding: 13px 14px;
+    min-height: 52px;
 
-    border-radius: 10px;
+    padding:
+        13px 15px;
 
-    color: #dbe4f5;
+    border-radius: 12px;
+
+    color:
+        #cbd5e1;
 
     text-decoration: none;
 
-    font-size: 14px;
+    font-size: 15px;
 
     font-weight: 600;
 
     transition:
         background 0.2s ease,
-        color 0.2s ease;
+        color 0.2s ease,
+        transform 0.2s ease;
 
 }
 
@@ -128,9 +164,13 @@ body {
 .nav-item:hover {
 
     background:
-        rgba(255,255,255,0.09);
+        rgba(255, 255, 255, 0.08);
 
-    color: white;
+    color:
+        white;
+
+    transform:
+        translateX(2px);
 
 }
 
@@ -138,23 +178,34 @@ body {
 .nav-item.active {
 
     background:
-        rgba(255,255,255,0.15);
+        #2563eb;
 
-    color: white;
+    color:
+        white;
+
+    box-shadow:
+        0 8px 20px
+        rgba(37, 99, 235, 0.25);
 
 }
 
 
 .nav-icon {
 
-    width: 22px;
+    width: 25px;
+
+    min-width: 25px;
 
     text-align: center;
 
-    font-size: 17px;
+    font-size: 18px;
 
 }
 
+
+/* =========================================================
+   LOGOUT
+========================================================= */
 
 .logout-btn {
 
@@ -162,21 +213,29 @@ body {
 
     width: 100%;
 
-    padding: 13px;
+    padding:
+        14px 16px;
 
-    border: 1px solid
-        rgba(255,255,255,0.15);
+    border:
+        none;
 
-    border-radius: 10px;
+    border-radius: 12px;
 
     background:
-        rgba(255,255,255,0.08);
+        #ef4444;
 
-    color: white;
+    color:
+        white;
 
-    font-weight: 600;
+    font-size: 15px;
+
+    font-weight: 700;
 
     cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
 
 }
 
@@ -184,87 +243,124 @@ body {
 .logout-btn:hover {
 
     background:
-        rgba(255,255,255,0.14);
+        #dc2626;
+
+    transform:
+        translateY(-1px);
 
 }
 
 
-/* =====================================================
-   MAIN
-===================================================== */
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
 
 .main-content {
 
-    margin-left: 250px;
-
-    padding: 40px;
+    margin-left: 280px;
 
     min-height: 100vh;
+
+    padding:
+        45px;
 
 }
 
 
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
 .page-header {
 
-    margin-bottom: 30px;
+    margin-bottom:
+        30px;
 
 }
 
 
 .page-header h2 {
 
-    margin: 0;
+    margin:
+        0;
 
-    font-size: 30px;
+    color:
+        #0f172a;
 
-    color: #10204a;
+    font-size:
+        34px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        -0.7px;
 
 }
 
 
 .page-header p {
 
-    margin-top: 8px;
+    margin:
+        9px 0 0;
 
-    color: #718096;
+    color:
+        #64748b;
+
+    font-size:
+        15px;
 
 }
 
 
-/* =====================================================
+/* =========================================================
    PROFILE CARD
-===================================================== */
+========================================================= */
 
 .profile-card {
 
-    max-width: 1000px;
+    width:
+        100%;
 
-    background: white;
+    max-width:
+        1050px;
 
-    border-radius: 18px;
+    background:
+        white;
 
-    padding: 35px;
+    border:
+        1px solid #e8edf4;
+
+    border-radius:
+        20px;
+
+    padding:
+        35px;
 
     box-shadow:
-        0 10px 35px
-        rgba(15, 23, 42, 0.07);
+        0 12px 35px
+        rgba(15, 23, 42, 0.06);
 
 }
 
 
-/* =====================================================
+/* =========================================================
    PROFILE HEADER
-===================================================== */
+========================================================= */
 
 .profile-header {
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    gap: 25px;
+    gap:
+        25px;
 
-    padding-bottom: 30px;
+    padding-bottom:
+        30px;
 
     border-bottom:
         1px solid #e8edf5;
@@ -272,356 +368,469 @@ body {
 }
 
 
+/* =========================================================
+   PROFILE IMAGE
+========================================================= */
+
 .profile-image-wrapper {
 
-    position: relative;
+    position:
+        relative;
 
-    width: 110px;
+    width:
+        115px;
 
-    height: 110px;
+    height:
+        115px;
 
-    flex-shrink: 0;
+    min-width:
+        115px;
 
 }
 
 
 .profile-image {
 
-    width: 110px;
+    width:
+        115px;
 
-    height: 110px;
+    height:
+        115px;
 
-    object-fit: cover;
+    object-fit:
+        cover;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
-    border: 4px solid #eef3ff;
+    border:
+        4px solid #eaf0ff;
 
-    background: #f1f5f9;
+    background:
+        #f1f5f9;
 
 }
 
 
 .photo-button {
 
-    position: absolute;
+    position:
+        absolute;
 
-    right: 0;
+    right:
+        0;
 
-    bottom: 0;
+    bottom:
+        0;
 
-    width: 34px;
+    width:
+        36px;
 
-    height: 34px;
+    height:
+        36px;
 
-    border: 3px solid white;
+    border:
+        3px solid white;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
-    background: #2563eb;
+    background:
+        #2563eb;
 
-    color: white;
+    color:
+        white;
 
-    cursor: pointer;
+    cursor:
+        pointer;
+
+    font-size:
+        15px;
 
 }
 
 
 .photo-button:hover {
 
-    background: #1d4ed8;
+    background:
+        #1d4ed8;
 
 }
 
 
+/* =========================================================
+   PROFILE HEADING
+========================================================= */
+
 .profile-heading h3 {
 
-    margin: 0;
+    margin:
+        0;
 
-    font-size: 24px;
+    color:
+        #0f172a;
 
-    color: #10204a;
+    font-size:
+        25px;
+
+    font-weight:
+        800;
 
 }
 
 
 .profile-heading p {
 
-    margin: 7px 0;
+    margin:
+        7px 0;
 
-    color: #64748b;
+    color:
+        #64748b;
+
+    font-size:
+        14px;
 
 }
 
 
 .login-method {
 
-    display: inline-block;
+    display:
+        inline-block;
 
-    padding: 5px 10px;
+    margin-top:
+        5px;
 
-    border-radius: 20px;
+    padding:
+        6px 11px;
 
-    background: #eef4ff;
+    border-radius:
+        20px;
 
-    color: #2563eb;
+    background:
+        #eef4ff;
 
-    font-size: 12px;
+    color:
+        #2563eb;
 
-    font-weight: 700;
+    font-size:
+        12px;
+
+    font-weight:
+        700;
 
 }
 
 
-/* =====================================================
-   SECTION
-===================================================== */
+/* =========================================================
+   SECTION TITLE
+========================================================= */
 
 .section-title {
 
-    margin-top: 30px;
+    margin-top:
+        30px;
 
-    margin-bottom: 20px;
+    margin-bottom:
+        20px;
 
 }
 
 
 .section-title h3 {
 
-    margin: 0;
+    margin:
+        0;
 
-    color: #10204a;
+    color:
+        #0f172a;
 
-    font-size: 18px;
+    font-size:
+        19px;
+
+    font-weight:
+        750;
 
 }
 
 
 .section-title p {
 
-    margin: 6px 0 0;
+    margin:
+        6px 0 0;
 
-    color: #718096;
+    color:
+        #718096;
 
-    font-size: 14px;
+    font-size:
+        14px;
 
 }
 
 
-/* =====================================================
-   FORM
-===================================================== */
+/* =========================================================
+   FORM GRID
+========================================================= */
 
 .form-grid {
 
-    display: grid;
+    display:
+        grid;
 
     grid-template-columns:
-        repeat(2, 1fr);
+        repeat(2, minmax(0, 1fr));
 
-    gap: 22px;
+    gap:
+        22px;
 
 }
 
 
+/* =========================================================
+   FORM GROUP
+========================================================= */
+
 .form-group {
 
-    display: flex;
+    display:
+        flex;
 
-    flex-direction: column;
+    flex-direction:
+        column;
 
 }
 
 
 .form-group label {
 
-    margin-bottom: 8px;
+    margin-bottom:
+        8px;
 
-    color: #334155;
+    color:
+        #334155;
 
-    font-weight: 600;
+    font-size:
+        14px;
 
-    font-size: 14px;
+    font-weight:
+        650;
 
 }
 
 
 .form-group input {
 
-    width: 100%;
+    width:
+        100%;
 
-    padding: 13px 14px;
+    padding:
+        13px 14px;
 
-    border: 1px solid #d8e0eb;
+    border:
+        1px solid #d8e0eb;
 
-    border-radius: 9px;
+    border-radius:
+        10px;
 
-    outline: none;
+    background:
+        white;
 
-    font-size: 14px;
+    color:
+        #1e293b;
 
-    color: #1e293b;
+    outline:
+        none;
+
+    font-family:
+        inherit;
+
+    font-size:
+        14px;
+
+    transition:
+        border 0.2s ease,
+        box-shadow 0.2s ease;
 
 }
 
 
 .form-group input:focus {
 
-    border-color: #2563eb;
+    border-color:
+        #2563eb;
 
     box-shadow:
         0 0 0 3px
-        rgba(37,99,235,0.10);
+        rgba(37, 99, 235, 0.10);
 
 }
 
 
 .form-group input[readonly] {
 
-    background: #f8fafc;
+    background:
+        #f8fafc;
 
-    color: #64748b;
+    color:
+        #64748b;
+
+    cursor:
+        not-allowed;
 
 }
 
 
 .form-group small {
 
-    margin-top: 6px;
+    margin-top:
+        6px;
 
-    color: #94a3b8;
+    color:
+        #94a3b8;
 
-    font-size: 12px;
+    font-size:
+        12px;
 
 }
 
 
+/* =========================================================
+   READONLY BOX
+========================================================= */
+
 .readonly-box {
 
-    padding: 13px 14px;
+    padding:
+        13px 14px;
 
     border:
         1px solid #d8e0eb;
 
-    border-radius: 9px;
+    border-radius:
+        10px;
 
-    background: #f8fafc;
+    background:
+        #f8fafc;
 
-    color: #64748b;
+    color:
+        #64748b;
 
-    font-size: 14px;
+    font-size:
+        14px;
 
 }
 
 
-/* =====================================================
+/* =========================================================
    ACCOUNT STATUS
-===================================================== */
+========================================================= */
 
 .account-status {
 
-    margin-top: 30px;
+    margin-top:
+        30px;
 
-    padding: 20px;
+    padding:
+        20px;
 
-    border-radius: 12px;
+    border:
+        1px solid #e5eaf2;
 
-    background: #f8fafc;
+    border-radius:
+        13px;
 
-    display: flex;
+    background:
+        #f8fafc;
 
-    justify-content: space-between;
+    display:
+        flex;
 
-    align-items: center;
+    justify-content:
+        space-between;
+
+    align-items:
+        center;
 
 }
 
 
 .account-status h3 {
 
-    margin: 0;
+    margin:
+        0;
 
-    font-size: 16px;
+    color:
+        #0f172a;
 
-    color: #10204a;
+    font-size:
+        16px;
 
 }
 
 
 .account-status p {
 
-    margin: 5px 0 0;
+    margin:
+        5px 0 0;
 
-    color: #718096;
+    color:
+        #718096;
 
-    font-size: 13px;
+    font-size:
+        13px;
 
 }
 
 
 .status-active {
 
-    padding: 7px 14px;
+    display:
+        inline-flex;
 
-    border-radius: 20px;
+    align-items:
+        center;
 
-    background: #dcfce7;
+    gap:
+        6px;
 
-    color: #15803d;
+    padding:
+        7px 14px;
 
-    font-size: 13px;
+    border-radius:
+        20px;
 
-    font-weight: 700;
+    background:
+        #dcfce7;
 
-}
+    color:
+        #15803d;
 
+    font-size:
+        13px;
 
-/* =====================================================
-   MESSAGE
-===================================================== */
-
-.message {
-
-    min-height: 24px;
-
-    margin-top: 20px;
-
-    text-align: center;
-
-    font-size: 14px;
-
-    font-weight: 600;
+    font-weight:
+        700;
 
 }
 
 
-.message.success {
-
-    color: #16a34a;
-
-}
-
-
-.message.error {
-
-    color: #dc2626;
-
-}
-
-
-/* =====================================================
-   ACTIONS
-===================================================== */
+/* =========================================================
+   PROFILE ACTIONS
+========================================================= */
 
 .profile-actions {
 
-    display: flex;
+    display:
+        flex;
 
-    justify-content: flex-end;
+    justify-content:
+        flex-end;
 
-    gap: 12px;
+    gap:
+        12px;
 
-    margin-top: 25px;
+    margin-top:
+        25px;
 
 }
 
@@ -629,116 +838,322 @@ body {
 .primary-btn,
 .secondary-btn {
 
-    padding: 12px 22px;
+    min-height:
+        44px;
 
-    border-radius: 9px;
+    padding:
+        12px 22px;
 
-    font-size: 14px;
+    border-radius:
+        10px;
 
-    font-weight: 700;
+    font-family:
+        inherit;
 
-    cursor: pointer;
+    font-size:
+        14px;
+
+    font-weight:
+        700;
+
+    cursor:
+        pointer;
+
+    transition:
+        background 0.2s ease,
+        border 0.2s ease,
+        transform 0.2s ease;
 
 }
 
 
 .primary-btn {
 
-    border: none;
+    border:
+        none;
 
-    background: #2563eb;
+    background:
+        #2563eb;
 
-    color: white;
+    color:
+        white;
 
 }
 
 
 .primary-btn:hover {
 
-    background: #1d4ed8;
+    background:
+        #1d4ed8;
+
+    transform:
+        translateY(-1px);
 
 }
 
 
 .primary-btn:disabled {
 
-    opacity: 0.6;
+    opacity:
+        0.6;
 
-    cursor: not-allowed;
+    cursor:
+        not-allowed;
+
+    transform:
+        none;
 
 }
 
 
 .secondary-btn {
 
-    border: 1px solid #d8e0eb;
+    border:
+        1px solid #d8e0eb;
 
-    background: white;
+    background:
+        white;
 
-    color: #475569;
+    color:
+        #475569;
 
 }
 
 
 .secondary-btn:hover {
 
-    background: #f8fafc;
+    background:
+        #f8fafc;
 
 }
 
 
-/* =====================================================
-   MOBILE
-===================================================== */
+/* =========================================================
+   MESSAGE
+========================================================= */
 
-@media (max-width: 800px) {
+.message {
+
+    max-width:
+        1050px;
+
+    min-height:
+        24px;
+
+    margin-top:
+        18px;
+
+    text-align:
+        center;
+
+    font-size:
+        14px;
+
+    font-weight:
+        600;
+
+}
+
+
+.message.success {
+
+    color:
+        #16a34a;
+
+}
+
+
+.message.error {
+
+    color:
+        #dc2626;
+
+}
+
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.profile-loading {
+
+    min-height:
+        250px;
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    align-items:
+        center;
+
+    gap:
+        12px;
+
+    color:
+        #64748b;
+
+    font-size:
+        14px;
+
+}
+
+
+/* =========================================================
+   LOADER
+========================================================= */
+
+.button-loader {
+
+    display:
+        inline-block;
+
+    width:
+        18px;
+
+    height:
+        18px;
+
+    border:
+        2px solid #dbeafe;
+
+    border-top:
+        2px solid #2563eb;
+
+    border-radius:
+        50%;
+
+    animation:
+        profileLoaderSpin 0.7s linear infinite;
+
+}
+
+
+@keyframes profileLoaderSpin {
+
+    from {
+
+        transform:
+            rotate(0deg);
+
+    }
+
+    to {
+
+        transform:
+            rotate(360deg);
+
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 900px) {
 
     .sidebar {
 
-        position: relative;
-
-        width: 100%;
-
-        height: auto;
-
-    }
-
-
-    .sidebar-nav {
-
-        flex-direction: row;
-
-        flex-wrap: wrap;
-
-    }
-
-
-    .logout-btn {
-
-        margin-top: 20px;
+        width:
+            235px;
 
     }
 
 
     .main-content {
 
-        margin-left: 0;
+        margin-left:
+            235px;
 
-        padding: 25px 18px;
+        padding:
+            30px;
 
     }
 
 
     .form-grid {
 
-        grid-template-columns: 1fr;
+        grid-template-columns:
+            1fr;
+
+    }
+
+}
+
+
+@media (max-width: 700px) {
+
+    .sidebar {
+
+        position:
+            relative;
+
+        width:
+            100%;
+
+        height:
+            auto;
+
+        padding:
+            20px;
 
     }
 
 
-    .profile-header {
+    .brand {
 
-        align-items: flex-start;
+        padding:
+            5px 10px 20px;
+
+    }
+
+
+    .sidebar-nav {
+
+        flex-direction:
+            row;
+
+        flex-wrap:
+            wrap;
+
+    }
+
+
+    .nav-item {
+
+        flex:
+            1 1 45%;
+
+    }
+
+
+    .logout-btn {
+
+        margin-top:
+            20px;
+
+    }
+
+
+    .main-content {
+
+        margin-left:
+            0;
+
+        padding:
+            25px 18px;
+
+    }
+
+
+    .profile-card {
+
+        padding:
+            25px;
 
     }
 
@@ -747,38 +1162,57 @@ body {
 
 @media (max-width: 500px) {
 
+    .page-header h2 {
+
+        font-size:
+            27px;
+
+    }
+
+
     .profile-card {
 
-        padding: 22px;
+        padding:
+            20px;
+
+        border-radius:
+            15px;
 
     }
 
 
     .profile-header {
 
-        flex-direction: column;
+        flex-direction:
+            column;
 
-        align-items: center;
+        align-items:
+            center;
 
-        text-align: center;
+        text-align:
+            center;
 
     }
 
 
     .account-status {
 
-        flex-direction: column;
+        flex-direction:
+            column;
 
-        align-items: flex-start;
+        align-items:
+            flex-start;
 
-        gap: 12px;
+        gap:
+            12px;
 
     }
 
 
     .profile-actions {
 
-        flex-direction: column-reverse;
+        flex-direction:
+            column-reverse;
 
     }
 
@@ -786,28 +1220,17 @@ body {
     .primary-btn,
     .secondary-btn {
 
-        width: 100%;
+        width:
+            100%;
 
     }
 
-}
 
-.button-loader {
-    display: inline-block;
-    width: 15px;
-    height: 15px;
-    border: 2px solid rgba(255,255,255,0.45);
-    border-top: 2px solid white;
-    border-radius: 50%;
-    animation: profileLoaderSpin 0.7s linear infinite;
-}
+    .nav-item {
 
-@keyframes profileLoaderSpin {
-    from {
-        transform: rotate(0deg);
+        flex:
+            1 1 100%;
+
     }
 
-    to {
-        transform: rotate(360deg);
-    }
 }
