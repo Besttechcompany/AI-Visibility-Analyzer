@@ -19,15 +19,20 @@
 
 </head>
 
+
 <body>
 
 <div class="dashboard-container">
+
 
     <!-- =====================================================
          SIDEBAR
     ====================================================== -->
 
     <aside class="sidebar">
+
+
+        <!-- BRAND -->
 
         <div class="brand">
 
@@ -42,7 +47,12 @@
         </div>
 
 
+        <!-- NAVIGATION -->
+
         <nav class="sidebar-nav">
+
+
+            <!-- DASHBOARD -->
 
             <a
                 href="dashboard.html"
@@ -60,6 +70,8 @@
             </a>
 
 
+            <!-- WEBSITE ANALYSIS -->
+
             <a
                 href="dashboard.html"
                 class="nav-item"
@@ -75,6 +87,8 @@
 
             </a>
 
+
+            <!-- LOGS -->
 
             <a
                 href="logs.html"
@@ -92,6 +106,8 @@
             </a>
 
 
+            <!-- AI VISIBILITY -->
+
             <a
                 href="dashboard.html"
                 class="nav-item"
@@ -107,6 +123,8 @@
 
             </a>
 
+
+            <!-- SETTINGS -->
 
             <a
                 href="dashboard.html"
@@ -124,6 +142,8 @@
             </a>
 
 
+            <!-- PROFILE -->
+
             <a
                 href="profile.html"
                 class="nav-item active"
@@ -139,8 +159,11 @@
 
             </a>
 
+
         </nav>
 
+
+        <!-- LOGOUT -->
 
         <button
             type="button"
@@ -152,7 +175,9 @@
 
         </button>
 
+
     </aside>
+
 
 
     <!-- =====================================================
@@ -177,6 +202,7 @@
         </div>
 
 
+
         <!-- =================================================
              PROFILE CARD
         ================================================== -->
@@ -186,7 +212,8 @@
             class="profile-card"
         >
 
-            <!-- Loading state -->
+
+            <!-- INITIAL LOADING -->
 
             <div class="profile-loading">
 
@@ -198,10 +225,14 @@
 
             </div>
 
+
         </div>
 
 
-        <!-- MESSAGE -->
+
+        <!-- =================================================
+             MESSAGE
+        ================================================== -->
 
         <div
             id="message"
@@ -212,10 +243,32 @@
 
     </main>
 
+
 </div>
 
 
-<script src="js/profile.js"></script>
+
+<!-- =========================================================
+     PROFILE PHOTO INPUT
+========================================================== -->
+
+<input
+    type="file"
+    id="profilePhotoInput"
+    accept="image/*"
+    hidden
+>
+
+
+
+<!-- =========================================================
+     PROFILE JAVASCRIPT
+========================================================== -->
+
+<script
+    src="js/profile.js"
+></script>
+
 
 </body>
 

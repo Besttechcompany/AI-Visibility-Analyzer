@@ -29,21 +29,19 @@ const message =
 
 
 // ======================================================
-// GET JWT
+// CURRENT PROFILE DATA
+// ======================================================
+
+let currentUser = null;
+
+let isEditMode = false;
+
+
+// ======================================================
+// GET JWT TOKEN
 // ======================================================
 
 function getAccessToken() {
-
-    /*
-        IMPORTANT:
-
-        login.js stores the JWT using:
-
-        localStorage.setItem(
-            "access_token",
-            data.access_token
-        );
-    */
 
     const token =
         localStorage.getItem("access_token");
@@ -164,7 +162,7 @@ function showLoading() {
 
 
 // ======================================================
-// SHOW LOGIN REQUIRED
+// LOGIN REQUIRED
 // ======================================================
 
 function showLoginRequired() {
@@ -214,7 +212,7 @@ function showLoginRequired() {
 
 
 // ======================================================
-// SHOW SESSION EXPIRED
+// SESSION EXPIRED
 // ======================================================
 
 function showSessionExpired() {
@@ -270,13 +268,24 @@ function showSessionExpired() {
 
 function renderProfile(user) {
 
+    currentUser =
+        user;
+
+    isEditMode =
+        false;
+
+
     const name =
         user.name ||
-        "User";
+        "";
 
     const email =
         user.email ||
-        "Not available";
+        "";
+
+    const mobile =
+        user.mobile ||
+        "";
 
     const picture =
         user.picture ||
@@ -304,6 +313,9 @@ function renderProfile(user) {
 
         <div class="profile-header">
 
+
+            <!-- PROFILE IMAGE -->
+
             <div class="profile-image-wrapper">
 
                 <img
@@ -325,25 +337,35 @@ function renderProfile(user) {
             </div>
 
 
+            <!-- PROFILE HEADING -->
+
             <div class="profile-heading">
 
-                <h3>
-                    ${escapeHtml(name)}
+                <h3 id="profileHeadingName">
+                    ${escapeHtml(
+                        name || "User"
+                    )}
                 </h3>
 
-                <p>
-                    ${escapeHtml(email)}
+                <p id="profileHeadingEmail">
+                    ${escapeHtml(
+                        email || "Not available"
+                    )}
                 </p>
 
                 <span class="login-method">
 
-                    ${escapeHtml(loginMethod)}
+                    ${escapeHtml(
+                        loginMethod
+                    )}
 
                 </span>
 
             </div>
 
+
         </div>
+
 
 
         <!-- ==================================================
@@ -357,11 +379,16 @@ function renderProfile(user) {
             </h3>
 
             <p>
-                Your account details and personal information.
+                Update your personal account information.
             </p>
 
         </div>
 
+
+
+        <!-- ==================================================
+             FORM
+        =================================================== -->
 
         <div class="form-grid">
 
@@ -379,6 +406,7 @@ function renderProfile(user) {
                     id="profileName"
                     value="${escapeHtml(name)}"
                     readonly
+                    maxlength="150"
                 >
 
                 <small>
@@ -386,6 +414,7 @@ function renderProfile(user) {
                 </small>
 
             </div>
+
 
 
             <!-- EMAIL -->
@@ -401,6 +430,7 @@ function renderProfile(user) {
                     id="profileEmail"
                     value="${escapeHtml(email)}"
                     readonly
+                    maxlength="255"
                 >
 
                 <small>
@@ -408,6 +438,41 @@ function renderProfile(user) {
                 </small>
 
             </div>
+
+
+
+            <!-- MOBILE -->
+
+            <div class="form-group">
+
+                <label for="profileMobile">
+                    Mobile Number
+                    <span
+                        style="
+                            color:#94a3b8;
+                            font-weight:400;
+                        "
+                    >
+                        (Optional)
+                    </span>
+                </label>
+
+                <input
+                    type="tel"
+                    id="profileMobile"
+                    value="${escapeHtml(mobile)}"
+                    readonly
+                    maxlength="20"
+                    inputmode="tel"
+                    placeholder="Enter mobile number"
+                >
+
+                <small>
+                    Optional. You can leave this blank.
+                </small>
+
+            </div>
+
 
 
             <!-- LOGIN METHOD -->
@@ -420,11 +485,14 @@ function renderProfile(user) {
 
                 <div class="readonly-box">
 
-                    ${escapeHtml(loginMethod)}
+                    ${escapeHtml(
+                        loginMethod
+                    )}
 
                 </div>
 
             </div>
+
 
 
             <!-- ACCOUNT CREATED -->
@@ -437,13 +505,17 @@ function renderProfile(user) {
 
                 <div class="readonly-box">
 
-                    ${escapeHtml(createdAt)}
+                    ${escapeHtml(
+                        createdAt
+                    )}
 
                 </div>
 
             </div>
 
+
         </div>
+
 
 
         <!-- ==================================================
@@ -466,11 +538,13 @@ function renderProfile(user) {
 
             <span class="status-active">
 
-                ● ${active ? "Active" : "Inactive"}
+                ●
+                ${active ? "Active" : "Inactive"}
 
             </span>
 
         </div>
+
 
 
         <!-- ==================================================
@@ -478,6 +552,9 @@ function renderProfile(user) {
         =================================================== -->
 
         <div class="profile-actions">
+
+
+            <!-- REFRESH -->
 
             <button
                 type="button"
@@ -487,6 +564,44 @@ function renderProfile(user) {
                 ↻ Refresh Profile
             </button>
 
+
+            <!-- EDIT -->
+
+            <button
+                type="button"
+                class="primary-btn"
+                id="editProfileButton"
+            >
+                ✏️ Edit Profile
+            </button>
+
+
+            <!-- CANCEL -->
+
+            <button
+                type="button"
+                class="secondary-btn"
+                id="cancelEditButton"
+                style="display:none;"
+            >
+                Cancel
+            </button>
+
+
+            <!-- SAVE -->
+
+            <button
+                type="button"
+                class="primary-btn"
+                id="saveProfileButton"
+                style="display:none;"
+            >
+                💾 Save Changes
+            </button>
+
+
+            <!-- DASHBOARD -->
+
             <button
                 type="button"
                 class="primary-btn"
@@ -495,38 +610,27 @@ function renderProfile(user) {
                 ← Dashboard
             </button>
 
+
         </div>
 
     `;
 
 
-    // ======================================================
-    // PROFILE IMAGE ERROR
-    // ======================================================
+    attachProfileEvents();
 
-    const profileImage =
-        document.getElementById(
-            "profileImage"
-        );
-
-    if (profileImage) {
-
-        profileImage.addEventListener(
-            "error",
-            function () {
-
-                this.src =
-                    "assets/default-user.png";
-
-            }
-        );
-
-    }
+}
 
 
-    // ======================================================
+// ======================================================
+// ATTACH PROFILE EVENTS
+// ======================================================
+
+function attachProfileEvents() {
+
+
+    // --------------------------------------------------
     // REFRESH
-    // ======================================================
+    // --------------------------------------------------
 
     const refreshButton =
         document.getElementById(
@@ -537,15 +641,80 @@ function renderProfile(user) {
 
         refreshButton.addEventListener(
             "click",
-            loadProfile
+            function () {
+
+                loadProfile();
+
+            }
         );
 
     }
 
 
-    // ======================================================
+
+    // --------------------------------------------------
+    // EDIT
+    // --------------------------------------------------
+
+    const editButton =
+        document.getElementById(
+            "editProfileButton"
+        );
+
+    if (editButton) {
+
+        editButton.addEventListener(
+            "click",
+            enableEditMode
+        );
+
+    }
+
+
+
+    // --------------------------------------------------
+    // CANCEL
+    // --------------------------------------------------
+
+    const cancelButton =
+        document.getElementById(
+            "cancelEditButton"
+        );
+
+    if (cancelButton) {
+
+        cancelButton.addEventListener(
+            "click",
+            cancelEdit
+        );
+
+    }
+
+
+
+    // --------------------------------------------------
+    // SAVE
+    // --------------------------------------------------
+
+    const saveButton =
+        document.getElementById(
+            "saveProfileButton"
+        );
+
+    if (saveButton) {
+
+        saveButton.addEventListener(
+            "click",
+            saveProfile
+        );
+
+    }
+
+
+
+    // --------------------------------------------------
     // DASHBOARD
-    // ======================================================
+    // --------------------------------------------------
 
     const dashboardButton =
         document.getElementById(
@@ -567,9 +736,10 @@ function renderProfile(user) {
     }
 
 
-    // ======================================================
+
+    // --------------------------------------------------
     // PHOTO BUTTON
-    // ======================================================
+    // --------------------------------------------------
 
     const photoButton =
         document.getElementById(
@@ -580,17 +750,805 @@ function renderProfile(user) {
 
         photoButton.addEventListener(
             "click",
+            handlePhotoClick
+        );
+
+    }
+
+
+
+    // --------------------------------------------------
+    // PROFILE IMAGE FALLBACK
+    // --------------------------------------------------
+
+    const profileImage =
+        document.getElementById(
+            "profileImage"
+        );
+
+    if (profileImage) {
+
+        profileImage.addEventListener(
+            "error",
             function () {
 
-                showMessage(
-                    "Profile picture upload is not available yet.",
-                    "error"
-                );
+                this.src =
+                    "assets/default-user.png";
 
             }
         );
 
     }
+
+}
+
+
+// ======================================================
+// ENABLE EDIT MODE
+// ======================================================
+
+function enableEditMode() {
+
+    isEditMode =
+        true;
+
+
+    const nameInput =
+        document.getElementById(
+            "profileName"
+        );
+
+    const emailInput =
+        document.getElementById(
+            "profileEmail"
+        );
+
+    const mobileInput =
+        document.getElementById(
+            "profileMobile"
+        );
+
+
+    if (nameInput) {
+
+        nameInput.removeAttribute(
+            "readonly"
+        );
+
+    }
+
+
+    if (emailInput) {
+
+        emailInput.removeAttribute(
+            "readonly"
+        );
+
+    }
+
+
+    if (mobileInput) {
+
+        mobileInput.removeAttribute(
+            "readonly"
+        );
+
+    }
+
+
+    // --------------------------------------------------
+    // SHOW / HIDE BUTTONS
+    // --------------------------------------------------
+
+    const editButton =
+        document.getElementById(
+            "editProfileButton"
+        );
+
+    const cancelButton =
+        document.getElementById(
+            "cancelEditButton"
+        );
+
+    const saveButton =
+        document.getElementById(
+            "saveProfileButton"
+        );
+
+    if (editButton) {
+
+        editButton.style.display =
+            "none";
+
+    }
+
+    if (cancelButton) {
+
+        cancelButton.style.display =
+            "inline-block";
+
+    }
+
+    if (saveButton) {
+
+        saveButton.style.display =
+            "inline-block";
+
+    }
+
+
+    // --------------------------------------------------
+    // FOCUS NAME
+    // --------------------------------------------------
+
+    if (nameInput) {
+
+        nameInput.focus();
+
+    }
+
+
+    showMessage(
+        "Edit mode enabled.",
+        "success"
+    );
+
+}
+
+
+// ======================================================
+// CANCEL EDIT
+// ======================================================
+
+function cancelEdit() {
+
+    if (!currentUser) {
+
+        loadProfile();
+
+        return;
+
+    }
+
+
+    renderProfile(
+        currentUser
+    );
+
+
+    showMessage(
+        "Changes cancelled.",
+        ""
+    );
+
+}
+
+
+// ======================================================
+// VALIDATE FORM
+// ======================================================
+
+function validateProfileForm(
+    name,
+    email,
+    mobile
+) {
+
+
+    // --------------------------------------------------
+    // NAME
+    // --------------------------------------------------
+
+    if (!name) {
+
+        showMessage(
+            "Full name cannot be empty.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+    if (name.length < 2) {
+
+        showMessage(
+            "Full name must contain at least 2 characters.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+
+    // --------------------------------------------------
+    // EMAIL
+    // --------------------------------------------------
+
+    if (!email) {
+
+        showMessage(
+            "Email address cannot be empty.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+    const emailPattern =
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+    if (
+        !emailPattern.test(
+            email
+        )
+    ) {
+
+        showMessage(
+            "Please enter a valid email address.",
+            "error"
+        );
+
+        return false;
+
+    }
+
+
+
+    // --------------------------------------------------
+    // MOBILE
+    // --------------------------------------------------
+
+    if (mobile) {
+
+        const cleanedMobile =
+            mobile.replace(
+                /[\s\-()+]/g,
+                ""
+            );
+
+
+        if (
+            !/^\d{7,15}$/.test(
+                cleanedMobile
+            )
+        ) {
+
+            showMessage(
+                "Please enter a valid mobile number or leave it blank.",
+                "error"
+            );
+
+            return false;
+
+        }
+
+    }
+
+
+    return true;
+
+}
+
+
+// ======================================================
+// SAVE PROFILE
+// ======================================================
+
+async function saveProfile() {
+
+    const token =
+        getAccessToken();
+
+
+    if (!token) {
+
+        showSessionExpired();
+
+        showMessage(
+            "Your session has expired. Please login again.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------
+    // GET FORM VALUES
+    // --------------------------------------------------
+
+    const nameInput =
+        document.getElementById(
+            "profileName"
+        );
+
+    const emailInput =
+        document.getElementById(
+            "profileEmail"
+        );
+
+    const mobileInput =
+        document.getElementById(
+            "profileMobile"
+        );
+
+
+    const name =
+        nameInput
+            ? nameInput.value.trim()
+            : "";
+
+    const email =
+        emailInput
+            ? emailInput.value.trim()
+            : "";
+
+    const mobile =
+        mobileInput
+            ? mobileInput.value.trim()
+            : "";
+
+
+    // --------------------------------------------------
+    // VALIDATE
+    // --------------------------------------------------
+
+    if (
+        !validateProfileForm(
+            name,
+            email,
+            mobile
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    // --------------------------------------------------
+    // SAVE BUTTON
+    // --------------------------------------------------
+
+    const saveButton =
+        document.getElementById(
+            "saveProfileButton"
+        );
+
+    const originalButtonText =
+        saveButton
+            ? saveButton.innerHTML
+            : "💾 Save Changes";
+
+
+    if (saveButton) {
+
+        saveButton.disabled =
+            true;
+
+        saveButton.innerHTML = `
+            <span
+                class="button-loader"
+                style="
+                    width:14px;
+                    height:14px;
+                    border-width:2px;
+                    display:inline-block;
+                    vertical-align:middle;
+                    margin-right:7px;
+                "
+            ></span>
+            Saving...
+        `;
+
+    }
+
+
+    showMessage(
+        "Saving profile...",
+        ""
+    );
+
+
+    // --------------------------------------------------
+    // REQUEST BODY
+    // --------------------------------------------------
+
+    const requestBody = {
+
+        name:
+            name,
+
+        email:
+            email,
+
+        mobile:
+            mobile || null,
+
+        picture:
+            currentUser
+                ? currentUser.picture || null
+                : null
+
+    };
+
+
+    console.log(
+        "Updating profile..."
+    );
+
+
+    try {
+
+
+        // ------------------------------------------------
+        // PUT PROFILE
+        // ------------------------------------------------
+
+        const response =
+            await fetch(
+                PROFILE_API_URL,
+                {
+                    method: "PUT",
+
+                    headers: {
+
+                        "Authorization":
+                            `Bearer ${token}`,
+
+                        "Content-Type":
+                            "application/json",
+
+                        "Accept":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            requestBody
+                        )
+                }
+            );
+
+
+        console.log(
+            "Profile update status:",
+            response.status
+        );
+
+
+        // ------------------------------------------------
+        // UNAUTHORIZED
+        // ------------------------------------------------
+
+        if (
+            response.status === 401
+        ) {
+
+            localStorage.removeItem(
+                "access_token"
+            );
+
+            showSessionExpired();
+
+            showMessage(
+                "Your session has expired. Please login again.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        // ------------------------------------------------
+        // OTHER ERROR
+        // ------------------------------------------------
+
+        if (!response.ok) {
+
+            let errorMessage =
+                `Profile update failed: ${response.status}`;
+
+
+            try {
+
+                const errorData =
+                    await response.json();
+
+
+                if (
+                    errorData.detail
+                ) {
+
+                    if (
+                        typeof errorData.detail ===
+                        "string"
+                    ) {
+
+                        errorMessage =
+                            errorData.detail;
+
+                    }
+
+                    else if (
+                        Array.isArray(
+                            errorData.detail
+                        )
+                    ) {
+
+                        errorMessage =
+                            errorData.detail
+                                .map(
+                                    item =>
+                                        item.msg ||
+                                        "Validation error"
+                                )
+                                .join(", ");
+
+                    }
+
+                }
+
+            }
+
+            catch (error) {
+
+                console.warn(
+                    "Could not parse update error."
+                );
+
+            }
+
+
+            throw new Error(
+                errorMessage
+            );
+
+        }
+
+
+        // ------------------------------------------------
+        // READ RESPONSE
+        // ------------------------------------------------
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Profile update response:",
+            data
+        );
+
+
+        // ------------------------------------------------
+        // SUCCESS
+        // ------------------------------------------------
+
+        if (
+            data &&
+            data.user
+        ) {
+
+            currentUser =
+                data.user;
+
+            renderProfile(
+                data.user
+            );
+
+        }
+
+        else {
+
+            // If backend doesn't return the user,
+            // reload it from GET /profile.
+
+            await loadProfile();
+
+        }
+
+
+        showMessage(
+            data.message ||
+            "Profile updated successfully.",
+            "success"
+        );
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "PROFILE UPDATE ERROR:",
+            error
+        );
+
+
+        showMessage(
+            error.message ||
+            "Unable to update profile.",
+            "error"
+        );
+
+    }
+
+    finally {
+
+        if (saveButton) {
+
+            saveButton.disabled =
+                false;
+
+            saveButton.innerHTML =
+                originalButtonText;
+
+        }
+
+    }
+
+}
+
+
+// ======================================================
+// PROFILE PHOTO
+// ======================================================
+
+function handlePhotoClick() {
+
+    const photoInput =
+        document.getElementById(
+            "profilePhotoInput"
+        );
+
+
+    if (!photoInput) {
+
+        showMessage(
+            "Photo selector is not available.",
+            "error"
+        );
+
+        return;
+
+    }
+
+
+    photoInput.click();
+
+
+    photoInput.onchange =
+        function () {
+
+            const file =
+                photoInput.files &&
+                photoInput.files[0];
+
+
+            if (!file) {
+
+                return;
+
+            }
+
+
+            // ------------------------------------------------
+            // VALIDATE FILE TYPE
+            // ------------------------------------------------
+
+            if (
+                !file.type.startsWith(
+                    "image/"
+                )
+            ) {
+
+                showMessage(
+                    "Please select a valid image file.",
+                    "error"
+                );
+
+                photoInput.value =
+                    "";
+
+                return;
+
+            }
+
+
+            // ------------------------------------------------
+            // VALIDATE FILE SIZE
+            // ------------------------------------------------
+
+            const maxSize =
+                5 * 1024 * 1024;
+
+
+            if (
+                file.size > maxSize
+            ) {
+
+                showMessage(
+                    "Profile picture must be smaller than 5 MB.",
+                    "error"
+                );
+
+                photoInput.value =
+                    "";
+
+                return;
+
+            }
+
+
+            // ------------------------------------------------
+            // PREVIEW ONLY
+            // ------------------------------------------------
+
+            const reader =
+                new FileReader();
+
+
+            reader.onload =
+                function (event) {
+
+                    const profileImage =
+                        document.getElementById(
+                            "profileImage"
+                        );
+
+
+                    if (
+                        profileImage
+                    ) {
+
+                        profileImage.src =
+                            event.target.result;
+
+                    }
+
+
+                    showMessage(
+                        "Photo preview updated. Click Save Changes to continue.",
+                        "success"
+                    );
+
+                };
+
+
+            reader.readAsDataURL(
+                file
+            );
+
+
+            /*
+             * IMPORTANT:
+             *
+             * Your current PUT /profile API
+             * accepts "picture" as a string.
+             *
+             * It does NOT currently provide
+             * a multipart image-upload endpoint.
+             *
+             * Therefore this code previews the
+             * selected image in the browser only.
+             *
+             * Actual permanent image upload will
+             * require a separate backend upload
+             * endpoint.
+             */
+
+        };
 
 }
 
@@ -617,12 +1575,14 @@ async function loadProfile() {
 
     showLoading();
 
-    showMessage("");
+    showMessage(
+        ""
+    );
 
 
-    // ==================================================
-    // GET ACCESS TOKEN
-    // ==================================================
+    // --------------------------------------------------
+    // TOKEN
+    // --------------------------------------------------
 
     const token =
         getAccessToken();
@@ -634,9 +1594,9 @@ async function loadProfile() {
     );
 
 
-    // ==================================================
+    // --------------------------------------------------
     // NO TOKEN
-    // ==================================================
+    // --------------------------------------------------
 
     if (!token) {
 
@@ -656,9 +1616,9 @@ async function loadProfile() {
     }
 
 
-    // ==================================================
+    // --------------------------------------------------
     // API REQUEST
-    // ==================================================
+    // --------------------------------------------------
 
     try {
 
@@ -692,9 +1652,9 @@ async function loadProfile() {
         );
 
 
-        // ==================================================
+        // ------------------------------------------------
         // 401
-        // ==================================================
+        // ------------------------------------------------
 
         if (
             response.status === 401
@@ -722,36 +1682,46 @@ async function loadProfile() {
         }
 
 
-        // ==================================================
+        // ------------------------------------------------
         // OTHER ERROR
-        // ==================================================
+        // ------------------------------------------------
 
         if (!response.ok) {
 
             let errorText =
                 `Profile API error: ${response.status}`;
 
+
             try {
 
                 const errorData =
                     await response.json();
+
 
                 if (
                     errorData.detail
                 ) {
 
                     errorText =
-                        errorData.detail;
+                        typeof errorData.detail ===
+                        "string"
+                            ? errorData.detail
+                            : JSON.stringify(
+                                errorData.detail
+                            );
 
                 }
 
-            } catch (error) {
+            }
+
+            catch (error) {
 
                 console.warn(
                     "Could not read error response."
                 );
 
             }
+
 
             throw new Error(
                 errorText
@@ -760,9 +1730,9 @@ async function loadProfile() {
         }
 
 
-        // ==================================================
+        // ------------------------------------------------
         // READ RESPONSE
-        // ==================================================
+        // ------------------------------------------------
 
         const data =
             await response.json();
@@ -774,9 +1744,9 @@ async function loadProfile() {
         );
 
 
-        // ==================================================
+        // ------------------------------------------------
         // VALIDATE
-        // ==================================================
+        // ------------------------------------------------
 
         if (
             !data ||
@@ -790,9 +1760,17 @@ async function loadProfile() {
         }
 
 
-        // ==================================================
+        // ------------------------------------------------
+        // STORE CURRENT USER
+        // ------------------------------------------------
+
+        currentUser =
+            data.user;
+
+
+        // ------------------------------------------------
         // DISPLAY PROFILE
-        // ==================================================
+        // ------------------------------------------------
 
         renderProfile(
             data.user
@@ -810,7 +1788,9 @@ async function loadProfile() {
         );
 
 
-    } catch (error) {
+    }
+
+    catch (error) {
 
         console.error(
             "PROFILE LOAD ERROR:",
@@ -852,7 +1832,7 @@ async function loadProfile() {
                     <button
                         type="button"
                         class="primary-btn"
-                        onclick="loadProfile()"
+                        id="tryAgainButton"
                     >
                         Try Again
                     </button>
@@ -862,6 +1842,22 @@ async function loadProfile() {
             </div>
 
         `;
+
+
+        const tryAgainButton =
+            document.getElementById(
+                "tryAgainButton"
+            );
+
+
+        if (tryAgainButton) {
+
+            tryAgainButton.addEventListener(
+                "click",
+                loadProfile
+            );
+
+        }
 
 
         showMessage(
@@ -908,6 +1904,7 @@ document.addEventListener(
         console.log(
             "Profile page initialized."
         );
+
 
         loadProfile();
 
