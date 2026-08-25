@@ -828,7 +828,6 @@ googleButton.addEventListener(
 
         `;
 
-
         window.location.href =
             `${API_URL}/google/login`;
 
