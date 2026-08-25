@@ -46,12 +46,60 @@ class RegisterRequest(BaseModel):
     name: str
     email: str
     password: str
+    mobile: str | None = None
 
 
 class LoginRequest(BaseModel):
 
     email: str
     password: str
+
+
+class ProfileUpdateRequest(BaseModel):
+
+    name: str | None = None
+    email: str | None = None
+    mobile: str | None = None
+    picture: str | None = None
+
+
+# =========================================================
+# HELPER FUNCTIONS
+# =========================================================
+
+def clean_mobile(mobile):
+
+    if mobile is None:
+        return None
+
+    mobile = mobile.strip()
+
+    if not mobile:
+        return None
+
+    if len(mobile) > 30:
+        raise HTTPException(
+            status_code=400,
+            detail="Mobile number is too long."
+        )
+
+    return mobile
+
+
+def clean_email(email):
+
+    if email is None:
+        return None
+
+    email = email.strip().lower()
+
+    if not email or "@" not in email:
+        raise HTTPException(
+            status_code=400,
+            detail="Please enter a valid email address."
+        )
+
+    return email
 
 
 # =========================================================
@@ -72,10 +120,9 @@ def register(
     # -----------------------------------------------------
 
     name = data.name.strip()
-
     email = data.email.strip().lower()
-
     password = data.password
+    mobile = clean_mobile(data.mobile)
 
 
     # -----------------------------------------------------
@@ -120,16 +167,12 @@ def register(
 
     existing_user = (
         db.query(User)
-        .filter(
-            User.email == email
-        )
+        .filter(User.email == email)
         .first()
     )
 
 
     if existing_user:
-
-        # Existing Google account
 
         if existing_user.google_id:
 
@@ -140,9 +183,6 @@ def register(
                     "using Google login. Please continue with Google."
                 )
             )
-
-
-        # Existing ordinary account
 
         raise HTTPException(
             status_code=409,
@@ -164,19 +204,13 @@ def register(
     # -----------------------------------------------------
 
     user = User(
-
         google_id=None,
-
         email=email,
-
         name=name,
-
+        mobile=mobile,
         password_hash=password_hash,
-
         picture=None,
-
         is_active=True
-
     )
 
 
@@ -250,6 +284,9 @@ def register(
             "name":
                 user.name,
 
+            "mobile":
+                user.mobile,
+
             "picture":
                 user.picture
 
@@ -276,7 +313,6 @@ def login(
     # -----------------------------------------------------
 
     email = data.email.strip().lower()
-
     password = data.password
 
 
@@ -286,9 +322,7 @@ def login(
 
     user = (
         db.query(User)
-        .filter(
-            User.email == email
-        )
+        .filter(User.email == email)
         .first()
     )
 
@@ -388,6 +422,9 @@ def login(
 
             "name":
                 user.name,
+
+            "mobile":
+                user.mobile,
 
             "picture":
                 user.picture
@@ -556,9 +593,7 @@ async def google_callback(
 
         user = (
             db.query(User)
-            .filter(
-                User.email == email
-            )
+            .filter(User.email == email)
             .first()
         )
 
@@ -584,6 +619,8 @@ async def google_callback(
                     name
                     or email.split("@")[0]
                 ),
+
+                mobile=None,
 
                 password_hash=None,
 
@@ -796,7 +833,7 @@ async def google_callback(
 
 
         print(
-            f"Redirect URL: "
+            "Redirect URL:",
             f"{dashboard_url}?token=[JWT]"
         )
 
@@ -838,20 +875,16 @@ async def google_callback(
 
 
 # =========================================================
-# PROFILE
+# GET PROFILE
 # =========================================================
 #
-# IMPORTANT:
-#
-# This endpoint is:
+# API:
 #
 # https://ai-visibility-analyzer.onrender.com/profile
 #
-# It intentionally does NOT use:
+# Requires:
 #
-#     current_user.mobile
-#
-# because the User model does not contain a mobile field.
+# Authorization: Bearer YOUR_JWT
 #
 # =========================================================
 
@@ -874,10 +907,6 @@ def get_profile(
         f"{current_user.id}"
     )
 
-
-    # -----------------------------------------------------
-    # PROFILE RESPONSE
-    # -----------------------------------------------------
 
     return {
 
@@ -903,6 +932,420 @@ def get_profile(
 
             "name":
                 current_user.name,
+
+            "mobile":
+                current_user.mobile,
+
+            "picture":
+                current_user.picture,
+
+            "is_active":
+                current_user.is_active,
+
+            "created_at":
+                current_user.created_at
+
+        }
+
+    }
+
+
+# =========================================================
+# UPDATE PROFILE
+# =========================================================
+#
+# API:
+#
+# PUT
+# https://ai-visibility-analyzer.onrender.com/profile
+#
+# PATCH
+# https://ai-visibility-analyzer.onrender.com/profile
+#
+# Editable:
+#
+# - name
+# - email
+# - mobile
+# - picture
+#
+# =========================================================
+
+@router.put(
+    "/profile",
+    tags=["Profile"]
+)
+def update_profile(
+    data: ProfileUpdateRequest,
+    current_user: User = Depends(
+        get_current_user
+    ),
+    db: Session = Depends(get_db)
+):
+
+    print("=" * 60)
+
+    print(
+        "PROFILE UPDATE REQUEST"
+    )
+
+    print(
+        f"Authenticated User ID: "
+        f"{current_user.id}"
+    )
+
+
+    # -----------------------------------------------------
+    # CHECK WHETHER SOMETHING WAS SENT
+    # -----------------------------------------------------
+
+    if (
+        data.name is None
+        and data.email is None
+        and data.mobile is None
+        and data.picture is None
+    ):
+
+        raise HTTPException(
+            status_code=400,
+            detail="No profile changes were submitted."
+        )
+
+
+    # -----------------------------------------------------
+    # UPDATE NAME
+    # -----------------------------------------------------
+
+    if data.name is not None:
+
+        name = data.name.strip()
+
+        if not name:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Name cannot be empty."
+            )
+
+        current_user.name = name
+
+
+    # -----------------------------------------------------
+    # UPDATE EMAIL
+    # -----------------------------------------------------
+
+    if data.email is not None:
+
+        email = clean_email(
+            data.email
+        )
+
+
+        if email != current_user.email:
+
+            existing_user = (
+                db.query(User)
+                .filter(
+                    User.email == email,
+                    User.id != current_user.id
+                )
+                .first()
+            )
+
+
+            if existing_user:
+
+                raise HTTPException(
+                    status_code=409,
+                    detail=(
+                        "This email address is already "
+                        "registered with another account."
+                    )
+                )
+
+
+            current_user.email = email
+
+
+    # -----------------------------------------------------
+    # UPDATE MOBILE
+    # -----------------------------------------------------
+
+    if data.mobile is not None:
+
+        current_user.mobile = clean_mobile(
+            data.mobile
+        )
+
+
+    # -----------------------------------------------------
+    # UPDATE PROFILE PICTURE
+    # -----------------------------------------------------
+
+    if data.picture is not None:
+
+        picture = data.picture.strip()
+
+        if not picture:
+
+            current_user.picture = None
+
+        else:
+
+            current_user.picture = picture
+
+
+    # -----------------------------------------------------
+    # SAVE CHANGES
+    # -----------------------------------------------------
+
+    try:
+
+        db.commit()
+
+        db.refresh(current_user)
+
+    except Exception as e:
+
+        db.rollback()
+
+        print(
+            "PROFILE UPDATE DATABASE ERROR:"
+        )
+
+        print(
+            repr(e)
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to update profile."
+        )
+
+
+    print(
+        "PROFILE UPDATED SUCCESSFULLY"
+    )
+
+    print("=" * 60)
+
+
+    # -----------------------------------------------------
+    # RESPONSE
+    # -----------------------------------------------------
+
+    return {
+
+        "success":
+            True,
+
+        "message":
+            "Profile updated successfully.",
+
+        "user": {
+
+            "id":
+                current_user.id,
+
+            "google_id":
+                current_user.google_id,
+
+            "email":
+                current_user.email,
+
+            "name":
+                current_user.name,
+
+            "mobile":
+                current_user.mobile,
+
+            "picture":
+                current_user.picture,
+
+            "is_active":
+                current_user.is_active,
+
+            "created_at":
+                current_user.created_at
+
+        }
+
+    }
+
+
+# =========================================================
+# PATCH PROFILE
+# =========================================================
+#
+# This uses the same update logic as PUT.
+#
+# It is provided so your frontend can use either:
+#
+# PUT /profile
+# or
+# PATCH /profile
+#
+# =========================================================
+
+@router.patch(
+    "/profile",
+    tags=["Profile"]
+)
+def patch_profile(
+    data: ProfileUpdateRequest,
+    current_user: User = Depends(
+        get_current_user
+    ),
+    db: Session = Depends(get_db)
+):
+
+    # -----------------------------------------------------
+    # CHECK WHETHER SOMETHING WAS SENT
+    # -----------------------------------------------------
+
+    if (
+        data.name is None
+        and data.email is None
+        and data.mobile is None
+        and data.picture is None
+    ):
+
+        raise HTTPException(
+            status_code=400,
+            detail="No profile changes were submitted."
+        )
+
+
+    # -----------------------------------------------------
+    # NAME
+    # -----------------------------------------------------
+
+    if data.name is not None:
+
+        name = data.name.strip()
+
+        if not name:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Name cannot be empty."
+            )
+
+        current_user.name = name
+
+
+    # -----------------------------------------------------
+    # EMAIL
+    # -----------------------------------------------------
+
+    if data.email is not None:
+
+        email = clean_email(
+            data.email
+        )
+
+
+        if email != current_user.email:
+
+            existing_user = (
+                db.query(User)
+                .filter(
+                    User.email == email,
+                    User.id != current_user.id
+                )
+                .first()
+            )
+
+
+            if existing_user:
+
+                raise HTTPException(
+                    status_code=409,
+                    detail=(
+                        "This email address is already "
+                        "registered with another account."
+                    )
+                )
+
+
+            current_user.email = email
+
+
+    # -----------------------------------------------------
+    # MOBILE
+    # -----------------------------------------------------
+
+    if data.mobile is not None:
+
+        current_user.mobile = clean_mobile(
+            data.mobile
+        )
+
+
+    # -----------------------------------------------------
+    # PICTURE
+    # -----------------------------------------------------
+
+    if data.picture is not None:
+
+        picture = data.picture.strip()
+
+        current_user.picture = (
+            picture
+            if picture
+            else None
+        )
+
+
+    # -----------------------------------------------------
+    # SAVE
+    # -----------------------------------------------------
+
+    try:
+
+        db.commit()
+
+        db.refresh(current_user)
+
+    except Exception as e:
+
+        db.rollback()
+
+        print(
+            "PATCH PROFILE DATABASE ERROR:",
+            repr(e)
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to update profile."
+        )
+
+
+    return {
+
+        "success":
+            True,
+
+        "message":
+            "Profile updated successfully.",
+
+        "user": {
+
+            "id":
+                current_user.id,
+
+            "google_id":
+                current_user.google_id,
+
+            "email":
+                current_user.email,
+
+            "name":
+                current_user.name,
+
+            "mobile":
+                current_user.mobile,
 
             "picture":
                 current_user.picture,
