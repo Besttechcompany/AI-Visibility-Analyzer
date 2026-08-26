@@ -120,10 +120,9 @@ def register(
     # -----------------------------------------------------
 
     name = data.name.strip()
-    email = data.email.strip().lower()
+    email = clean_email(data.email)
     password = data.password
     mobile = clean_mobile(data.mobile)
-
 
     # -----------------------------------------------------
     # VALIDATE NAME
@@ -136,19 +135,6 @@ def register(
             detail="Name is required."
         )
 
-
-    # -----------------------------------------------------
-    # VALIDATE EMAIL
-    # -----------------------------------------------------
-
-    if not email or "@" not in email:
-
-        raise HTTPException(
-            status_code=400,
-            detail="Please enter a valid email address."
-        )
-
-
     # -----------------------------------------------------
     # VALIDATE PASSWORD
     # -----------------------------------------------------
@@ -160,7 +146,6 @@ def register(
             detail="Password must be at least 8 characters."
         )
 
-
     # -----------------------------------------------------
     # CHECK EXISTING USER
     # -----------------------------------------------------
@@ -170,7 +155,6 @@ def register(
         .filter(User.email == email)
         .first()
     )
-
 
     if existing_user:
 
@@ -186,18 +170,14 @@ def register(
 
         raise HTTPException(
             status_code=409,
-            detail=(
-                "An account already exists with this email."
-            )
+            detail="An account already exists with this email."
         )
-
 
     # -----------------------------------------------------
     # HASH PASSWORD
     # -----------------------------------------------------
 
     password_hash = hash_password(password)
-
 
     # -----------------------------------------------------
     # CREATE USER
@@ -213,14 +193,11 @@ def register(
         is_active=True
     )
 
-
     db.add(user)
-
 
     try:
 
         db.commit()
-
         db.refresh(user)
 
     except Exception as e:
@@ -237,7 +214,6 @@ def register(
             detail="Unable to create account."
         )
 
-
     # -----------------------------------------------------
     # CREATE JWT
     # -----------------------------------------------------
@@ -249,14 +225,12 @@ def register(
         }
     )
 
-
     if not access_token:
 
         raise HTTPException(
             status_code=500,
             detail="Unable to create access token."
         )
-
 
     # -----------------------------------------------------
     # RESPONSE
@@ -289,9 +263,7 @@ def register(
 
             "picture":
                 user.picture
-
         }
-
     }
 
 
@@ -312,12 +284,13 @@ def login(
     # CLEAN INPUT
     # -----------------------------------------------------
 
-    email = data.email.strip().lower()
+    email = clean_email(data.email)
     password = data.password
 
-
     # -----------------------------------------------------
-    # FIND USER
+    # FIND USER BY CURRENT EMAIL
+    #
+    # This allows users to login using their edited email.
     # -----------------------------------------------------
 
     user = (
@@ -326,14 +299,12 @@ def login(
         .first()
     )
 
-
     if not user:
 
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password."
         )
-
 
     # -----------------------------------------------------
     # CHECK ACCOUNT STATUS
@@ -345,7 +316,6 @@ def login(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Your account is inactive."
         )
-
 
     # -----------------------------------------------------
     # GOOGLE-ONLY ACCOUNT
@@ -361,7 +331,6 @@ def login(
             )
         )
 
-
     # -----------------------------------------------------
     # VERIFY PASSWORD
     # -----------------------------------------------------
@@ -376,7 +345,6 @@ def login(
             detail="Invalid email or password."
         )
 
-
     # -----------------------------------------------------
     # CREATE JWT
     # -----------------------------------------------------
@@ -388,14 +356,12 @@ def login(
         }
     )
 
-
     if not access_token:
 
         raise HTTPException(
             status_code=500,
             detail="Unable to create access token."
         )
-
 
     # -----------------------------------------------------
     # RESPONSE
@@ -428,9 +394,7 @@ def login(
 
             "picture":
                 user.picture
-
         }
-
     }
 
 
@@ -452,6 +416,7 @@ async def google_login(
         "GOOGLE LOGIN STARTED"
     )
 
+    print("=" * 60)
 
     # -----------------------------------------------------
     # GET GOOGLE REDIRECT URI
@@ -461,7 +426,6 @@ async def google_login(
         "GOOGLE_REDIRECT_URI"
     )
 
-
     print(
         "Google Redirect URI:"
     )
@@ -469,7 +433,6 @@ async def google_login(
     print(
         redirect_uri
     )
-
 
     if not redirect_uri:
 
@@ -479,7 +442,6 @@ async def google_login(
                 "GOOGLE_REDIRECT_URI is not configured."
             )
         )
-
 
     # -----------------------------------------------------
     # START GOOGLE OAUTH
@@ -505,13 +467,8 @@ async def google_callback(
 ):
 
     print("=" * 60)
-
-    print(
-        "GOOGLE CALLBACK STARTED"
-    )
-
+    print("GOOGLE CALLBACK STARTED")
     print("=" * 60)
-
 
     try:
 
@@ -523,11 +480,9 @@ async def google_callback(
             request
         )
 
-
         print(
             "Google authorization successful."
         )
-
 
         # -------------------------------------------------
         # 2. GET GOOGLE USER INFORMATION
@@ -537,7 +492,6 @@ async def google_callback(
             "userinfo"
         )
 
-
         if not user_info:
 
             raise HTTPException(
@@ -546,7 +500,6 @@ async def google_callback(
                     "Google user information not found."
                 )
             )
-
 
         email = user_info.get(
             "email"
@@ -564,9 +517,8 @@ async def google_callback(
             "picture"
         )
 
-
         # -------------------------------------------------
-        # VALIDATE GOOGLE DATA
+        # 3. VALIDATE GOOGLE DATA
         # -------------------------------------------------
 
         if not email or not google_id:
@@ -578,66 +530,73 @@ async def google_callback(
                 )
             )
 
-
         email = email.strip().lower()
-
 
         print(
             f"Google Email: {email}"
         )
 
+        print(
+            f"Google ID: {google_id}"
+        )
+
+        # =================================================
+        # IMPORTANT GOOGLE ACCOUNT LOGIC
+        # =================================================
+        #
+        # ALWAYS FIND GOOGLE USERS BY google_id FIRST.
+        #
+        # This is critical because the user may have changed
+        # their application profile email.
+        #
+        # Example:
+        #
+        # Google email:
+        # old@gmail.com
+        #
+        # Application email:
+        # new@email.com
+        #
+        # google_id remains the permanent Google identity.
+        #
+        # =================================================
 
         # -------------------------------------------------
-        # 3. FIND USER BY EMAIL
+        # 4. FIND EXISTING USER BY GOOGLE ID
         # -------------------------------------------------
 
         user = (
             db.query(User)
-            .filter(User.email == email)
+            .filter(User.google_id == google_id)
             .first()
         )
 
-
-        # -------------------------------------------------
-        # 4. CREATE NEW GOOGLE USER
-        # -------------------------------------------------
-
-        if not user:
+        if user:
 
             print(
-                "Creating new Google user..."
+                f"Existing Google user found by google_id: "
+                f"{user.id}"
             )
 
+            # -------------------------------------------------
+            # DO NOT overwrite user.email here.
+            #
+            # The user may have intentionally changed their
+            # application email from the Profile page.
+            # -------------------------------------------------
 
-            user = User(
+            # We can optionally refresh Google's name/picture.
+            # We DO NOT change the application email.
 
-                google_id=google_id,
+            if name and not user.name:
+                user.name = name
 
-                email=email,
-
-                name=(
-                    name
-                    or email.split("@")[0]
-                ),
-
-                mobile=None,
-
-                password_hash=None,
-
-                picture=picture,
-
-                is_active=True
-
-            )
-
-
-            db.add(user)
-
+            if picture and not user.picture:
+                user.picture = picture
 
             try:
 
                 db.commit()
-
                 db.refresh(user)
 
             except Exception as e:
@@ -645,65 +604,145 @@ async def google_callback(
                 db.rollback()
 
                 print(
-                    "GOOGLE USER DATABASE ERROR:"
-                )
-
-                print(
+                    "GOOGLE USER REFRESH ERROR:",
                     repr(e)
                 )
 
                 raise HTTPException(
                     status_code=500,
                     detail=(
-                        "Unable to create Google account."
+                        "Unable to update Google account."
                     )
                 )
 
-
-            print(
-                f"New Google user created: {user.id}"
-            )
-
-
-        # -------------------------------------------------
-        # EXISTING USER
-        # -------------------------------------------------
-
         else:
 
+            # -------------------------------------------------
+            # 5. GOOGLE ID NOT FOUND
+            #
+            # Now check whether the Google email already
+            # belongs to an existing application account.
+            # -------------------------------------------------
+
             print(
-                f"Existing user found: {user.id}"
+                "Google ID not found. Checking email..."
             )
 
+            user = (
+                db.query(User)
+                .filter(User.email == email)
+                .first()
+            )
 
-            # ---------------------------------------------
-            # LINK GOOGLE TO EXISTING ORDINARY ACCOUNT
-            # ---------------------------------------------
+            # -------------------------------------------------
+            # EXISTING USER FOUND BY EMAIL
+            # -------------------------------------------------
 
-            if user.google_id is None:
+            if user:
 
                 print(
-                    "Linking Google account to existing user."
+                    f"Existing user found by email: "
+                    f"{user.id}"
                 )
 
+                # -------------------------------------------------
+                # EXISTING GOOGLE ACCOUNT WITH DIFFERENT GOOGLE ID
+                # -------------------------------------------------
 
-                user.google_id = google_id
+                if user.google_id is not None:
 
+                    if user.google_id != google_id:
 
-                if name:
+                        raise HTTPException(
+                            status_code=409,
+                            detail=(
+                                "This email is already associated "
+                                "with a different Google account."
+                            )
+                        )
 
-                    user.name = name
+                # -------------------------------------------------
+                # EXISTING ORDINARY ACCOUNT
+                #
+                # Link Google to this existing account.
+                # -------------------------------------------------
 
+                else:
 
-                if picture:
+                    print(
+                        "Linking Google account to existing "
+                        "ordinary account."
+                    )
 
-                    user.picture = picture
+                    user.google_id = google_id
 
+                    # Do not replace an edited application name
+                    # unnecessarily.
+
+                    if not user.name and name:
+
+                        user.name = name
+
+                    if not user.picture and picture:
+
+                        user.picture = picture
+
+                    try:
+
+                        db.commit()
+                        db.refresh(user)
+
+                    except Exception as e:
+
+                        db.rollback()
+
+                        print(
+                            "GOOGLE ACCOUNT LINK ERROR:",
+                            repr(e)
+                        )
+
+                        raise HTTPException(
+                            status_code=500,
+                            detail=(
+                                "Unable to link Google account."
+                            )
+                        )
+
+            # -------------------------------------------------
+            # 6. COMPLETELY NEW GOOGLE USER
+            # -------------------------------------------------
+
+            else:
+
+                print(
+                    "Creating new Google user..."
+                )
+
+                user = User(
+
+                    google_id=google_id,
+
+                    email=email,
+
+                    name=(
+                        name
+                        or email.split("@")[0]
+                    ),
+
+                    mobile=None,
+
+                    password_hash=None,
+
+                    picture=picture,
+
+                    is_active=True
+                )
+
+                db.add(user)
 
                 try:
 
                     db.commit()
-
                     db.refresh(user)
 
                 except Exception as e:
@@ -711,7 +750,7 @@ async def google_callback(
                     db.rollback()
 
                     print(
-                        "GOOGLE ACCOUNT LINK ERROR:"
+                        "GOOGLE USER DATABASE ERROR:"
                     )
 
                     print(
@@ -721,28 +760,16 @@ async def google_callback(
                     raise HTTPException(
                         status_code=500,
                         detail=(
-                            "Unable to link Google account."
+                            "Unable to create Google account."
                         )
                     )
 
-
-            # ---------------------------------------------
-            # CHECK GOOGLE ID
-            # ---------------------------------------------
-
-            elif user.google_id != google_id:
-
-                raise HTTPException(
-                    status_code=409,
-                    detail=(
-                        "This email is already associated "
-                        "with a different Google account."
-                    )
+                print(
+                    f"New Google user created: {user.id}"
                 )
 
-
         # -------------------------------------------------
-        # 5. CHECK ACTIVE STATUS
+        # 7. CHECK ACTIVE STATUS
         # -------------------------------------------------
 
         if not user.is_active:
@@ -754,9 +781,13 @@ async def google_callback(
                 )
             )
 
-
         # -------------------------------------------------
-        # 6. CREATE APPLICATION JWT
+        # 8. CREATE APPLICATION JWT
+        #
+        # IMPORTANT:
+        # JWT identifies the application user by user_id.
+        #
+        # The email is informational/current profile email.
         # -------------------------------------------------
 
         access_token = create_access_token(
@@ -765,7 +796,6 @@ async def google_callback(
                 "email": user.email
             }
         )
-
 
         if not access_token:
 
@@ -776,24 +806,24 @@ async def google_callback(
                 )
             )
 
-
         print(
             "JWT CREATED SUCCESSFULLY"
         )
-
 
         print(
             f"User ID: {user.id}"
         )
 
-
         print(
-            f"Email: {user.email}"
+            f"Application Email: {user.email}"
         )
 
+        print(
+            f"Google ID: {user.google_id}"
+        )
 
         # -------------------------------------------------
-        # 7. FRONTEND URL
+        # 9. FRONTEND URL
         # -------------------------------------------------
 
         frontend_url = os.getenv(
@@ -801,18 +831,16 @@ async def google_callback(
             "https://webanalyzer.besttechcompany.com"
         ).rstrip("/")
 
-
         # -------------------------------------------------
-        # 8. DASHBOARD URL
+        # 10. DASHBOARD URL
         # -------------------------------------------------
 
         dashboard_url = (
             f"{frontend_url}/dashboard.html"
         )
 
-
         # -------------------------------------------------
-        # 9. ADD JWT TO REDIRECT
+        # 11. ADD JWT TO REDIRECT
         # -------------------------------------------------
 
         query_string = urlencode(
@@ -821,25 +849,21 @@ async def google_callback(
             }
         )
 
-
         redirect_url = (
             f"{dashboard_url}?{query_string}"
         )
 
-
         print(
             "Redirecting to dashboard with JWT."
         )
-
 
         print(
             "Redirect URL:",
             f"{dashboard_url}?token=[JWT]"
         )
 
-
         # -------------------------------------------------
-        # 10. REDIRECT
+        # 12. REDIRECT
         # -------------------------------------------------
 
         return RedirectResponse(
@@ -847,11 +871,9 @@ async def google_callback(
             status_code=302
         )
 
-
     except HTTPException:
 
         raise
-
 
     except Exception as e:
 
@@ -867,7 +889,6 @@ async def google_callback(
 
         print("=" * 60)
 
-
         raise HTTPException(
             status_code=500,
             detail="Google login failed."
@@ -876,16 +897,6 @@ async def google_callback(
 
 # =========================================================
 # GET PROFILE
-# =========================================================
-#
-# API:
-#
-# https://ai-visibility-analyzer.onrender.com/profile
-#
-# Requires:
-#
-# Authorization: Bearer YOUR_JWT
-#
 # =========================================================
 
 @router.get(
@@ -906,7 +917,6 @@ def get_profile(
         f"Authenticated User ID: "
         f"{current_user.id}"
     )
-
 
     return {
 
@@ -944,31 +954,152 @@ def get_profile(
 
             "created_at":
                 current_user.created_at
-
         }
-
     }
 
 
 # =========================================================
-# UPDATE PROFILE
+# PROFILE UPDATE HELPER
 # =========================================================
-#
-# API:
-#
-# PUT
-# https://ai-visibility-analyzer.onrender.com/profile
-#
-# PATCH
-# https://ai-visibility-analyzer.onrender.com/profile
-#
-# Editable:
-#
-# - name
-# - email
-# - mobile
-# - picture
-#
+
+def apply_profile_update(
+    data: ProfileUpdateRequest,
+    current_user: User,
+    db: Session
+):
+
+    # -----------------------------------------------------
+    # CHECK WHETHER SOMETHING WAS SENT
+    # -----------------------------------------------------
+
+    if (
+        data.name is None
+        and data.email is None
+        and data.mobile is None
+        and data.picture is None
+    ):
+
+        raise HTTPException(
+            status_code=400,
+            detail="No profile changes were submitted."
+        )
+
+    # -----------------------------------------------------
+    # UPDATE NAME
+    # -----------------------------------------------------
+
+    if data.name is not None:
+
+        name = data.name.strip()
+
+        if not name:
+
+            raise HTTPException(
+                status_code=400,
+                detail="Name cannot be empty."
+            )
+
+        current_user.name = name
+
+    # -----------------------------------------------------
+    # UPDATE EMAIL
+    #
+    # This is the user's APPLICATION email.
+    #
+    # For Google users:
+    # - email can change
+    # - google_id NEVER changes
+    #
+    # This is intentional.
+    # -----------------------------------------------------
+
+    if data.email is not None:
+
+        email = clean_email(
+            data.email
+        )
+
+        if email != current_user.email:
+
+            existing_user = (
+                db.query(User)
+                .filter(
+                    User.email == email,
+                    User.id != current_user.id
+                )
+                .first()
+            )
+
+            if existing_user:
+
+                raise HTTPException(
+                    status_code=409,
+                    detail=(
+                        "This email address is already "
+                        "registered with another account."
+                    )
+                )
+
+            current_user.email = email
+
+    # -----------------------------------------------------
+    # UPDATE MOBILE
+    # -----------------------------------------------------
+
+    if data.mobile is not None:
+
+        current_user.mobile = clean_mobile(
+            data.mobile
+        )
+
+    # -----------------------------------------------------
+    # UPDATE PROFILE PICTURE
+    # -----------------------------------------------------
+
+    if data.picture is not None:
+
+        picture = data.picture.strip()
+
+        if not picture:
+
+            current_user.picture = None
+
+        else:
+
+            current_user.picture = picture
+
+    # -----------------------------------------------------
+    # SAVE CHANGES
+    # -----------------------------------------------------
+
+    try:
+
+        db.commit()
+        db.refresh(current_user)
+
+    except Exception as e:
+
+        db.rollback()
+
+        print(
+            "PROFILE UPDATE DATABASE ERROR:",
+            repr(e)
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to update profile."
+        )
+
+    print(
+        "PROFILE UPDATED SUCCESSFULLY"
+    )
+
+    return current_user
+
+
+# =========================================================
+# UPDATE PROFILE - PUT
 # =========================================================
 
 @router.put(
@@ -994,141 +1125,17 @@ def update_profile(
         f"{current_user.id}"
     )
 
-
     # -----------------------------------------------------
-    # CHECK WHETHER SOMETHING WAS SENT
-    # -----------------------------------------------------
-
-    if (
-        data.name is None
-        and data.email is None
-        and data.mobile is None
-        and data.picture is None
-    ):
-
-        raise HTTPException(
-            status_code=400,
-            detail="No profile changes were submitted."
-        )
-
-
-    # -----------------------------------------------------
-    # UPDATE NAME
+    # APPLY UPDATE
     # -----------------------------------------------------
 
-    if data.name is not None:
-
-        name = data.name.strip()
-
-        if not name:
-
-            raise HTTPException(
-                status_code=400,
-                detail="Name cannot be empty."
-            )
-
-        current_user.name = name
-
-
-    # -----------------------------------------------------
-    # UPDATE EMAIL
-    # -----------------------------------------------------
-
-    if data.email is not None:
-
-        email = clean_email(
-            data.email
-        )
-
-
-        if email != current_user.email:
-
-            existing_user = (
-                db.query(User)
-                .filter(
-                    User.email == email,
-                    User.id != current_user.id
-                )
-                .first()
-            )
-
-
-            if existing_user:
-
-                raise HTTPException(
-                    status_code=409,
-                    detail=(
-                        "This email address is already "
-                        "registered with another account."
-                    )
-                )
-
-
-            current_user.email = email
-
-
-    # -----------------------------------------------------
-    # UPDATE MOBILE
-    # -----------------------------------------------------
-
-    if data.mobile is not None:
-
-        current_user.mobile = clean_mobile(
-            data.mobile
-        )
-
-
-    # -----------------------------------------------------
-    # UPDATE PROFILE PICTURE
-    # -----------------------------------------------------
-
-    if data.picture is not None:
-
-        picture = data.picture.strip()
-
-        if not picture:
-
-            current_user.picture = None
-
-        else:
-
-            current_user.picture = picture
-
-
-    # -----------------------------------------------------
-    # SAVE CHANGES
-    # -----------------------------------------------------
-
-    try:
-
-        db.commit()
-
-        db.refresh(current_user)
-
-    except Exception as e:
-
-        db.rollback()
-
-        print(
-            "PROFILE UPDATE DATABASE ERROR:"
-        )
-
-        print(
-            repr(e)
-        )
-
-        raise HTTPException(
-            status_code=500,
-            detail="Unable to update profile."
-        )
-
-
-    print(
-        "PROFILE UPDATED SUCCESSFULLY"
+    current_user = apply_profile_update(
+        data,
+        current_user,
+        db
     )
 
     print("=" * 60)
-
 
     # -----------------------------------------------------
     # RESPONSE
@@ -1167,24 +1174,12 @@ def update_profile(
 
             "created_at":
                 current_user.created_at
-
         }
-
     }
 
 
 # =========================================================
 # PATCH PROFILE
-# =========================================================
-#
-# This uses the same update logic as PUT.
-#
-# It is provided so your frontend can use either:
-#
-# PUT /profile
-# or
-# PATCH /profile
-#
 # =========================================================
 
 @router.patch(
@@ -1199,128 +1194,32 @@ def patch_profile(
     db: Session = Depends(get_db)
 ):
 
-    # -----------------------------------------------------
-    # CHECK WHETHER SOMETHING WAS SENT
-    # -----------------------------------------------------
+    print("=" * 60)
 
-    if (
-        data.name is None
-        and data.email is None
-        and data.mobile is None
-        and data.picture is None
-    ):
+    print(
+        "PATCH PROFILE UPDATE REQUEST"
+    )
 
-        raise HTTPException(
-            status_code=400,
-            detail="No profile changes were submitted."
-        )
-
+    print(
+        f"Authenticated User ID: "
+        f"{current_user.id}"
+    )
 
     # -----------------------------------------------------
-    # NAME
+    # APPLY SAME UPDATE LOGIC
     # -----------------------------------------------------
 
-    if data.name is not None:
+    current_user = apply_profile_update(
+        data,
+        current_user,
+        db
+    )
 
-        name = data.name.strip()
-
-        if not name:
-
-            raise HTTPException(
-                status_code=400,
-                detail="Name cannot be empty."
-            )
-
-        current_user.name = name
-
+    print("=" * 60)
 
     # -----------------------------------------------------
-    # EMAIL
+    # RESPONSE
     # -----------------------------------------------------
-
-    if data.email is not None:
-
-        email = clean_email(
-            data.email
-        )
-
-
-        if email != current_user.email:
-
-            existing_user = (
-                db.query(User)
-                .filter(
-                    User.email == email,
-                    User.id != current_user.id
-                )
-                .first()
-            )
-
-
-            if existing_user:
-
-                raise HTTPException(
-                    status_code=409,
-                    detail=(
-                        "This email address is already "
-                        "registered with another account."
-                    )
-                )
-
-
-            current_user.email = email
-
-
-    # -----------------------------------------------------
-    # MOBILE
-    # -----------------------------------------------------
-
-    if data.mobile is not None:
-
-        current_user.mobile = clean_mobile(
-            data.mobile
-        )
-
-
-    # -----------------------------------------------------
-    # PICTURE
-    # -----------------------------------------------------
-
-    if data.picture is not None:
-
-        picture = data.picture.strip()
-
-        current_user.picture = (
-            picture
-            if picture
-            else None
-        )
-
-
-    # -----------------------------------------------------
-    # SAVE
-    # -----------------------------------------------------
-
-    try:
-
-        db.commit()
-
-        db.refresh(current_user)
-
-    except Exception as e:
-
-        db.rollback()
-
-        print(
-            "PATCH PROFILE DATABASE ERROR:",
-            repr(e)
-        )
-
-        raise HTTPException(
-            status_code=500,
-            detail="Unable to update profile."
-        )
-
 
     return {
 
@@ -1355,7 +1254,5 @@ def patch_profile(
 
             "created_at":
                 current_user.created_at
-
         }
-
     }
