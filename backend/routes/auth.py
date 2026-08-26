@@ -3,7 +3,9 @@ from fastapi import (
     Request,
     Depends,
     HTTPException,
-    status
+    status,
+    UploadFile,
+    File
 )
 
 from fastapi.responses import RedirectResponse
@@ -26,6 +28,10 @@ from utils.password_handler import (
 )
 
 import os
+import uuid
+import shutil
+
+from pathlib import Path
 
 from urllib.parse import urlencode
 
@@ -38,28 +44,77 @@ router = APIRouter()
 
 
 # =========================================================
+# PROFILE UPLOAD DIRECTORY
+# =========================================================
+
+UPLOAD_DIR = Path("uploads")
+
+PROFILE_UPLOAD_DIR = (
+    UPLOAD_DIR / "profile"
+)
+
+PROFILE_UPLOAD_DIR.mkdir(
+    parents=True,
+    exist_ok=True
+)
+
+
+# =========================================================
+# ALLOWED IMAGE TYPES
+# =========================================================
+
+ALLOWED_IMAGE_TYPES = {
+
+    "image/jpeg": ".jpg",
+
+    "image/png": ".png",
+
+    "image/webp": ".webp",
+
+    "image/gif": ".gif"
+}
+
+
+# =========================================================
+# MAX PROFILE IMAGE SIZE
+# 5 MB
+# =========================================================
+
+MAX_PROFILE_IMAGE_SIZE = (
+    5 * 1024 * 1024
+)
+
+
+# =========================================================
 # REQUEST MODELS
 # =========================================================
 
 class RegisterRequest(BaseModel):
 
     name: str
+
     email: str
+
     password: str
+
     mobile: str | None = None
 
 
 class LoginRequest(BaseModel):
 
     email: str
+
     password: str
 
 
 class ProfileUpdateRequest(BaseModel):
 
     name: str | None = None
+
     email: str | None = None
+
     mobile: str | None = None
+
     picture: str | None = None
 
 
@@ -70,14 +125,17 @@ class ProfileUpdateRequest(BaseModel):
 def clean_mobile(mobile):
 
     if mobile is None:
+
         return None
 
     mobile = mobile.strip()
 
     if not mobile:
+
         return None
 
     if len(mobile) > 30:
+
         raise HTTPException(
             status_code=400,
             detail="Mobile number is too long."
@@ -89,17 +147,77 @@ def clean_mobile(mobile):
 def clean_email(email):
 
     if email is None:
+
         return None
 
     email = email.strip().lower()
 
-    if not email or "@" not in email:
+    if (
+        not email
+        or "@" not in email
+    ):
+
         raise HTTPException(
             status_code=400,
             detail="Please enter a valid email address."
         )
 
     return email
+
+
+# =========================================================
+# DELETE OLD LOCAL PROFILE IMAGE
+# =========================================================
+
+def delete_local_profile_image(
+    picture_url
+):
+
+    if not picture_url:
+
+        return
+
+    try:
+
+        # -------------------------------------------------
+        # Only delete files belonging to our local
+        # /uploads/profile/ directory.
+        # -------------------------------------------------
+
+        if "/uploads/profile/" not in picture_url:
+
+            return
+
+        filename = (
+            picture_url
+            .split("/uploads/profile/")[-1]
+            .split("?")[0]
+        )
+
+        if not filename:
+
+            return
+
+        file_path = (
+            PROFILE_UPLOAD_DIR /
+            Path(filename).name
+        )
+
+        if file_path.exists():
+
+            file_path.unlink()
+
+            print(
+                "Deleted old profile image:",
+                str(file_path)
+            )
+
+    except Exception as e:
+
+        print(
+            "Unable to delete old profile image:",
+            repr(e)
+        )
 
 
 # =========================================================
@@ -115,14 +233,17 @@ def register(
     db: Session = Depends(get_db)
 ):
 
-    # -----------------------------------------------------
-    # CLEAN INPUT
-    # -----------------------------------------------------
-
     name = data.name.strip()
-    email = clean_email(data.email)
+
+    email = clean_email(
+        data.email
+    )
+
     password = data.password
-    mobile = clean_mobile(data.mobile)
+
+    mobile = clean_mobile(
+        data.mobile
+    )
 
     # -----------------------------------------------------
     # VALIDATE NAME
@@ -143,7 +264,9 @@ def register(
 
         raise HTTPException(
             status_code=400,
-            detail="Password must be at least 8 characters."
+            detail=(
+                "Password must be at least 8 characters."
+            )
         )
 
     # -----------------------------------------------------
@@ -152,7 +275,9 @@ def register(
 
     existing_user = (
         db.query(User)
-        .filter(User.email == email)
+        .filter(
+            User.email == email
+        )
         .first()
     )
 
@@ -163,33 +288,45 @@ def register(
             raise HTTPException(
                 status_code=409,
                 detail=(
-                    "An account already exists with this email "
-                    "using Google login. Please continue with Google."
+                    "An account already exists with this "
+                    "email using Google login. "
+                    "Please continue with Google."
                 )
             )
 
         raise HTTPException(
             status_code=409,
-            detail="An account already exists with this email."
+            detail=(
+                "An account already exists with this email."
+            )
         )
 
     # -----------------------------------------------------
     # HASH PASSWORD
     # -----------------------------------------------------
 
-    password_hash = hash_password(password)
+    password_hash = hash_password(
+        password
+    )
 
     # -----------------------------------------------------
     # CREATE USER
     # -----------------------------------------------------
 
     user = User(
+
         google_id=None,
+
         email=email,
+
         name=name,
+
         mobile=mobile,
+
         password_hash=password_hash,
+
         picture=None,
+
         is_active=True
     )
 
@@ -198,6 +335,7 @@ def register(
     try:
 
         db.commit()
+
         db.refresh(user)
 
     except Exception as e:
@@ -231,10 +369,6 @@ def register(
             status_code=500,
             detail="Unable to create access token."
         )
-
-    # -----------------------------------------------------
-    # RESPONSE
-    # -----------------------------------------------------
 
     return {
 
@@ -280,22 +414,21 @@ def login(
     db: Session = Depends(get_db)
 ):
 
-    # -----------------------------------------------------
-    # CLEAN INPUT
-    # -----------------------------------------------------
+    email = clean_email(
+        data.email
+    )
 
-    email = clean_email(data.email)
     password = data.password
 
     # -----------------------------------------------------
     # FIND USER BY CURRENT EMAIL
-    #
-    # This allows users to login using their edited email.
     # -----------------------------------------------------
 
     user = (
         db.query(User)
-        .filter(User.email == email)
+        .filter(
+            User.email == email
+        )
         .first()
     )
 
@@ -307,7 +440,7 @@ def login(
         )
 
     # -----------------------------------------------------
-    # CHECK ACCOUNT STATUS
+    # ACCOUNT STATUS
     # -----------------------------------------------------
 
     if not user.is_active:
@@ -318,7 +451,7 @@ def login(
         )
 
     # -----------------------------------------------------
-    # GOOGLE-ONLY ACCOUNT
+    # GOOGLE ONLY ACCOUNT
     # -----------------------------------------------------
 
     if not user.password_hash:
@@ -346,7 +479,7 @@ def login(
         )
 
     # -----------------------------------------------------
-    # CREATE JWT
+    # JWT
     # -----------------------------------------------------
 
     access_token = create_access_token(
@@ -362,10 +495,6 @@ def login(
             status_code=500,
             detail="Unable to create access token."
         )
-
-    # -----------------------------------------------------
-    # RESPONSE
-    # -----------------------------------------------------
 
     return {
 
@@ -418,10 +547,6 @@ async def google_login(
 
     print("=" * 60)
 
-    # -----------------------------------------------------
-    # GET GOOGLE REDIRECT URI
-    # -----------------------------------------------------
-
     redirect_uri = os.getenv(
         "GOOGLE_REDIRECT_URI"
     )
@@ -443,10 +568,6 @@ async def google_login(
             )
         )
 
-    # -----------------------------------------------------
-    # START GOOGLE OAUTH
-    # -----------------------------------------------------
-
     return await oauth.google.authorize_redirect(
         request,
         redirect_uri
@@ -467,13 +588,17 @@ async def google_callback(
 ):
 
     print("=" * 60)
-    print("GOOGLE CALLBACK STARTED")
+
+    print(
+        "GOOGLE CALLBACK STARTED"
+    )
+
     print("=" * 60)
 
     try:
 
         # -------------------------------------------------
-        # 1. EXCHANGE GOOGLE CODE FOR TOKEN
+        # EXCHANGE CODE FOR TOKEN
         # -------------------------------------------------
 
         token = await oauth.google.authorize_access_token(
@@ -485,7 +610,7 @@ async def google_callback(
         )
 
         # -------------------------------------------------
-        # 2. GET GOOGLE USER INFORMATION
+        # GOOGLE USER INFO
         # -------------------------------------------------
 
         user_info = token.get(
@@ -513,12 +638,12 @@ async def google_callback(
             "name"
         )
 
-        picture = user_info.get(
+        google_picture = user_info.get(
             "picture"
         )
 
         # -------------------------------------------------
-        # 3. VALIDATE GOOGLE DATA
+        # VALIDATE
         # -------------------------------------------------
 
         if not email or not google_id:
@@ -541,62 +666,61 @@ async def google_callback(
         )
 
         # =================================================
-        # IMPORTANT GOOGLE ACCOUNT LOGIC
+        # IMPORTANT
+        #
+        # FIND GOOGLE USER BY google_id FIRST
         # =================================================
-        #
-        # ALWAYS FIND GOOGLE USERS BY google_id FIRST.
-        #
-        # This is critical because the user may have changed
-        # their application profile email.
-        #
-        # Example:
-        #
-        # Google email:
-        # old@gmail.com
-        #
-        # Application email:
-        # new@email.com
-        #
-        # google_id remains the permanent Google identity.
-        #
-        # =================================================
-
-        # -------------------------------------------------
-        # 4. FIND EXISTING USER BY GOOGLE ID
-        # -------------------------------------------------
 
         user = (
             db.query(User)
-            .filter(User.google_id == google_id)
+            .filter(
+                User.google_id == google_id
+            )
             .first()
         )
+
+        # =================================================
+        # EXISTING GOOGLE USER
+        # =================================================
 
         if user:
 
             print(
-                f"Existing Google user found by google_id: "
-                f"{user.id}"
+                f"Existing Google user found by "
+                f"google_id: {user.id}"
             )
 
             # -------------------------------------------------
-            # DO NOT overwrite user.email here.
-            #
-            # The user may have intentionally changed their
-            # application email from the Profile page.
+            # DO NOT CHANGE APPLICATION EMAIL
             # -------------------------------------------------
 
-            # We can optionally refresh Google's name/picture.
-            # We DO NOT change the application email.
+            # -------------------------------------------------
+            # DO NOT OVERWRITE CUSTOM PROFILE IMAGE
+            #
+            # If the user uploaded their own picture,
+            # preserve it.
+            # -------------------------------------------------
 
-            if name and not user.name:
+            if (
+                not user.picture
+                and google_picture
+            ):
+
+                user.picture = (
+                    google_picture
+                )
+
+            if (
+                not user.name
+                and name
+            ):
+
                 user.name = name
-
-            if picture and not user.picture:
-                user.picture = picture
 
             try:
 
                 db.commit()
+
                 db.refresh(user)
 
             except Exception as e:
@@ -617,12 +741,11 @@ async def google_callback(
 
         else:
 
-            # -------------------------------------------------
-            # 5. GOOGLE ID NOT FOUND
+            # =================================================
+            # GOOGLE ID NOT FOUND
             #
-            # Now check whether the Google email already
-            # belongs to an existing application account.
-            # -------------------------------------------------
+            # Check email next.
+            # =================================================
 
             print(
                 "Google ID not found. Checking email..."
@@ -630,12 +753,14 @@ async def google_callback(
 
             user = (
                 db.query(User)
-                .filter(User.email == email)
+                .filter(
+                    User.email == email
+                )
                 .first()
             )
 
             # -------------------------------------------------
-            # EXISTING USER FOUND BY EMAIL
+            # EXISTING USER BY EMAIL
             # -------------------------------------------------
 
             if user:
@@ -646,50 +771,59 @@ async def google_callback(
                 )
 
                 # -------------------------------------------------
-                # EXISTING GOOGLE ACCOUNT WITH DIFFERENT GOOGLE ID
+                # EMAIL ALREADY BELONGS TO ANOTHER GOOGLE ACCOUNT
                 # -------------------------------------------------
 
                 if user.google_id is not None:
 
-                    if user.google_id != google_id:
+                    if (
+                        user.google_id != google_id
+                    ):
 
                         raise HTTPException(
                             status_code=409,
                             detail=(
-                                "This email is already associated "
-                                "with a different Google account."
+                                "This email is already "
+                                "associated with a different "
+                                "Google account."
                             )
                         )
 
                 # -------------------------------------------------
-                # EXISTING ORDINARY ACCOUNT
+                # ORDINARY ACCOUNT
                 #
-                # Link Google to this existing account.
+                # LINK GOOGLE
                 # -------------------------------------------------
 
                 else:
 
                     print(
-                        "Linking Google account to existing "
-                        "ordinary account."
+                        "Linking Google account to "
+                        "existing ordinary account."
                     )
 
                     user.google_id = google_id
 
-                    # Do not replace an edited application name
-                    # unnecessarily.
-
-                    if not user.name and name:
+                    if (
+                        not user.name
+                        and name
+                    ):
 
                         user.name = name
 
-                    if not user.picture and picture:
+                    if (
+                        not user.picture
+                        and google_picture
+                    ):
 
-                        user.picture = picture
+                        user.picture = (
+                            google_picture
+                        )
 
                     try:
 
                         db.commit()
+
                         db.refresh(user)
 
                     except Exception as e:
@@ -709,7 +843,7 @@ async def google_callback(
                         )
 
             # -------------------------------------------------
-            # 6. COMPLETELY NEW GOOGLE USER
+            # COMPLETELY NEW GOOGLE USER
             # -------------------------------------------------
 
             else:
@@ -733,7 +867,7 @@ async def google_callback(
 
                     password_hash=None,
 
-                    picture=picture,
+                    picture=google_picture,
 
                     is_active=True
                 )
@@ -743,6 +877,7 @@ async def google_callback(
                 try:
 
                     db.commit()
+
                     db.refresh(user)
 
                 except Exception as e:
@@ -769,7 +904,7 @@ async def google_callback(
                 )
 
         # -------------------------------------------------
-        # 7. CHECK ACTIVE STATUS
+        # ACTIVE CHECK
         # -------------------------------------------------
 
         if not user.is_active:
@@ -782,12 +917,7 @@ async def google_callback(
             )
 
         # -------------------------------------------------
-        # 8. CREATE APPLICATION JWT
-        #
-        # IMPORTANT:
-        # JWT identifies the application user by user_id.
-        #
-        # The email is informational/current profile email.
+        # CREATE JWT
         # -------------------------------------------------
 
         access_token = create_access_token(
@@ -823,7 +953,7 @@ async def google_callback(
         )
 
         # -------------------------------------------------
-        # 9. FRONTEND URL
+        # FRONTEND
         # -------------------------------------------------
 
         frontend_url = os.getenv(
@@ -831,17 +961,9 @@ async def google_callback(
             "https://webanalyzer.besttechcompany.com"
         ).rstrip("/")
 
-        # -------------------------------------------------
-        # 10. DASHBOARD URL
-        # -------------------------------------------------
-
         dashboard_url = (
             f"{frontend_url}/dashboard.html"
         )
-
-        # -------------------------------------------------
-        # 11. ADD JWT TO REDIRECT
-        # -------------------------------------------------
 
         query_string = urlencode(
             {
@@ -852,19 +974,6 @@ async def google_callback(
         redirect_url = (
             f"{dashboard_url}?{query_string}"
         )
-
-        print(
-            "Redirecting to dashboard with JWT."
-        )
-
-        print(
-            "Redirect URL:",
-            f"{dashboard_url}?token=[JWT]"
-        )
-
-        # -------------------------------------------------
-        # 12. REDIRECT
-        # -------------------------------------------------
 
         return RedirectResponse(
             url=redirect_url,
@@ -968,10 +1077,6 @@ def apply_profile_update(
     db: Session
 ):
 
-    # -----------------------------------------------------
-    # CHECK WHETHER SOMETHING WAS SENT
-    # -----------------------------------------------------
-
     if (
         data.name is None
         and data.email is None
@@ -981,11 +1086,13 @@ def apply_profile_update(
 
         raise HTTPException(
             status_code=400,
-            detail="No profile changes were submitted."
+            detail=(
+                "No profile changes were submitted."
+            )
         )
 
     # -----------------------------------------------------
-    # UPDATE NAME
+    # NAME
     # -----------------------------------------------------
 
     if data.name is not None:
@@ -1002,15 +1109,7 @@ def apply_profile_update(
         current_user.name = name
 
     # -----------------------------------------------------
-    # UPDATE EMAIL
-    #
-    # This is the user's APPLICATION email.
-    #
-    # For Google users:
-    # - email can change
-    # - google_id NEVER changes
-    #
-    # This is intentional.
+    # EMAIL
     # -----------------------------------------------------
 
     if data.email is not None:
@@ -1019,7 +1118,9 @@ def apply_profile_update(
             data.email
         )
 
-        if email != current_user.email:
+        if (
+            email != current_user.email
+        ):
 
             existing_user = (
                 db.query(User)
@@ -1043,17 +1144,19 @@ def apply_profile_update(
             current_user.email = email
 
     # -----------------------------------------------------
-    # UPDATE MOBILE
+    # MOBILE
     # -----------------------------------------------------
 
     if data.mobile is not None:
 
-        current_user.mobile = clean_mobile(
-            data.mobile
+        current_user.mobile = (
+            clean_mobile(
+                data.mobile
+            )
         )
 
     # -----------------------------------------------------
-    # UPDATE PROFILE PICTURE
+    # PICTURE URL
     # -----------------------------------------------------
 
     if data.picture is not None:
@@ -1069,13 +1172,16 @@ def apply_profile_update(
             current_user.picture = picture
 
     # -----------------------------------------------------
-    # SAVE CHANGES
+    # SAVE
     # -----------------------------------------------------
 
     try:
 
         db.commit()
-        db.refresh(current_user)
+
+        db.refresh(
+            current_user
+        )
 
     except Exception as e:
 
@@ -1090,10 +1196,6 @@ def apply_profile_update(
             status_code=500,
             detail="Unable to update profile."
         )
-
-    print(
-        "PROFILE UPDATED SUCCESSFULLY"
-    )
 
     return current_user
 
@@ -1114,8 +1216,6 @@ def update_profile(
     db: Session = Depends(get_db)
 ):
 
-    print("=" * 60)
-
     print(
         "PROFILE UPDATE REQUEST"
     )
@@ -1125,21 +1225,11 @@ def update_profile(
         f"{current_user.id}"
     )
 
-    # -----------------------------------------------------
-    # APPLY UPDATE
-    # -----------------------------------------------------
-
     current_user = apply_profile_update(
         data,
         current_user,
         db
     )
-
-    print("=" * 60)
-
-    # -----------------------------------------------------
-    # RESPONSE
-    # -----------------------------------------------------
 
     return {
 
@@ -1194,32 +1284,11 @@ def patch_profile(
     db: Session = Depends(get_db)
 ):
 
-    print("=" * 60)
-
-    print(
-        "PATCH PROFILE UPDATE REQUEST"
-    )
-
-    print(
-        f"Authenticated User ID: "
-        f"{current_user.id}"
-    )
-
-    # -----------------------------------------------------
-    # APPLY SAME UPDATE LOGIC
-    # -----------------------------------------------------
-
     current_user = apply_profile_update(
         data,
         current_user,
         db
     )
-
-    print("=" * 60)
-
-    # -----------------------------------------------------
-    # RESPONSE
-    # -----------------------------------------------------
 
     return {
 
@@ -1228,6 +1297,413 @@ def patch_profile(
 
         "message":
             "Profile updated successfully.",
+
+        "user": {
+
+            "id":
+                current_user.id,
+
+            "google_id":
+                current_user.google_id,
+
+            "email":
+                current_user.email,
+
+            "name":
+                current_user.name,
+
+            "mobile":
+                current_user.mobile,
+
+            "picture":
+                current_user.picture,
+
+            "is_active":
+                current_user.is_active,
+
+            "created_at":
+                current_user.created_at
+        }
+    }
+
+
+# =========================================================
+# UPLOAD PROFILE PHOTO
+# =========================================================
+
+@router.post(
+    "/profile/photo",
+    tags=["Profile"]
+)
+async def upload_profile_photo(
+    file: UploadFile = File(...),
+    current_user: User = Depends(
+        get_current_user
+    ),
+    db: Session = Depends(get_db)
+):
+
+    print("=" * 60)
+
+    print(
+        "PROFILE PHOTO UPLOAD REQUEST"
+    )
+
+    print(
+        f"User ID: {current_user.id}"
+    )
+
+    print(
+        f"Filename: {file.filename}"
+    )
+
+    print(
+        f"Content Type: {file.content_type}"
+    )
+
+    print("=" * 60)
+
+    # =====================================================
+    # VALIDATE CONTENT TYPE
+    # =====================================================
+
+    if (
+        file.content_type
+        not in ALLOWED_IMAGE_TYPES
+    ):
+
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Invalid image type. "
+                "Only JPG, PNG, WEBP and GIF are allowed."
+            )
+        )
+
+    # =====================================================
+    # VALIDATE FILENAME
+    # =====================================================
+
+    if not file.filename:
+
+        raise HTTPException(
+            status_code=400,
+            detail="No file was selected."
+        )
+
+    # =====================================================
+    # GENERATE SAFE UNIQUE FILENAME
+    # =====================================================
+
+    extension = (
+        ALLOWED_IMAGE_TYPES[
+            file.content_type
+        ]
+    )
+
+    filename = (
+        f"user_{current_user.id}_"
+        f"{uuid.uuid4().hex}"
+        f"{extension}"
+    )
+
+    file_path = (
+        PROFILE_UPLOAD_DIR /
+        filename
+    )
+
+    # =====================================================
+    # WRITE FILE IN CHUNKS
+    # =====================================================
+
+    total_size = 0
+
+    try:
+
+        with open(
+            file_path,
+            "wb"
+        ) as buffer:
+
+            while True:
+
+                chunk = await file.read(
+                    1024 * 1024
+                )
+
+                if not chunk:
+
+                    break
+
+                total_size += len(
+                    chunk
+                )
+
+                # -----------------------------------------
+                # 5 MB LIMIT
+                # -----------------------------------------
+
+                if (
+                    total_size
+                    > MAX_PROFILE_IMAGE_SIZE
+                ):
+
+                    buffer.close()
+
+                    if file_path.exists():
+
+                        file_path.unlink()
+
+                    raise HTTPException(
+                        status_code=413,
+                        detail=(
+                            "Profile image must be "
+                            "5 MB or smaller."
+                        )
+                    )
+
+                buffer.write(
+                    chunk
+                )
+
+    except HTTPException:
+
+        raise
+
+    except Exception as e:
+
+        print(
+            "PROFILE IMAGE WRITE ERROR:",
+            repr(e)
+        )
+
+        if file_path.exists():
+
+            try:
+
+                file_path.unlink()
+
+            except Exception:
+                pass
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Unable to save profile image."
+            )
+        )
+
+    finally:
+
+        await file.close()
+
+    # =====================================================
+    # CREATE PUBLIC URL
+    # =====================================================
+
+    # -----------------------------------------------------
+    # Render backend URL
+    # -----------------------------------------------------
+
+    backend_url = os.getenv(
+        "BACKEND_URL",
+        "https://ai-visibility-analyzer.onrender.com"
+    ).rstrip("/")
+
+    picture_url = (
+        f"{backend_url}"
+        f"/uploads/profile/"
+        f"{filename}"
+    )
+
+    # =====================================================
+    # DELETE OLD LOCAL PROFILE IMAGE
+    # =====================================================
+
+    old_picture = (
+        current_user.picture
+    )
+
+    if old_picture:
+
+        delete_local_profile_image(
+            old_picture
+        )
+
+    # =====================================================
+    # SAVE NEW URL
+    # =====================================================
+
+    current_user.picture = (
+        picture_url
+    )
+
+    try:
+
+        db.commit()
+
+        db.refresh(
+            current_user
+        )
+
+    except Exception as e:
+
+        db.rollback()
+
+        # Remove newly uploaded file if DB update fails.
+
+        if file_path.exists():
+
+            try:
+
+                file_path.unlink()
+
+            except Exception:
+                pass
+
+        print(
+            "PROFILE PHOTO DATABASE ERROR:",
+            repr(e)
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Image uploaded but could not "
+                "update your profile."
+            )
+        )
+
+    # =====================================================
+    # RESPONSE
+    # =====================================================
+
+    print(
+        "PROFILE PHOTO UPLOAD SUCCESS"
+    )
+
+    print(
+        "Picture URL:",
+        picture_url
+    )
+
+    return {
+
+        "success":
+            True,
+
+        "message":
+            "Profile picture uploaded successfully.",
+
+        "picture":
+            picture_url,
+
+        "user": {
+
+            "id":
+                current_user.id,
+
+            "google_id":
+                current_user.google_id,
+
+            "email":
+                current_user.email,
+
+            "name":
+                current_user.name,
+
+            "mobile":
+                current_user.mobile,
+
+            "picture":
+                current_user.picture,
+
+            "is_active":
+                current_user.is_active,
+
+            "created_at":
+                current_user.created_at
+        }
+    }
+
+
+# =========================================================
+# DELETE PROFILE PHOTO
+# =========================================================
+
+@router.delete(
+    "/profile/photo",
+    tags=["Profile"]
+)
+def delete_profile_photo(
+    current_user: User = Depends(
+        get_current_user
+    ),
+    db: Session = Depends(get_db)
+):
+
+    print(
+        "PROFILE PHOTO DELETE REQUEST"
+    )
+
+    print(
+        f"User ID: {current_user.id}"
+    )
+
+    old_picture = (
+        current_user.picture
+    )
+
+    # -----------------------------------------------------
+    # DELETE LOCAL FILE
+    # -----------------------------------------------------
+
+    if old_picture:
+
+        delete_local_profile_image(
+            old_picture
+        )
+
+    # -----------------------------------------------------
+    # CLEAR DATABASE FIELD
+    # -----------------------------------------------------
+
+    current_user.picture = None
+
+    try:
+
+        db.commit()
+
+        db.refresh(
+            current_user
+        )
+
+    except Exception as e:
+
+        db.rollback()
+
+        print(
+            "PROFILE PHOTO DELETE ERROR:",
+            repr(e)
+        )
+
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                "Unable to remove profile picture."
+            )
+        )
+
+    return {
+
+        "success":
+            True,
+
+        "message":
+            "Profile picture removed successfully.",
+
+        "picture":
+            None,
 
         "user": {
 
