@@ -28,10 +28,10 @@ from utils.password_handler import (
 )
 
 import os
-import uuid
-import shutil
+import io
 
-from pathlib import Path
+import cloudinary
+import cloudinary.uploader
 
 from urllib.parse import urlencode
 
@@ -44,19 +44,27 @@ router = APIRouter()
 
 
 # =========================================================
-# PROFILE UPLOAD DIRECTORY
+# CLOUDINARY CONFIGURATION
 # =========================================================
+# Profile images are stored permanently in Cloudinary instead of the
+# Render filesystem. Render instances can restart/redeploy, so local
+# uploads are not suitable for persistent profile pictures.
 
-UPLOAD_DIR = Path("uploads")
+CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME")
+CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY")
+CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET")
 
-PROFILE_UPLOAD_DIR = (
-    UPLOAD_DIR / "profile"
-)
-
-PROFILE_UPLOAD_DIR.mkdir(
-    parents=True,
-    exist_ok=True
-)
+if (
+    CLOUDINARY_CLOUD_NAME
+    and CLOUDINARY_API_KEY
+    and CLOUDINARY_API_SECRET
+):
+    cloudinary.config(
+        cloud_name=CLOUDINARY_CLOUD_NAME,
+        api_key=CLOUDINARY_API_KEY,
+        api_secret=CLOUDINARY_API_SECRET,
+        secure=True
+    )
 
 
 # =========================================================
@@ -64,26 +72,26 @@ PROFILE_UPLOAD_DIR.mkdir(
 # =========================================================
 
 ALLOWED_IMAGE_TYPES = {
-
     "image/jpeg": ".jpg",
-
     "image/png": ".png",
-
     "image/webp": ".webp",
-
     "image/gif": ".gif"
 }
 
 
 # =========================================================
 # MAX PROFILE IMAGE SIZE
+# =========================================================
 # 5 MB
+
+MAX_PROFILE_IMAGE_SIZE = 5 * 1024 * 1024
+
+
+# =========================================================
+# CLOUDINARY PROFILE FOLDER
 # =========================================================
 
-MAX_PROFILE_IMAGE_SIZE = (
-    5 * 1024 * 1024
-)
-
+CLOUDINARY_PROFILE_FOLDER = "ai_visibility_profiles"
 
 # =========================================================
 # REQUEST MODELS
@@ -166,58 +174,41 @@ def clean_email(email):
 
 
 # =========================================================
-# DELETE OLD LOCAL PROFILE IMAGE
+# CLOUDINARY HELPERS
 # =========================================================
 
-def delete_local_profile_image(
-    picture_url
-):
+def cloudinary_is_configured():
+    return all((
+        CLOUDINARY_CLOUD_NAME,
+        CLOUDINARY_API_KEY,
+        CLOUDINARY_API_SECRET
+    ))
 
-    if not picture_url:
 
+def profile_public_id(user_id: int) -> str:
+    return f"{CLOUDINARY_PROFILE_FOLDER}/user_{user_id}"
+
+
+def delete_cloudinary_profile_image(user_id: int, picture_url: str | None):
+    """Delete only an image previously stored by this application."""
+
+    if not picture_url or "res.cloudinary.com" not in picture_url:
+        return
+
+    if not cloudinary_is_configured():
         return
 
     try:
-
-        # -------------------------------------------------
-        # Only delete files belonging to our local
-        # /uploads/profile/ directory.
-        # -------------------------------------------------
-
-        if "/uploads/profile/" not in picture_url:
-
-            return
-
-        filename = (
-            picture_url
-            .split("/uploads/profile/")[-1]
-            .split("?")[0]
+        result = cloudinary.uploader.destroy(
+            profile_public_id(user_id),
+            resource_type="image",
+            invalidate=True
         )
-
-        if not filename:
-
-            return
-
-        file_path = (
-            PROFILE_UPLOAD_DIR /
-            Path(filename).name
-        )
-
-        if file_path.exists():
-
-            file_path.unlink()
-
-            print(
-                "Deleted old profile image:",
-                str(file_path)
-            )
-
+        print("Cloudinary old profile image delete result:", result)
     except Exception as e:
-
-        print(
-            "Unable to delete old profile image:",
-            repr(e)
-        )
+        # Do not block a profile update just because an old image could
+        # not be deleted. The database/profile update can still succeed.
+        print("CLOUDINARY DELETE ERROR:", repr(e))
 
 
 # =========================================================
@@ -1328,7 +1319,7 @@ def patch_profile(
 
 
 # =========================================================
-# UPLOAD PROFILE PHOTO
+# UPLOAD PROFILE PHOTO - CLOUDINARY
 # =========================================================
 
 @router.post(
@@ -1344,285 +1335,160 @@ async def upload_profile_photo(
 ):
 
     print("=" * 60)
-
-    print(
-        "PROFILE PHOTO UPLOAD REQUEST"
-    )
-
-    print(
-        f"User ID: {current_user.id}"
-    )
-
-    print(
-        f"Filename: {file.filename}"
-    )
-
-    print(
-        f"Content Type: {file.content_type}"
-    )
-
+    print("PROFILE PHOTO CLOUDINARY UPLOAD REQUEST")
+    print(f"User ID: {current_user.id}")
+    print(f"Filename: {file.filename}")
+    print(f"Content Type: {file.content_type}")
     print("=" * 60)
 
-    # =====================================================
-    # VALIDATE CONTENT TYPE
-    # =====================================================
-
-    if (
-        file.content_type
-        not in ALLOWED_IMAGE_TYPES
-    ):
-
+    if not cloudinary_is_configured():
         raise HTTPException(
-            status_code=400,
+            status_code=500,
             detail=(
-                "Invalid image type. "
-                "Only JPG, PNG, WEBP and GIF are allowed."
+                "Cloudinary is not configured. Please add "
+                "CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY and "
+                "CLOUDINARY_API_SECRET to the server environment."
             )
         )
 
-    # =====================================================
-    # VALIDATE FILENAME
-    # =====================================================
+    # ---------------------------------------------------------
+    # VALIDATE CONTENT TYPE
+    # ---------------------------------------------------------
+
+    if file.content_type not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Invalid image type. Only JPG, PNG, WEBP and GIF "
+                "are allowed."
+            )
+        )
 
     if not file.filename:
-
         raise HTTPException(
             status_code=400,
             detail="No file was selected."
         )
 
-    # =====================================================
-    # GENERATE SAFE UNIQUE FILENAME
-    # =====================================================
-
-    extension = (
-        ALLOWED_IMAGE_TYPES[
-            file.content_type
-        ]
-    )
-
-    filename = (
-        f"user_{current_user.id}_"
-        f"{uuid.uuid4().hex}"
-        f"{extension}"
-    )
-
-    file_path = (
-        PROFILE_UPLOAD_DIR /
-        filename
-    )
-
-    # =====================================================
-    # WRITE FILE IN CHUNKS
-    # =====================================================
-
-    total_size = 0
+    # ---------------------------------------------------------
+    # READ FILE WITH 5 MB LIMIT
+    # ---------------------------------------------------------
 
     try:
-
-        with open(
-            file_path,
-            "wb"
-        ) as buffer:
-
-            while True:
-
-                chunk = await file.read(
-                    1024 * 1024
-                )
-
-                if not chunk:
-
-                    break
-
-                total_size += len(
-                    chunk
-                )
-
-                # -----------------------------------------
-                # 5 MB LIMIT
-                # -----------------------------------------
-
-                if (
-                    total_size
-                    > MAX_PROFILE_IMAGE_SIZE
-                ):
-
-                    buffer.close()
-
-                    if file_path.exists():
-
-                        file_path.unlink()
-
-                    raise HTTPException(
-                        status_code=413,
-                        detail=(
-                            "Profile image must be "
-                            "5 MB or smaller."
-                        )
-                    )
-
-                buffer.write(
-                    chunk
-                )
-
-    except HTTPException:
-
-        raise
-
-    except Exception as e:
-
-        print(
-            "PROFILE IMAGE WRITE ERROR:",
-            repr(e)
+        contents = await file.read(
+            MAX_PROFILE_IMAGE_SIZE + 1
         )
-
-        if file_path.exists():
-
-            try:
-
-                file_path.unlink()
-
-            except Exception:
-                pass
-
-        raise HTTPException(
-            status_code=500,
-            detail=(
-                "Unable to save profile image."
-            )
-        )
-
     finally:
-
         await file.close()
 
-    # =====================================================
-    # CREATE PUBLIC URL
-    # =====================================================
-
-    # -----------------------------------------------------
-    # Render backend URL
-    # -----------------------------------------------------
-
-    backend_url = os.getenv(
-        "BACKEND_URL",
-        "https://ai-visibility-analyzer.onrender.com"
-    ).rstrip("/")
-
-    picture_url = (
-        f"{backend_url}"
-        f"/uploads/profile/"
-        f"{filename}"
-    )
-
-    # =====================================================
-    # DELETE OLD LOCAL PROFILE IMAGE
-    # =====================================================
-
-    old_picture = (
-        current_user.picture
-    )
-
-    if old_picture:
-
-        delete_local_profile_image(
-            old_picture
+    if len(contents) > MAX_PROFILE_IMAGE_SIZE:
+        raise HTTPException(
+            status_code=413,
+            detail="Profile image must be 5 MB or smaller."
         )
 
-    # =====================================================
-    # SAVE NEW URL
-    # =====================================================
+    if not contents:
+        raise HTTPException(
+            status_code=400,
+            detail="The selected image is empty."
+        )
 
-    current_user.picture = (
-        picture_url
-    )
+    # ---------------------------------------------------------
+    # UPLOAD TO CLOUDINARY
+    # ---------------------------------------------------------
+    # One fixed public_id is used per user. A new upload therefore
+    # replaces the user's previous profile image instead of creating
+    # unlimited duplicate profile files.
+
+    public_id = profile_public_id(current_user.id)
+    old_picture = current_user.picture
 
     try:
-
-        db.commit()
-
-        db.refresh(
-            current_user
+        upload_result = cloudinary.uploader.upload(
+            io.BytesIO(contents),
+            resource_type="image",
+            folder=CLOUDINARY_PROFILE_FOLDER,
+            public_id=f"user_{current_user.id}",
+            overwrite=True,
+            invalidate=True
         )
+
+        picture_url = upload_result.get("secure_url")
+
+        if not picture_url:
+            raise RuntimeError(
+                "Cloudinary did not return a secure image URL."
+            )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print("CLOUDINARY UPLOAD ERROR:", repr(e))
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to upload profile image to Cloudinary."
+        )
+
+    # ---------------------------------------------------------
+    # SAVE CLOUDINARY URL TO DATABASE
+    # ---------------------------------------------------------
+
+    current_user.picture = picture_url
+
+    try:
+        db.commit()
+        db.refresh(current_user)
 
     except Exception as e:
-
         db.rollback()
 
-        # Remove newly uploaded file if DB update fails.
+        # Best-effort cleanup of the newly uploaded Cloudinary image.
+        try:
+            cloudinary.uploader.destroy(
+                public_id,
+                resource_type="image",
+                invalidate=True
+            )
+        except Exception as cleanup_error:
+            print(
+                "CLOUDINARY CLEANUP ERROR:",
+                repr(cleanup_error)
+            )
 
-        if file_path.exists():
-
-            try:
-
-                file_path.unlink()
-
-            except Exception:
-                pass
-
-        print(
-            "PROFILE PHOTO DATABASE ERROR:",
-            repr(e)
-        )
+        print("PROFILE PHOTO DATABASE ERROR:", repr(e))
 
         raise HTTPException(
             status_code=500,
             detail=(
-                "Image uploaded but could not "
+                "Image uploaded to Cloudinary but could not "
                 "update your profile."
             )
         )
 
-    # =====================================================
-    # RESPONSE
-    # =====================================================
+    # ---------------------------------------------------------
+    # OLD IMAGE HANDLING
+    # ---------------------------------------------------------
+    # Cloudinary uses the same public_id and overwrite=True, so the
+    # previous Cloudinary profile image has already been replaced.
+    # Old local Render images are intentionally not deleted here.
 
-    print(
-        "PROFILE PHOTO UPLOAD SUCCESS"
-    )
-
-    print(
-        "Picture URL:",
-        picture_url
-    )
+    print("PROFILE PHOTO CLOUDINARY UPLOAD SUCCESS")
+    print("Previous picture:", old_picture)
+    print("New picture URL:", picture_url)
 
     return {
-
-        "success":
-            True,
-
-        "message":
-            "Profile picture uploaded successfully.",
-
-        "picture":
-            picture_url,
-
+        "success": True,
+        "message": "Profile picture uploaded successfully.",
+        "picture": picture_url,
         "user": {
-
-            "id":
-                current_user.id,
-
-            "google_id":
-                current_user.google_id,
-
-            "email":
-                current_user.email,
-
-            "name":
-                current_user.name,
-
-            "mobile":
-                current_user.mobile,
-
-            "picture":
-                current_user.picture,
-
-            "is_active":
-                current_user.is_active,
-
-            "created_at":
-                current_user.created_at
+            "id": current_user.id,
+            "google_id": current_user.google_id,
+            "email": current_user.email,
+            "name": current_user.name,
+            "mobile": current_user.mobile,
+            "picture": current_user.picture,
+            "is_active": current_user.is_active,
+            "created_at": current_user.created_at
         }
     }
 
@@ -1642,93 +1508,55 @@ def delete_profile_photo(
     db: Session = Depends(get_db)
 ):
 
-    print(
-        "PROFILE PHOTO DELETE REQUEST"
+    print("PROFILE PHOTO DELETE REQUEST")
+    print(f"User ID: {current_user.id}")
+
+    old_picture = current_user.picture
+
+    # ---------------------------------------------------------
+    # DELETE CLOUDINARY IMAGE
+    # ---------------------------------------------------------
+
+    delete_cloudinary_profile_image(
+        current_user.id,
+        old_picture
     )
 
-    print(
-        f"User ID: {current_user.id}"
-    )
-
-    old_picture = (
-        current_user.picture
-    )
-
-    # -----------------------------------------------------
-    # DELETE LOCAL FILE
-    # -----------------------------------------------------
-
-    if old_picture:
-
-        delete_local_profile_image(
-            old_picture
-        )
-
-    # -----------------------------------------------------
+    # ---------------------------------------------------------
     # CLEAR DATABASE FIELD
-    # -----------------------------------------------------
+    # ---------------------------------------------------------
 
     current_user.picture = None
 
     try:
-
         db.commit()
-
-        db.refresh(
-            current_user
-        )
+        db.refresh(current_user)
 
     except Exception as e:
-
         db.rollback()
 
         print(
-            "PROFILE PHOTO DELETE ERROR:",
+            "PROFILE PHOTO DELETE DATABASE ERROR:",
             repr(e)
         )
 
         raise HTTPException(
             status_code=500,
-            detail=(
-                "Unable to remove profile picture."
-            )
+            detail="Unable to remove profile picture."
         )
 
     return {
-
-        "success":
-            True,
-
-        "message":
-            "Profile picture removed successfully.",
-
-        "picture":
-            None,
-
+        "success": True,
+        "message": "Profile picture removed successfully.",
+        "picture": None,
         "user": {
-
-            "id":
-                current_user.id,
-
-            "google_id":
-                current_user.google_id,
-
-            "email":
-                current_user.email,
-
-            "name":
-                current_user.name,
-
-            "mobile":
-                current_user.mobile,
-
-            "picture":
-                current_user.picture,
-
-            "is_active":
-                current_user.is_active,
-
-            "created_at":
-                current_user.created_at
+            "id": current_user.id,
+            "google_id": current_user.google_id,
+            "email": current_user.email,
+            "name": current_user.name,
+            "mobile": current_user.mobile,
+            "picture": current_user.picture,
+            "is_active": current_user.is_active,
+            "created_at": current_user.created_at
         }
     }
