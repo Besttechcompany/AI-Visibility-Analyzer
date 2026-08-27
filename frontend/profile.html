@@ -29,88 +29,66 @@
          SIDEBAR
     ====================================================== -->
 
-    <aside class="sidebar">
+  <aside class="sidebar">
 
-        <div class="brand">
+    <div class="brand">
 
-            <h1>
-                AI Visibility
-            </h1>
+        <h1>
+            AI Visibility
+        </h1>
 
-            <span>
-                Dashboard
-            </span>
+        <span>
+            Dashboard
+        </span>
 
-        </div>
+    </div>
 
+    <nav class="sidebar-nav">
 
-        <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+        </a>
 
-            <a
-                href="dashboard.html"
-                class="nav-item"
-            >
-                <span class="nav-icon">📊</span>
-                <span>Dashboard</span>
-            </a>
+        <a href="dashboard.html" class="nav-item">
+            <span class="nav-icon">🌐</span>
+            <span>Website Analysis</span>
+        </a>
 
+        <a href="logs.html" class="nav-item">
+            <span class="nav-icon">📈</span>
+            <span>Logs</span>
+        </a>
 
-            <a
-                href="dashboard.html"
-                class="nav-item"
-            >
-                <span class="nav-icon">🌐</span>
-                <span>Website Analysis</span>
-            </a>
+        <a href="dashboard.html" class="nav-item">
+            <span class="nav-icon">🤖</span>
+            <span>AI Visibility</span>
+        </a>
 
+        <a href="dashboard.html" class="nav-item">
+            <span class="nav-icon">⚙️</span>
+            <span>Settings</span>
+        </a>
 
-            <a
-                href="logs.html"
-                class="nav-item"
-            >
-                <span class="nav-icon">📈</span>
-                <span>Logs</span>
-            </a>
-
-
-            <a
-                href="dashboard.html"
-                class="nav-item"
-            >
-                <span class="nav-icon">🤖</span>
-                <span>AI Visibility</span>
-            </a>
-
-
-            <a
-                href="dashboard.html"
-                class="nav-item"
-            >
-                <span class="nav-icon">⚙️</span>
-                <span>Settings</span>
-            </a>
-
-
-            <a
-                href="profile.html"
-                class="nav-item active"
-            >
-                <span class="nav-icon">👤</span>
-                <span>Profile</span>
-            </a>
-
-        </nav>
-
-
-        <button
-            type="button"
-            class="logout-btn"
-            onclick="logout()"
+        <a
+            href="profile.html"
+            class="nav-item active"
         >
-            🚪 Logout
-        </button>
+            <span class="nav-icon">👤</span>
+            <span>Profile</span>
+        </a>
 
-    </aside>
+    </nav>
+
+    <button
+        type="button"
+        class="logout-btn"
+        onclick="logout()"
+    >
+        🚪 Logout
+    </button>
+
+</aside>
 
 
 
@@ -130,7 +108,7 @@
             </h2>
 
             <p>
-                Manage your profile information and profile photo.
+                Manage your account information and profile details.
             </p>
 
         </div>
@@ -146,6 +124,9 @@
             class="profile-card"
         >
 
+
+            <!-- INITIAL LOADING -->
+
             <div class="profile-loading">
 
                 <span class="button-loader"></span>
@@ -156,33 +137,49 @@
 
             </div>
 
+
         </div>
 
 
+
+        <!-- =================================================
+             MESSAGE
+        ================================================== -->
+
+        <div
+            id="message"
+            class="message"
+            role="alert"
+        ></div>
+
+
     </main>
+
 
 </div>
 
 
 
 <!-- =========================================================
-     HIDDEN PROFILE PHOTO INPUT
+     PROFILE PHOTO INPUT
 ========================================================== -->
 
 <input
     type="file"
     id="profilePhotoInput"
-    accept="image/jpeg,image/png,image/webp,image/gif"
+    accept="image/*"
     hidden
 >
 
 
 
 <!-- =========================================================
-     JAVASCRIPT
+     PROFILE JAVASCRIPT
 ========================================================== -->
 
-<script src="js/profile.js"></script>
+<script
+    src="js/profile.js"
+></script>
 
 
 </body>
