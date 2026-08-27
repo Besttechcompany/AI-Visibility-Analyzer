@@ -1,9 +1,803 @@
 /* =====================================================
-   AUTH POPUP
+   AI VISIBILITY ANALYZER
+   LOGIN / REGISTRATION STYLES
+===================================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+
+/* =====================================================
+   BODY
+===================================================== */
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef3ff 0%,
+            #f8faff 50%,
+            #eef4ff 100%
+        );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 30px;
+
+    color: #263653;
+}
+
+
+/* =====================================================
+   AUTH CONTAINER
+===================================================== */
+
+.auth-container {
+
+    width: 100%;
+
+    max-width: 480px;
+
+}
+
+
+/* =====================================================
+   AUTH CARD
+===================================================== */
+
+.auth-card {
+
+    width: 100%;
+
+    background: #ffffff;
+
+    border-radius: 22px;
+
+    padding: 40px;
+
+    box-shadow:
+        0 20px 60px
+        rgba(20, 40, 90, 0.12);
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.8);
+
+}
+
+
+/* =====================================================
+   BRAND
+===================================================== */
+
+.brand {
+
+    text-align: center;
+
+    margin-bottom: 30px;
+
+}
+
+
+.brand-icon {
+
+    width: 68px;
+
+    height: 68px;
+
+    margin:
+        0 auto 15px;
+
+    border-radius: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 36px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #4f46e5
+        );
+
+    box-shadow:
+        0 10px 25px
+        rgba(37, 99, 235, 0.22);
+
+}
+
+
+.brand h1 {
+
+    margin: 0;
+
+    color: #10204a;
+
+    font-size: 28px;
+
+    font-weight: 800;
+
+    letter-spacing: -0.5px;
+
+}
+
+
+.brand p {
+
+    margin:
+        10px 0 0;
+
+    color: #6b7a99;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+
+}
+
+
+/* =====================================================
+   TABS
+===================================================== */
+
+.auth-tabs {
+
+    display: flex;
+
+    gap: 5px;
+
+    background: #f1f4fa;
+
+    padding: 5px;
+
+    border-radius: 12px;
+
+    margin-bottom: 30px;
+
+}
+
+
+.auth-tab {
+
+    flex: 1;
+
+    border: none;
+
+    padding: 12px;
+
+    border-radius: 9px;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    color: #687792;
+
+    transition:
+        all 0.2s ease;
+
+}
+
+
+.auth-tab:hover {
+
+    color: #2563eb;
+
+}
+
+
+.auth-tab.active {
+
+    background: #ffffff;
+
+    color: #2563eb;
+
+    box-shadow:
+        0 3px 10px
+        rgba(0, 0, 0, 0.08);
+
+}
+
+
+/* =====================================================
+   FORMS
+===================================================== */
+
+.auth-form {
+
+    width: 100%;
+
+}
+
+
+.auth-form h2 {
+
+    margin:
+        0 0 6px;
+
+    color: #10204a;
+
+    font-size: 22px;
+
+    font-weight: 750;
+
+}
+
+
+.form-subtitle {
+
+    margin:
+        0 0 24px;
+
+    color: #78859d;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+}
+
+
+/* =====================================================
+   LABELS
+===================================================== */
+
+.auth-form label {
+
+    display: block;
+
+    margin-top: 16px;
+
+    margin-bottom: 7px;
+
+    font-size: 14px;
+
+    font-weight: 650;
+
+    color: #263653;
+
+}
+
+
+/* =====================================================
+   INPUTS
+===================================================== */
+
+.auth-form input {
+
+    width: 100%;
+
+    height: 48px;
+
+    padding:
+        0 15px;
+
+    border:
+        1px solid
+        #d9e0ec;
+
+    border-radius: 10px;
+
+    background: #ffffff;
+
+    color: #263653;
+
+    font-family: inherit;
+
+    font-size: 15px;
+
+    outline: none;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+
+}
+
+
+.auth-form input::placeholder {
+
+    color: #a0abc0;
+
+}
+
+
+.auth-form input:hover {
+
+    border-color: #c7d1e2;
+
+}
+
+
+.auth-form input:focus {
+
+    border-color: #2563eb;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(37, 99, 235, 0.10);
+
+    background: #ffffff;
+
+}
+
+
+/* =====================================================
+   PASSWORD WRAPPER
+===================================================== */
+
+.password-wrapper {
+
+    position: relative;
+
+    width: 100%;
+
+}
+
+
+.password-wrapper input {
+
+    padding-right: 52px;
+
+}
+
+
+/* =====================================================
+   PASSWORD TOGGLE
+===================================================== */
+
+.password-toggle {
+
+    position: absolute;
+
+    right: 10px;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    width: 36px;
+
+    height: 36px;
+
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    border-radius: 7px;
+
+    font-size: 17px;
+
+    color: #64748b;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+}
+
+
+.password-toggle:hover {
+
+    background: #f1f5f9;
+
+    color: #2563eb;
+
+}
+
+
+/* =====================================================
+   PASSWORD RULES
+===================================================== */
+
+.password-rules {
+
+    margin-top: 10px;
+
+    padding:
+        11px 13px;
+
+    background: #f8fafc;
+
+    border:
+        1px solid
+        #edf1f7;
+
+    border-radius: 9px;
+
+    font-size: 12px;
+
+    color: #64748b;
+
+    line-height: 1.85;
+
+}
+
+
+.password-rules div {
+
+    transition:
+        color 0.2s ease;
+
+}
+
+
+.password-rules div.valid {
+
+    color: #16a34a;
+
+    font-weight: 600;
+
+}
+
+
+.password-rules div.valid span {
+
+    color: #16a34a;
+
+}
+
+
+.password-rules span {
+
+    display: inline-block;
+
+    width: 18px;
+
+    font-weight: 700;
+
+}
+
+
+/* =====================================================
+   PRIMARY BUTTON
+===================================================== */
+
+.primary-btn {
+
+    width: 100%;
+
+    min-height: 48px;
+
+    margin-top: 25px;
+
+    padding:
+        13px 18px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #1d4ed8
+        );
+
+    color: #ffffff;
+
+    font-family: inherit;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    box-shadow:
+        0 7px 18px
+        rgba(37, 99, 235, 0.18);
+
+    transition:
+        transform 0.15s ease,
+        box-shadow 0.2s ease,
+        opacity 0.2s ease;
+
+}
+
+
+.primary-btn:hover {
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 10px 24px
+        rgba(37, 99, 235, 0.25);
+
+}
+
+
+.primary-btn:active {
+
+    transform:
+        translateY(0);
+
+}
+
+
+.primary-btn:disabled {
+
+    opacity: 0.7;
+
+    cursor: wait;
+
+    transform: none;
+
+}
+
+
+/* =====================================================
+   DIVIDER
+===================================================== */
+
+.divider {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    margin:
+        25px 0;
+
+    color: #9aa6bb;
+
+    font-size: 13px;
+
+}
+
+
+.divider::before,
+.divider::after {
+
+    content: "";
+
+    flex: 1;
+
+    height: 1px;
+
+    background: #e2e7ef;
+
+}
+
+
+.divider span {
+
+    white-space: nowrap;
+
+}
+
+
+/* =====================================================
+   GOOGLE BUTTON
+===================================================== */
+
+.google-btn {
+
+    width: 100%;
+
+    min-height: 48px;
+
+    padding:
+        12px 15px;
+
+    border:
+        1px solid
+        #d9e0ec;
+
+    background: #ffffff;
+
+    border-radius: 10px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 12px;
+
+    cursor: pointer;
+
+    font-family: inherit;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    color: #263653;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+
+}
+
+
+.google-btn:hover {
+
+    background: #f8faff;
+
+    border-color: #cbd5e1;
+
+    box-shadow:
+        0 4px 12px
+        rgba(15, 23, 42, 0.06);
+
+}
+
+
+.google-btn:disabled {
+
+    opacity: 0.7;
+
+    cursor: wait;
+
+}
+
+
+.google-btn img {
+
+    width: 20px;
+
+    height: 20px;
+
+    flex-shrink: 0;
+
+}
+
+
+/* =====================================================
+   OLD MESSAGE AREA
+   HIDDEN BECAUSE WE USE POPUP
+===================================================== */
+
+.message {
+
+    display: none !important;
+
+}
+
+
+/* =====================================================
+   HIDDEN
+===================================================== */
+
+.hidden {
+
+    display: none !important;
+
+}
+
+
+/* =====================================================
+   BUTTON LOADER
+===================================================== */
+
+.button-loader {
+
+    display: inline-block;
+
+    width: 16px;
+
+    height: 16px;
+
+    flex-shrink: 0;
+
+    border:
+        2px solid
+        rgba(255, 255, 255, 0.45);
+
+    border-top-color:
+        #ffffff;
+
+    border-radius: 50%;
+
+    animation:
+        buttonLoaderSpin
+        0.7s linear infinite;
+
+}
+
+
+.small-loader {
+
+    display: inline-block;
+
+    width: 17px;
+
+    height: 17px;
+
+    flex-shrink: 0;
+
+    border:
+        2px solid
+        #dbe5f5;
+
+    border-top-color:
+        #2563eb;
+
+    border-radius: 50%;
+
+    animation:
+        buttonLoaderSpin
+        0.7s linear infinite;
+
+}
+
+
+@keyframes buttonLoaderSpin {
+
+    from {
+
+        transform:
+            rotate(0deg);
+
+    }
+
+    to {
+
+        transform:
+            rotate(360deg);
+
+    }
+
+}
+
+
+/* =====================================================
+   AUTH POPUP OVERLAY
 ===================================================== */
 
 body.popup-open {
+
     overflow: hidden;
+
 }
 
 
@@ -14,7 +808,7 @@ body.popup-open {
     inset: 0;
 
     background:
-        rgba(15, 23, 42, 0.48);
+        rgba(15, 23, 42, 0.50);
 
     backdrop-filter:
         blur(5px);
@@ -41,6 +835,7 @@ body.popup-open {
         visibility 0.25s ease;
 
     z-index: 99999;
+
 }
 
 
@@ -51,11 +846,12 @@ body.popup-open {
     visibility: visible;
 
     pointer-events: auto;
+
 }
 
 
 /* =====================================================
-   POPUP BOX
+   POPUP
 ===================================================== */
 
 .auth-popup {
@@ -64,7 +860,7 @@ body.popup-open {
 
     max-width: 390px;
 
-    background: white;
+    background: #ffffff;
 
     border-radius: 18px;
 
@@ -76,25 +872,10 @@ body.popup-open {
         0 25px 70px
         rgba(15, 23, 42, 0.25);
 
-    transform:
-        translateY(15px)
-        scale(0.96);
-
-    transition:
-        transform 0.25s ease;
-
     animation:
         authPopupIn
         0.25s ease;
-}
 
-
-.auth-popup-overlay.show
-.auth-popup {
-
-    transform:
-        translateY(0)
-        scale(1);
 }
 
 
@@ -151,6 +932,16 @@ body.popup-open {
     background: #fee2e2;
 
     color: #dc2626;
+
+}
+
+
+.popup-icon.error {
+
+    background: #fee2e2;
+
+    color: #dc2626;
+
 }
 
 
@@ -163,14 +954,6 @@ body.popup-open {
     animation:
         popupSuccess
         0.45s ease;
-}
-
-
-.popup-icon.error {
-
-    background: #fee2e2;
-
-    color: #dc2626;
 
 }
 
@@ -206,19 +989,26 @@ body.popup-open {
 
 
 /* =====================================================
-   POPUP TEXT
+   POPUP TITLE
 ===================================================== */
 
 .auth-popup h3 {
 
-    margin: 0 0 10px;
+    margin:
+        0 0 10px;
 
     color: #10204a;
 
     font-size: 20px;
 
+    font-weight: 750;
+
 }
 
+
+/* =====================================================
+   POPUP MESSAGE
+===================================================== */
 
 .auth-popup p {
 
@@ -229,11 +1019,12 @@ body.popup-open {
     font-size: 14px;
 
     line-height: 1.6;
+
 }
 
 
 /* =====================================================
-   POPUP BUTTON
+   POPUP CLOSE BUTTON
 ===================================================== */
 
 .popup-close-btn {
@@ -242,15 +1033,19 @@ body.popup-open {
 
     margin-top: 24px;
 
-    padding: 12px 18px;
+    padding:
+        12px 18px;
 
     border: none;
 
     border-radius: 9px;
 
-    background: #2563eb;
+    background:
+        #2563eb;
 
-    color: white;
+    color: #ffffff;
+
+    font-family: inherit;
 
     font-size: 14px;
 
@@ -261,12 +1056,14 @@ body.popup-open {
     transition:
         background 0.2s ease,
         transform 0.15s ease;
+
 }
 
 
 .popup-close-btn:hover {
 
-    background: #1d4ed8;
+    background:
+        #1d4ed8;
 
 }
 
@@ -280,112 +1077,113 @@ body.popup-open {
 
 
 /* =====================================================
-   BOTTOM MESSAGE AREA
+   BACK HOME
 ===================================================== */
 
-.message {
+.back-home {
 
-    display: none !important;
+    display: block;
+
+    text-align: center;
+
+    margin-top: 25px;
+
+    color: #2563eb;
+
+    text-decoration: none;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+}
+
+
+.back-home:hover {
+
+    text-decoration: underline;
 
 }
 
 
 /* =====================================================
-   LOGIN / REGISTER LOADER
+   MOBILE
 ===================================================== */
 
-.button-loader {
+@media (max-width: 600px) {
 
-    width: 16px;
+    body {
 
-    height: 16px;
+        padding: 15px;
 
-    flex-shrink: 0;
+        align-items: flex-start;
 
-    border:
-        2px solid
-        rgba(255,255,255,0.45);
-
-    border-top-color:
-        white;
-
-    border-radius: 50%;
-
-    animation:
-        buttonLoaderSpin
-        0.7s linear infinite;
-}
-
-
-.small-loader {
-
-    width: 17px;
-
-    height: 17px;
-
-    flex-shrink: 0;
-
-    border:
-        2px solid
-        #dbe5f5;
-
-    border-top-color:
-        #2563eb;
-
-    border-radius: 50%;
-
-    animation:
-        buttonLoaderSpin
-        0.7s linear infinite;
-}
-
-
-@keyframes buttonLoaderSpin {
-
-    from {
-
-        transform:
-            rotate(0deg);
+        padding-top: 25px;
 
     }
 
-    to {
 
-        transform:
-            rotate(360deg);
+    .auth-card {
+
+        padding: 25px 20px;
+
+        border-radius: 18px;
 
     }
 
-}
+
+    .brand h1 {
+
+        font-size: 24px;
+
+    }
 
 
-/* =====================================================
-   BUTTON LOADING STATE
-===================================================== */
+    .brand-icon {
 
-.primary-btn:disabled,
-.google-btn:disabled {
+        width: 60px;
 
-    opacity: 0.70;
+        height: 60px;
 
-    cursor:
-        wait;
-}
+        font-size: 31px;
 
+    }
 
-/* =====================================================
-   MOBILE POPUP
-===================================================== */
-
-@media (max-width: 500px) {
 
     .auth-popup {
 
-        max-width: 100%;
-
-        padding: 25px;
+        padding: 25px 20px;
 
         border-radius: 16px;
+
+    }
+
+}
+
+
+/* =====================================================
+   VERY SMALL SCREENS
+===================================================== */
+
+@media (max-width: 380px) {
+
+    body {
+
+        padding: 10px;
+
+    }
+
+
+    .auth-card {
+
+        padding: 22px 16px;
+
+    }
+
+
+    .brand h1 {
+
+        font-size: 21px;
 
     }
 
