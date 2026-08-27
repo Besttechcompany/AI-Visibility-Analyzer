@@ -20,6 +20,7 @@ html {
 
 body {
     margin: 0;
+
     min-height: 100vh;
 
     font-family:
@@ -53,19 +54,16 @@ body {
     left: 0;
     top: 0;
 
-    width: 250px;
+    width: 318px;
     height: 100vh;
 
     background:
-        linear-gradient(
-            180deg,
-            #10204a 0%,
-            #172b5d 100%
-        );
+        #0f172a;
 
     color: white;
 
-    padding: 28px 18px;
+    padding:
+        42px 18px 28px;
 
     display: flex;
 
@@ -78,39 +76,45 @@ body {
 
 
 /* =========================================================
-   BRAND
+   SIDEBAR BRAND
 ========================================================= */
 
-.brand {
+.sidebar .brand {
 
     padding:
-        0 14px 30px;
+        0 22px 42px;
+
+    text-align: center;
 }
 
 
-.brand h1 {
+.sidebar .brand h1 {
 
     margin: 0;
 
-    font-size: 23px;
+    color: white;
+
+    font-size: 34px;
 
     line-height: 1.2;
 
     font-weight: 800;
 
-    color: white;
+    letter-spacing: -0.5px;
 }
 
 
-.brand span {
+.sidebar .brand span {
 
     display: block;
 
-    margin-top: 5px;
+    margin-top: 18px;
 
-    color: #aebbd6;
+    color: #94a3c3;
 
-    font-size: 13px;
+    font-size: 20px;
+
+    line-height: 1.3;
 }
 
 
@@ -124,9 +128,15 @@ body {
 
     flex-direction: column;
 
-    gap: 6px;
+    gap: 8px;
+
+    width: 100%;
 }
 
+
+/* =========================================================
+   NAV ITEM
+========================================================= */
 
 .nav-item {
 
@@ -134,19 +144,24 @@ body {
 
     align-items: center;
 
-    gap: 13px;
+    gap: 18px;
 
-    padding: 13px 14px;
+    width: 100%;
 
-    border-radius: 10px;
+    min-height: 78px;
 
-    color: #dbe4f5;
+    padding:
+        16px 26px;
+
+    border-radius: 17px;
+
+    color: #f1f5f9;
 
     text-decoration: none;
 
-    font-size: 14px;
+    font-size: 20px;
 
-    font-weight: 600;
+    font-weight: 700;
 
     transition:
         background 0.2s ease,
@@ -155,16 +170,43 @@ body {
 }
 
 
+/* =========================================================
+   NAV ICON
+========================================================= */
+
+.nav-icon {
+
+    width: 28px;
+
+    min-width: 28px;
+
+    text-align: center;
+
+    font-size: 23px;
+
+    line-height: 1;
+}
+
+
+/* =========================================================
+   NAV HOVER
+========================================================= */
+
 .nav-item:hover {
 
     background:
-        rgba(255, 255, 255, 0.09);
+        rgba(255, 255, 255, 0.08);
 
     color: white;
 
-    transform: translateX(2px);
+    transform:
+        translateX(2px);
 }
 
+
+/* =========================================================
+   ACTIVE NAV ITEM
+========================================================= */
 
 .nav-item.active {
 
@@ -174,20 +216,8 @@ body {
     color: white;
 
     box-shadow:
-        0 8px 20px
-        rgba(37, 99, 235, 0.25);
-}
-
-
-.nav-icon {
-
-    width: 22px;
-
-    min-width: 22px;
-
-    text-align: center;
-
-    font-size: 17px;
+        0 8px 22px
+        rgba(37, 99, 235, 0.30);
 }
 
 
@@ -201,24 +231,28 @@ body {
 
     width: 100%;
 
-    padding: 13px;
+    min-height: 78px;
+
+    padding:
+        16px 26px;
 
     border:
-        1px solid
-        rgba(255, 255, 255, 0.15);
+        none;
 
-    border-radius: 10px;
+    border-radius: 17px;
 
     background:
         #ef4444;
 
     color: white;
 
+    font-size: 20px;
+
     font-weight: 700;
 
-    font-size: 14px;
-
     cursor: pointer;
+
+    text-align: left;
 
     transition:
         background 0.2s ease,
@@ -228,9 +262,18 @@ body {
 
 .logout-btn:hover {
 
-    background: #dc2626;
+    background:
+        #dc2626;
 
-    transform: translateY(-1px);
+    transform:
+        translateY(-1px);
+}
+
+
+.logout-btn:active {
+
+    transform:
+        translateY(0);
 }
 
 
@@ -240,7 +283,7 @@ body {
 
 .main-content {
 
-    margin-left: 250px;
+    margin-left: 318px;
 
     padding: 40px;
 
@@ -427,15 +470,18 @@ body {
 
 .photo-button:hover {
 
-    background: #1d4ed8;
+    background:
+        #1d4ed8;
 
-    transform: scale(1.05);
+    transform:
+        scale(1.05);
 }
 
 
 .photo-button:active {
 
-    transform: scale(0.98);
+    transform:
+        scale(0.98);
 }
 
 
@@ -631,13 +677,15 @@ body {
 
 .form-group input:focus {
 
-    border-color: #2563eb;
+    border-color:
+        #2563eb;
 
     box-shadow:
         0 0 0 3px
         rgba(37, 99, 235, 0.10);
 
-    background: white;
+    background:
+        white;
 }
 
 
@@ -647,21 +695,27 @@ body {
 
 .form-group input[readonly] {
 
-    background: #f8fafc;
+    background:
+        #f8fafc;
 
-    color: #64748b;
+    color:
+        #64748b;
 
-    cursor: default;
+    cursor:
+        default;
 }
 
 
 .form-group input[readonly]:focus {
 
-    border-color: #d8e0eb;
+    border-color:
+        #d8e0eb;
 
-    box-shadow: none;
+    box-shadow:
+        none;
 
-    background: #f8fafc;
+    background:
+        #f8fafc;
 }
 
 
@@ -671,17 +725,21 @@ body {
 
 .form-group input:not([readonly]) {
 
-    background: white;
+    background:
+        white;
 
-    color: #1e293b;
+    color:
+        #1e293b;
 
-    border-color: #cbd5e1;
+    border-color:
+        #cbd5e1;
 }
 
 
 .form-group input:not([readonly]):hover {
 
-    border-color: #94a3b8;
+    border-color:
+        #94a3b8;
 }
 
 
@@ -693,11 +751,14 @@ body {
 
     margin-top: 6px;
 
-    color: #94a3b8;
+    color:
+        #94a3b8;
 
-    font-size: 12px;
+    font-size:
+        12px;
 
-    line-height: 1.4;
+    line-height:
+        1.4;
 }
 
 
@@ -707,11 +768,14 @@ body {
 
 .readonly-box {
 
-    min-height: 48px;
+    min-height:
+        48px;
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
+    align-items:
+        center;
 
     padding:
         13px 14px;
@@ -719,15 +783,20 @@ body {
     border:
         1px solid #d8e0eb;
 
-    border-radius: 9px;
+    border-radius:
+        9px;
 
-    background: #f8fafc;
+    background:
+        #f8fafc;
 
-    color: #64748b;
+    color:
+        #64748b;
 
-    font-size: 14px;
+    font-size:
+        14px;
 
-    line-height: 1.4;
+    line-height:
+        1.4;
 }
 
 
@@ -737,36 +806,48 @@ body {
 
 .account-status {
 
-    margin-top: 30px;
+    margin-top:
+        30px;
 
-    padding: 20px;
+    padding:
+        20px;
 
-    border-radius: 12px;
+    border-radius:
+        12px;
 
-    background: #f8fafc;
+    background:
+        #f8fafc;
 
     border:
         1px solid #e8edf5;
 
-    display: flex;
+    display:
+        flex;
 
-    justify-content: space-between;
+    justify-content:
+        space-between;
 
-    align-items: center;
+    align-items:
+        center;
 
-    gap: 20px;
+    gap:
+        20px;
 }
 
 
 .account-status h3 {
 
-    margin: 0;
+    margin:
+        0;
 
-    font-size: 16px;
+    font-size:
+        16px;
 
-    color: #10204a;
+    color:
+        #10204a;
 
-    font-weight: 800;
+    font-weight:
+        800;
 }
 
 
@@ -775,11 +856,14 @@ body {
     margin:
         5px 0 0;
 
-    color: #718096;
+    color:
+        #718096;
 
-    font-size: 13px;
+    font-size:
+        13px;
 
-    line-height: 1.5;
+    line-height:
+        1.5;
 }
 
 
@@ -789,26 +873,35 @@ body {
 
 .status-active {
 
-    display: inline-flex;
+    display:
+        inline-flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    justify-content: center;
+    justify-content:
+        center;
 
-    white-space: nowrap;
+    white-space:
+        nowrap;
 
     padding:
         7px 14px;
 
-    border-radius: 20px;
+    border-radius:
+        20px;
 
-    background: #dcfce7;
+    background:
+        #dcfce7;
 
-    color: #15803d;
+    color:
+        #15803d;
 
-    font-size: 13px;
+    font-size:
+        13px;
 
-    font-weight: 700;
+    font-weight:
+        700;
 }
 
 
@@ -818,20 +911,26 @@ body {
 
 .message {
 
-    max-width: 1120px;
+    max-width:
+        1120px;
 
-    min-height: 24px;
+    min-height:
+        24px;
 
     margin:
         16px auto 0;
 
-    text-align: center;
+    text-align:
+        center;
 
-    font-size: 14px;
+    font-size:
+        14px;
 
-    font-weight: 600;
+    font-weight:
+        600;
 
-    line-height: 1.5;
+    line-height:
+        1.5;
 
     transition:
         opacity 0.2s ease;
@@ -840,13 +939,15 @@ body {
 
 .message.success {
 
-    color: #16a34a;
+    color:
+        #16a34a;
 }
 
 
 .message.error {
 
-    color: #dc2626;
+    color:
+        #dc2626;
 }
 
 
@@ -856,17 +957,23 @@ body {
 
 .profile-actions {
 
-    display: flex;
+    display:
+        flex;
 
-    justify-content: flex-end;
+    justify-content:
+        flex-end;
 
-    align-items: center;
+    align-items:
+        center;
 
-    flex-wrap: wrap;
+    flex-wrap:
+        wrap;
 
-    gap: 12px;
+    gap:
+        12px;
 
-    margin-top: 25px;
+    margin-top:
+        25px;
 }
 
 
@@ -877,23 +984,28 @@ body {
 .primary-btn,
 .secondary-btn {
 
-    min-height: 46px;
+    min-height:
+        46px;
 
     padding:
         12px 20px;
 
-    border-radius: 9px;
+    border-radius:
+        9px;
 
     font-family:
         Inter,
         Arial,
         sans-serif;
 
-    font-size: 14px;
+    font-size:
+        14px;
 
-    font-weight: 700;
+    font-weight:
+        700;
 
-    cursor: pointer;
+    cursor:
+        pointer;
 
     transition:
         background 0.2s ease,
@@ -910,11 +1022,14 @@ body {
 
 .primary-btn {
 
-    border: none;
+    border:
+        none;
 
-    background: #2563eb;
+    background:
+        #2563eb;
 
-    color: white;
+    color:
+        white;
 
     box-shadow:
         0 4px 12px
@@ -924,9 +1039,11 @@ body {
 
 .primary-btn:hover {
 
-    background: #1d4ed8;
+    background:
+        #1d4ed8;
 
-    transform: translateY(-1px);
+    transform:
+        translateY(-1px);
 
     box-shadow:
         0 6px 16px
@@ -936,19 +1053,24 @@ body {
 
 .primary-btn:active {
 
-    transform: translateY(0);
+    transform:
+        translateY(0);
 }
 
 
 .primary-btn:disabled {
 
-    opacity: 0.6;
+    opacity:
+        0.6;
 
-    cursor: not-allowed;
+    cursor:
+        not-allowed;
 
-    transform: none;
+    transform:
+        none;
 
-    box-shadow: none;
+    box-shadow:
+        none;
 }
 
 
@@ -961,35 +1083,44 @@ body {
     border:
         1px solid #d8e0eb;
 
-    background: white;
+    background:
+        white;
 
-    color: #475569;
+    color:
+        #475569;
 }
 
 
 .secondary-btn:hover {
 
-    background: #f8fafc;
+    background:
+        #f8fafc;
 
-    border-color: #cbd5e1;
+    border-color:
+        #cbd5e1;
 
-    transform: translateY(-1px);
+    transform:
+        translateY(-1px);
 }
 
 
 .secondary-btn:active {
 
-    transform: translateY(0);
+    transform:
+        translateY(0);
 }
 
 
 .secondary-btn:disabled {
 
-    opacity: 0.6;
+    opacity:
+        0.6;
 
-    cursor: not-allowed;
+    cursor:
+        not-allowed;
 
-    transform: none;
+    transform:
+        none;
 }
 
 
@@ -999,19 +1130,26 @@ body {
 
 .profile-loading {
 
-    min-height: 420px;
+    min-height:
+        420px;
 
-    display: flex;
+    display:
+        flex;
 
-    align-items: center;
+    align-items:
+        center;
 
-    justify-content: center;
+    justify-content:
+        center;
 
-    gap: 12px;
+    gap:
+        12px;
 
-    color: #64748b;
+    color:
+        #64748b;
 
-    font-size: 14px;
+    font-size:
+        14px;
 }
 
 
@@ -1021,13 +1159,17 @@ body {
 
 .button-loader {
 
-    display: inline-block;
+    display:
+        inline-block;
 
-    width: 17px;
+    width:
+        17px;
 
-    height: 17px;
+    height:
+        17px;
 
-    flex-shrink: 0;
+    flex-shrink:
+        0;
 
     border:
         2px solid
@@ -1036,7 +1178,8 @@ body {
     border-top:
         2px solid #2563eb;
 
-    border-radius: 50%;
+    border-radius:
+        50%;
 
     animation:
         profileLoaderSpin
@@ -1050,14 +1193,12 @@ body {
 
         transform:
             rotate(0deg);
-
     }
 
     to {
 
         transform:
             rotate(360deg);
-
     }
 
 }
@@ -1077,7 +1218,8 @@ body {
         3px solid
         rgba(96, 165, 250, 0.55);
 
-    outline-offset: 2px;
+    outline-offset:
+        2px;
 }
 
 
@@ -1089,15 +1231,15 @@ body {
 
     .main-content {
 
-        padding: 30px;
-
+        padding:
+            30px;
     }
 
 
     .profile-card {
 
-        padding: 30px;
-
+        padding:
+            30px;
     }
 
 }
@@ -1111,96 +1253,147 @@ body {
 
     .sidebar {
 
-        position: relative;
+        position:
+            relative;
 
-        width: 100%;
+        width:
+            100%;
 
-        height: auto;
+        height:
+            auto;
 
-        min-height: auto;
+        min-height:
+            auto;
 
-        padding: 20px 18px;
-
+        padding:
+            25px 18px;
     }
 
 
-    .brand {
+    .sidebar .brand {
 
         padding:
-            0 10px 20px;
+            0 10px 25px;
 
+        text-align:
+            center;
+    }
+
+
+    .sidebar .brand h1 {
+
+        font-size:
+            28px;
+    }
+
+
+    .sidebar .brand span {
+
+        margin-top:
+            8px;
+
+        font-size:
+            17px;
     }
 
 
     .sidebar-nav {
 
-        flex-direction: row;
+        flex-direction:
+            column;
 
-        flex-wrap: wrap;
-
-        gap: 6px;
-
+        gap:
+            6px;
     }
 
 
     .nav-item {
 
-        flex: 1 1 auto;
+        min-height:
+            60px;
 
-        min-width: 130px;
+        padding:
+            14px 20px;
 
+        font-size:
+            17px;
+
+        border-radius:
+            12px;
+    }
+
+
+    .nav-icon {
+
+        font-size:
+            20px;
     }
 
 
     .logout-btn {
 
-        margin-top: 20px;
+        margin-top:
+            20px;
 
+        min-height:
+            60px;
+
+        padding:
+            14px 20px;
+
+        font-size:
+            17px;
+
+        border-radius:
+            12px;
+
+        text-align:
+            left;
     }
 
 
     .main-content {
 
-        margin-left: 0;
+        margin-left:
+            0;
 
         padding:
             25px 18px;
-
     }
 
 
     .page-header {
 
-        margin-bottom: 22px;
-
+        margin-bottom:
+            22px;
     }
 
 
     .page-header h2 {
 
-        font-size: 26px;
-
+        font-size:
+            26px;
     }
 
 
     .profile-card {
 
-        padding: 25px;
-
+        padding:
+            25px;
     }
 
 
     .form-grid {
 
-        grid-template-columns: 1fr;
-
+        grid-template-columns:
+            1fr;
     }
 
 
     .profile-header {
 
-        align-items: flex-start;
-
+        align-items:
+            flex-start;
     }
 
 }
@@ -1216,94 +1409,101 @@ body {
 
         padding:
             20px 14px;
-
     }
 
 
     .page-header h2 {
 
-        font-size: 24px;
-
+        font-size:
+            24px;
     }
 
 
     .page-header p {
 
-        font-size: 14px;
-
+        font-size:
+            14px;
     }
 
 
     .profile-card {
 
-        padding: 20px;
+        padding:
+            20px;
 
-        border-radius: 14px;
-
+        border-radius:
+            14px;
     }
 
 
     .profile-header {
 
-        flex-direction: column;
+        flex-direction:
+            column;
 
-        align-items: center;
+        align-items:
+            center;
 
-        text-align: center;
+        text-align:
+            center;
 
-        gap: 18px;
+        gap:
+            18px;
 
-        padding-bottom: 25px;
-
+        padding-bottom:
+            25px;
     }
 
 
     .profile-heading {
 
-        width: 100%;
-
+        width:
+            100%;
     }
 
 
     .profile-heading h3 {
 
-        font-size: 21px;
-
+        font-size:
+            21px;
     }
 
 
     .account-status {
 
-        flex-direction: column;
+        flex-direction:
+            column;
 
-        align-items: flex-start;
+        align-items:
+            flex-start;
 
-        gap: 12px;
-
+        gap:
+            12px;
     }
 
 
     .profile-actions {
 
-        flex-direction: column;
+        flex-direction:
+            column;
 
-        align-items: stretch;
-
+        align-items:
+            stretch;
     }
 
 
     .primary-btn,
     .secondary-btn {
 
-        width: 100%;
-
+        width:
+            100%;
     }
 
 
     .nav-item {
 
-        min-width: 100%;
-
+        min-width:
+            100%;
     }
 
 }
@@ -1317,44 +1517,47 @@ body {
 
     .profile-card {
 
-        padding: 16px;
-
+        padding:
+            16px;
     }
 
 
     .profile-image-wrapper,
     .profile-image {
 
-        width: 95px;
+        width:
+            95px;
 
-        height: 95px;
+        height:
+            95px;
 
-        min-width: 95px;
-
+        min-width:
+            95px;
     }
 
 
     .photo-button {
 
-        width: 32px;
+        width:
+            32px;
 
-        height: 32px;
-
+        height:
+            32px;
     }
 
 
     .section-title h3 {
 
-        font-size: 17px;
-
+        font-size:
+            17px;
     }
 
 
     .form-group input,
     .readonly-box {
 
-        font-size: 13px;
-
+        font-size:
+            13px;
     }
 
 }
