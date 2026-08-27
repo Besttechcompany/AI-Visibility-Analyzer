@@ -6020,3 +6020,14 @@ function extractEntityValues(container) {
 
     return values;
 }
+
+
+// ======================================================
+// OPEN PROFILE PAGE
+// ======================================================
+
+function openProfilePage() {
+
+    window.location.href = "profile.html";
+
+}
