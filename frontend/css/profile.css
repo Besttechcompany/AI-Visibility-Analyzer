@@ -1,12 +1,6 @@
 /* =========================================================
    AI VISIBILITY ANALYZER
    PROFILE PAGE
-   SIDEBAR MATCHES DASHBOARD.CSS
-========================================================= */
-
-
-/* =========================================================
-   GLOBAL RESET
 ========================================================= */
 
 * {
@@ -22,7 +16,9 @@ html {
 
 
 body {
+
     margin: 0;
+
     min-height: 100vh;
 
     font-family:
@@ -34,26 +30,6 @@ body {
 
     color: #1f2937;
 
-    line-height: 1.6;
-
-    overflow-x: hidden;
-}
-
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-
-img {
-    display: block;
-    max-width: 100%;
-}
-
-
-button {
-    font-family: inherit;
 }
 
 
@@ -74,17 +50,19 @@ button {
 
 /* =========================================================
    SIDEBAR
-   EXACT DASHBOARD SIDEBAR
+   EXACT DASHBOARD STYLE
 ========================================================= */
 
 .sidebar {
 
     position: fixed;
 
-    left: 0;
     top: 0;
 
+    left: 0;
+
     width: 260px;
+
     min-width: 260px;
 
     height: 100vh;
@@ -93,11 +71,11 @@ button {
 
     color: #ffffff;
 
+    padding: 30px 20px;
+
     display: flex;
 
     flex-direction: column;
-
-    padding: 30px 20px;
 
     box-shadow:
         8px 0 30px
@@ -105,23 +83,18 @@ button {
 
     z-index: 1000;
 
-    overflow-y: auto;
-
 }
 
 
 /* =========================================================
-   SIDEBAR BRAND
-   MATCHES DASHBOARD
+   BRAND
 ========================================================= */
 
 .brand {
 
-    margin-bottom: 40px;
-
-    padding: 0;
-
     text-align: center;
+
+    margin-bottom: 40px;
 
 }
 
@@ -131,8 +104,6 @@ button {
     margin: 0;
 
     font-size: 28px;
-
-    line-height: 1.2;
 
     font-weight: 700;
 
@@ -156,7 +127,6 @@ button {
 
 /* =========================================================
    SIDEBAR NAVIGATION
-   MATCHES DASHBOARD
 ========================================================= */
 
 .sidebar-nav {
@@ -184,13 +154,13 @@ button {
 
     border-radius: 14px;
 
-    color: #ffffff;
-
-    text-decoration: none;
-
     cursor: pointer;
 
     transition: .3s;
+
+    color: #ffffff;
+
+    text-decoration: none;
 
     font-size: 16px;
 
@@ -202,8 +172,6 @@ button {
 .nav-item:hover {
 
     background: #1e293b;
-
-    color: #ffffff;
 
 }
 
@@ -227,21 +195,18 @@ button {
 
     font-size: 20px;
 
-    line-height: 1;
-
 }
 
 
 /* =========================================================
    LOGOUT
-   MATCHES DASHBOARD
 ========================================================= */
 
 .logout-btn {
 
-    width: 100%;
-
     margin-top: 8px;
+
+    width: 100%;
 
     padding: 15px 18px;
 
@@ -268,8 +233,6 @@ button {
 
     background: #dc2626;
 
-    color: #ffffff;
-
 }
 
 
@@ -281,17 +244,14 @@ button {
 
     margin-left: 260px;
 
-    flex: 1;
-
-    min-width: 0;
+    width:
+        calc(100% - 260px);
 
     min-height: 100vh;
 
     padding: 35px;
 
     background: #f4f7fb;
-
-    overflow-x: hidden;
 
 }
 
@@ -302,7 +262,7 @@ button {
 
 .page-header {
 
-    max-width: 1120px;
+    max-width: 1100px;
 
     margin:
         0 auto 30px;
@@ -314,11 +274,11 @@ button {
 
     margin: 0;
 
-    font-size: 30px;
+    color: #10204a;
+
+    font-size: 32px;
 
     line-height: 1.2;
-
-    color: #10204a;
 
     font-weight: 800;
 
@@ -334,8 +294,6 @@ button {
 
     font-size: 15px;
 
-    line-height: 1.6;
-
 }
 
 
@@ -347,32 +305,31 @@ button {
 
     width: 100%;
 
-    max-width: 1120px;
+    max-width: 1100px;
 
     margin: 0 auto;
+
+    padding: 35px;
 
     background: #ffffff;
 
     border-radius: 18px;
 
-    padding: 35px;
+    border:
+        1px solid #e5eaf2;
 
     box-shadow:
         0 10px 35px
         rgba(15, 23, 42, 0.07);
 
-    border:
-        1px solid
-        rgba(226, 232, 240, 0.8);
-
 }
 
 
 /* =========================================================
-   PROFILE HEADER
+   PROFILE PHOTO SECTION
 ========================================================= */
 
-.profile-header {
+.profile-photo-section {
 
     display: flex;
 
@@ -389,18 +346,18 @@ button {
 
 
 /* =========================================================
-   PROFILE IMAGE WRAPPER
+   PHOTO WRAPPER
 ========================================================= */
 
-.profile-image-wrapper {
+.profile-photo-wrapper {
 
     position: relative;
 
-    width: 110px;
+    width: 115px;
 
-    height: 110px;
+    height: 115px;
 
-    min-width: 110px;
+    min-width: 115px;
 
 }
 
@@ -411,24 +368,24 @@ button {
 
 .profile-image {
 
-    width: 110px;
+    width: 115px;
 
-    height: 110px;
-
-    display: block;
+    height: 115px;
 
     object-fit: cover;
 
     border-radius: 50%;
 
-    border:
-        4px solid #eef3ff;
+    display: block;
 
-    background: #f1f5f9;
+    background: #eef2f7;
+
+    border:
+        4px solid #eef4ff;
 
     box-shadow:
-        0 5px 20px
-        rgba(37, 99, 235, 0.10);
+        0 8px 22px
+        rgba(37, 99, 235, 0.12);
 
 }
 
@@ -445,9 +402,9 @@ button {
 
     bottom: -2px;
 
-    width: 36px;
+    width: 38px;
 
-    height: 36px;
+    height: 38px;
 
     border:
         3px solid #ffffff;
@@ -458,23 +415,23 @@ button {
 
     color: #ffffff;
 
-    cursor: pointer;
-
-    font-size: 15px;
-
     display: flex;
 
     align-items: center;
 
     justify-content: center;
 
+    cursor: pointer;
+
+    font-size: 16px;
+
     box-shadow:
-        0 4px 12px
+        0 5px 15px
         rgba(37, 99, 235, 0.25);
 
     transition:
-        background 0.2s ease,
-        transform 0.2s ease;
+        background .2s ease,
+        transform .2s ease;
 
 }
 
@@ -483,38 +440,30 @@ button {
 
     background: #1d4ed8;
 
-    transform: scale(1.05);
-
-}
-
-
-.photo-button:active {
-
-    transform: scale(0.98);
+    transform:
+        scale(1.06);
 
 }
 
 
 /* =========================================================
-   PROFILE HEADING
+   PHOTO INFORMATION
 ========================================================= */
 
-.profile-heading {
+.profile-photo-info {
 
     min-width: 0;
 
 }
 
 
-.profile-heading h3 {
+.profile-photo-info h3 {
 
-    margin: 0;
-
-    font-size: 24px;
-
-    line-height: 1.3;
+    margin: 0 0 5px;
 
     color: #10204a;
+
+    font-size: 24px;
 
     font-weight: 800;
 
@@ -523,10 +472,9 @@ button {
 }
 
 
-.profile-heading p {
+.profile-photo-info p {
 
-    margin:
-        7px 0 10px;
+    margin: 0 0 12px;
 
     color: #64748b;
 
@@ -537,27 +485,28 @@ button {
 }
 
 
-/* =========================================================
-   LOGIN METHOD
-========================================================= */
+.photo-text-button {
 
-.login-method {
+    border: none;
 
-    display: inline-flex;
+    background: transparent;
 
-    align-items: center;
-
-    padding: 5px 10px;
-
-    border-radius: 20px;
-
-    background: #eef4ff;
+    padding: 0;
 
     color: #2563eb;
 
-    font-size: 12px;
+    font-size: 13px;
 
     font-weight: 700;
+
+    cursor: pointer;
+
+}
+
+
+.photo-text-button:hover {
+
+    text-decoration: underline;
 
 }
 
@@ -570,7 +519,7 @@ button {
 
     margin-top: 30px;
 
-    margin-bottom: 20px;
+    margin-bottom: 22px;
 
 }
 
@@ -581,9 +530,7 @@ button {
 
     color: #10204a;
 
-    font-size: 19px;
-
-    line-height: 1.4;
+    font-size: 20px;
 
     font-weight: 800;
 
@@ -598,8 +545,6 @@ button {
     color: #718096;
 
     font-size: 14px;
-
-    line-height: 1.5;
 
 }
 
@@ -626,10 +571,6 @@ button {
 
 .form-group {
 
-    display: flex;
-
-    flex-direction: column;
-
     min-width: 0;
 
 }
@@ -637,15 +578,30 @@ button {
 
 .form-group label {
 
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
     margin-bottom: 8px;
 
     color: #334155;
 
-    font-weight: 700;
-
     font-size: 14px;
 
-    line-height: 1.4;
+    font-weight: 700;
+
+}
+
+
+.optional-label {
+
+    color: #94a3b8;
+
+    font-size: 11px;
+
+    font-weight: 600;
 
 }
 
@@ -668,9 +624,11 @@ button {
 
     border-radius: 9px;
 
-    outline: none;
-
     background: #ffffff;
+
+    color: #1e293b;
+
+    outline: none;
 
     font-family:
         Inter,
@@ -679,12 +637,10 @@ button {
 
     font-size: 14px;
 
-    color: #1e293b;
-
     transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
 
 }
 
@@ -702,22 +658,20 @@ button {
 
     box-shadow:
         0 0 0 3px
-        rgba(37, 99, 235, 0.10);
-
-    background: #ffffff;
+        rgba(37, 99, 235, .10);
 
 }
 
 
 /* =========================================================
-   READONLY INPUT
+   READONLY
 ========================================================= */
 
 .form-group input[readonly] {
 
     background: #f8fafc;
 
-    color: #64748b;
+    color: #475569;
 
     cursor: default;
 
@@ -730,38 +684,29 @@ button {
 
     box-shadow: none;
 
-    background: #f8fafc;
-
 }
 
 
 /* =========================================================
-   EDITABLE INPUT
+   EDIT MODE
 ========================================================= */
 
 .form-group input:not([readonly]) {
 
     background: #ffffff;
 
-    color: #1e293b;
-
-    border-color: #cbd5e1;
-
-}
-
-
-.form-group input:not([readonly]):hover {
-
-    border-color: #94a3b8;
+    border-color: #2563eb;
 
 }
 
 
 /* =========================================================
-   SMALL HELP TEXT
+   HELP TEXT
 ========================================================= */
 
 .form-group small {
+
+    display: block;
 
     margin-top: 6px;
 
@@ -769,170 +714,11 @@ button {
 
     font-size: 12px;
 
-    line-height: 1.4;
-
 }
 
 
 /* =========================================================
-   READONLY BOX
-========================================================= */
-
-.readonly-box {
-
-    min-height: 48px;
-
-    display: flex;
-
-    align-items: center;
-
-    padding:
-        13px 14px;
-
-    border:
-        1px solid #d8e0eb;
-
-    border-radius: 9px;
-
-    background: #f8fafc;
-
-    color: #64748b;
-
-    font-size: 14px;
-
-    line-height: 1.4;
-
-}
-
-
-/* =========================================================
-   ACCOUNT STATUS
-========================================================= */
-
-.account-status {
-
-    margin-top: 30px;
-
-    padding: 20px;
-
-    border-radius: 12px;
-
-    background: #f8fafc;
-
-    border:
-        1px solid #e8edf5;
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-    gap: 20px;
-
-}
-
-
-.account-status h3 {
-
-    margin: 0;
-
-    font-size: 16px;
-
-    color: #10204a;
-
-    font-weight: 800;
-
-}
-
-
-.account-status p {
-
-    margin:
-        5px 0 0;
-
-    color: #718096;
-
-    font-size: 13px;
-
-    line-height: 1.5;
-
-}
-
-
-/* =========================================================
-   ACTIVE STATUS
-========================================================= */
-
-.status-active {
-
-    display: inline-flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    white-space: nowrap;
-
-    padding:
-        7px 14px;
-
-    border-radius: 20px;
-
-    background: #dcfce7;
-
-    color: #15803d;
-
-    font-size: 13px;
-
-    font-weight: 700;
-
-}
-
-
-/* =========================================================
-   MESSAGE
-========================================================= */
-
-.message {
-
-    max-width: 1120px;
-
-    min-height: 24px;
-
-    margin:
-        16px auto 0;
-
-    text-align: center;
-
-    font-size: 14px;
-
-    font-weight: 600;
-
-    line-height: 1.5;
-
-    transition:
-        opacity 0.2s ease;
-
-}
-
-
-.message.success {
-
-    color: #16a34a;
-
-}
-
-
-.message.error {
-
-    color: #dc2626;
-
-}
-
-
-/* =========================================================
-   PROFILE ACTIONS
+   ACTION BUTTONS
 ========================================================= */
 
 .profile-actions {
@@ -943,46 +729,14 @@ button {
 
     align-items: center;
 
-    flex-wrap: wrap;
-
     gap: 12px;
 
-    margin-top: 25px;
+    margin-top: 30px;
 
-}
+    padding-top: 25px;
 
-
-/* =========================================================
-   BUTTON BASE
-========================================================= */
-
-.primary-btn,
-.secondary-btn {
-
-    min-height: 46px;
-
-    padding:
-        12px 20px;
-
-    border-radius: 9px;
-
-    font-family:
-        Inter,
-        Arial,
-        sans-serif;
-
-    font-size: 14px;
-
-    font-weight: 700;
-
-    cursor: pointer;
-
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
+    border-top:
+        1px solid #e8edf5;
 
 }
 
@@ -993,15 +747,37 @@ button {
 
 .primary-btn {
 
+    min-height: 46px;
+
+    padding:
+        12px 20px;
+
     border: none;
+
+    border-radius: 9px;
 
     background: #2563eb;
 
     color: #ffffff;
 
-    box-shadow:
-        0 4px 12px
-        rgba(37, 99, 235, 0.15);
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 9px;
+
+    transition:
+        background .2s ease,
+        transform .15s ease,
+        box-shadow .2s ease;
 
 }
 
@@ -1010,31 +786,19 @@ button {
 
     background: #1d4ed8;
 
-    transform: translateY(-1px);
-
-    box-shadow:
-        0 6px 16px
-        rgba(37, 99, 235, 0.20);
-
-}
-
-
-.primary-btn:active {
-
-    transform: translateY(0);
+    transform:
+        translateY(-1px);
 
 }
 
 
 .primary-btn:disabled {
 
-    opacity: 0.6;
+    opacity: .65;
 
-    cursor: not-allowed;
+    cursor: wait;
 
     transform: none;
-
-    box-shadow: none;
 
 }
 
@@ -1045,12 +809,29 @@ button {
 
 .secondary-btn {
 
+    min-height: 46px;
+
+    padding:
+        12px 20px;
+
     border:
         1px solid #d8e0eb;
+
+    border-radius: 9px;
 
     background: #ffffff;
 
     color: #475569;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease;
 
 }
 
@@ -1061,36 +842,25 @@ button {
 
     border-color: #cbd5e1;
 
-    transform: translateY(-1px);
-
-}
-
-
-.secondary-btn:active {
-
-    transform: translateY(0);
-
 }
 
 
 .secondary-btn:disabled {
 
-    opacity: 0.6;
+    opacity: .65;
 
-    cursor: not-allowed;
-
-    transform: none;
+    cursor: wait;
 
 }
 
 
 /* =========================================================
-   PROFILE LOADING
+   LOADING
 ========================================================= */
 
 .profile-loading {
 
-    min-height: 420px;
+    min-height: 400px;
 
     display: flex;
 
@@ -1108,7 +878,7 @@ button {
 
 
 /* =========================================================
-   LOADING SPINNER
+   LOADER
 ========================================================= */
 
 .button-loader {
@@ -1123,7 +893,7 @@ button {
 
     border:
         2px solid
-        rgba(37, 99, 235, 0.18);
+        rgba(37, 99, 235, .18);
 
     border-top:
         2px solid #2563eb;
@@ -1131,13 +901,24 @@ button {
     border-radius: 50%;
 
     animation:
-        profileLoaderSpin
-        0.7s linear infinite;
+        profileSpin
+        .7s linear infinite;
 
 }
 
 
-@keyframes profileLoaderSpin {
+.primary-btn .button-loader {
+
+    border-color:
+        rgba(255,255,255,.45);
+
+    border-top-color:
+        #ffffff;
+
+}
+
+
+@keyframes profileSpin {
 
     from {
 
@@ -1157,20 +938,267 @@ button {
 
 
 /* =========================================================
-   FOCUS ACCESSIBILITY
+   ERROR
 ========================================================= */
 
-.nav-item:focus-visible,
-.logout-btn:focus-visible,
-.primary-btn:focus-visible,
-.secondary-btn:focus-visible,
-.photo-button:focus-visible {
+.profile-error {
 
-    outline:
-        3px solid
-        rgba(96, 165, 250, 0.55);
+    min-height: 350px;
 
-    outline-offset: 2px;
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+}
+
+
+.error-icon {
+
+    width: 58px;
+
+    height: 58px;
+
+    margin-bottom: 18px;
+
+    border-radius: 50%;
+
+    background: #fee2e2;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 25px;
+
+}
+
+
+.profile-error h3 {
+
+    margin-bottom: 8px;
+
+    color: #10204a;
+
+    font-size: 20px;
+
+}
+
+
+.profile-error p {
+
+    max-width: 500px;
+
+    margin-bottom: 22px;
+
+    color: #64748b;
+
+    font-size: 14px;
+
+}
+
+
+/* =========================================================
+   HIDDEN
+========================================================= */
+
+.hidden {
+
+    display: none !important;
+
+}
+
+
+/* =========================================================
+   POPUP / TOAST
+========================================================= */
+
+.profile-toast {
+
+    position: fixed;
+
+    top: 25px;
+
+    right: 25px;
+
+    z-index: 99999;
+
+    width: auto;
+
+    min-width: 320px;
+
+    max-width: 470px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding:
+        15px 17px;
+
+    border:
+        1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    background: #ffffff;
+
+    color: #1e293b;
+
+    box-shadow:
+        0 15px 40px
+        rgba(15, 23, 42, .16);
+
+    animation:
+        toastIn
+        .25s ease
+        forwards;
+
+}
+
+
+.profile-toast.success {
+
+    border-left:
+        4px solid #16a34a;
+
+}
+
+
+.profile-toast.error {
+
+    border-left:
+        4px solid #dc2626;
+
+}
+
+
+.profile-toast.info {
+
+    border-left:
+        4px solid #2563eb;
+
+}
+
+
+.profile-toast.warning {
+
+    border-left:
+        4px solid #f59e0b;
+
+}
+
+
+.toast-icon {
+
+    width: 28px;
+
+    height: 28px;
+
+    min-width: 28px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #f1f5f9;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+}
+
+
+.toast-message {
+
+    flex: 1;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    line-height: 1.4;
+
+}
+
+
+.toast-close {
+
+    width: 25px;
+
+    height: 25px;
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #64748b;
+
+    font-size: 21px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+}
+
+
+.toast-close:hover {
+
+    color: #1e293b;
+
+}
+
+
+@keyframes toastIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateX(30px);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateX(0);
+
+    }
+
+}
+
+
+.toast-hide {
+
+    opacity: 0;
+
+    transform:
+        translateX(30px);
+
+    transition:
+        opacity .25s ease,
+        transform .25s ease;
 
 }
 
@@ -1180,6 +1208,62 @@ button {
 ========================================================= */
 
 @media (max-width: 992px) {
+
+    .sidebar {
+
+        width: 240px;
+
+        min-width: 240px;
+
+        padding:
+            25px 16px;
+
+    }
+
+
+    .main-content {
+
+        margin-left: 240px;
+
+        width:
+            calc(100% - 240px);
+
+        padding: 30px 25px;
+
+    }
+
+
+    .nav-item {
+
+        padding:
+            14px 15px;
+
+        font-size: 15px;
+
+    }
+
+
+    .brand h1 {
+
+        font-size: 26px;
+
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .dashboard-container {
+
+        flex-direction: column;
+
+    }
+
 
     .sidebar {
 
@@ -1196,13 +1280,6 @@ button {
     }
 
 
-    .dashboard-container {
-
-        flex-direction: column;
-
-    }
-
-
     .brand {
 
         margin-bottom: 20px;
@@ -1212,18 +1289,17 @@ button {
 
     .sidebar-nav {
 
-        flex-direction: row;
-
-        flex-wrap: wrap;
-
-        gap: 10px;
+        gap: 8px;
 
     }
 
 
     .nav-item {
 
-        flex: 0 0 auto;
+        padding:
+            12px 14px;
+
+        font-size: 14px;
 
     }
 
@@ -1232,7 +1308,12 @@ button {
 
         width: auto;
 
-        margin-top: 0;
+        margin-top: 12px;
+
+        padding:
+            12px 18px;
+
+        font-size: 14px;
 
     }
 
@@ -1241,43 +1322,10 @@ button {
 
         margin-left: 0;
 
-        padding: 25px;
-
-    }
-
-
-    .profile-card {
-
         width: 100%;
 
-    }
-
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 768px) {
-
-    .main-content {
-
-        padding: 18px;
-
-    }
-
-
-    .page-header h2 {
-
-        font-size: 28px;
-
-    }
-
-
-    .page-header p {
-
-        font-size: 14px;
+        padding:
+            25px 18px;
 
     }
 
@@ -1296,32 +1344,34 @@ button {
     }
 
 
-    .profile-header {
-
-        align-items: flex-start;
-
-    }
-
-
-    .sidebar-nav {
+    .profile-photo-section {
 
         flex-direction: column;
 
+        text-align: center;
+
     }
 
 
-    .nav-item {
+    .profile-photo-info {
 
         width: 100%;
 
     }
 
 
-    .logout-btn {
+    .profile-actions {
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+    }
+
+
+    .profile-actions button {
 
         width: 100%;
-
-        margin-top: 10px;
 
     }
 
@@ -1342,27 +1392,6 @@ button {
     }
 
 
-    .page-header {
-
-        margin-bottom: 22px;
-
-    }
-
-
-    .page-header h2 {
-
-        font-size: 24px;
-
-    }
-
-
-    .page-header p {
-
-        font-size: 14px;
-
-    }
-
-
     .profile-card {
 
         padding: 20px;
@@ -1372,145 +1401,31 @@ button {
     }
 
 
-    .profile-header {
+    .page-header h2 {
 
-        flex-direction: column;
-
-        align-items: center;
-
-        text-align: center;
-
-        gap: 18px;
-
-        padding-bottom: 25px;
+        font-size: 27px;
 
     }
 
 
-    .profile-heading {
-
-        width: 100%;
-
-    }
-
-
-    .profile-heading h3 {
+    .profile-photo-info h3 {
 
         font-size: 21px;
 
     }
 
 
-    .account-status {
+    .profile-toast {
 
-        flex-direction: column;
+        top: 15px;
 
-        align-items: flex-start;
+        left: 15px;
 
-        gap: 12px;
+        right: 15px;
 
-    }
+        min-width: 0;
 
-
-    .profile-actions {
-
-        flex-direction: column;
-
-        align-items: stretch;
-
-    }
-
-
-    .primary-btn,
-    .secondary-btn {
-
-        width: 100%;
-
-    }
-
-
-    .brand h1 {
-
-        font-size: 24px;
-
-    }
-
-
-    .brand span {
-
-        font-size: 14px;
-
-    }
-
-
-    .nav-item {
-
-        padding:
-            12px 14px;
-
-        font-size: 14px;
-
-    }
-
-
-    .nav-icon {
-
-        width: 20px;
-
-        min-width: 20px;
-
-        font-size: 17px;
-
-    }
-
-}
-
-
-/* =========================================================
-   VERY SMALL MOBILE
-========================================================= */
-
-@media (max-width: 400px) {
-
-    .profile-card {
-
-        padding: 16px;
-
-    }
-
-
-    .profile-image-wrapper,
-    .profile-image {
-
-        width: 95px;
-
-        height: 95px;
-
-        min-width: 95px;
-
-    }
-
-
-    .photo-button {
-
-        width: 32px;
-
-        height: 32px;
-
-    }
-
-
-    .section-title h3 {
-
-        font-size: 17px;
-
-    }
-
-
-    .form-group input,
-    .readonly-box {
-
-        font-size: 13px;
+        max-width: none;
 
     }
 
