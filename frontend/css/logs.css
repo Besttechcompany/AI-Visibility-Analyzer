@@ -20,620 +20,1148 @@ body {
     min-height: 100vh;
 }
 
+
+/* =========================================================
+   DASHBOARD LAYOUT
+========================================================= */
+
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background: #f4f7fb;
+}
+
+
 /* =========================================================
    SIDEBAR
-   ========================================================= */
+   EXACT DASHBOARD SIDEBAR
+========================================================= */
 
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 323px;
+
+    width: 260px;
+    min-width: 260px;
+
     height: 100vh;
-    background: #09142d;
+
+    background: #0f172a;
+
     color: #ffffff;
-    padding: 42px 25px 28px;
+
     display: flex;
     flex-direction: column;
+
+    padding: 30px 20px;
+
+    box-shadow:
+        8px 0 30px rgba(0, 0, 0, 0.12);
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
     z-index: 1000;
 }
 
+
+/* =========================================================
+   BRAND
+   EXACT DASHBOARD STYLE
+========================================================= */
+
 .brand {
+
     text-align: center;
-    margin-bottom: 42px;
+
+    margin-bottom: 40px;
+
 }
+
 
 .brand h1 {
-    font-size: 32px;
+
+    margin: 0;
+
+    font-size: 28px;
+
     font-weight: 700;
-    margin-bottom: 14px;
+
+    color: #ffffff;
+
 }
+
 
 .brand span {
-    font-size: 20px;
-    color: #8da6cf;
+
+    display: block;
+
+    margin-top: 8px;
+
+    color: #94a3b8;
+
+    font-size: 15px;
+
 }
+
+
+/* =========================================================
+   SIDEBAR NAVIGATION
+   EXACT DASHBOARD STYLE
+========================================================= */
 
 .sidebar-nav {
+
     display: flex;
+
     flex-direction: column;
+
     gap: 10px;
+
+    flex: 1;
+
 }
+
 
 .nav-item {
-    min-height: 68px;
+
     display: flex;
+
     align-items: center;
-    gap: 18px;
-    padding: 0 28px;
-    border-radius: 18px;
-    text-decoration: none;
+
+    gap: 14px;
+
+    padding: 15px 18px;
+
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+
     color: #ffffff;
-    font-size: 20px;
-    font-weight: 600;
-    transition: 0.2s ease;
+
+    text-decoration: none;
+
+    font-size: 16px;
+
+    font-weight: 500;
+
 }
+
 
 .nav-item:hover {
-    background: rgba(255, 255, 255, 0.08);
+
+    background: #1e293b;
+
 }
+
 
 .nav-item.active {
-    background: #2f68e8;
-    box-shadow: 0 10px 25px rgba(47, 104, 232, 0.28);
+
+    background: #2563eb;
+
+    color: #ffffff;
+
 }
+
+
+/* =========================================================
+   NAVIGATION ICON
+========================================================= */
 
 .nav-icon {
-    width: 28px;
+
+    width: 24px;
+
+    min-width: 24px;
+
     text-align: center;
-    font-size: 23px;
+
+    font-size: 20px;
+
 }
+
+
+/* =========================================================
+   LOGOUT
+   EXACT DASHBOARD STYLE
+========================================================= */
 
 .logout-btn {
-    margin-top: auto;
+
+    margin-top: 8px;
+
     width: 100%;
-    min-height: 66px;
+
+    padding: 15px 18px;
+
     border: none;
-    border-radius: 17px;
-    background: #ff4248;
+
+    border-radius: 14px;
+
+    background: #ef4444;
+
     color: #ffffff;
-    font-size: 20px;
-    font-weight: 700;
+
+    font-size: 16px;
+
+    font-weight: 500;
+
     cursor: pointer;
-    transition: 0.2s ease;
+
+    transition: 0.3s;
+
 }
 
+
 .logout-btn:hover {
-    background: #e83238;
-    transform: translateY(-1px);
+
+    background: #dc2626;
+
+    color: #ffffff;
+
 }
+
 
 /* =========================================================
    MAIN CONTENT
-   ========================================================= */
+========================================================= */
 
 .main-content {
-    margin-left: 323px;
+
+    margin-left: 260px;
+
     min-height: 100vh;
-    padding: 64px 45px 70px;
+
+    width: calc(100% - 260px);
+
+    padding: 35px;
+
+    overflow-x: hidden;
+
 }
+
 
 /* =========================================================
    PAGE HEADER
-   ========================================================= */
+========================================================= */
 
 .page-header {
+
     margin-bottom: 42px;
+
 }
+
 
 .page-header h2 {
+
     font-size: 48px;
+
     line-height: 1.15;
+
     color: #14213d;
+
     margin-bottom: 12px;
+
     font-weight: 700;
+
 }
 
+
 .page-header p {
+
     font-size: 20px;
+
     color: #6680a5;
+
     line-height: 1.5;
+
 }
+
 
 /* =========================================================
    COMMON
-   ========================================================= */
+========================================================= */
 
 .hidden {
+
     display: none !important;
+
 }
+
 
 /* =========================================================
    LOADING
-   ========================================================= */
+========================================================= */
 
 .loading-box {
+
     background: #ffffff;
+
     border-radius: 24px;
+
     padding: 55px;
+
     text-align: center;
-    box-shadow: 0 8px 30px rgba(20, 33, 61, 0.06);
+
+    box-shadow:
+        0 8px 30px
+        rgba(20, 33, 61, 0.06);
+
 }
+
 
 .loader {
+
     width: 42px;
+
     height: 42px;
-    border: 4px solid #e3eaf5;
-    border-top-color: #2f68e8;
+
+    border:
+        4px solid
+        #e3eaf5;
+
+    border-top-color:
+        #2f68e8;
+
     border-radius: 50%;
-    margin: 0 auto 18px;
-    animation: spin 0.8s linear infinite;
+
+    margin:
+        0 auto 18px;
+
+    animation:
+        spin
+        0.8s linear infinite;
+
 }
+
 
 .loading-box p {
+
     color: #6680a5;
+
     font-size: 17px;
+
 }
 
+
 @keyframes spin {
+
     to {
-        transform: rotate(360deg);
+
+        transform:
+            rotate(360deg);
+
     }
+
 }
+
 
 /* =========================================================
    ERROR
-   ========================================================= */
+========================================================= */
 
 .error-box {
+
     background: #ffffff;
+
     border-radius: 24px;
+
     padding: 50px;
+
     text-align: center;
-    box-shadow: 0 8px 30px rgba(20, 33, 61, 0.06);
+
+    box-shadow:
+        0 8px 30px
+        rgba(20, 33, 61, 0.06);
+
 }
+
 
 .error-box h3 {
+
     color: #d92d32;
+
     font-size: 28px;
+
     margin-bottom: 15px;
+
 }
+
 
 .error-box p {
+
     color: #6680a5;
+
     font-size: 17px;
+
     margin-bottom: 25px;
+
 }
+
 
 .retry-btn {
+
     border: none;
+
     background: #2f68e8;
+
     color: #ffffff;
+
     padding: 14px 28px;
+
     border-radius: 10px;
+
     font-size: 16px;
+
     font-weight: 700;
+
     cursor: pointer;
+
 }
 
+
 .retry-btn:hover {
+
     background: #2459cf;
+
 }
+
 
 /* =========================================================
    EMPTY
-   ========================================================= */
+========================================================= */
 
 .empty-box {
+
     background: #ffffff;
+
     border-radius: 24px;
+
     padding: 65px 30px;
+
     text-align: center;
-    box-shadow: 0 8px 30px rgba(20, 33, 61, 0.06);
+
+    box-shadow:
+        0 8px 30px
+        rgba(20, 33, 61, 0.06);
+
 }
+
 
 .empty-icon {
+
     font-size: 50px;
+
     margin-bottom: 15px;
+
 }
+
 
 .empty-box h3 {
+
     font-size: 27px;
+
     margin-bottom: 12px;
+
 }
+
 
 .empty-box p {
+
     color: #6680a5;
+
     margin-bottom: 25px;
+
 }
 
+
 .analyze-btn {
+
     display: inline-block;
+
     background: #2f68e8;
+
     color: #ffffff;
+
     text-decoration: none;
+
     padding: 14px 25px;
+
     border-radius: 10px;
+
     font-weight: 700;
+
 }
+
 
 /* =========================================================
    HISTORY CONTAINER
-   ========================================================= */
+========================================================= */
 
 .history-container {
+
     background: #ffffff;
+
     border-radius: 24px;
+
     padding: 32px;
-    box-shadow: 0 8px 30px rgba(20, 33, 61, 0.06);
+
+    box-shadow:
+        0 8px 30px
+        rgba(20, 33, 61, 0.06);
+
 }
+
 
 .history-header {
+
     margin-bottom: 24px;
+
 }
+
 
 .history-header h3 {
+
     font-size: 30px;
+
     color: #14213d;
+
     margin-bottom: 7px;
+
 }
 
+
 .history-header p {
+
     font-size: 17px;
+
     color: #6680a5;
+
 }
+
 
 /* =========================================================
    HISTORY LIST
-   ========================================================= */
+========================================================= */
 
 .history-list {
+
     display: flex;
+
     flex-direction: column;
+
     gap: 14px;
+
 }
+
 
 /* =========================================================
    HORIZONTAL ANALYSIS ROW
-   ========================================================= */
+========================================================= */
 
 .history-item,
 .history-card,
 .analysis-card {
+
     width: 100%;
+
     min-height: 92px;
+
     background: #ffffff;
-    border: 1px solid #dfe7f2;
+
+    border:
+        1px solid
+        #dfe7f2;
+
     border-radius: 14px;
+
     padding: 18px 20px;
 
     display: grid;
 
-    /*
-       Website
-       Date
-       Analysis ID
-       Status
-       PDF
-    */
     grid-template-columns:
+
         minmax(260px, 2.2fr)
+
         minmax(170px, 1.2fr)
+
         minmax(110px, 0.7fr)
+
         minmax(120px, 0.7fr)
+
         minmax(190px, auto);
 
     align-items: center;
+
     column-gap: 22px;
 
     transition: 0.2s ease;
+
 }
+
 
 .history-item:hover,
 .history-card:hover,
 .analysis-card:hover {
-    border-color: #b9cbea;
-    box-shadow: 0 6px 18px rgba(20, 33, 61, 0.07);
+
+    border-color:
+        #b9cbea;
+
+    box-shadow:
+        0 6px 18px
+        rgba(20, 33, 61, 0.07);
+
 }
+
 
 /* =========================================================
    WEBSITE
-   ========================================================= */
+========================================================= */
 
 .history-website,
 .website-name,
 .analysis-website {
+
     min-width: 0;
+
 }
+
 
 .history-website a,
 .website-name a,
 .analysis-website a {
+
     color: #14213d;
+
     font-size: 17px;
+
     font-weight: 700;
+
     text-decoration: none;
 
     display: block;
+
     white-space: nowrap;
+
     overflow: hidden;
+
     text-overflow: ellipsis;
+
 }
+
 
 .history-website a:hover,
 .website-name a:hover,
 .analysis-website a:hover {
+
     color: #2f68e8;
+
 }
+
 
 /* =========================================================
    DATE
-   ========================================================= */
+========================================================= */
 
 .history-date,
 .analysis-date,
 .date-time {
+
     color: #6680a5;
+
     font-size: 15px;
+
     white-space: nowrap;
+
 }
+
 
 /* =========================================================
    ANALYSIS ID
-   ========================================================= */
+========================================================= */
 
 .history-id,
 .analysis-id {
+
     font-size: 15px;
+
     color: #263b5d;
+
     white-space: nowrap;
+
 }
+
 
 .history-id strong,
 .analysis-id strong {
+
     color: #14213d;
+
 }
+
 
 /* =========================================================
    STATUS
-   ========================================================= */
+========================================================= */
 
 .history-status,
 .analysis-status {
+
     font-size: 15px;
+
     font-weight: 700;
+
     white-space: nowrap;
+
 }
+
 
 .status-completed,
 .completed {
+
     color: #07883f;
+
 }
+
 
 .status-pending,
 .pending {
+
     color: #d98b00;
+
 }
+
 
 .status-failed,
 .failed {
+
     color: #d92d32;
+
 }
+
 
 /* =========================================================
    PDF BUTTON
-   ========================================================= */
+========================================================= */
 
 .download-pdf,
 .pdf-btn,
 .download-btn {
+
     justify-self: end;
 
     display: inline-flex;
+
     align-items: center;
+
     justify-content: center;
+
     gap: 8px;
 
     min-width: 185px;
+
     padding: 12px 18px;
 
-    border: 1px solid #d5dfef;
+    border:
+        1px solid
+        #d5dfef;
+
     border-radius: 10px;
 
     background: #ffffff;
+
     color: #1454d8;
 
     font-size: 15px;
+
     font-weight: 700;
 
     text-decoration: none;
+
     cursor: pointer;
 
     transition: 0.2s ease;
+
 }
+
 
 .download-pdf:hover,
 .pdf-btn:hover,
 .download-btn:hover {
+
     background: #f1f6ff;
+
     border-color: #2f68e8;
+
     color: #1248ba;
+
 }
+
 
 /* =========================================================
    SUPPORT FOR COMMON INNER WRAPPERS
-   ========================================================= */
-
-/*
-   If logs.js creates a single card with separate sections,
-   these rules force them into one horizontal row.
-*/
+========================================================= */
 
 .history-item > div,
 .history-card > div,
 .analysis-card > div {
+
     min-width: 0;
+
 }
 
-/* =========================================================
-   MOBILE / TABLET
-   ========================================================= */
-
-@media (max-width: 1250px) {
-
-    .sidebar {
-        width: 270px;
-    }
-
-    .main-content {
-        margin-left: 270px;
-        padding: 50px 30px;
-    }
-
-    .history-item,
-    .history-card,
-    .analysis-card {
-        grid-template-columns:
-            minmax(220px, 2fr)
-            minmax(150px, 1.2fr)
-            minmax(100px, 0.7fr)
-            minmax(100px, 0.7fr)
-            minmax(175px, auto);
-
-        column-gap: 14px;
-    }
-
-    .download-pdf,
-    .pdf-btn,
-    .download-btn {
-        min-width: 165px;
-        padding: 11px 12px;
-    }
-}
 
 /* =========================================================
-   SMALL DESKTOP / TABLET
-   ========================================================= */
+   TABLET
+========================================================= */
 
-@media (max-width: 1000px) {
+@media (max-width: 992px) {
 
     .sidebar {
-        width: 230px;
-        padding-left: 16px;
-        padding-right: 16px;
+
+        width: 240px;
+
+        min-width: 240px;
+
+        padding:
+            25px 16px;
+
     }
+
 
     .main-content {
-        margin-left: 230px;
-        padding: 40px 22px;
+
+        margin-left: 240px;
+
+        width:
+            calc(100% - 240px);
+
+        padding: 30px 25px;
+
     }
 
-    .page-header h2 {
-        font-size: 38px;
+
+    .brand h1 {
+
+        font-size: 26px;
+
     }
+
+
+    .nav-item {
+
+        padding:
+            14px 15px;
+
+        font-size: 15px;
+
+    }
+
+
+    .nav-icon {
+
+        font-size: 19px;
+
+    }
+
 
     .history-container {
-        padding: 24px;
+
         overflow-x: auto;
+
     }
+
 
     .history-list {
+
         min-width: 850px;
+
     }
 
-    .history-item,
-    .history-card,
-    .analysis-card {
-        grid-template-columns:
-            2fr
-            1.2fr
-            0.8fr
-            0.8fr
-            180px;
+
+    .page-header h2 {
+
+        font-size: 40px;
+
     }
+
 }
+
+
+/* =========================================================
+   SMALL TABLET
+========================================================= */
+
+@media (max-width: 768px) {
+
+    .dashboard-container {
+
+        flex-direction: column;
+
+    }
+
+
+    .sidebar {
+
+        position: relative;
+
+        width: 100%;
+
+        min-width: 100%;
+
+        height: auto;
+
+        padding: 20px;
+
+    }
+
+
+    .brand {
+
+        margin-bottom: 20px;
+
+    }
+
+
+    .sidebar-nav {
+
+        flex-direction: row;
+
+        flex-wrap: wrap;
+
+        gap: 8px;
+
+    }
+
+
+    .nav-item {
+
+        flex:
+            0 0 auto;
+
+        padding:
+            12px 14px;
+
+        font-size: 14px;
+
+    }
+
+
+    .logout-btn {
+
+        width: auto;
+
+        margin-top: 12px;
+
+        padding:
+            12px 18px;
+
+        font-size: 14px;
+
+    }
+
+
+    .main-content {
+
+        margin-left: 0;
+
+        width: 100%;
+
+        padding: 25px 18px;
+
+    }
+
+
+    .page-header {
+
+        margin-bottom: 25px;
+
+    }
+
+
+    .page-header h2 {
+
+        font-size: 34px;
+
+    }
+
+
+    .page-header p {
+
+        font-size: 16px;
+
+    }
+
+}
+
 
 /* =========================================================
    MOBILE
-   ========================================================= */
+========================================================= */
 
-@media (max-width: 700px) {
+@media (max-width: 600px) {
 
     .sidebar {
-        position: relative;
-        width: 100%;
-        height: auto;
-        min-height: auto;
-        padding: 22px 15px;
+
+        padding:
+            20px 15px;
+
     }
 
-    .brand {
-        margin-bottom: 20px;
-    }
 
     .brand h1 {
-        font-size: 26px;
+
+        font-size: 24px;
+
     }
+
 
     .brand span {
-        font-size: 16px;
+
+        font-size: 14px;
+
     }
+
 
     .sidebar-nav {
+
         gap: 5px;
+
     }
+
 
     .nav-item {
-        min-height: 48px;
-        padding: 0 16px;
-        font-size: 16px;
+
+        min-height: 45px;
+
+        padding:
+            10px 12px;
+
+        border-radius: 12px;
+
+        font-size: 14px;
+
     }
+
+
+    .nav-icon {
+
+        width: 20px;
+
+        min-width: 20px;
+
+        font-size: 17px;
+
+    }
+
 
     .logout-btn {
-        margin-top: 20px;
-        min-height: 50px;
-        font-size: 16px;
+
+        min-height: 45px;
+
+        border-radius: 12px;
+
+        font-size: 14px;
+
     }
+
 
     .main-content {
-        margin-left: 0;
-        padding: 30px 15px;
+
+        padding:
+            22px 15px;
+
     }
 
-    .page-header {
-        margin-bottom: 25px;
-    }
 
     .page-header h2 {
-        font-size: 32px;
+
+        font-size: 30px;
+
     }
+
 
     .page-header p {
-        font-size: 16px;
+
+        font-size: 15px;
+
     }
+
 
     .history-container {
+
         padding: 20px;
+
         overflow-x: auto;
+
     }
 
-    /*
-       Keep horizontal format on mobile too.
-       User can scroll horizontally rather than
-       breaking the professional row layout.
-    */
+
     .history-list {
+
         min-width: 850px;
+
     }
+
 
     .history-item,
     .history-card,
     .analysis-card {
+
         grid-template-columns:
+
             250px
+
             160px
+
             110px
+
             110px
+
             180px;
+
     }
+
+}
+
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+    .brand h1 {
+
+        font-size: 22px;
+
+    }
+
+
+    .nav-item {
+
+        padding:
+            9px 10px;
+
+        font-size: 13px;
+
+    }
+
+
+    .main-content {
+
+        padding:
+            18px 12px;
+
+    }
+
+
+    .page-header h2 {
+
+        font-size: 27px;
+
+    }
+
 }
