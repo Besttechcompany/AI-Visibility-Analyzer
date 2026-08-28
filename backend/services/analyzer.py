@@ -302,6 +302,150 @@ class WebsiteAnalyzer:
             return {}
 
             # ==========================================================
+    # BROWSER FALLBACK
+    # ==========================================================
+
+    @staticmethod
+    def fetch_with_browser(url: str):
+        """
+        Fetch a website with Chromium when direct requests are blocked
+        (for example HTTP 403/429).
+
+        Returns a requests.Response-compatible object so all existing
+        analyzers can continue using response.text, response.url,
+        response.status_code and response.headers.
+        """
+
+        browser_manager = None
+        page = None
+
+        try:
+            print("==================================================")
+            print("BROWSER FALLBACK STARTED")
+            print("URL:", url)
+            print("==================================================")
+
+            browser_manager = BrowserManager()
+            browser = browser_manager.start()
+
+            page = browser.new_page(
+                viewport={
+                    "width": 1366,
+                    "height": 768
+                },
+                user_agent=(
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/137.0.0.0 Safari/537.36"
+                ),
+                extra_http_headers={
+                    "Accept": (
+                        "text/html,application/xhtml+xml,"
+                        "application/xml;q=0.9,image/avif,"
+                        "image/webp,*/*;q=0.8"
+                    ),
+                    "Accept-Language": "en-US,en;q=0.9"
+                }
+            )
+
+            browser_response = None
+
+            try:
+                browser_response = page.goto(
+                    url,
+                    wait_until="domcontentloaded",
+                    timeout=30000
+                )
+            except Exception as exc:
+                print(
+                    "Browser navigation warning:",
+                    repr(exc)
+                )
+
+            # Allow JavaScript, redirects and security checks to finish.
+            try:
+                page.wait_for_load_state(
+                    "networkidle",
+                    timeout=10000
+                )
+            except Exception:
+                pass
+
+            html = page.content()
+            final_url = page.url
+
+            status_code = 200
+
+            if browser_response:
+                try:
+                    status_code = browser_response.status
+                except Exception:
+                    status_code = 200
+
+            # Build a requests.Response-compatible object.
+            browser_result = requests.Response()
+
+            browser_result.status_code = status_code
+            browser_result.url = final_url
+            browser_result._content = (
+                html or ""
+            ).encode("utf-8", errors="ignore")
+            browser_result.encoding = "utf-8"
+
+            # Ensure the existing content-type check accepts browser HTML.
+            browser_result.headers["content-type"] = "text/html; charset=utf-8"
+
+            if browser_response:
+                try:
+                    browser_headers = browser_response.all_headers()
+
+                    if browser_headers:
+                        for key, value in browser_headers.items():
+                            browser_result.headers[key] = value
+                except Exception as exc:
+                    print(
+                        "Browser headers warning:",
+                        repr(exc)
+                    )
+
+            print("BROWSER FALLBACK SUCCESS")
+            print("Final URL:", final_url)
+            print("Browser HTTP Status:", status_code)
+            print("HTML Length:", len(html or ""))
+
+            return browser_result
+
+        except Exception as exc:
+
+            print(
+                "BROWSER FALLBACK ERROR:",
+                repr(exc)
+            )
+
+            return None
+
+        finally:
+
+            if page:
+                try:
+                    page.close()
+                except Exception as exc:
+                    print(
+                        "Browser page cleanup warning:",
+                        repr(exc)
+                    )
+
+            if browser_manager:
+                try:
+                    browser_manager.stop()
+                except Exception as exc:
+                    print(
+                        "Browser cleanup warning:",
+                        repr(exc)
+                    )
+
+
+    # ==========================================================
     # MAIN WEBSITE ANALYSIS
     # ==========================================================
 
@@ -583,17 +727,61 @@ class WebsiteAnalyzer:
 
 
         # ======================================================
-        # HTTP STATUS CHECK
+        # HTTP STATUS / BROWSER FALLBACK
         # ======================================================
 
-        if response.status_code >= 400:
+        browser_fallback_used = False
+
+        # A 403/429 does NOT automatically mean the website is inactive.
+        # Many websites block Python requests while allowing a real browser.
+        if response.status_code in (403, 429):
+
+            print(
+                "Direct HTTP request returned:",
+                response.status_code
+            )
+
+            print(
+                "Trying Chromium browser fallback..."
+            )
+
+            browser_response = (
+                WebsiteAnalyzer.fetch_with_browser(url)
+            )
+
+            if browser_response is not None:
+
+                browser_html = (
+                    browser_response.text or ""
+                ).strip()
+
+                # Continue with browser HTML when it contains a usable page.
+                if len(browser_html) >= 200:
+
+                    response = browser_response
+                    browser_fallback_used = True
+
+                    print(
+                        "Using browser HTML for analysis."
+                    )
+
+                else:
+
+                    print(
+                        "Browser returned insufficient HTML."
+                    )
+
+        # Other 4xx/5xx errors are still treated as failures.
+        # 403/429 were already given a browser fallback above.
+        if response.status_code >= 400 and not browser_fallback_used:
 
             return {
 
                 "success": False,
 
                 "website_status":
-                    "inactive",
+                    "blocked" if response.status_code in (403, 429)
+                    else "error",
 
                 "analysis_mode":
                     "not_analyzed",
@@ -610,11 +798,15 @@ class WebsiteAnalyzer:
                 "website_url":
                     url,
 
+                "final_url":
+                    str(response.url),
+
                 "http_status":
                     response.status_code,
 
                 "error": (
-                    "The website returned HTTP "
+                    "The website could not be analyzed because "
+                    "the server returned HTTP "
                     + str(
                         response.status_code
                     )
@@ -644,34 +836,38 @@ class WebsiteAnalyzer:
             not in content_type
         ):
 
-            return {
+            # Browser fallback already gives us HTML. Do not reject it
+            # only because the origin response headers were unusual.
+            if not browser_fallback_used:
 
-                "success": False,
+                return {
 
-                "website_status":
-                    "inactive",
+                    "success": False,
 
-                "analysis_mode":
-                    "not_analyzed",
+                    "website_status":
+                        "inactive",
 
-                "live_website":
-                    False,
+                    "analysis_mode":
+                        "not_analyzed",
 
-                "url":
-                    url,
+                    "live_website":
+                        False,
 
-                "website":
-                    url,
+                    "url":
+                        url,
 
-                "website_url":
-                    url,
+                    "website":
+                        url,
 
-                "error": (
-                    "The URL does not return a normal "
-                    "HTML website."
-                )
+                    "website_url":
+                        url,
 
-            }
+                    "error": (
+                        "The URL does not return a normal "
+                        "HTML website."
+                    )
+
+                }
 
 
         # ======================================================
@@ -1267,6 +1463,10 @@ class WebsiteAnalyzer:
 
             "analysis_notice":
                 (
+                    "Live website analysis completed successfully "
+                    "using browser fallback."
+                    if browser_fallback_used
+                    else
                     "Live website analysis completed successfully."
                 ),
 
