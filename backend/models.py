@@ -9,8 +9,8 @@ from sqlalchemy import (
 )
 
 from sqlalchemy.dialects.postgresql import JSONB
+
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship
 
 from database import Base
 
@@ -66,7 +66,8 @@ class User(Base):
         nullable=False
     )
 
-    # -----------------------------------------------------
+
+        # -----------------------------------------------------
     # MOBILE NUMBER
     # -----------------------------------------------------
     # Optional for all users.
@@ -117,16 +118,6 @@ class User(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False
-    )
-
-    # -----------------------------------------------------
-    # ANALYSIS HISTORY RELATIONSHIP
-    # -----------------------------------------------------
-
-    analyses = relationship(
-        "AnalysisHistory",
-        back_populates="user",
-        cascade="all, delete-orphan"
     )
 
 
@@ -188,13 +179,4 @@ class AnalysisHistory(Base):
         server_default=func.now(),
         nullable=False,
         index=True
-    )
-
-    # -----------------------------------------------------
-    # USER RELATIONSHIP
-    # -----------------------------------------------------
-
-    user = relationship(
-        "User",
-        back_populates="analyses"
     )
