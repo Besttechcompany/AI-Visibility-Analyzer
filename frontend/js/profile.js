@@ -48,17 +48,13 @@ document.addEventListener(
 function getAccessToken() {
 
     let token =
-        localStorage.getItem(
-            "access_token"
-        );
+        localStorage.getItem("access_token");
 
 
     if (!token) {
 
         token =
-            localStorage.getItem(
-                "token"
-            );
+            localStorage.getItem("token");
 
     }
 
@@ -112,9 +108,7 @@ async function loadProfile() {
 
 
     const profileCard =
-        document.getElementById(
-            "profile-card"
-        );
+        document.getElementById("profile-card");
 
 
     if (!profileCard) {
@@ -145,7 +139,6 @@ async function loadProfile() {
             await fetch(
                 `${API_URL}/profile`,
                 {
-
                     method: "GET",
 
                     headers: {
@@ -190,9 +183,7 @@ async function loadProfile() {
                 );
 
 
-            throw new Error(
-                message
-            );
+            throw new Error(message);
 
         }
 
@@ -272,14 +263,10 @@ async function loadProfile() {
 // RENDER PROFILE
 // ======================================================
 
-function renderProfile(
-    user
-) {
+function renderProfile(user) {
 
     const profileCard =
-        document.getElementById(
-            "profile-card"
-        );
+        document.getElementById("profile-card");
 
 
     if (!profileCard) {
@@ -290,18 +277,15 @@ function renderProfile(
 
 
     const name =
-        user?.name ||
-        "";
+        user?.name || "";
 
 
     const email =
-        user?.email ||
-        "";
+        user?.email || "";
 
 
     const mobile =
-        user?.mobile ||
-        "";
+        user?.mobile || "";
 
 
     const picture =
@@ -344,7 +328,9 @@ function renderProfile(
             <div class="profile-photo-info">
 
                 <h3>
-                    ${escapeHtml(name || "Your Profile")}
+                    ${escapeHtml(
+                        name || "Your Profile"
+                    )}
                 </h3>
 
                 <p>
@@ -376,12 +362,17 @@ function renderProfile(
             </h3>
 
             <p>
-                Update your name, email address and mobile number.
+                Your name and email are linked to your account.
+                Only your mobile number can be edited here.
             </p>
 
         </div>
 
 
+
+        <!-- =================================================
+             FORM
+        ================================================== -->
 
         <div class="form-grid">
 
@@ -400,10 +391,13 @@ function renderProfile(
                     type="text"
                     id="profileName"
                     value="${escapeHtml(name)}"
-                    placeholder="Enter your full name"
-                    autocomplete="name"
                     readonly
+                    autocomplete="name"
                 >
+
+                <small>
+                    Name cannot be changed from the profile page.
+                </small>
 
             </div>
 
@@ -423,10 +417,13 @@ function renderProfile(
                     type="email"
                     id="profileEmail"
                     value="${escapeHtml(email)}"
-                    placeholder="Enter your email address"
-                    autocomplete="email"
                     readonly
+                    autocomplete="email"
                 >
+
+                <small>
+                    Email address cannot be changed from the profile page.
+                </small>
 
             </div>
 
@@ -455,7 +452,7 @@ function renderProfile(
                 >
 
                 <small>
-                    Mobile number is optional.
+                    You can update your mobile number.
                 </small>
 
             </div>
@@ -512,6 +509,7 @@ function renderProfile(
                 ></span>
 
             </button>
+
 
         </div>
 
@@ -620,18 +618,6 @@ function attachProfileEvents() {
 
 function enableEditMode() {
 
-    const nameInput =
-        document.getElementById(
-            "profileName"
-        );
-
-
-    const emailInput =
-        document.getElementById(
-            "profileEmail"
-        );
-
-
     const mobileInput =
         document.getElementById(
             "profileMobile"
@@ -656,24 +642,22 @@ function enableEditMode() {
         );
 
 
-    [
-        nameInput,
-        emailInput,
-        mobileInput
-    ].forEach(
-        function (input) {
+    // --------------------------------------------------
+    // ONLY MOBILE IS EDITABLE
+    // --------------------------------------------------
 
-            if (input) {
+    if (mobileInput) {
 
-                input.removeAttribute(
-                    "readonly"
-                );
+        mobileInput.removeAttribute(
+            "readonly"
+        );
 
-            }
+    }
 
-        }
-    );
 
+    // --------------------------------------------------
+    // SHOW / HIDE BUTTONS
+    // --------------------------------------------------
 
     if (editButton) {
 
@@ -702,11 +686,17 @@ function enableEditMode() {
     }
 
 
-    if (nameInput) {
+    if (mobileInput) {
 
-        nameInput.focus();
+        mobileInput.focus();
 
     }
+
+
+    showMessage(
+        "You can now edit your mobile number.",
+        "info"
+    );
 
 }
 
@@ -756,18 +746,6 @@ async function saveProfile() {
     }
 
 
-    const nameInput =
-        document.getElementById(
-            "profileName"
-        );
-
-
-    const emailInput =
-        document.getElementById(
-            "profileEmail"
-        );
-
-
     const mobileInput =
         document.getElementById(
             "profileMobile"
@@ -798,11 +776,7 @@ async function saveProfile() {
         );
 
 
-    if (
-        !nameInput ||
-        !emailInput ||
-        !mobileInput
-    ) {
+    if (!mobileInput) {
 
         showMessage(
             "Profile form is unavailable.",
@@ -814,77 +788,8 @@ async function saveProfile() {
     }
 
 
-    const name =
-        nameInput.value.trim();
-
-
-    const email =
-        emailInput.value.trim();
-
-
     const mobile =
         mobileInput.value.trim();
-
-
-
-    // ==================================================
-    // VALIDATE NAME
-    // ==================================================
-
-    if (!name) {
-
-        showMessage(
-            "Full name cannot be empty.",
-            "error"
-        );
-
-        nameInput.focus();
-
-        return;
-
-    }
-
-
-
-    // ==================================================
-    // VALIDATE EMAIL
-    // ==================================================
-
-    if (!email) {
-
-        showMessage(
-            "Email address cannot be empty.",
-            "error"
-        );
-
-        emailInput.focus();
-
-        return;
-
-    }
-
-
-    const emailPattern =
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-
-    if (
-        !emailPattern.test(
-            email
-        )
-    ) {
-
-        showMessage(
-            "Please enter a valid email address.",
-            "error"
-        );
-
-        emailInput.focus();
-
-        return;
-
-    }
-
 
 
     // ==================================================
@@ -915,7 +820,6 @@ async function saveProfile() {
         }
 
     }
-
 
 
     // ==================================================
@@ -963,6 +867,23 @@ async function saveProfile() {
 
     try {
 
+        /*
+         * IMPORTANT:
+         *
+         * Name and Email are NOT editable.
+         * We send the existing values unchanged.
+         *
+         * Only mobile comes from the editable input.
+         */
+
+        const name =
+            currentUser?.name || "";
+
+
+        const email =
+            currentUser?.email || "";
+
+
         const response =
             await fetch(
                 `${API_URL}/profile`,
@@ -993,14 +914,17 @@ async function saveProfile() {
                                 email,
 
                             mobile:
-                                mobile ||
-                                null
+                                mobile || null
 
                         })
 
                 }
             );
 
+
+        // ==================================================
+        // SESSION EXPIRED
+        // ==================================================
 
         if (
             response.status === 401
@@ -1021,6 +945,10 @@ async function saveProfile() {
         }
 
 
+        // ==================================================
+        // API ERROR
+        // ==================================================
+
         if (!response.ok) {
 
             const message =
@@ -1036,6 +964,10 @@ async function saveProfile() {
 
         }
 
+
+        // ==================================================
+        // RESPONSE
+        // ==================================================
 
         const data =
             await response.json();
@@ -1057,23 +989,24 @@ async function saveProfile() {
                 currentUser ||
                 {};
 
-            currentUser.name =
-                name;
-
-            currentUser.email =
-                email;
-
             currentUser.mobile =
-                mobile ||
-                null;
+                mobile || null;
 
         }
 
+
+        // ==================================================
+        // RE-RENDER
+        // ==================================================
 
         renderProfile(
             currentUser
         );
 
+
+        // ==================================================
+        // SUCCESS MESSAGE
+        // ==================================================
 
         showMessage(
             data.message ||
@@ -1223,9 +1156,7 @@ function openProfilePhotoPicker() {
 // HANDLE SELECTED PHOTO
 // ======================================================
 
-async function handleSelectedPhoto(
-    file
-) {
+async function handleSelectedPhoto(file) {
 
     const validation =
         validateProfileImage(
@@ -1251,15 +1182,15 @@ async function handleSelectedPhoto(
         );
 
 
-    let oldImage =
+    const oldImage =
         image
             ? image.src
             : DEFAULT_PROFILE_IMAGE;
 
 
-    // --------------------------------------------------
-    // Immediate preview
-    // --------------------------------------------------
+    // ==================================================
+    // IMMEDIATE PREVIEW
+    // ==================================================
 
     const previewUrl =
         URL.createObjectURL(
@@ -1389,9 +1320,7 @@ async function handleSelectedPhoto(
 // UPLOAD PROFILE PHOTO
 // ======================================================
 
-async function uploadProfilePhoto(
-    file
-) {
+async function uploadProfilePhoto(file) {
 
     const token =
         getAccessToken();
@@ -1487,9 +1416,7 @@ async function uploadProfilePhoto(
 // VALIDATE IMAGE
 // ======================================================
 
-function validateProfileImage(
-    file
-) {
+function validateProfileImage(file) {
 
     if (!file) {
 
@@ -1570,9 +1497,7 @@ function validateProfileImage(
 // IMAGE ERROR FALLBACK
 // ======================================================
 
-function handleProfileImageError(
-    image
-) {
+function handleProfileImageError(image) {
 
     if (!image) {
 
@@ -1666,6 +1591,7 @@ async function parseApiError(
 
     }
 
+
     catch (error) {
 
         console.warn(
@@ -1682,7 +1608,7 @@ async function parseApiError(
 
 
 // ======================================================
-// POPUP MESSAGE
+// POPUP MESSAGE / TOAST
 // ======================================================
 
 function showMessage(
@@ -1723,6 +1649,7 @@ function showMessage(
 
     }
 
+
     else if (
         type === "error"
     ) {
@@ -1731,6 +1658,7 @@ function showMessage(
             "⚠";
 
     }
+
 
     else if (
         type === "warning"
@@ -1940,9 +1868,7 @@ function logout() {
 // ESCAPE HTML
 // ======================================================
 
-function escapeHtml(
-    value
-) {
+function escapeHtml(value) {
 
     if (
         value === null ||
