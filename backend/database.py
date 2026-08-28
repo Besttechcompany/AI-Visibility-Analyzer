@@ -3,36 +3,112 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 from dotenv import load_dotenv
 import os
 
-# Load environment variables
+
+# =========================================================
+# LOAD ENVIRONMENT VARIABLES
+# =========================================================
+
 load_dotenv()
 
-# Read DATABASE_URL from .env or Render Environment Variables
+
+# =========================================================
+# DATABASE URL
+# =========================================================
+
 DATABASE_URL = os.getenv("DATABASE_URL")
 
+
 if not DATABASE_URL:
-    raise ValueError("DATABASE_URL environment variable is not set.")
+    raise RuntimeError(
+        "DATABASE_URL environment variable is not set."
+    )
 
-# SQLAlchemy Engine
+
+# =========================================================
+# POSTGRESQL URL COMPATIBILITY
+# =========================================================
+# Some hosting providers may provide:
+#
+# postgres://...
+#
+# while SQLAlchemy expects:
+#
+# postgresql://...
+#
+# Normalize it automatically.
+
+if DATABASE_URL.startswith(
+    "postgres://"
+):
+
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgres://",
+        "postgresql://",
+        1
+    )
+
+
+# =========================================================
+# SQLALCHEMY ENGINE
+# =========================================================
+
 engine = create_engine(
+
     DATABASE_URL,
+
     pool_pre_ping=True,
-    pool_recycle=300
+
+    pool_recycle=300,
+
+    pool_timeout=30,
+
+    connect_args={
+        "connect_timeout": 10
+    }
+
 )
 
-# Database Session
+
+# =========================================================
+# DATABASE SESSION
+# =========================================================
+
 SessionLocal = sessionmaker(
+
     autocommit=False,
+
     autoflush=False,
+
     bind=engine
+
 )
 
-# Base Model
+
+# =========================================================
+# BASE MODEL
+# =========================================================
+
 Base = declarative_base()
 
-# Dependency
+
+# =========================================================
+# DATABASE DEPENDENCY
+# =========================================================
+
 def get_db():
+
     db = SessionLocal()
+
     try:
+
         yield db
+
+    except Exception:
+
+        db.rollback()
+
+        raise
+
     finally:
+
         db.close()

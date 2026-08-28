@@ -279,27 +279,43 @@ class WebsiteAnalyzer:
     @staticmethod
     def safe_analyze(
         analyzer_function,
-        default=None
+        default=None,
+        analyzer_name="Analyzer"
     ):
+        """
+        Run one analysis module without allowing one optional module
+        to crash the entire website analysis.
+
+        A failed optional analyzer returns the supplied default and
+        records the failure in the server log.
+        """
 
         try:
 
-            return analyzer_function()
+            result = analyzer_function()
+
+            if result is None:
+
+                return (
+                    default
+                    if default is not None
+                    else {}
+                )
+
+            return result
 
         except Exception as exc:
 
             print(
-                "Analyzer warning:",
-                str(exc)
+                f"{analyzer_name} warning:",
+                repr(exc)
             )
 
-
-            if default is not None:
-
-                return default
-
-
-            return {}
+            return (
+                default
+                if default is not None
+                else {}
+            )
 
             # ==========================================================
     # MAIN WEBSITE ANALYSIS
@@ -730,12 +746,24 @@ class WebsiteAnalyzer:
 
         try:
 
+            html_content = response.text or ""
+
+            if not html_content.strip():
+
+                return {
+                    "success": False,
+                    "website_status": "inactive",
+                    "analysis_mode": "not_analyzed",
+                    "live_website": False,
+                    "url": url,
+                    "website": url,
+                    "website_url": url,
+                    "error": "The website returned an empty HTML response."
+                }
+
             soup = BeautifulSoup(
-
-                response.text,
-
+                html_content,
                 "lxml"
-
             )
 
         except Exception as exc:
@@ -1167,7 +1195,7 @@ class WebsiteAnalyzer:
 
         try:
 
-            browser_manager =BrowserManager()
+            browser_manager = BrowserManager()
                 
 
 
@@ -1226,22 +1254,21 @@ class WebsiteAnalyzer:
             "success":
                 True,
 
-
-            # ==================================================
-            # WEBSITE STATUS
-            # ==================================================
+            "status":
+                "completed",
 
             "website_status":
                 "active",
 
-
             "analysis_mode":
                 "live",
-
 
             "live_website":
                 True,
 
+            # ==================================================
+            # WEBSITE STATUS
+            # ==================================================
 
             "url":
                 url,
@@ -1394,8 +1421,8 @@ class WebsiteAnalyzer:
 
                 default={
                     "score": 0
-                }
-
+                },
+                analyzer_name="Score Analyzer"
             )
 
         )
