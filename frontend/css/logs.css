@@ -1,7 +1,7 @@
 /* =========================================================
    AI VISIBILITY ANALYZER
    ANALYSIS HISTORY PAGE
-   ========================================================= */
+========================================================= */
 
 * {
     margin: 0;
@@ -9,15 +9,25 @@
     box-sizing: border-box;
 }
 
+
 html {
     scroll-behavior: smooth;
 }
 
+
 body {
-    font-family: Arial, Helvetica, sans-serif;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
     background: #f4f7fb;
+
     color: #14213d;
+
     min-height: 100vh;
+
 }
 
 
@@ -26,20 +36,24 @@ body {
 ========================================================= */
 
 .dashboard-container {
+
     display: flex;
+
     min-height: 100vh;
+
     background: #f4f7fb;
+
 }
 
 
 /* =========================================================
    SIDEBAR
-   EXACT DASHBOARD SIDEBAR
 ========================================================= */
 
 .sidebar {
 
     width: 260px;
+
     min-width: 260px;
 
     height: 100vh;
@@ -49,25 +63,28 @@ body {
     color: #ffffff;
 
     display: flex;
+
     flex-direction: column;
 
     padding: 30px 20px;
 
     box-shadow:
-        8px 0 30px rgba(0, 0, 0, 0.12);
+        8px 0 30px
+        rgba(0, 0, 0, 0.12);
 
     position: fixed;
 
     top: 0;
+
     left: 0;
 
     z-index: 1000;
+
 }
 
 
 /* =========================================================
    BRAND
-   EXACT DASHBOARD STYLE
 ========================================================= */
 
 .brand {
@@ -106,8 +123,7 @@ body {
 
 
 /* =========================================================
-   SIDEBAR NAVIGATION
-   EXACT DASHBOARD STYLE
+   NAVIGATION
 ========================================================= */
 
 .sidebar-nav {
@@ -166,10 +182,6 @@ body {
 }
 
 
-/* =========================================================
-   NAVIGATION ICON
-========================================================= */
-
 .nav-icon {
 
     width: 24px;
@@ -185,7 +197,6 @@ body {
 
 /* =========================================================
    LOGOUT
-   EXACT DASHBOARD STYLE
 ========================================================= */
 
 .logout-btn {
@@ -219,8 +230,6 @@ body {
 
     background: #dc2626;
 
-    color: #ffffff;
-
 }
 
 
@@ -234,7 +243,8 @@ body {
 
     min-height: 100vh;
 
-    width: calc(100% - 260px);
+    width:
+        calc(100% - 260px);
 
     padding: 35px;
 
@@ -558,12 +568,10 @@ body {
 
 
 /* =========================================================
-   HORIZONTAL ANALYSIS ROW
+   HISTORY CARD
 ========================================================= */
 
-.history-item,
-.history-card,
-.analysis-card {
+.history-card {
 
     width: 100%;
 
@@ -589,7 +597,7 @@ body {
 
         minmax(110px, 0.7fr)
 
-        minmax(120px, 0.7fr)
+        minmax(130px, 0.8fr)
 
         minmax(190px, auto);
 
@@ -597,14 +605,13 @@ body {
 
     column-gap: 22px;
 
-    transition: 0.2s ease;
+    transition:
+        0.2s ease;
 
 }
 
 
-.history-item:hover,
-.history-card:hover,
-.analysis-card:hover {
+.history-card:hover {
 
     border-color:
         #b9cbea;
@@ -620,18 +627,14 @@ body {
    WEBSITE
 ========================================================= */
 
-.history-website,
-.website-name,
-.analysis-website {
+.history-website {
 
     min-width: 0;
 
 }
 
 
-.history-website a,
-.website-name a,
-.analysis-website a {
+.history-website a {
 
     color: #14213d;
 
@@ -652,9 +655,7 @@ body {
 }
 
 
-.history-website a:hover,
-.website-name a:hover,
-.analysis-website a:hover {
+.history-website a:hover {
 
     color: #2f68e8;
 
@@ -665,9 +666,7 @@ body {
    DATE
 ========================================================= */
 
-.history-date,
-.analysis-date,
-.date-time {
+.history-date {
 
     color: #6680a5;
 
@@ -682,8 +681,7 @@ body {
    ANALYSIS ID
 ========================================================= */
 
-.history-id,
-.analysis-id {
+.history-id {
 
     font-size: 15px;
 
@@ -694,20 +692,11 @@ body {
 }
 
 
-.history-id strong,
-.analysis-id strong {
-
-    color: #14213d;
-
-}
-
-
 /* =========================================================
    STATUS
 ========================================================= */
 
-.history-status,
-.analysis-status {
+.history-status {
 
     font-size: 15px;
 
@@ -718,26 +707,48 @@ body {
 }
 
 
-.status-completed,
-.completed {
+/* COMPLETED */
+
+.status-completed {
 
     color: #07883f;
 
 }
 
 
-.status-pending,
-.pending {
+/* FAILED */
+
+.status-failed {
+
+    color: #d92d32;
+
+}
+
+
+/* PROCESSING */
+
+.status-pending {
 
     color: #d98b00;
 
 }
 
 
-.status-failed,
-.failed {
+/* =========================================================
+   ACTION AREA
+========================================================= */
 
-    color: #d92d32;
+.history-action {
+
+    justify-self: end;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    min-width: 190px;
 
 }
 
@@ -746,11 +757,7 @@ body {
    PDF BUTTON
 ========================================================= */
 
-.download-pdf,
-.pdf-btn,
-.download-btn {
-
-    justify-self: end;
+.download-pdf-btn {
 
     display: inline-flex;
 
@@ -760,55 +767,112 @@ body {
 
     gap: 8px;
 
-    min-width: 185px;
+    width: 205px;
 
-    padding: 12px 18px;
+    min-height: 38px;
+
+    padding: 9px 15px;
 
     border:
         1px solid
-        #d5dfef;
+        #bfc9d8;
 
-    border-radius: 10px;
+    border-radius: 3px;
 
     background: #ffffff;
 
-    color: #1454d8;
+    color: #111827;
 
-    font-size: 15px;
+    font-size: 14px;
 
-    font-weight: 700;
-
-    text-decoration: none;
+    font-weight: 500;
 
     cursor: pointer;
 
-    transition: 0.2s ease;
+    transition:
+        0.2s ease;
 
 }
 
 
-.download-pdf:hover,
-.pdf-btn:hover,
-.download-btn:hover {
+.download-pdf-btn:hover {
 
-    background: #f1f6ff;
+    background: #f4f7fb;
 
-    border-color: #2f68e8;
+    border-color:
+        #94a3b8;
 
-    color: #1248ba;
+}
+
+
+.download-pdf-btn:disabled {
+
+    opacity: 0.65;
+
+    cursor: wait;
 
 }
 
 
 /* =========================================================
-   SUPPORT FOR COMMON INNER WRAPPERS
+   NO PDF TEXT
 ========================================================= */
 
-.history-item > div,
-.history-card > div,
-.analysis-card > div {
+.no-pdf-text {
 
-    min-width: 0;
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: 205px;
+
+    min-height: 38px;
+
+    color: #94a3b8;
+
+    font-size: 13px;
+
+    font-weight: 500;
+
+    text-align: center;
+
+}
+
+
+/* =========================================================
+   FAILED ACTION
+========================================================= */
+
+.history-card:has(
+    .status-failed
+) {
+
+    background:
+        #fffafa;
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .history-container {
+
+        overflow-x: auto;
+
+    }
+
+
+    .history-list {
+
+        min-width: 900px;
+
+    }
 
 }
 
@@ -838,7 +902,8 @@ body {
         width:
             calc(100% - 240px);
 
-        padding: 30px 25px;
+        padding:
+            30px 25px;
 
     }
 
@@ -863,20 +928,6 @@ body {
     .nav-icon {
 
         font-size: 19px;
-
-    }
-
-
-    .history-container {
-
-        overflow-x: auto;
-
-    }
-
-
-    .history-list {
-
-        min-width: 850px;
 
     }
 
@@ -969,7 +1020,8 @@ body {
 
         width: 100%;
 
-        padding: 25px 18px;
+        padding:
+            25px 18px;
 
     }
 
@@ -1101,26 +1153,7 @@ body {
 
     .history-list {
 
-        min-width: 850px;
-
-    }
-
-
-    .history-item,
-    .history-card,
-    .analysis-card {
-
-        grid-template-columns:
-
-            250px
-
-            160px
-
-            110px
-
-            110px
-
-            180px;
+        min-width: 900px;
 
     }
 

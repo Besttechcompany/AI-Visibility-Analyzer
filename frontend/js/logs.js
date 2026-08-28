@@ -51,9 +51,7 @@ const logoutBtn =
 function getToken() {
 
     let token =
-        localStorage.getItem(
-            "access_token"
-        );
+        localStorage.getItem("access_token");
 
 
     /*
@@ -141,6 +139,7 @@ async function loadHistory() {
         );
 
         return;
+
     }
 
 
@@ -189,6 +188,7 @@ async function loadHistory() {
 
 
             return;
+
         }
 
 
@@ -215,14 +215,25 @@ async function loadHistory() {
         );
 
 
+        /*
+           IMPORTANT:
+           We DO NOT filter failed records.
+
+           Every record returned by the API
+           will be displayed.
+        */
+
         displayHistory(
+
             Array.isArray(data.history)
                 ? data.history
                 : []
+
         );
 
 
     }
+
     catch (error) {
 
         console.error(
@@ -271,6 +282,7 @@ function displayHistory(
         );
 
         return;
+
     }
 
 
@@ -334,6 +346,162 @@ function displayHistory(
 
 
 /* =========================================================
+   GET ANALYSIS STATUS
+========================================================= */
+
+function getAnalysisStatus(item) {
+
+    /*
+       Different backend versions may use
+       different property names.
+
+       We check the common possibilities.
+    */
+
+    const rawStatus =
+
+        item?.status ??
+        item?.analysis_status ??
+        item?.state ??
+        item?.result_status ??
+        null;
+
+
+    /*
+       Boolean completed field.
+    */
+
+    if (
+        item?.completed === true
+    ) {
+
+        return "completed";
+
+    }
+
+
+    /*
+       Boolean failed field.
+    */
+
+    if (
+        item?.failed === true
+    ) {
+
+        return "failed";
+
+    }
+
+
+    /*
+       No status supplied.
+    */
+
+    if (
+        rawStatus === null ||
+        rawStatus === undefined
+    ) {
+
+        /*
+           Do NOT automatically call an unknown
+           record Completed.
+
+           If your backend does not currently send
+           a status field, see the note below.
+        */
+
+        return "unknown";
+
+    }
+
+
+    const status =
+        String(rawStatus)
+            .trim()
+            .toLowerCase();
+
+
+    /*
+       COMPLETED
+    */
+
+    if (
+
+        status === "completed" ||
+
+        status === "complete" ||
+
+        status === "success" ||
+
+        status === "successful" ||
+
+        status === "done" ||
+
+        status === "finished"
+
+    ) {
+
+        return "completed";
+
+    }
+
+
+    /*
+       FAILED
+    */
+
+    if (
+
+        status === "failed" ||
+
+        status === "failure" ||
+
+        status === "error" ||
+
+        status === "errored"
+
+    ) {
+
+        return "failed";
+
+    }
+
+
+    /*
+       PENDING / RUNNING
+    */
+
+    if (
+
+        status === "pending" ||
+
+        status === "processing" ||
+
+        status === "running" ||
+
+        status === "in_progress" ||
+
+        status === "in-progress" ||
+
+        status === "started"
+
+    ) {
+
+        return "pending";
+
+    }
+
+
+    /*
+       Unknown status.
+    */
+
+    return "unknown";
+
+}
+
+
+/* =========================================================
    CREATE HISTORY CARD
 ========================================================= */
 
@@ -353,31 +521,88 @@ function createHistoryCard(
 
 
     /*
-       Website.
+       Determine actual status.
     */
+
+    const analysisStatus =
+        getAnalysisStatus(
+            item
+        );
+
+
+    /* =====================================================
+       WEBSITE
+    ===================================================== */
 
     const website =
         document.createElement(
             "div"
         );
 
+
     website.className =
         "history-website";
 
 
-    website.textContent =
+    const websiteUrl =
         item.website_url ||
         "Website unavailable";
 
 
     /*
-       Date.
+       Show website as clickable link
+       only when a valid URL exists.
     */
+
+    if (
+        item.website_url
+    ) {
+
+        const link =
+            document.createElement(
+                "a"
+            );
+
+
+        link.href =
+            item.website_url;
+
+
+        link.target =
+            "_blank";
+
+
+        link.rel =
+            "noopener noreferrer";
+
+
+        link.textContent =
+            item.website_url;
+
+
+        website.appendChild(
+            link
+        );
+
+    }
+
+    else {
+
+        website.textContent =
+            websiteUrl;
+
+    }
+
+
+    /* =====================================================
+       DATE
+    ===================================================== */
 
     const date =
         document.createElement(
             "div"
         );
+
 
     date.className =
         "history-date";
@@ -389,14 +614,15 @@ function createHistoryCard(
         );
 
 
-    /*
-       Analysis ID.
-    */
+    /* =====================================================
+       ANALYSIS ID
+    ===================================================== */
 
     const id =
         document.createElement(
             "div"
         );
+
 
     id.className =
         "history-id";
@@ -406,61 +632,248 @@ function createHistoryCard(
         `#${item.id}`;
 
 
-    /*
-       Status.
-    */
+    /* =====================================================
+       STATUS
+    ===================================================== */
 
     const status =
         document.createElement(
             "div"
         );
 
+
     status.className =
         "history-status";
 
 
-    status.textContent =
-        "Completed";
+    /*
+       COMPLETED
+    */
+
+    if (
+        analysisStatus === "completed"
+    ) {
+
+        status.classList.add(
+            "status-completed"
+        );
+
+        status.textContent =
+            "Completed";
+
+    }
 
 
     /*
-       PDF button.
+       FAILED
     */
 
-    const pdfButton =
+    else if (
+        analysisStatus === "failed"
+    ) {
+
+        status.classList.add(
+            "status-failed"
+        );
+
+        status.textContent =
+            "Failed";
+
+    }
+
+
+    /*
+       PENDING
+    */
+
+    else if (
+        analysisStatus === "pending"
+    ) {
+
+        status.classList.add(
+            "status-pending"
+        );
+
+        status.textContent =
+            "Processing";
+
+    }
+
+
+    /*
+       UNKNOWN
+    */
+
+    else {
+
+        status.classList.add(
+            "status-pending"
+        );
+
+        status.textContent =
+            "Status unavailable";
+
+    }
+
+
+    /* =====================================================
+       ACTION AREA
+    ===================================================== */
+
+    const action =
         document.createElement(
-            "button"
+            "div"
         );
 
 
-    pdfButton.type =
-        "button";
-
-
-    pdfButton.className =
-        "download-pdf-btn";
-
-
-    pdfButton.textContent =
-        "📄 Download PDF";
-
-
-    pdfButton.addEventListener(
-        "click",
-        () => {
-
-            downloadPDF(
-                item.id,
-                pdfButton
-            );
-
-        }
-    );
+    action.className =
+        "history-action";
 
 
     /*
-       Assemble card.
+       IMPORTANT:
+
+       PDF BUTTON IS CREATED ONLY FOR
+       COMPLETED ANALYSES.
     */
+
+    if (
+        analysisStatus === "completed"
+    ) {
+
+        const pdfButton =
+            document.createElement(
+                "button"
+            );
+
+
+        pdfButton.type =
+            "button";
+
+
+        pdfButton.className =
+            "download-pdf-btn";
+
+
+        pdfButton.textContent =
+            "📄 Download PDF";
+
+
+        pdfButton.addEventListener(
+            "click",
+            () => {
+
+                downloadPDF(
+                    item.id,
+                    pdfButton
+                );
+
+            }
+        );
+
+
+        action.appendChild(
+            pdfButton
+        );
+
+    }
+
+
+    /*
+       FAILED ANALYSIS
+
+       No PDF button.
+    */
+
+    else if (
+        analysisStatus === "failed"
+    ) {
+
+        const failedText =
+            document.createElement(
+                "span"
+            );
+
+
+        failedText.className =
+            "no-pdf-text";
+
+
+        failedText.textContent =
+            "No report available";
+
+
+        action.appendChild(
+            failedText
+        );
+
+    }
+
+
+    /*
+       PROCESSING
+
+       No PDF button.
+    */
+
+    else if (
+        analysisStatus === "pending"
+    ) {
+
+        const processingText =
+            document.createElement(
+                "span"
+            );
+
+
+        processingText.className =
+            "no-pdf-text"
+        ;
+
+
+        processingText.textContent =
+            "Report not ready";
+
+
+        action.appendChild(
+            processingText
+        );
+
+    }
+
+
+    /*
+       UNKNOWN
+
+       No PDF button.
+    */
+
+    else {
+
+        const unavailableText =
+            document.createElement(
+                "span"
+            );
+
+
+        unavailableText.className =
+            "no-pdf-text";
+
+
+        unavailableText.textContent =
+            "Report unavailable";
+
+
+        action.appendChild(
+            unavailableText
+        );
+
+    }
+
+
+    /* =====================================================
+       ASSEMBLE CARD
+    ===================================================== */
 
     card.appendChild(
         website
@@ -483,11 +896,12 @@ function createHistoryCard(
 
 
     card.appendChild(
-        pdfButton
+        action
     );
 
 
     return card;
+
 }
 
 
@@ -502,6 +916,7 @@ function formatDateTime(
     if (!dateString) {
 
         return "Date unavailable";
+
     }
 
 
@@ -518,6 +933,7 @@ function formatDateTime(
     ) {
 
         return "Date unavailable";
+
     }
 
 
@@ -525,15 +941,20 @@ function formatDateTime(
         "en-IN",
         {
 
-            day: "2-digit",
+            day:
+                "2-digit",
 
-            month: "short",
+            month:
+                "short",
 
-            year: "numeric",
+            year:
+                "numeric",
 
-            hour: "2-digit",
+            hour:
+                "2-digit",
 
-            minute: "2-digit"
+            minute:
+                "2-digit"
 
         }
     );
@@ -570,6 +991,7 @@ async function downloadPDF(
 
 
         return;
+
     }
 
 
@@ -589,6 +1011,7 @@ async function downloadPDF(
 
 
         return;
+
     }
 
 
@@ -611,9 +1034,7 @@ async function downloadPDF(
     try {
 
         /*
-           IMPORTANT:
-
-           This MUST match the FastAPI route:
+           FastAPI route:
 
            /analysis/{analysis_id}/pdf
         */
@@ -665,11 +1086,12 @@ async function downloadPDF(
 
 
             return;
+
         }
 
 
         /*
-           Analysis not found.
+           Not found.
         */
 
         if (
@@ -697,6 +1119,7 @@ async function downloadPDF(
                 }
 
             }
+
             catch (e) {
 
                 /*
@@ -712,6 +1135,7 @@ async function downloadPDF(
 
 
             return;
+
         }
 
 
@@ -742,6 +1166,7 @@ async function downloadPDF(
                 }
 
             }
+
             catch (e) {
 
                 /*
@@ -767,7 +1192,7 @@ async function downloadPDF(
 
 
         /*
-           Make sure we actually received PDF.
+           Make sure we received something.
         */
 
         if (
@@ -838,6 +1263,7 @@ async function downloadPDF(
 
 
     }
+
     catch (error) {
 
         console.error(
@@ -852,6 +1278,7 @@ async function downloadPDF(
         );
 
     }
+
     finally {
 
         button.disabled =
@@ -929,6 +1356,7 @@ if (logoutBtn) {
             localStorage.removeItem(
                 "access_token"
             );
+
 
             sessionStorage.removeItem(
                 "selected_analysis"
