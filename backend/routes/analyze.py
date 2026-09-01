@@ -45,24 +45,215 @@ def analyze(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    """
+    Run website analysis and save both successful and failed attempts.
+
+    Successful analyses are stored with:
+        status = "completed"
+
+    Failed analyses are stored with:
+        status = "failed"
+
+    The dashboard still receives an error response for failed analyses,
+    while the Logs page can show the failed record.
+    """
+
+    website_url = (request.url or "").strip()
+
+    if not website_url:
+        raise HTTPException(
+            status_code=422,
+            detail="Website URL is required.",
+        )
+
+    if not website_url.lower().startswith(("http://", "https://")):
+        website_url = "https://" + website_url
+
+    # -----------------------------------------------------
+    # RUN ANALYZER
+    # -----------------------------------------------------
+
     try:
-        result = WebsiteAnalyzer.analyze(request.url)
+        result = WebsiteAnalyzer.analyze(website_url)
+
+    except HTTPException as e:
+        db.rollback()
+
+        failed_data = {
+            "success": False,
+            "status": "failed",
+            "error": str(e.detail),
+        }
+
+        try:
+            history = AnalysisHistory(
+                user_id=current_user.id,
+                website_url=website_url,
+                analysis_data=failed_data,
+            )
+            db.add(history)
+            db.commit()
+            db.refresh(history)
+
+            print(
+                "FAILED ANALYSIS SAVED:",
+                f"user={current_user.id}",
+                f"url={website_url}",
+                f"id={history.id}",
+            )
+
+        except Exception as save_error:
+            db.rollback()
+            print(
+                "FAILED ANALYSIS HISTORY SAVE ERROR:",
+                repr(save_error),
+            )
+
+        raise
+
+    except Exception as e:
+        db.rollback()
+
+        print("WEBSITE ANALYSIS ERROR:", repr(e))
+
+        failed_data = {
+            "success": False,
+            "status": "failed",
+            "error": str(e),
+        }
+
+        try:
+            history = AnalysisHistory(
+                user_id=current_user.id,
+                website_url=website_url,
+                analysis_data=failed_data,
+            )
+            db.add(history)
+            db.commit()
+            db.refresh(history)
+
+            print(
+                "FAILED ANALYSIS SAVED:",
+                f"user={current_user.id}",
+                f"url={website_url}",
+                f"id={history.id}",
+            )
+
+        except Exception as save_error:
+            db.rollback()
+            print(
+                "FAILED ANALYSIS HISTORY SAVE ERROR:",
+                repr(save_error),
+            )
+
+        raise HTTPException(
+            status_code=502,
+            detail=f"Website analysis failed: {str(e)}",
+        )
+
+    # -----------------------------------------------------
+    # ENCODE ANALYZER RESULT
+    # -----------------------------------------------------
+
+    try:
+        encoded_result = jsonable_encoder(result)
+    except Exception as e:
+        db.rollback()
+        print("ANALYSIS RESULT ENCODING ERROR:", repr(e))
+
+        raise HTTPException(
+            status_code=502,
+            detail="The analysis service returned an invalid result.",
+        )
+
+    if not isinstance(encoded_result, dict):
+        raise HTTPException(
+            status_code=502,
+            detail="The analysis service returned an invalid report format.",
+        )
+
+    # -----------------------------------------------------
+    # ANALYZER EXPLICITLY REPORTED FAILURE
+    # -----------------------------------------------------
+
+    if encoded_result.get("success") is False:
+        detail = (
+            encoded_result.get("detail")
+            or encoded_result.get("message")
+            or encoded_result.get("error")
+            or "Website analysis failed."
+        )
+
+        failed_data = dict(encoded_result)
+        failed_data["success"] = False
+        failed_data["status"] = "failed"
+        failed_data["error"] = str(detail)
+
+        try:
+            history = AnalysisHistory(
+                user_id=current_user.id,
+                website_url=website_url,
+                analysis_data=failed_data,
+            )
+            db.add(history)
+            db.commit()
+            db.refresh(history)
+
+            print(
+                "FAILED ANALYSIS SAVED:",
+                f"user={current_user.id}",
+                f"url={website_url}",
+                f"id={history.id}",
+            )
+
+        except Exception as save_error:
+            db.rollback()
+            print(
+                "FAILED ANALYSIS HISTORY SAVE ERROR:",
+                repr(save_error),
+            )
+
+        raise HTTPException(
+            status_code=502,
+            detail=str(detail),
+        )
+
+    # -----------------------------------------------------
+    # SUCCESSFUL ANALYSIS
+    # -----------------------------------------------------
+
+    encoded_result["success"] = True
+    encoded_result["status"] = "completed"
+
+    try:
         history = AnalysisHistory(
             user_id=current_user.id,
-            website_url=request.url,
-            analysis_data=jsonable_encoder(result),
+            website_url=website_url,
+            analysis_data=encoded_result,
         )
+
         db.add(history)
         db.commit()
         db.refresh(history)
-        return result
+
+        print(
+            "COMPLETED ANALYSIS SAVED:",
+            f"user={current_user.id}",
+            f"url={website_url}",
+            f"id={history.id}",
+        )
+
     except Exception as e:
         db.rollback()
+
         print("ANALYSIS HISTORY SAVE ERROR:", repr(e))
+
         raise HTTPException(
             status_code=500,
             detail="Analysis completed but could not be saved to history.",
         )
+
+    return encoded_result
 
 
 @router.get("/analysis-history")
@@ -70,6 +261,14 @@ def get_analysis_history(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    """
+    Return analysis history with an explicit status.
+
+    Existing records created before the status field was introduced
+    are treated as completed unless their stored analysis_data explicitly
+    says success=false or status=failed.
+    """
+
     try:
         history = (
             db.query(AnalysisHistory)
@@ -77,21 +276,48 @@ def get_analysis_history(
             .order_by(AnalysisHistory.created_at.desc())
             .all()
         )
+
+        records = []
+
+        for item in history:
+            analysis_data = (
+                item.analysis_data
+                if isinstance(item.analysis_data, dict)
+                else {}
+            )
+
+            if (
+                analysis_data.get("success") is False
+                or analysis_data.get("status") == "failed"
+            ):
+                status = "failed"
+            elif analysis_data.get("status") == "processing":
+                status = "processing"
+            elif analysis_data.get("status") == "pending":
+                status = "pending"
+            else:
+                status = "completed"
+
+            records.append(
+                {
+                    "id": item.id,
+                    "website_url": item.website_url,
+                    "analysis_data": analysis_data,
+                    "created_at": item.created_at,
+                    "status": status,
+                    "pdf_available": status == "completed",
+                }
+            )
+
         return {
             "success": True,
-            "count": len(history),
-            "history": [
-                {
-                    "id": x.id,
-                    "website_url": x.website_url,
-                    "analysis_data": x.analysis_data,
-                    "created_at": x.created_at,
-                }
-                for x in history
-            ],
+            "count": len(records),
+            "history": records,
         }
+
     except Exception as e:
         print("HISTORY FETCH ERROR:", repr(e))
+
         raise HTTPException(
             status_code=500,
             detail="Unable to load analysis history.",
@@ -268,6 +494,32 @@ def download_analysis_pdf(
         raise HTTPException(
             status_code=404,
             detail="Analysis report not found.",
+        )
+
+    # =====================================================
+    # PDF ONLY FOR COMPLETED ANALYSES
+    # =====================================================
+
+    analysis_data = (
+        analysis.analysis_data
+        if isinstance(
+            analysis.analysis_data,
+            dict
+        )
+        else {}
+    )
+
+    if (
+        analysis_data.get("success") is False
+        or
+        analysis_data.get("status") == "failed"
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "PDF is unavailable because "
+                "this website analysis failed."
+            )
         )
 
     data = analysis.analysis_data or {}
