@@ -2340,6 +2340,37 @@ button {
 
 
 /* ==========================================================
+   LLMs PREVIEW
+========================================================== */
+
+.llms-preview {
+
+    margin-top: 20px;
+
+    padding: 18px;
+
+    background: #f8fafc;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 12px;
+
+    color: #475569;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+
+    white-space: pre-wrap;
+
+    word-break: break-word;
+
+    overflow-x: auto;
+
+}
+
+
+/* ==========================================================
    CODE / URL TEXT
 ========================================================== */
 
@@ -2545,6 +2576,16 @@ button {
         font-size: 13px;
 
     }
+
+
+    .llms-preview {
+
+        padding: 14px;
+
+        font-size: 12px;
+
+    }
+
 }   
 
 
@@ -3750,290 +3791,3 @@ button {
 
 
 
-
-
-/* ==========================================================
-   SCREEN-RECORDING STYLE UI OVERRIDES
-   Keep dashboard.html unchanged.
-   No website preview.
-========================================================== */
-
-:root {
-    --ui-blue: #386cf4;
-    --ui-purple: #8244e5;
-    --ui-pink: #ed4d9c;
-    --ui-green: #20b77a;
-    --ui-orange: #ff9b36;
-    --ui-ink: #17203b;
-    --ui-muted: #6d778e;
-    --ui-line: #e7eaf1;
-    --ui-soft: #f6f8fc;
-}
-
-html,
-body {
-    background: #f7f8fc !important;
-    color: var(--ui-ink) !important;
-}
-
-.dashboard {
-    display: block !important;
-    min-height: 100vh !important;
-    background: #f7f8fc !important;
-}
-
-/* Hide old sidebar; keep HTML and JS untouched. */
-.sidebar {
-    display: none !important;
-}
-
-.main-content {
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    min-height: 100vh !important;
-    background: #f7f8fc !important;
-}
-
-/* SEOptimer-inspired top navigation */
-.topbar {
-    min-height: 76px !important;
-    padding: 14px clamp(20px, 5vw, 72px) !important;
-    background: rgba(255,255,255,.97) !important;
-    border-bottom: 1px solid var(--ui-line) !important;
-    box-shadow: 0 2px 15px rgba(24,37,70,.04) !important;
-    position: sticky !important;
-    top: 0 !important;
-    z-index: 100 !important;
-}
-
-.page-title h1 {
-    color: #15203b !important;
-    font-size: 23px !important;
-    font-weight: 800 !important;
-    letter-spacing: -.4px !important;
-}
-
-.page-title p {
-    color: #7b8498 !important;
-    font-size: 12px !important;
-    max-width: 650px !important;
-}
-
-.profile-card {
-    border: 1px solid var(--ui-line) !important;
-    background: #fff !important;
-    border-radius: 12px !important;
-    box-shadow: 0 5px 18px rgba(30,45,80,.06) !important;
-}
-
-/* Analyzer header */
-.search-card {
-    max-width: 1180px !important;
-    margin: 28px auto 20px !important;
-    padding: 28px 30px !important;
-    background: #fff !important;
-    border: 1px solid var(--ui-line) !important;
-    border-radius: 18px !important;
-    box-shadow: 0 8px 30px rgba(31,48,88,.06) !important;
-}
-
-.search-card h2 {
-    color: #17203b !important;
-    font-size: 25px !important;
-    margin-bottom: 7px !important;
-}
-
-.search-card p {
-    color: var(--ui-muted) !important;
-    font-size: 13px !important;
-}
-
-.input-group {
-    display: flex !important;
-    gap: 9px !important;
-    margin-top: 19px !important;
-    padding: 6px !important;
-    border: 1px solid #dce1eb !important;
-    border-radius: 13px !important;
-    background: #fff !important;
-    box-shadow: 0 8px 24px rgba(40,55,100,.06) !important;
-}
-
-.input-group input {
-    flex: 1 !important;
-    min-width: 0 !important;
-    height: 48px !important;
-    border: 0 !important;
-    outline: 0 !important;
-    background: transparent !important;
-    color: #18213c !important;
-    font-size: 14px !important;
-}
-
-.analyze-btn {
-    border: 0 !important;
-    border-radius: 10px !important;
-    padding: 0 25px !important;
-    background: linear-gradient(100deg,var(--ui-blue),var(--ui-purple)) !important;
-    color: #fff !important;
-    font-weight: 800 !important;
-    box-shadow: 0 9px 22px rgba(65,93,224,.22) !important;
-}
-
-.reset-btn {
-    border: 1px solid #dce1eb !important;
-    border-radius: 10px !important;
-    background: #fff !important;
-    color: #5d667a !important;
-    padding: 0 18px !important;
-}
-
-#results {
-    max-width: 1180px !important;
-    margin: 0 auto !important;
-    padding: 0 0 45px !important;
-}
-
-#results > .card,
-#results > section,
-#results .card {
-    background: #fff !important;
-    border: 1px solid var(--ui-line) !important;
-    border-radius: 18px !important;
-    box-shadow: 0 8px 28px rgba(31,48,88,.055) !important;
-}
-
-#results h2 {
-    color: #17203b !important;
-    font-weight: 800 !important;
-}
-
-/* Score cards */
-.summary-grid {
-    display: grid !important;
-    grid-template-columns: repeat(4, 1fr) !important;
-    gap: 14px !important;
-}
-
-.summary-card {
-    background: #fff !important;
-    border: 1px solid var(--ui-line) !important;
-    border-radius: 15px !important;
-    box-shadow: 0 7px 22px rgba(30,45,80,.05) !important;
-    transition: .2s ease !important;
-}
-
-.summary-card:hover {
-    transform: translateY(-3px) !important;
-}
-
-/* Tables */
-.info-table {
-    width: 100% !important;
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    overflow: hidden !important;
-    border: 1px solid var(--ui-line) !important;
-    border-radius: 12px !important;
-}
-
-.info-table td {
-    padding: 13px 15px !important;
-    border-bottom: 1px solid #edf0f5 !important;
-    font-size: 13px !important;
-}
-
-.info-table tr:last-child td {
-    border-bottom: 0 !important;
-}
-
-.info-table td:first-child {
-    width: 34% !important;
-    color: #59637a !important;
-    font-weight: 700 !important;
-    background: #fafbfe !important;
-}
-
-.info-table td:last-child {
-    color: #27314c !important;
-}
-
-/* Progress / score visuals */
-.progress-bar,
-.progress-fill {
-    border-radius: 999px !important;
-}
-
-.progress-fill {
-    background: linear-gradient(90deg,var(--ui-blue),var(--ui-purple),var(--ui-pink)) !important;
-}
-
-/* Recommendation styling */
-.recommendation,
-.recommendation-card {
-    border-radius: 12px !important;
-    border: 1px solid var(--ui-line) !important;
-    background: #fff !important;
-}
-
-/* Footer */
-.footer {
-    max-width: 1180px !important;
-    margin: 0 auto !important;
-    padding: 25px 0 !important;
-    color: #8993a8 !important;
-    background: transparent !important;
-}
-
-/* ==========================================================
-   RESPONSIVE
-========================================================== */
-
-@media (max-width: 900px) {
-
-    .topbar {
-        padding: 14px 20px !important;
-    }
-
-    .search-card,
-    #results {
-        width: calc(100% - 30px) !important;
-    }
-
-    .summary-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-    }
-}
-
-@media (max-width: 600px) {
-
-    .page-title p {
-        display: none !important;
-    }
-
-    .search-card {
-        padding: 20px !important;
-    }
-
-    .input-group {
-        flex-direction: column !important;
-        padding: 7px !important;
-    }
-
-    .input-group input,
-    .analyze-btn,
-    .reset-btn {
-        width: 100% !important;
-        min-height: 48px !important;
-    }
-
-    .summary-grid {
-        grid-template-columns: 1fr !important;
-    }
-
-    .info-table td {
-        padding: 10px !important;
-        font-size: 12px !important;
-    }
-}
