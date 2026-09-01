@@ -100,6 +100,203 @@ function getToken() {
 
 
 /* =========================================================
+   NORMALIZE STATUS
+========================================================= */
+
+function normalizeStatus(item) {
+
+    /*
+       Different backends sometimes use different
+       property names.
+
+       Check the common possibilities.
+    */
+
+    const rawStatus =
+        item.status ||
+        item.analysis_status ||
+        item.website_status ||
+        item.state ||
+        "";
+
+
+    return String(rawStatus)
+        .trim()
+        .toLowerCase();
+
+}
+
+
+/* =========================================================
+   CHECK COMPLETED
+========================================================= */
+
+function isCompleted(item) {
+
+    const status =
+        normalizeStatus(item);
+
+
+    return (
+        status === "completed" ||
+        status === "complete" ||
+        status === "success" ||
+        status === "successful" ||
+        status === "done"
+    );
+
+}
+
+
+/* =========================================================
+   CHECK FAILED
+========================================================= */
+
+function isFailed(item) {
+
+    const status =
+        normalizeStatus(item);
+
+
+    return (
+        status === "failed" ||
+        status === "failure" ||
+        status === "error"
+    );
+
+}
+
+
+/* =========================================================
+   GET STATUS DISPLAY
+========================================================= */
+
+function getStatusInfo(item) {
+
+    const status =
+        normalizeStatus(item);
+
+
+    /*
+       COMPLETED
+    */
+
+    if (
+        status === "completed" ||
+        status === "complete" ||
+        status === "success" ||
+        status === "successful" ||
+        status === "done"
+    ) {
+
+        return {
+
+            text: "Completed",
+
+            className: "status-completed",
+
+            icon: "✓"
+
+        };
+
+    }
+
+
+    /*
+       FAILED
+    */
+
+    if (
+        status === "failed" ||
+        status === "failure" ||
+        status === "error"
+    ) {
+
+        return {
+
+            text: "Failed",
+
+            className: "status-failed",
+
+            icon: "✕"
+
+        };
+
+    }
+
+
+    /*
+       PROCESSING
+    */
+
+    if (
+        status === "processing" ||
+        status === "running" ||
+        status === "analyzing"
+    ) {
+
+        return {
+
+            text: "Processing",
+
+            className: "status-processing",
+
+            icon: "⟳"
+
+        };
+
+    }
+
+
+    /*
+       PENDING
+    */
+
+    if (
+        status === "pending" ||
+        status === "queued" ||
+        status === "waiting"
+    ) {
+
+        return {
+
+            text: "Pending",
+
+            className: "status-pending",
+
+            icon: "⏳"
+
+        };
+
+    }
+
+
+    /*
+       UNKNOWN STATUS
+
+       Do NOT call it Completed.
+
+       This is important.
+    */
+
+    return {
+
+        text:
+            status
+                ? status.charAt(0).toUpperCase() +
+                  status.slice(1)
+                : "Unknown",
+
+        className: "status-unknown",
+
+        icon: "•"
+
+    };
+
+}
+
+
+/* =========================================================
    LOAD HISTORY
 ========================================================= */
 
@@ -216,9 +413,11 @@ async function loadHistory() {
 
 
         displayHistory(
+
             Array.isArray(data.history)
                 ? data.history
                 : []
+
         );
 
 
@@ -353,7 +552,7 @@ function createHistoryCard(
 
 
     /*
-       Website.
+       WEBSITE
     */
 
     const website =
@@ -367,11 +566,12 @@ function createHistoryCard(
 
     website.textContent =
         item.website_url ||
+        item.website ||
         "Website unavailable";
 
 
     /*
-       Date.
+       DATE
     */
 
     const date =
@@ -390,7 +590,7 @@ function createHistoryCard(
 
 
     /*
-       Analysis ID.
+       ANALYSIS ID
     */
 
     const id =
@@ -407,7 +607,7 @@ function createHistoryCard(
 
 
     /*
-       Status.
+       STATUS
     */
 
     const status =
@@ -419,47 +619,122 @@ function createHistoryCard(
         "history-status";
 
 
-    status.textContent =
-        "Completed";
+    const statusInfo =
+        getStatusInfo(item);
 
 
-    /*
-       PDF button.
-    */
-
-    const pdfButton =
-        document.createElement(
-            "button"
-        );
-
-
-    pdfButton.type =
-        "button";
-
-
-    pdfButton.className =
-        "download-pdf-btn";
-
-
-    pdfButton.textContent =
-        "📄 Download PDF";
-
-
-    pdfButton.addEventListener(
-        "click",
-        () => {
-
-            downloadPDF(
-                item.id,
-                pdfButton
-            );
-
-        }
+    status.classList.add(
+        statusInfo.className
     );
 
 
+    status.textContent =
+        `${statusInfo.icon} ${statusInfo.text}`;
+
+
     /*
-       Assemble card.
+       ADD DATA ATTRIBUTE
+
+       Useful for CSS and debugging.
+    */
+
+    status.dataset.status =
+        normalizeStatus(item);
+
+
+    /*
+       PDF AREA
+
+       We create a container so that
+       failed/pending records don't
+       have an empty button area.
+    */
+
+    const actionArea =
+        document.createElement(
+            "div"
+        );
+
+    actionArea.className =
+        "history-actions";
+
+
+    /*
+       ONLY COMPLETED ANALYSES
+       CAN DOWNLOAD PDF.
+    */
+
+    if (
+        isCompleted(item)
+    ) {
+
+        const pdfButton =
+            document.createElement(
+                "button"
+            );
+
+
+        pdfButton.type =
+            "button";
+
+
+        pdfButton.className =
+            "download-pdf-btn";
+
+
+        pdfButton.textContent =
+            "📄 Download PDF";
+
+
+        pdfButton.addEventListener(
+            "click",
+            () => {
+
+                downloadPDF(
+                    item.id,
+                    pdfButton
+                );
+
+            }
+        );
+
+
+        actionArea.appendChild(
+            pdfButton
+        );
+
+    }
+    else {
+
+        /*
+           No PDF for failed,
+           pending, processing,
+           or unknown analyses.
+        */
+
+        const noPdf =
+            document.createElement(
+                "span"
+            );
+
+
+        noPdf.className =
+            "pdf-unavailable";
+
+
+        noPdf.textContent =
+            "PDF unavailable";
+
+
+        actionArea.appendChild(
+            noPdf
+        );
+
+    }
+
+
+    /*
+       ASSEMBLE CARD
     */
 
     card.appendChild(
@@ -483,7 +758,7 @@ function createHistoryCard(
 
 
     card.appendChild(
-        pdfButton
+        actionArea
     );
 
 
@@ -502,6 +777,7 @@ function formatDateTime(
     if (!dateString) {
 
         return "Date unavailable";
+
     }
 
 
@@ -518,6 +794,7 @@ function formatDateTime(
     ) {
 
         return "Date unavailable";
+
     }
 
 
@@ -611,11 +888,7 @@ async function downloadPDF(
     try {
 
         /*
-           IMPORTANT:
-
-           This MUST match the FastAPI route:
-
-           /analysis/{analysis_id}/pdf
+           FastAPI PDF route.
         */
 
         const response =
@@ -929,6 +1202,7 @@ if (logoutBtn) {
             localStorage.removeItem(
                 "access_token"
             );
+
 
             sessionStorage.removeItem(
                 "selected_analysis"
