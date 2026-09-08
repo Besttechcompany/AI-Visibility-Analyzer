@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Firebase Authentication Test</title>
+
+  <style>
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+    }
+
+    .card {
+      width: 430px;
+      max-width: 92%;
+      padding: 32px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      color: #111827;
+    }
+
+    .subtitle {
+      margin: 0 0 25px;
+      color: #6b7280;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      height: 46px;
+      padding: 0 14px;
+      margin-bottom: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 9px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #2563eb;
+    }
+
+    button {
+      width: 100%;
+      height: 46px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 9px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #registerBtn {
+      background: #2563eb;
+      color: white;
+    }
+
+    #loginBtn {
+      background: #16a34a;
+      color: white;
+    }
+
+    #googleBtn {
+      background: white;
+      color: #111827;
+      border: 1px solid #d1d5db;
+    }
+
+    #logoutBtn {
+      background: #dc2626;
+      color: white;
+    }
+
+    #status {
+      margin-top: 22px;
+      padding: 15px;
+      background: #f3f4f6;
+      border-radius: 10px;
+      color: #374151;
+      font-size: 14px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="card">
+
+    <h1>Firebase Authentication Test</h1>
+
+    <p class="subtitle">
+      AI Visibility Analyzer
+    </p>
+
+    <input
+      type="email"
+      id="email"
+      placeholder="Enter email"
+      autocomplete="email"
+    >
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Enter password"
+      autocomplete="current-password"
+    >
+
+    <button id="registerBtn">
+      Create Account
+    </button>
+
+    <button id="loginBtn">
+      Login
+    </button>
+
+    <button id="googleBtn">
+      Continue with Google
+    </button>
+
+    <button id="logoutBtn">
+      Logout
+    </button>
+
+    <div id="status">
+      Checking Firebase authentication...
+    </div>
+
+  </div>
+
+
+  <script type="module">
+
+    import {
+      auth,
+      googleProvider,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signInWithPopup,
+      signOut,
+      onAuthStateChanged
+    } from "./js/firebase-auth.js";
+
+
+    const emailInput =
+      document.getElementById("email");
+
+    const passwordInput =
+      document.getElementById("password");
+
+    const registerBtn =
+      document.getElementById("registerBtn");
+
+    const loginBtn =
+      document.getElementById("loginBtn");
+
+    const googleBtn =
+      document.getElementById("googleBtn");
+
+    const logoutBtn =
+      document.getElementById("logoutBtn");
+
+    const status =
+      document.getElementById("status");
+
+
+    function showStatus(message) {
+
+      status.textContent = message;
+
+    }
+
+
+    // --------------------------------
+    // CREATE ACCOUNT
+    // --------------------------------
+
+    registerBtn.addEventListener(
+      "click",
+      async function () {
+
+        const email =
+          emailInput.value.trim();
+
+        const password =
+          passwordInput.value;
+
+
+        if (!email || !password) {
+
+          showStatus(
+            "Please enter an email and password."
+          );
+
+          return;
+        }
+
+
+        try {
+
+          showStatus(
+            "Creating Firebase account..."
+          );
+
+
+          const userCredential =
+            await createUserWithEmailAndPassword(
+              auth,
+              email,
+              password
+            );
+
+
+          const user =
+            userCredential.user;
+
+
+          showStatus(
+            "ACCOUNT CREATED SUCCESSFULLY\n\n" +
+            "UID: " + user.uid + "\n" +
+            "Email: " + user.email
+          );
+
+
+          console.log(
+            "Firebase user:",
+            user
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "Registration error:",
+            error
+          );
+
+
+          showStatus(
+            "REGISTRATION ERROR\n\n" +
+            error.code +
+            "\n\n" +
+            error.message
+          );
+
+        }
+
+      }
+    );
+
+
+    // --------------------------------
+    // LOGIN
+    // --------------------------------
+
+    loginBtn.addEventListener(
+      "click",
+      async function () {
+
+        const email =
+          emailInput.value.trim();
+
+        const password =
+          passwordInput.value;
+
+
+        if (!email || !password) {
+
+          showStatus(
+            "Please enter an email and password."
+          );
+
+          return;
+        }
+
+
+        try {
+
+          showStatus(
+            "Logging in..."
+          );
+
+
+          const userCredential =
+            await signInWithEmailAndPassword(
+              auth,
+              email,
+              password
+            );
+
+
+          const user =
+            userCredential.user;
+
+
+          showStatus(
+            "LOGIN SUCCESSFUL\n\n" +
+            "UID: " + user.uid + "\n" +
+            "Email: " + user.email
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "Login error:",
+            error
+          );
+
+
+          showStatus(
+            "LOGIN ERROR\n\n" +
+            error.code +
+            "\n\n" +
+            error.message
+          );
+
+        }
+
+      }
+    );
+
+
+    // --------------------------------
+    // GOOGLE LOGIN
+    // --------------------------------
+
+    googleBtn.addEventListener(
+      "click",
+      async function () {
+
+        try {
+
+          showStatus(
+            "Opening Google sign-in..."
+          );
+
+
+          const result =
+            await signInWithPopup(
+              auth,
+              googleProvider
+            );
+
+
+          const user =
+            result.user;
+
+
+          showStatus(
+            "GOOGLE LOGIN SUCCESSFUL\n\n" +
+            "UID: " + user.uid + "\n" +
+            "Name: " +
+            (user.displayName || "Not available") +
+            "\n" +
+            "Email: " + user.email
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "Google login error:",
+            error
+          );
+
+
+          showStatus(
+            "GOOGLE LOGIN ERROR\n\n" +
+            error.code +
+            "\n\n" +
+            error.message
+          );
+
+        }
+
+      }
+    );
+
+
+    // --------------------------------
+    // LOGOUT
+    // --------------------------------
+
+    logoutBtn.addEventListener(
+      "click",
+      async function () {
+
+        try {
+
+          await signOut(auth);
+
+
+          showStatus(
+            "LOGGED OUT SUCCESSFULLY"
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "Logout error:",
+            error
+          );
+
+
+          showStatus(
+            "LOGOUT ERROR\n\n" +
+            error.message
+          );
+
+        }
+
+      }
+    );
+
+
+    // --------------------------------
+    // AUTH STATE
+    // --------------------------------
+
+    onAuthStateChanged(
+      auth,
+      function (user) {
+
+        if (user) {
+
+          console.log(
+            "Current Firebase user:",
+            user
+          );
+
+
+          showStatus(
+            "FIREBASE USER IS LOGGED IN\n\n" +
+            "UID: " + user.uid + "\n" +
+            "Email: " + user.email
+          );
+
+
+        } else {
+
+          showStatus(
+            "No Firebase user is currently logged in."
+          );
+
+        }
+
+      }
+    );
+
+  </script>
+
+</body>
+
+</html>
