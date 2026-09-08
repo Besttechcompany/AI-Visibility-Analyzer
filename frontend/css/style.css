@@ -76,6 +76,7 @@ a {
 .brand-text {
     font-size: 13px;
     line-height: 1.05;
+    transform: translateY(5px);
 }
 
 .brand-text strong {

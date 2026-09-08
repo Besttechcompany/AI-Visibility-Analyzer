@@ -3789,5 +3789,56 @@ button {
 }
 
 
+/* ==========================================================
+   BEST TECH COMPANY LOGO — SIDEBAR
+   ========================================================== */
 
+.sidebar-top {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+/* Best Tech Company logo */
+.sidebar-logo {
+    width: 120px;
+    height: 90px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 12px;
+}
+
+/* Keep sidebar title below the logo */
+.sidebar-top h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 700;
+    color: #ffffff;
+}
+
+.sidebar-top p {
+    margin-top: 8px;
+    color: #94a3b8;
+    font-size: 15px;
+}
+
+/* Sidebar logo on smaller screens */
+@media (max-width: 992px) {
+    .sidebar-logo {
+        width: 105px;
+        height: 78px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar-logo {
+        width: 95px;
+        height: 70px;
+        margin-bottom: 8px;
+    }
+
+    .sidebar-top h2 {
+        font-size: 24px;
+    }
+}
 
