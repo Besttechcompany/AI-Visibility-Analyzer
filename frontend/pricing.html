@@ -29,95 +29,104 @@
          SIDEBAR
          ========================================== -->
 
-    <aside class="sidebar">
+   <!-- ==========================================
+     SIDEBAR — SAME AS SCREENSHOT 1
+     ========================================== -->
 
-        <div class="sidebar-top">
+<aside class="sidebar">
 
-            <div class="brand">
-                <div class="brand-icon">
-                    AI
-                </div>
+    <!-- Brand -->
+    <div class="sidebar-brand">
 
-                <div class="brand-text">
-                    <h2>AI Visibility</h2>
-                    <span>Analyzer</span>
-                </div>
-            </div>
-
+        <div class="brand-small">
+            AI
         </div>
 
+        <div class="brand-title">
+            AI Visibility
+        </div>
 
-        <!-- Navigation -->
+        <div class="brand-subtitle">
+            Dashboard
+        </div>
 
-        <nav class="sidebar-menu">
-
-            <ul>
-
-                <!-- Dashboard -->
-                <li
-                    onclick="window.location.href='dashboard.html'"
-                    style="cursor: pointer;"
-                >
-                    <span class="menu-icon">📊</span>
-                    <span>Dashboard</span>
-                </li>
+    </div>
 
 
-                <!-- Website Analysis -->
-                <li
-                    onclick="window.location.href='dashboard.html'"
-                    style="cursor: pointer;"
-                >
-                    <span class="menu-icon">🌐</span>
-                    <span>Website Analysis</span>
-                </li>
+    <!-- Navigation -->
+    <nav class="sidebar-menu">
+
+        <ul>
+
+            <!-- Dashboard -->
+            <li
+                onclick="window.location.href='dashboard.html'"
+                style="cursor:pointer;"
+            >
+                <span class="menu-icon">📊</span>
+                <span class="menu-text">Dashboard</span>
+            </li>
 
 
-                <!-- Logs -->
-                <li
-                    onclick="window.location.href='logs.html'"
-                    style="cursor: pointer;"
-                >
-                    <span class="menu-icon">📋</span>
-                    <span>Logs</span>
-                </li>
+            <!-- Website Analysis -->
+            <li
+                onclick="window.location.href='dashboard.html'"
+                style="cursor:pointer;"
+            >
+                <span class="menu-icon">🌐</span>
+                <span class="menu-text">Website Analysis</span>
+            </li>
 
 
-                <!-- Pricing -->
-                <li
-                    class="active"
-                    onclick="window.location.href='pricing.html'"
-                    style="cursor: pointer;"
-                >
-                    <span class="menu-icon">💰</span>
-                    <span>Pricing</span>
-                </li>
+            <!-- Logs -->
+            <li
+                onclick="window.location.href='logs.html'"
+                style="cursor:pointer;"
+            >
+                <span class="menu-icon">📈</span>
+                <span class="menu-text">Logs</span>
+            </li>
 
 
-                <!-- Profile -->
-                <li
-                    onclick="window.location.href='profile.html'"
-                    style="cursor: pointer;"
-                >
-                    <span class="menu-icon">👤</span>
-                    <span>Profile</span>
-                </li>
+            <!-- Pricing -->
+            <li
+                class="active"
+                onclick="window.location.href='pricing.html'"
+                style="cursor:pointer;"
+            >
+                <span class="menu-icon">💰</span>
+                <span class="menu-text">Pricing</span>
+            </li>
 
 
-                <!-- Logout -->
-                <li
-                    onclick="logout()"
-                    style="cursor: pointer;"
-                >
-                    <span class="menu-icon">🚪</span>
-                    <span>Logout</span>
-                </li>
+            <!-- Profile -->
+            <li
+                onclick="window.location.href='profile.html'"
+                style="cursor:pointer;"
+            >
+                <span class="menu-icon">👤</span>
+                <span class="menu-text">Profile</span>
+            </li>
 
-            </ul>
+        </ul>
 
-        </nav>
+    </nav>
 
-    </aside>
+
+    <!-- Logout -->
+    <div class="sidebar-logout">
+
+        <button
+            type="button"
+            onclick="logout()"
+        >
+            <span class="logout-icon">▤</span>
+            <span>Logout</span>
+        </button>
+
+    </div>
+
+</aside>
 
 
     <!-- ==========================================
