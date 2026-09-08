@@ -1,0 +1,976 @@
+/* =========================================================
+   AI VISIBILITY ANALYZER
+   PRICING PAGE
+   ========================================================= */
+
+
+/* =========================================================
+   PAGE BASE
+   ========================================================= */
+
+.pricing-page {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: "Inter", sans-serif;
+    background: #f4f7fb;
+    color: #0f172a;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.pricing-main {
+    min-height: 100vh;
+    padding-bottom: 40px;
+}
+
+
+/* =========================================================
+   TOPBAR
+   ========================================================= */
+
+.pricing-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+
+.pricing-topbar .page-title h1 {
+    margin: 0;
+    font-size: 28px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+}
+
+
+.pricing-topbar .page-title p {
+    margin: 7px 0 0;
+    font-size: 14px;
+    color: #64748b;
+}
+
+
+.pricing-topbar-right {
+    display: flex;
+    align-items: center;
+}
+
+
+.pricing-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border-radius: 30px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.12);
+}
+
+
+/* =========================================================
+   HERO
+   ========================================================= */
+
+.pricing-hero {
+    position: relative;
+    margin-top: 25px;
+    padding: 48px 35px;
+    border-radius: 22px;
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 10% 20%,
+            rgba(59, 130, 246, 0.20),
+            transparent 32%
+        ),
+        radial-gradient(
+            circle at 90% 80%,
+            rgba(124, 58, 237, 0.18),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            #0f172a 0%,
+            #172554 50%,
+            #312e81 100%
+        );
+
+    box-shadow:
+        0 18px 45px rgba(15, 23, 42, 0.15);
+}
+
+
+.pricing-hero::before {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    right: -100px;
+    top: -120px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+
+.pricing-hero::after {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    left: 40%;
+    bottom: -120px;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+
+.pricing-hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+
+.pricing-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 7px 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 30px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    color: #bfdbfe;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 1.5px;
+}
+
+
+.pricing-hero h2 {
+    margin: 17px 0 12px;
+
+    color: #ffffff;
+
+    font-size: 34px;
+    line-height: 1.2;
+    font-weight: 800;
+
+    letter-spacing: -1px;
+}
+
+
+.pricing-hero p {
+    max-width: 680px;
+    margin: 0 auto;
+
+    color: #cbd5e1;
+
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   PRICING SECTION
+   ========================================================= */
+
+.pricing-section {
+    margin-top: 35px;
+}
+
+
+.pricing-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 22px;
+
+    align-items: stretch;
+}
+
+
+/* =========================================================
+   PRICING CARD
+   ========================================================= */
+
+.pricing-card {
+    position: relative;
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 600px;
+
+    padding: 30px 27px 27px;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 22px;
+
+    box-shadow:
+        0 8px 28px rgba(15, 23, 42, 0.06);
+
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        border-color 0.25s ease;
+}
+
+
+.pricing-card:hover {
+    transform: translateY(-6px);
+
+    box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.12);
+}
+
+
+/* =========================================================
+   FREE CARD
+   ========================================================= */
+
+.free-plan {
+    border-top: 4px solid #64748b;
+}
+
+
+/* =========================================================
+   PRO CARD
+   ========================================================= */
+
+.pro-plan {
+    border: 2px solid #2563eb;
+
+    box-shadow:
+        0 16px 45px rgba(37, 99, 235, 0.15);
+
+    transform: translateY(-7px);
+}
+
+
+.pro-plan:hover {
+    transform: translateY(-12px);
+
+    box-shadow:
+        0 22px 50px rgba(37, 99, 235, 0.20);
+}
+
+
+/* =========================================================
+   AGENCY CARD
+   ========================================================= */
+
+.agency-plan {
+    border-top: 4px solid #7c3aed;
+}
+
+
+/* =========================================================
+   POPULAR BADGE
+   ========================================================= */
+
+.popular-badge {
+    position: absolute;
+
+    top: 0;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    padding: 7px 17px;
+
+    border-radius: 30px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #7c3aed
+        );
+
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 1px;
+
+    white-space: nowrap;
+
+    box-shadow:
+        0 8px 18px rgba(37, 99, 235, 0.25);
+}
+
+
+/* =========================================================
+   PLAN HEADER
+   ========================================================= */
+
+.plan-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+
+    margin-bottom: 25px;
+}
+
+
+.plan-icon {
+    width: 48px;
+    height: 48px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 14px;
+
+    font-size: 22px;
+}
+
+
+.free-icon {
+    background: #f1f5f9;
+}
+
+
+.pro-icon {
+    background: #eff6ff;
+}
+
+
+.agency-icon {
+    background: #f5f3ff;
+}
+
+
+.plan-header h3 {
+    margin: 0;
+
+    font-size: 18px;
+    font-weight: 800;
+
+    color: #0f172a;
+
+    letter-spacing: -0.2px;
+}
+
+
+.plan-description {
+    margin: 5px 0 0;
+
+    font-size: 12px;
+    line-height: 1.4;
+
+    color: #64748b;
+}
+
+
+/* =========================================================
+   PLAN PRICE
+   ========================================================= */
+
+.plan-price {
+    display: flex;
+    align-items: flex-start;
+
+    min-height: 58px;
+
+    color: #0f172a;
+}
+
+
+.plan-price .currency {
+    margin-top: 7px;
+    margin-right: 3px;
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+
+.plan-price .price {
+    font-size: 39px;
+    line-height: 1;
+
+    font-weight: 800;
+
+    letter-spacing: -1.5px;
+}
+
+
+.pro-price {
+    color: #2563eb;
+}
+
+
+.agency-price {
+    color: #7c3aed;
+}
+
+
+.price-note {
+    margin: 7px 0 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+    font-weight: 500;
+}
+
+
+.one-time-price {
+    margin-top: 9px;
+
+    color: #64748b;
+
+    font-size: 12px;
+}
+
+
+.one-time-price strong {
+    color: #2563eb;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   DIVIDER
+   ========================================================= */
+
+.plan-divider {
+    width: 100%;
+    height: 1px;
+
+    margin: 25px 0 23px;
+
+    background: #e2e8f0;
+}
+
+
+/* =========================================================
+   FEATURES
+   ========================================================= */
+
+.features-title {
+    margin: 0 0 15px;
+
+    color: #334155;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+}
+
+
+.plan-features {
+    list-style: none;
+
+    margin: 0;
+    padding: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 14px;
+}
+
+
+.plan-features li {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 10px;
+
+    color: #334155;
+
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+
+.feature-check,
+.feature-cross {
+    width: 21px;
+    height: 21px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    font-size: 12px;
+    font-weight: 800;
+}
+
+
+.feature-check {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+
+.feature-cross {
+    background: #f1f5f9;
+    color: #94a3b8;
+}
+
+
+.feature-disabled {
+    color: #94a3b8 !important;
+}
+
+
+/* =========================================================
+   PLAN ACTION
+   ========================================================= */
+
+.plan-action {
+    margin-top: auto;
+
+    padding-top: 30px;
+}
+
+
+/* =========================================================
+   BUTTON BASE
+   ========================================================= */
+
+.pricing-button {
+    width: 100%;
+
+    min-height: 48px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    font-family: inherit;
+
+    font-size: 13px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.pricing-button:hover {
+    transform: translateY(-2px);
+}
+
+
+.pricing-button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   FREE BUTTON
+   ========================================================= */
+
+.free-button {
+    background: #f1f5f9;
+
+    color: #334155;
+
+    border: 1px solid #cbd5e1;
+}
+
+
+.free-button:hover {
+    background: #e2e8f0;
+
+    box-shadow:
+        0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+
+/* =========================================================
+   PRO BUTTON
+   ========================================================= */
+
+.pro-button {
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #4f46e5
+        );
+
+    box-shadow:
+        0 10px 22px rgba(37, 99, 235, 0.22);
+}
+
+
+.pro-button:hover {
+    box-shadow:
+        0 14px 28px rgba(37, 99, 235, 0.30);
+}
+
+
+/* =========================================================
+   AGENCY BUTTON
+   ========================================================= */
+
+.agency-button {
+    color: #ffffff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #6d28d9
+        );
+
+    box-shadow:
+        0 10px 22px rgba(124, 58, 237, 0.20);
+}
+
+
+.agency-button:hover {
+    box-shadow:
+        0 14px 28px rgba(124, 58, 237, 0.28);
+}
+
+
+/* =========================================================
+   INFORMATION NOTE
+   ========================================================= */
+
+.pricing-note-section {
+    margin-top: 35px;
+}
+
+
+.pricing-note-card {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 16px;
+
+    padding: 23px 25px;
+
+    border-radius: 18px;
+
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    box-shadow:
+        0 6px 20px rgba(15, 23, 42, 0.04);
+}
+
+
+.note-icon {
+    width: 42px;
+    height: 42px;
+
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 12px;
+
+    background: #eff6ff;
+
+    font-size: 20px;
+}
+
+
+.note-content h3 {
+    margin: 0 0 6px;
+
+    font-size: 15px;
+    font-weight: 800;
+
+    color: #0f172a;
+}
+
+
+.note-content p {
+    margin: 0;
+
+    color: #64748b;
+
+    font-size: 13px;
+
+    line-height: 1.7;
+}
+
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.pricing-footer {
+    margin-top: 38px;
+
+    padding-top: 25px;
+
+    border-top: 1px solid #e2e8f0;
+
+    text-align: center;
+}
+
+
+.pricing-footer p {
+    margin: 0;
+
+    color: #94a3b8;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   RESPONSIVE — TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .pricing-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+
+    .agency-plan {
+        grid-column: 1 / -1;
+
+        max-width: 600px;
+
+        width: 100%;
+
+        margin: 0 auto;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE — MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .pricing-main {
+        padding: 20px;
+    }
+
+
+    .pricing-topbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+
+    .pricing-topbar-right {
+        width: 100%;
+    }
+
+
+    .pricing-status {
+        width: 100%;
+        justify-content: center;
+    }
+
+
+    .pricing-hero {
+        margin-top: 20px;
+
+        padding: 35px 22px;
+
+        border-radius: 18px;
+    }
+
+
+    .pricing-hero h2 {
+        font-size: 27px;
+    }
+
+
+    .pricing-hero p {
+        font-size: 14px;
+    }
+
+
+    .pricing-grid {
+        grid-template-columns: 1fr;
+
+        gap: 20px;
+    }
+
+
+    .pricing-card {
+        min-height: auto;
+
+        padding: 28px 23px 23px;
+    }
+
+
+    .pro-plan {
+        transform: none;
+    }
+
+
+    .pro-plan:hover {
+        transform: translateY(-6px);
+    }
+
+
+    .agency-plan {
+        grid-column: auto;
+
+        max-width: none;
+    }
+
+
+    .plan-price .price {
+        font-size: 35px;
+    }
+
+
+    .pricing-note-card {
+        flex-direction: column;
+    }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .pricing-main {
+        padding: 15px;
+    }
+
+
+    .pricing-topbar .page-title h1 {
+        font-size: 23px;
+    }
+
+
+    .pricing-hero {
+        padding: 30px 18px;
+    }
+
+
+    .pricing-hero h2 {
+        font-size: 24px;
+    }
+
+
+    .pricing-hero p {
+        font-size: 13px;
+    }
+
+
+    .pricing-card {
+        padding: 25px 20px 21px;
+
+        border-radius: 18px;
+    }
+
+
+    .plan-header {
+        gap: 11px;
+    }
+
+
+    .plan-icon {
+        width: 43px;
+        height: 43px;
+
+        font-size: 19px;
+    }
+
+
+    .plan-header h3 {
+        font-size: 16px;
+    }
+
+
+    .plan-price .price {
+        font-size: 32px;
+    }
+
+
+    .plan-features li {
+        font-size: 12.5px;
+    }
+
+}
+
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+.pricing-button:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.25);
+    outline-offset: 3px;
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .pricing-card,
+    .pricing-button {
+        transition: none;
+    }
+
+}

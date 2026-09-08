@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pricing Plans | AI Visibility Analyzer</title>
+
+    <!-- Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Existing Dashboard CSS -->
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <!-- Pricing CSS -->
+    <link rel="stylesheet" href="css/pricing.css">
+</head>
+
+<body class="pricing-page">
+
+<div class="dashboard-container">
+
+    <!-- ==========================================
+         SIDEBAR
+         ========================================== -->
+
+    <aside class="sidebar">
+
+        <div class="sidebar-top">
+
+            <div class="brand">
+                <div class="brand-icon">
+                    AI
+                </div>
+
+                <div class="brand-text">
+                    <h2>AI Visibility</h2>
+                    <span>Analyzer</span>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Navigation -->
+
+        <nav class="sidebar-menu">
+
+            <ul>
+
+                <!-- Dashboard -->
+                <li
+                    onclick="window.location.href='dashboard.html'"
+                    style="cursor: pointer;"
+                >
+                    <span class="menu-icon">📊</span>
+                    <span>Dashboard</span>
+                </li>
+
+
+                <!-- Website Analysis -->
+                <li
+                    onclick="window.location.href='dashboard.html'"
+                    style="cursor: pointer;"
+                >
+                    <span class="menu-icon">🌐</span>
+                    <span>Website Analysis</span>
+                </li>
+
+
+                <!-- Logs -->
+                <li
+                    onclick="window.location.href='logs.html'"
+                    style="cursor: pointer;"
+                >
+                    <span class="menu-icon">📋</span>
+                    <span>Logs</span>
+                </li>
+
+
+                <!-- Pricing -->
+                <li
+                    class="active"
+                    onclick="window.location.href='pricing.html'"
+                    style="cursor: pointer;"
+                >
+                    <span class="menu-icon">💰</span>
+                    <span>Pricing</span>
+                </li>
+
+
+                <!-- Profile -->
+                <li
+                    onclick="window.location.href='profile.html'"
+                    style="cursor: pointer;"
+                >
+                    <span class="menu-icon">👤</span>
+                    <span>Profile</span>
+                </li>
+
+
+                <!-- Logout -->
+                <li
+                    onclick="logout()"
+                    style="cursor: pointer;"
+                >
+                    <span class="menu-icon">🚪</span>
+                    <span>Logout</span>
+                </li>
+
+            </ul>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- ==========================================
+         MAIN CONTENT
+         ========================================== -->
+
+    <main class="main-content pricing-main">
+
+
+        <!-- ======================================
+             TOP BAR
+             ====================================== -->
+
+        <header class="topbar pricing-topbar">
+
+            <div class="topbar-left">
+
+                <div class="page-title">
+
+                    <h1>
+                        Pricing Plans
+                    </h1>
+
+                    <p>
+                        Choose the plan that fits your AI visibility needs.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="pricing-topbar-right">
+
+                <div class="pricing-status">
+
+                    <span class="status-dot"></span>
+
+                    <span>
+                        Plans &amp; Billing
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ======================================
+             PRICING HERO
+             ====================================== -->
+
+        <section class="pricing-hero">
+
+            <div class="pricing-hero-content">
+
+                <span class="pricing-eyebrow">
+                    AI VISIBILITY ANALYZER
+                </span>
+
+                <h2>
+                    Choose the right plan for your website
+                </h2>
+
+                <p>
+                    Start with essential AI visibility analysis or unlock
+                    advanced insights, reports, and monitoring as your needs grow.
+                </p>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================
+             PRICING CARDS
+             ====================================== -->
+
+        <section class="pricing-section">
+
+            <div class="pricing-grid">
+
+
+                <!-- =================================
+                     FREE PLAN
+                     ================================= -->
+
+                <article class="pricing-card free-plan">
+
+                    <div class="plan-header">
+
+                        <div class="plan-icon free-icon">
+                            🌱
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                FREE
+                            </h3>
+
+                            <p class="plan-description">
+                                Start exploring AI visibility.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="plan-price">
+
+                        <span class="currency">
+                            $
+                        </span>
+
+                        <span class="price">
+                            0
+                        </span>
+
+                    </div>
+
+
+                    <p class="price-note">
+                        Free to get started
+                    </p>
+
+
+                    <div class="plan-divider"></div>
+
+
+                    <h4 class="features-title">
+                        Includes:
+                    </h4>
+
+
+                    <ul class="plan-features">
+
+                        <li>
+                            <span class="feature-check">✓</span>
+
+                            <span>
+                                One website.
+                            </span>
+                        </li>
+
+
+                        <li>
+                            <span class="feature-check">✓</span>
+
+                            <span>
+                                1–2 AI platforms only (not all 7).
+                            </span>
+                        </li>
+
+
+                        <li class="feature-disabled">
+                            <span class="feature-cross">×</span>
+
+                            <span>
+                                No PDF.
+                            </span>
+                        </li>
+
+
+                        <li class="feature-disabled">
+                            <span class="feature-cross">×</span>
+
+                            <span>
+                                No history.
+                            </span>
+                        </li>
+
+                    </ul>
+
+
+                    <div class="plan-action">
+
+                        <button
+                            type="button"
+                            class="pricing-button free-button"
+                            onclick="window.location.href='dashboard.html'"
+                        >
+                            Get Started
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- =================================
+                     PRO PLAN
+                     ================================= -->
+
+                <article class="pricing-card pro-plan">
+
+                    <div class="popular-badge">
+                        MOST POPULAR
+                    </div>
+
+
+                    <div class="plan-header">
+
+                        <div class="plan-icon pro-icon">
+                            🚀
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                PRO
+                            </h3>
+
+                            <p class="plan-description">
+                                Advanced AI visibility insights.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="plan-price pro-price">
+
+                        <span class="currency">
+                            $
+                        </span>
+
+                        <span class="price">
+                            9.99–14.99
+                        </span>
+
+                    </div>
+
+
+                    <p class="price-note">
+                        / month
+                    </p>
+
+
+                    <div class="one-time-price">
+                        OR <strong>$7.99 one-time</strong>
+                    </div>
+
+
+                    <div class="plan-divider"></div>
+
+
+                    <h4 class="features-title">
+                        Includes:
+                    </h4>
+
+
+                    <ul class="plan-features">
+
+                        <li>
+                            <span class="feature-check">✓</span>
+
+                            <span>
+                                7 AI platforms:
+                                ChatGPT, Gemini, Claude,
+                                Perplexity, Grok, Google AI Mode,
+                                DeepSeek.
+                            </span>
+                        </li>
+
+
+                        <li>
+                            <span class="feature-check">✓</span>
+
+                            <span>
+                                Full Technical SEO + E-E-A-T +
+                                Entity report.
+                            </span>
+                        </li>
+
+
+                        <li>
+                            <span class="feature-check">✓</span>
+
+                            <span>
+                                Actionable recommendations.
+                            </span>
+                        </li>
+
+
+                        <li>
+                            <span class="feature-check">✓</span>
+
+                            <span>
+                                PDF download.
+                            </span>
+                        </li>
+
+
+                        <li>
+                            <span class="feature-check">✓</span>
+
+                            <span>
+                                Multiple audits per month.
+                            </span>
+                        </li>
+
+                    </ul>
+
+
+                    <div class="plan-action">
+
+                        <button
+                            type="button"
+                            class="pricing-button pro-button"
+                            onclick="selectProPlan()"
+                        >
+                            Upgrade to Pro
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+
+                <!-- =================================
+                     AGENCY / BUSINESS PLAN
+                     ================================= -->
+
+                <article class="pricing-card agency-plan">
+
+                    <div class="plan-header">
+
+                        <div class="plan-icon agency-icon">
+                            🏢
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                AGENCY / BUSINESS
+                            </h3>
+
+                            <p class="plan-description">
+                                Built for teams and growing businesses.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="plan-price agency-price">
+
+                        <span class="currency">
+                            $
+                        </span>
+
+                        <span class="price">
+                            39.99–59.99
+                        </span>
+
+                    </div>
+
+
+                    <p class="price-note">
+                        / month
+                    </p>
+
+
+                    <div class="plan-divider"></div>
+
+
+                    <h4 class="features-title">
+                        Includes:
+                    </h4>
+
+
+                    <ul class="plan-features">
+
+                        <li>
+                            <span class="feature-check">✓</span>
+
+                            <span>
+                                Multiple websites.
+                            </span>
+                        </li>
+
+
+                        <li>
+                            <span class="feature-check">✓</span>
+
+                            <span>
+                                Scheduled re-audit/tracking.
+                            </span>
+                        </li>
+
+
+                        <li>
+                            <span class="feature-check">✓</span>
+
+                            <span>
+                                Competitor comparison.
+                            </span>
+                        </li>
+
+
+                        <li>
+                            <span class="feature-check">✓</span>
+
+                            <span>
+                                White-label report.
+                            </span>
+                        </li>
+
+
+                        <li>
+                            <span class="feature-check">✓</span>
+
+                            <span>
+                                API access.
+                            </span>
+                        </li>
+
+                    </ul>
+
+
+                    <div class="plan-action">
+
+                        <button
+                            type="button"
+                            class="pricing-button agency-button"
+                            onclick="selectAgencyPlan()"
+                        >
+                            Choose Agency / Business
+                        </button>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================
+             PLAN COMPARISON NOTE
+             ====================================== -->
+
+        <section class="pricing-note-section">
+
+            <div class="pricing-note-card">
+
+                <div class="note-icon">
+                    💡
+                </div>
+
+                <div class="note-content">
+
+                    <h3>
+                        Start small. Upgrade when you need more.
+                    </h3>
+
+                    <p>
+                        The Free plan lets you explore the AI Visibility Analyzer.
+                        Upgrade to Pro for deeper analysis and reports, or choose
+                        Agency / Business when you need multiple websites,
+                        tracking, competitor comparison, white-label reports,
+                        and API access.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ======================================
+             FOOTER
+             ====================================== -->
+
+        <footer class="pricing-footer">
+
+            <p>
+                © 2026 AI Visibility Analyzer.
+                All rights reserved.
+            </p>
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+<!-- ==========================================
+     PRICING PAGE JAVASCRIPT
+     ========================================== -->
+
+<script>
+
+    function selectProPlan() {
+
+        /*
+         * PAYMENT WILL BE CONNECTED IN PART 2.
+         *
+         * For now we only show a message.
+         */
+
+        alert(
+            "Pro plan selected. Payment integration will be connected next."
+        );
+
+    }
+
+
+    function selectAgencyPlan() {
+
+        /*
+         * PAYMENT WILL BE CONNECTED IN PART 2.
+         */
+
+        alert(
+            "Agency / Business plan selected. Payment integration will be connected next."
+        );
+
+    }
+
+
+    function logout() {
+
+        /*
+         * The existing dashboard logout system can be connected here
+         * in the authentication integration stage.
+         */
+
+        window.location.href = "index.html";
+
+    }
+
+</script>
+
+</body>
+</html>
