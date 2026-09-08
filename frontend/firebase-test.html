@@ -25,11 +25,12 @@
       justify-content: center;
       font-family: Arial, sans-serif;
       background: #f4f7fb;
+      padding: 20px;
     }
 
     .card {
-      width: 430px;
-      max-width: 92%;
+      width: 440px;
+      max-width: 100%;
       padding: 32px;
       background: #ffffff;
       border-radius: 18px;
@@ -72,6 +73,11 @@
       font-size: 15px;
       font-weight: 600;
       cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    button:hover {
+      opacity: 0.92;
     }
 
     #registerBtn {
@@ -95,6 +101,28 @@
       color: white;
     }
 
+    #profileBtn {
+      background: #7c3aed;
+      color: white;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 18px 0 5px;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: #e5e7eb;
+    }
+
     #status {
       margin-top: 22px;
       padding: 15px;
@@ -107,9 +135,20 @@
       word-break: break-word;
     }
 
+    .section-title {
+      margin-top: 25px;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #374151;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
   </style>
 
 </head>
+
 
 <body>
 
@@ -120,6 +159,13 @@
     <p class="subtitle">
       AI Visibility Analyzer
     </p>
+
+
+    <!-- EMAIL -->
+
+    <div class="section-title">
+      Email Authentication
+    </div>
 
     <input
       type="email"
@@ -135,21 +181,49 @@
       autocomplete="current-password"
     >
 
+
     <button id="registerBtn">
       Create Account
     </button>
+
 
     <button id="loginBtn">
       Login
     </button>
 
+
+    <div class="divider">
+      OR
+    </div>
+
+
+    <!-- GOOGLE -->
+
     <button id="googleBtn">
       Continue with Google
     </button>
 
+
+    <!-- FIRESTORE -->
+
+    <div class="section-title">
+      Firestore
+    </div>
+
+
+    <button id="profileBtn">
+      Create / Check Firestore Profile
+    </button>
+
+
+    <!-- LOGOUT -->
+
     <button id="logoutBtn">
       Logout
     </button>
+
+
+    <!-- STATUS -->
 
     <div id="status">
       Checking Firebase authentication...
@@ -159,6 +233,11 @@
 
 
   <script type="module">
+
+
+    // ==========================================
+    // FIREBASE AUTH IMPORTS
+    // ==========================================
 
     import {
       auth,
@@ -170,6 +249,20 @@
       onAuthStateChanged
     } from "./js/firebase-auth.js";
 
+
+    // ==========================================
+    // FIRESTORE IMPORTS
+    // ==========================================
+
+    import {
+      createUserProfile,
+      getUserProfile
+    } from "./js/firebase-user.js";
+
+
+    // ==========================================
+    // DOM ELEMENTS
+    // ==========================================
 
     const emailInput =
       document.getElementById("email");
@@ -186,12 +279,19 @@
     const googleBtn =
       document.getElementById("googleBtn");
 
+    const profileBtn =
+      document.getElementById("profileBtn");
+
     const logoutBtn =
       document.getElementById("logoutBtn");
 
     const status =
       document.getElementById("status");
 
+
+    // ==========================================
+    // STATUS FUNCTION
+    // ==========================================
 
     function showStatus(message) {
 
@@ -200,9 +300,9 @@
     }
 
 
-    // --------------------------------
+    // ==========================================
     // CREATE ACCOUNT
-    // --------------------------------
+    // ==========================================
 
     registerBtn.addEventListener(
       "click",
@@ -222,6 +322,18 @@
           );
 
           return;
+
+        }
+
+
+        if (password.length < 6) {
+
+          showStatus(
+            "Password must contain at least 6 characters."
+          );
+
+          return;
+
         }
 
 
@@ -244,10 +356,27 @@
             userCredential.user;
 
 
+          // --------------------------------------
+          // CREATE FIRESTORE PROFILE
+          // --------------------------------------
+
+          await createUserProfile(user);
+
+
           showStatus(
             "ACCOUNT CREATED SUCCESSFULLY\n\n" +
-            "UID: " + user.uid + "\n" +
-            "Email: " + user.email
+
+            "Firebase UID:\n" +
+            user.uid +
+
+            "\n\nEmail:\n" +
+            user.email +
+
+            "\n\nFirestore Profile:\n" +
+            "Created successfully" +
+
+            "\n\nPlan:\n" +
+            "free"
           );
 
 
@@ -267,8 +396,11 @@
 
           showStatus(
             "REGISTRATION ERROR\n\n" +
+
+            "Code:\n" +
             error.code +
-            "\n\n" +
+
+            "\n\nMessage:\n" +
             error.message
           );
 
@@ -278,9 +410,9 @@
     );
 
 
-    // --------------------------------
+    // ==========================================
     // LOGIN
-    // --------------------------------
+    // ==========================================
 
     loginBtn.addEventListener(
       "click",
@@ -300,6 +432,7 @@
           );
 
           return;
+
         }
 
 
@@ -324,8 +457,12 @@
 
           showStatus(
             "LOGIN SUCCESSFUL\n\n" +
-            "UID: " + user.uid + "\n" +
-            "Email: " + user.email
+
+            "Firebase UID:\n" +
+            user.uid +
+
+            "\n\nEmail:\n" +
+            user.email
           );
 
 
@@ -339,8 +476,11 @@
 
           showStatus(
             "LOGIN ERROR\n\n" +
+
+            "Code:\n" +
             error.code +
-            "\n\n" +
+
+            "\n\nMessage:\n" +
             error.message
           );
 
@@ -350,9 +490,9 @@
     );
 
 
-    // --------------------------------
+    // ==========================================
     // GOOGLE LOGIN
-    // --------------------------------
+    // ==========================================
 
     googleBtn.addEventListener(
       "click",
@@ -376,13 +516,41 @@
             result.user;
 
 
+          // --------------------------------------
+          // CREATE / CHECK FIRESTORE PROFILE
+          // --------------------------------------
+
+          let profile =
+            await getUserProfile(user.uid);
+
+
+          if (!profile) {
+
+            await createUserProfile(user);
+
+            profile =
+              await getUserProfile(user.uid);
+
+          }
+
+
           showStatus(
             "GOOGLE LOGIN SUCCESSFUL\n\n" +
-            "UID: " + user.uid + "\n" +
-            "Name: " +
+
+            "Firebase UID:\n" +
+            user.uid +
+
+            "\n\nName:\n" +
             (user.displayName || "Not available") +
-            "\n" +
-            "Email: " + user.email
+
+            "\n\nEmail:\n" +
+            user.email +
+
+            "\n\nFirestore Profile:\n" +
+            "Available" +
+
+            "\n\nPlan:\n" +
+            (profile?.plan || "free")
           );
 
 
@@ -396,8 +564,11 @@
 
           showStatus(
             "GOOGLE LOGIN ERROR\n\n" +
+
+            "Code:\n" +
             error.code +
-            "\n\n" +
+
+            "\n\nMessage:\n" +
             error.message
           );
 
@@ -407,9 +578,101 @@
     );
 
 
-    // --------------------------------
+    // ==========================================
+    // CREATE / CHECK FIRESTORE PROFILE
+    // ==========================================
+
+    profileBtn.addEventListener(
+      "click",
+      async function () {
+
+        const user =
+          auth.currentUser;
+
+
+        if (!user) {
+
+          showStatus(
+            "No Firebase user is logged in.\n\n" +
+            "Please create an account or login first."
+          );
+
+          return;
+
+        }
+
+
+        try {
+
+          showStatus(
+            "Checking Firestore profile..."
+          );
+
+
+          let profile =
+            await getUserProfile(user.uid);
+
+
+          // --------------------------------------
+          // PROFILE DOES NOT EXIST
+          // --------------------------------------
+
+          if (!profile) {
+
+            await createUserProfile(user);
+
+            profile =
+              await getUserProfile(user.uid);
+
+          }
+
+
+          showStatus(
+            "FIRESTORE PROFILE FOUND\n\n" +
+
+            "UID:\n" +
+            user.uid +
+
+            "\n\nName:\n" +
+            (profile?.name || "") +
+
+            "\n\nEmail:\n" +
+            (profile?.email || "") +
+
+            "\n\nPlan:\n" +
+            (profile?.plan || "free") +
+
+            "\n\nProfile is working correctly."
+          );
+
+
+        } catch (error) {
+
+          console.error(
+            "Firestore error:",
+            error
+          );
+
+
+          showStatus(
+            "FIRESTORE ERROR\n\n" +
+
+            "Code:\n" +
+            error.code +
+
+            "\n\nMessage:\n" +
+            error.message
+          );
+
+        }
+
+      }
+    );
+
+
+    // ==========================================
     // LOGOUT
-    // --------------------------------
+    // ==========================================
 
     logoutBtn.addEventListener(
       "click",
@@ -444,13 +707,13 @@
     );
 
 
-    // --------------------------------
+    // ==========================================
     // AUTH STATE
-    // --------------------------------
+    // ==========================================
 
     onAuthStateChanged(
       auth,
-      function (user) {
+      async function (user) {
 
         if (user) {
 
@@ -460,11 +723,68 @@
           );
 
 
-          showStatus(
-            "FIREBASE USER IS LOGGED IN\n\n" +
-            "UID: " + user.uid + "\n" +
-            "Email: " + user.email
-          );
+          try {
+
+            const profile =
+              await getUserProfile(user.uid);
+
+
+            if (profile) {
+
+              showStatus(
+                "FIREBASE USER IS LOGGED IN\n\n" +
+
+                "UID:\n" +
+                user.uid +
+
+                "\n\nEmail:\n" +
+                user.email +
+
+                "\n\nFirestore Profile:\n" +
+                "Found" +
+
+                "\n\nPlan:\n" +
+                (profile.plan || "free")
+              );
+
+            } else {
+
+              showStatus(
+                "FIREBASE USER IS LOGGED IN\n\n" +
+
+                "UID:\n" +
+                user.uid +
+
+                "\n\nEmail:\n" +
+                user.email +
+
+                "\n\nFirestore Profile:\n" +
+                "Not created yet"
+              );
+
+            }
+
+          } catch (error) {
+
+            console.error(
+              "Profile check error:",
+              error
+            );
+
+
+            showStatus(
+              "FIREBASE USER IS LOGGED IN\n\n" +
+
+              "UID:\n" +
+              user.uid +
+
+              "\n\nEmail:\n" +
+              user.email +
+
+              "\n\nFirestore profile could not be checked."
+            );
+
+          }
 
 
         } else {
@@ -477,6 +797,7 @@
 
       }
     );
+
 
   </script>
 
