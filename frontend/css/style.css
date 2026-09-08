@@ -56,46 +56,25 @@ a {
 }
 
 
-/* Logo */
+/* Best Tech Company Logo */
 
 .brand {
     display: flex;
     align-items: center;
-
     gap: 11px;
-
     color: #18213d;
 }
 
-.brand-mark {
-    width: 42px;
-    height: 42px;
-
-    display: grid;
-    place-items: center;
-
-    border-radius: 13px;
-
-    color: #ffffff;
-
-    font-size: 22px;
-
-    background:
-        linear-gradient(
-            135deg,
-            #3478ff,
-            #8145e6,
-            #ec4e9d
-        );
-
-    box-shadow:
-        0 9px 25px
-        rgba(89, 83, 225, 0.25);
+.brand-logo {
+    width: 85px;
+    height: 60px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
 }
 
 .brand-text {
     font-size: 13px;
-
     line-height: 1.05;
 }
 
