@@ -45,6 +45,20 @@ class User(Base):
         nullable=True
     )
 
+
+            # -----------------------------------------------------
+    # FIREBASE AUTHENTICATION
+    # -----------------------------------------------------
+    # Firebase UID for users authenticated through Firebase.
+    # Used for Firebase Google and Email/Password login.
+
+    firebase_uid = Column(
+        String,
+        unique=True,
+        nullable=True,
+        index=True
+    )
+
     # -----------------------------------------------------
     # EMAIL
     # -----------------------------------------------------
@@ -180,3 +194,4 @@ class AnalysisHistory(Base):
         nullable=False,
         index=True
     )
+

@@ -16,3 +16,12 @@ backend/venv/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Firebase Admin credentials
+serviceAccountKey.json
+
+# Environment variables
+.env
+
+# Python cache
+__pycache__/

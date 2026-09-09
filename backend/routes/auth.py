@@ -22,6 +22,8 @@ from utils.jwt_handler import create_access_token
 
 from dependencies import get_current_user
 
+from firebase_service import verify_firebase_token
+
 from utils.password_handler import (
     hash_password,
     verify_password
@@ -113,6 +115,15 @@ class LoginRequest(BaseModel):
     email: str
 
     password: str
+
+
+# =========================================================
+# FIREBASE AUTH REQUEST
+# =========================================================
+
+class FirebaseAuthRequest(BaseModel):
+
+    id_token: str
 
 
 class ProfileUpdateRequest(BaseModel):
@@ -515,6 +526,342 @@ def login(
             "picture":
                 user.picture
         }
+    }
+
+
+# =========================================================
+# FIREBASE AUTHENTICATION
+# =========================================================
+
+@router.post(
+    "/firebase/auth",
+    tags=["Authentication"]
+)
+def firebase_auth(
+    data: FirebaseAuthRequest,
+    db: Session = Depends(get_db)
+):
+
+    print("=" * 60)
+    print("FIREBASE AUTHENTICATION STARTED")
+    print("=" * 60)
+
+    # -----------------------------------------------------
+    # VERIFY FIREBASE ID TOKEN
+    # -----------------------------------------------------
+
+    try:
+
+        decoded_token = verify_firebase_token(
+            data.id_token
+        )
+
+    except Exception as e:
+
+        print(
+            "FIREBASE TOKEN VERIFICATION ERROR:",
+            repr(e)
+        )
+
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired Firebase token."
+        )
+
+    # -----------------------------------------------------
+    # FIREBASE USER INFORMATION
+    # -----------------------------------------------------
+
+    firebase_uid = decoded_token.get("uid")
+    email = decoded_token.get("email")
+    name = decoded_token.get("name")
+    picture = decoded_token.get("picture")
+
+    # -----------------------------------------------------
+    # VALIDATE REQUIRED INFORMATION
+    # -----------------------------------------------------
+
+    if not firebase_uid:
+
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Firebase UID is missing."
+        )
+
+    if not email:
+
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Firebase account does not contain an email."
+        )
+
+    email = email.strip().lower()
+
+    print(f"Firebase UID: {firebase_uid}")
+    print(f"Firebase Email: {email}")
+
+    # =====================================================
+    # FIND USER BY FIREBASE UID
+    # =====================================================
+
+    user = (
+        db.query(User)
+        .filter(
+            User.firebase_uid == firebase_uid
+        )
+        .first()
+    )
+
+    # =====================================================
+    # EXISTING FIREBASE USER
+    # =====================================================
+
+    if user:
+
+        print(
+            f"Existing Firebase user found: {user.id}"
+        )
+
+        # -------------------------------------------------
+        # UPDATE BASIC INFORMATION ONLY WHEN NECESSARY
+        # -------------------------------------------------
+
+        if not user.name and name:
+            user.name = name
+
+        # -------------------------------------------------
+        # DO NOT OVERWRITE CUSTOM PROFILE IMAGE
+        # -------------------------------------------------
+
+        if not user.picture and picture:
+            user.picture = picture
+
+        try:
+
+            db.commit()
+            db.refresh(user)
+
+        except Exception as e:
+
+            db.rollback()
+
+            print(
+                "FIREBASE USER UPDATE ERROR:",
+                repr(e)
+            )
+
+            raise HTTPException(
+                status_code=500,
+                detail="Unable to update Firebase account."
+            )
+
+    # =====================================================
+    # FIREBASE UID NOT FOUND
+    # =====================================================
+
+    else:
+
+        print(
+            "Firebase UID not found. Checking email..."
+        )
+
+        # -------------------------------------------------
+        # FIND EXISTING ACCOUNT BY EMAIL
+        # -------------------------------------------------
+
+        user = (
+            db.query(User)
+            .filter(
+                User.email == email
+            )
+            .first()
+        )
+
+        # =================================================
+        # EXISTING ACCOUNT WITH SAME EMAIL
+        # =================================================
+
+        if user:
+
+            print(
+                f"Existing account found by email: {user.id}"
+            )
+
+            # -------------------------------------------------
+            # FIREBASE UID ALREADY BELONGS TO ANOTHER USER
+            # -------------------------------------------------
+
+            if (
+                user.firebase_uid
+                and
+                user.firebase_uid != firebase_uid
+            ):
+
+                raise HTTPException(
+                    status_code=409,
+                    detail=(
+                        "This email is already linked "
+                        "to another Firebase account."
+                    )
+                )
+
+            # -------------------------------------------------
+            # LINK FIREBASE TO EXISTING ACCOUNT
+            # -------------------------------------------------
+
+            user.firebase_uid = firebase_uid
+
+            if not user.name and name:
+                user.name = name
+
+            if not user.picture and picture:
+                user.picture = picture
+
+            try:
+
+                db.commit()
+                db.refresh(user)
+
+            except Exception as e:
+
+                db.rollback()
+
+                print(
+                    "FIREBASE ACCOUNT LINK ERROR:",
+                    repr(e)
+                )
+
+                raise HTTPException(
+                    status_code=500,
+                    detail="Unable to link Firebase account."
+                )
+
+        # =================================================
+        # COMPLETELY NEW FIREBASE USER
+        # =================================================
+
+        else:
+
+            print(
+                "Creating new Firebase user..."
+            )
+
+            user = User(
+                google_id=None,
+                firebase_uid=firebase_uid,
+                email=email,
+                name=(
+                    name
+                    or email.split("@")[0]
+                ),
+                mobile=None,
+                password_hash=None,
+                picture=picture,
+                is_active=True
+            )
+
+            db.add(user)
+
+            try:
+
+                db.commit()
+                db.refresh(user)
+
+            except Exception as e:
+
+                db.rollback()
+
+                print(
+                    "FIREBASE USER DATABASE ERROR:",
+                    repr(e)
+                )
+
+                raise HTTPException(
+                    status_code=500,
+                    detail="Unable to create Firebase account."
+                )
+
+            print(
+                f"New Firebase user created: {user.id}"
+            )
+
+    # =====================================================
+    # ACCOUNT STATUS
+    # =====================================================
+
+    if not user.is_active:
+
+        raise HTTPException(
+            status_code=403,
+            detail="Your account is inactive."
+        )
+
+    # =====================================================
+    # CREATE APPLICATION JWT
+    # =====================================================
+
+    access_token = create_access_token(
+        {
+            "user_id": user.id,
+            "email": user.email
+        }
+    )
+
+    if not access_token:
+
+        raise HTTPException(
+            status_code=500,
+            detail="Unable to create access token."
+        )
+
+    print(
+        "FIREBASE AUTHENTICATION SUCCESSFUL"
+    )
+
+    print(
+        f"User ID: {user.id}"
+    )
+
+    # =====================================================
+    # RESPONSE
+    # =====================================================
+
+    return {
+
+        "message":
+            "Firebase authentication successful.",
+
+        "access_token":
+            access_token,
+
+        "token_type":
+            "bearer",
+
+        "user": {
+
+            "id":
+                user.id,
+
+            "firebase_uid":
+                user.firebase_uid,
+
+            "email":
+                user.email,
+
+            "name":
+                user.name,
+
+            "mobile":
+                user.mobile,
+
+            "picture":
+                user.picture,
+
+            "is_active":
+                user.is_active
+
+        }
+
     }
 
 
@@ -1560,3 +1907,4 @@ def delete_profile_photo(
             "created_at": current_user.created_at
         }
     }
+
