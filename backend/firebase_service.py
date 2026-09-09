@@ -1,43 +1,58 @@
 import os
+import json
 
 import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import auth
+from firebase_admin import credentials, auth
 
 
-# =========================================================
-# FIREBASE ADMIN INITIALIZATION
-# =========================================================
+def _initialize_firebase():
+    """
+    Initialize Firebase Admin SDK using the service-account JSON
+    stored in the FIREBASE_SERVICE_ACCOUNT_JSON environment variable.
+    """
 
-BASE_DIR = os.path.dirname(
-    os.path.abspath(__file__)
-)
+    if firebase_admin._apps:
+        return firebase_admin.get_app()
 
-SERVICE_ACCOUNT_PATH = os.path.join(
-    BASE_DIR,
-    "serviceAccountKey.json"
-)
-
-
-if not firebase_admin._apps:
-
-    cred = credentials.Certificate(
-        SERVICE_ACCOUNT_PATH
+    service_account_json = os.getenv(
+        "FIREBASE_SERVICE_ACCOUNT_JSON"
     )
 
-    firebase_admin.initialize_app(
+    if not service_account_json:
+        raise RuntimeError(
+            "FIREBASE_SERVICE_ACCOUNT_JSON is not configured."
+        )
+
+    try:
+        service_account_info = json.loads(
+            service_account_json
+        )
+    except json.JSONDecodeError as e:
+        raise RuntimeError(
+            "FIREBASE_SERVICE_ACCOUNT_JSON contains invalid JSON."
+        ) from e
+
+    try:
+        cred = credentials.Certificate(
+            service_account_info
+        )
+    except Exception as e:
+        raise RuntimeError(
+            "Unable to create Firebase credentials."
+        ) from e
+
+    return firebase_admin.initialize_app(
         cred
     )
 
 
-# =========================================================
-# VERIFY FIREBASE ID TOKEN
-# =========================================================
-
 def verify_firebase_token(id_token: str):
+    """
+    Verify a Firebase ID token and return the decoded claims.
+    """
 
-    decoded_token = auth.verify_id_token(
+    _initialize_firebase()
+
+    return auth.verify_id_token(
         id_token
     )
-
-    return decoded_token
