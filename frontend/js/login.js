@@ -1,6 +1,23 @@
 // ======================================================
 // AI VISIBILITY ANALYZER
-// LOGIN + REGISTRATION
+// FIREBASE LOGIN + REGISTRATION
+// ======================================================
+
+import {
+    auth,
+    googleProvider,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
+    signInWithPopup
+} from "./firebase-auth.js";
+
+import {
+    createUserProfile
+} from "./firebase-user.js";
+
+
+// ======================================================
+// API
 // ======================================================
 
 const API_URL =
@@ -262,7 +279,7 @@ function showMessage(
     /*
      * IMPORTANT:
      * Do not display errors at the bottom.
-     * Everything is now shown in a popup.
+     * Everything is shown in a popup.
      */
 
     showPopup(
@@ -700,6 +717,204 @@ function stopRegisterLoader() {
 
 
 // ======================================================
+// FIREBASE ERROR HANDLER
+// ======================================================
+
+function getFirebaseErrorMessage(
+    error
+) {
+
+    const code =
+        error?.code || "";
+
+    switch (code) {
+
+        case "auth/invalid-email":
+            return "Please enter a valid email address.";
+
+        case "auth/user-not-found":
+            return "No account was found with this email address.";
+
+        case "auth/wrong-password":
+            return "Incorrect email or password.";
+
+        case "auth/invalid-credential":
+            return "The email or password is incorrect.";
+
+        case "auth/email-already-in-use":
+            return "An account already exists with this email address. Please login instead.";
+
+        case "auth/weak-password":
+            return "Please create a stronger password.";
+
+        case "auth/popup-closed-by-user":
+            return "Google login was cancelled.";
+
+        case "auth/popup-blocked":
+            return "Your browser blocked the Google login popup. Please allow popups for this website.";
+
+        case "auth/unauthorized-domain":
+            return "This website is not authorized for Firebase login. Please check the Firebase Authorized Domains setting.";
+
+        case "auth/network-request-failed":
+            return "Network error. Please check your internet connection and try again.";
+
+        case "auth/too-many-requests":
+            return "Too many login attempts. Please wait a little while and try again.";
+
+        case "auth/account-exists-with-different-credential":
+            return "An account already exists with this email using another sign-in method.";
+
+        default:
+
+            return (
+                error?.message ||
+                "Authentication failed. Please try again."
+            );
+
+    }
+
+}
+
+
+// ======================================================
+// FIREBASE → FASTAPI JWT BRIDGE
+// ======================================================
+
+async function exchangeFirebaseTokenForBackendJWT(
+    user
+) {
+
+    if (!user) {
+
+        throw new Error(
+            "Firebase user information is unavailable."
+        );
+
+    }
+
+    // --------------------------------------------------
+    // GET FRESH FIREBASE ID TOKEN
+    // --------------------------------------------------
+
+    const idToken =
+        await user.getIdToken(
+            true
+        );
+
+    if (!idToken) {
+
+        throw new Error(
+            "Unable to obtain Firebase authentication token."
+        );
+
+    }
+
+    // --------------------------------------------------
+    // SEND TOKEN TO FASTAPI
+    // --------------------------------------------------
+
+    const response =
+        await fetch(
+            `${API_URL}/firebase/auth`,
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:
+                    JSON.stringify({
+                        id_token:
+                            idToken
+                    })
+            }
+        );
+
+    // --------------------------------------------------
+    // READ RESPONSE
+    // --------------------------------------------------
+
+    let data = {};
+
+    try {
+
+        data =
+            await response.json();
+
+    } catch (_) {
+
+        data = {};
+
+    }
+
+    // --------------------------------------------------
+    // SERVER ERROR
+    // --------------------------------------------------
+
+    if (!response.ok) {
+
+        throw new Error(
+            data.detail ||
+            data.message ||
+            "Unable to authenticate with the AI Visibility Analyzer server."
+        );
+
+    }
+
+    // --------------------------------------------------
+    // CHECK APPLICATION JWT
+    // --------------------------------------------------
+
+    if (!data.access_token) {
+
+        throw new Error(
+            "Authentication succeeded, but the server did not return an application access token."
+        );
+
+    }
+
+    // --------------------------------------------------
+    // STORE EXISTING APPLICATION JWT
+    // --------------------------------------------------
+
+    localStorage.setItem(
+        "access_token",
+        data.access_token
+    );
+
+    // --------------------------------------------------
+    // OPTIONAL USER INFORMATION
+    // --------------------------------------------------
+
+    if (data.user) {
+
+        try {
+
+            localStorage.setItem(
+                "user_info",
+                JSON.stringify(
+                    data.user
+                )
+            );
+
+        } catch (_) {
+
+            // Do not block login if
+            // localStorage user info fails.
+
+        }
+
+    }
+
+    return data;
+
+}
+
+
+// ======================================================
 // LOGIN
 // ======================================================
 
@@ -730,74 +945,38 @@ loginForm.addEventListener(
             );
 
             return;
+
         }
 
         startLoginLoader();
 
         try {
 
-            const response =
-                await fetch(
-                    `${API_URL}/login`,
-                    {
-                        method: "POST",
+            // --------------------------------------------------
+            // FIREBASE EMAIL LOGIN
+            // --------------------------------------------------
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify({
-                                email:
-                                    email,
-                                password:
-                                    password
-                            })
-                    }
+            const credential =
+                await signInWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
                 );
 
-            let data = {};
+            const user =
+                credential.user;
 
-            try {
+            // --------------------------------------------------
+            // FIREBASE → FASTAPI
+            // --------------------------------------------------
 
-                data =
-                    await response.json();
-
-            } catch (_) {
-
-                data = {};
-
-            }
-
-            if (!response.ok) {
-
-                throw new Error(
-                    data.detail ||
-                    data.message ||
-                    "Invalid email or password."
-                );
-
-            }
-
-            if (
-                !data.access_token
-            ) {
-
-                throw new Error(
-                    "Login succeeded, but no access token was returned."
-                );
-
-            }
-
-            localStorage.setItem(
-                "access_token",
-                data.access_token
+            await exchangeFirebaseTokenForBackendJWT(
+                user
             );
 
-            /*
-             * Successful login.
-             */
+            // --------------------------------------------------
+            // SUCCESS
+            // --------------------------------------------------
 
             showPopup(
                 "Login successful. Redirecting to your dashboard...",
@@ -819,13 +998,14 @@ loginForm.addEventListener(
         catch(error) {
 
             console.error(
-                "LOGIN ERROR:",
+                "FIREBASE LOGIN ERROR:",
                 error
             );
 
             showPopup(
-                error.message ||
-                "Unable to login. Please try again.",
+                getFirebaseErrorMessage(
+                    error
+                ),
                 "error"
             );
 
@@ -874,6 +1054,7 @@ registerForm.addEventListener(
             );
 
             return;
+
         }
 
         const emailPattern =
@@ -891,6 +1072,7 @@ registerForm.addEventListener(
             );
 
             return;
+
         }
 
         const passwordResult =
@@ -908,66 +1090,85 @@ registerForm.addEventListener(
             );
 
             return;
+
         }
 
         startRegisterLoader();
 
         try {
 
-            const response =
-                await fetch(
-                    `${API_URL}/register`,
-                    {
-                        method: "POST",
+            // --------------------------------------------------
+            // CREATE FIREBASE ACCOUNT
+            // --------------------------------------------------
 
-                        headers: {
-                            "Content-Type":
-                                "application/json"
-                        },
-
-                        body:
-                            JSON.stringify({
-                                name:
-                                    name,
-                                email:
-                                    email,
-                                password:
-                                    password
-                            })
-                    }
+            const credential =
+                await createUserWithEmailAndPassword(
+                    auth,
+                    email,
+                    password
                 );
 
-            let data = {};
+            const user =
+                credential.user;
+
+            // --------------------------------------------------
+            // UPDATE FIREBASE DISPLAY NAME
+            // --------------------------------------------------
+
+            /*
+             * Firebase profile creation is handled here
+             * through the user profile module.
+             *
+             * The Firestore profile stores:
+             * name
+             * email
+             * picture
+             * plan = free
+             */
 
             try {
 
-                data =
-                    await response.json();
-
-            } catch (_) {
-
-                data = {};
-
-            }
-
-            if (!response.ok) {
-
-                throw new Error(
-                    data.detail ||
-                    data.message ||
-                    "Registration failed."
+                await createUserProfile(
+                    user
                 );
 
+            } catch(profileError) {
+
+                console.error(
+                    "FIRESTORE PROFILE ERROR:",
+                    profileError
+                );
+
+                /*
+                 * Do not immediately fail the entire
+                 * authentication flow.
+                 *
+                 * The backend will still create/link
+                 * the Neon account.
+                 */
+
             }
 
-            /*
-             * Registration successful.
-             */
+            // --------------------------------------------------
+            // FIREBASE → FASTAPI
+            // --------------------------------------------------
+
+            await exchangeFirebaseTokenForBackendJWT(
+                user
+            );
+
+            // --------------------------------------------------
+            // SUCCESS
+            // --------------------------------------------------
 
             showPopup(
-                "Your account has been created successfully. Please login.",
+                "Your account has been created successfully. Redirecting to your dashboard...",
                 "success"
             );
+
+            // --------------------------------------------------
+            // CLEAR REGISTRATION FORM
+            // --------------------------------------------------
 
             document.getElementById(
                 "registerName"
@@ -1006,29 +1207,18 @@ registerForm.addEventListener(
 
             stopRegisterLoader();
 
+            // --------------------------------------------------
+            // REDIRECT
+            // --------------------------------------------------
+
             setTimeout(
                 function() {
 
-                    closePopup();
-
-                    showLogin();
-
-                    document.getElementById(
-                        "loginEmail"
-                    ).value =
-                        email;
-
-                    document.getElementById(
-                        "loginPassword"
-                    ).focus();
-
-                    showPopup(
-                        "Registration successful. Please login with your new account.",
-                        "success"
-                    );
+                    window.location.href =
+                        "dashboard.html";
 
                 },
-                1300
+                900
             );
 
         }
@@ -1036,13 +1226,14 @@ registerForm.addEventListener(
         catch(error) {
 
             console.error(
-                "REGISTRATION ERROR:",
+                "FIREBASE REGISTRATION ERROR:",
                 error
             );
 
             showPopup(
-                error.message ||
-                "Unable to create your account.",
+                getFirebaseErrorMessage(
+                    error
+                ),
                 "error"
             );
 
@@ -1060,7 +1251,7 @@ registerForm.addEventListener(
 
 googleButton.addEventListener(
     "click",
-    function() {
+    async function() {
 
         googleButton.disabled =
             true;
@@ -1077,13 +1268,97 @@ googleButton.addEventListener(
 
         `;
 
-        /*
-         * Redirect to FastAPI Google
-         * authentication endpoint.
-         */
+        try {
 
-        window.location.href =
-            `${API_URL}/google/login`;
+            // --------------------------------------------------
+            // FIREBASE GOOGLE POPUP
+            // --------------------------------------------------
+
+            const result =
+                await signInWithPopup(
+                    auth,
+                    googleProvider
+                );
+
+            const user =
+                result.user;
+
+            // --------------------------------------------------
+            // CREATE / LOAD FIRESTORE PROFILE
+            // --------------------------------------------------
+
+            try {
+
+                await createUserProfile(
+                    user
+                );
+
+            } catch(profileError) {
+
+                console.error(
+                    "GOOGLE FIRESTORE PROFILE ERROR:",
+                    profileError
+                );
+
+            }
+
+            // --------------------------------------------------
+            // FIREBASE → FASTAPI
+            // --------------------------------------------------
+
+            await exchangeFirebaseTokenForBackendJWT(
+                user
+            );
+
+            // --------------------------------------------------
+            // SUCCESS
+            // --------------------------------------------------
+
+            showPopup(
+                "Google login successful. Redirecting to your dashboard...",
+                "success"
+            );
+
+            setTimeout(
+                function() {
+
+                    window.location.href =
+                        "dashboard.html";
+
+                },
+                900
+            );
+
+        }
+
+        catch(error) {
+
+            console.error(
+                "GOOGLE LOGIN ERROR:",
+                error
+            );
+
+            showPopup(
+                getFirebaseErrorMessage(
+                    error
+                ),
+                "error"
+            );
+
+            // --------------------------------------------------
+            // RESTORE GOOGLE BUTTON
+            // --------------------------------------------------
+
+            googleButton.disabled =
+                false;
+
+            googleButton.innerHTML = `
+                <span>
+                    Continue with Google
+                </span>
+            `;
+
+        }
 
     }
 );
@@ -1096,5 +1371,5 @@ googleButton.addEventListener(
 clearMessage();
 
 console.log(
-    "AI Visibility Analyzer login.js loaded."
+    "AI Visibility Analyzer Firebase login.js loaded."
 );
