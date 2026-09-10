@@ -29,6 +29,523 @@ function getAccessToken() {
 
 }
 
+// =========================================================
+// SUBSCRIPTION / PLAN SYSTEM
+// =========================================================
+
+let subscriptionState = {
+    plan: "free",
+    planName: "Free",
+    features: {},
+    allowedAIPlatforms: [
+        "chatgpt",
+        "gemini"
+    ]
+};
+
+
+// =========================================================
+// ALL SUPPORTED AI PLATFORMS
+// =========================================================
+
+const ALL_AI_PLATFORMS = [
+    "chatgpt",
+    "gemini",
+    "claude",
+    "perplexity",
+    "grok",
+    "google_ai_mode",
+    "deepseek"
+];
+
+
+// =========================================================
+// AI PLATFORM DISPLAY NAMES
+// =========================================================
+
+const AI_PLATFORM_LABELS = {
+
+    chatgpt:
+        "ChatGPT",
+
+    gemini:
+        "Gemini",
+
+    claude:
+        "Claude",
+
+    perplexity:
+        "Perplexity",
+
+    grok:
+        "Grok",
+
+    google_ai_mode:
+        "Google AI Mode",
+
+    deepseek:
+        "DeepSeek"
+};
+
+
+// =========================================================
+// NORMALIZE PLAN
+// =========================================================
+
+function normalizePlan(plan) {
+
+    const value =
+        String(plan || "free")
+            .toLowerCase()
+            .trim();
+
+
+    if (
+        value === "pro" ||
+        value === "professional"
+    ) {
+
+        return "pro";
+    }
+
+
+    if (
+        value === "agency" ||
+        value === "business" ||
+        value === "agency_business"
+    ) {
+
+        return "agency";
+    }
+
+
+    return "free";
+}
+
+
+// =========================================================
+// DEFAULT AI PLATFORMS
+// =========================================================
+
+function defaultAllowedAIPlatforms(plan) {
+
+    const normalized =
+        normalizePlan(plan);
+
+
+    // FREE
+    // Only ChatGPT + Gemini
+
+    if (normalized === "free") {
+
+        return [
+            "chatgpt",
+            "gemini"
+        ];
+    }
+
+
+    // PRO + AGENCY
+    // All seven platforms
+
+    return [
+        ...ALL_AI_PLATFORMS
+    ];
+}
+
+
+// =========================================================
+// FEATURE CHECK
+// =========================================================
+
+function hasFeature(featureName) {
+
+    return (
+        subscriptionState
+            .features?.[featureName] === true
+    );
+}
+
+
+// =========================================================
+// GET ALLOWED AI PLATFORMS
+// =========================================================
+
+function getAllowedAIPlatforms() {
+
+    if (
+        Array.isArray(
+            subscriptionState.allowedAIPlatforms
+        )
+    ) {
+
+        return subscriptionState
+            .allowedAIPlatforms;
+    }
+
+
+    return defaultAllowedAIPlatforms(
+        subscriptionState.plan
+    );
+}
+
+
+// =========================================================
+// PLAN DISPLAY NAME
+// =========================================================
+
+function getPlanDisplayName(plan) {
+
+    const normalized =
+        normalizePlan(plan);
+
+
+    if (normalized === "pro") {
+
+        return "Pro";
+    }
+
+
+    if (normalized === "agency") {
+
+        return "Agency / Business";
+    }
+
+
+    return "Free";
+}
+
+
+// =========================================================
+// GO TO PRICING
+// =========================================================
+
+function goToPricing() {
+
+    window.location.href =
+        "pricing.html";
+}
+
+
+// =========================================================
+// LOAD SUBSCRIPTION STATUS
+// =========================================================
+
+async function loadSubscriptionStatus() {
+
+    const token =
+        getAccessToken();
+
+
+    // -----------------------------------------------------
+    // No token
+    // -----------------------------------------------------
+
+    if (!token) {
+
+        console.warn(
+            "Subscription check skipped: no access token."
+        );
+
+        return;
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `${API_URL}/subscription/status`,
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Authorization":
+                            `Bearer ${token}`,
+
+                        "Content-Type":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        // -------------------------------------------------
+        // HTTP ERROR
+        // -------------------------------------------------
+
+        if (!response.ok) {
+
+            console.warn(
+                "Subscription status request failed:",
+                response.status
+            );
+
+            return;
+        }
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Subscription status:",
+            data
+        );
+
+
+        // -------------------------------------------------
+        // SUPPORT DIFFERENT RESPONSE STRUCTURES
+        // -------------------------------------------------
+
+        const subscription =
+            data.subscription || {};
+
+
+        const user =
+            data.user || {};
+
+
+        const plan =
+            normalizePlan(
+                data.plan ||
+                subscription.plan ||
+                user.plan ||
+                "free"
+            );
+
+
+        // -------------------------------------------------
+        // FEATURES
+        // -------------------------------------------------
+
+        const features =
+            data.features ||
+            subscription.features ||
+            {};
+
+
+        // -------------------------------------------------
+        // ALLOWED AI PLATFORMS
+        // -------------------------------------------------
+
+        let allowedPlatforms =
+            data.allowed_ai_platforms ||
+            data.allowedAIPlatforms ||
+            subscription.allowed_ai_platforms ||
+            subscription.allowedAIPlatforms;
+
+
+        if (
+            !Array.isArray(
+                allowedPlatforms
+            )
+        ) {
+
+            allowedPlatforms =
+                defaultAllowedAIPlatforms(
+                    plan
+                );
+        }
+
+
+        // -------------------------------------------------
+        // SAVE SUBSCRIPTION STATE
+        // -------------------------------------------------
+
+        subscriptionState = {
+
+            plan: plan,
+
+            planName:
+                getPlanDisplayName(plan),
+
+            features:
+                features,
+
+            allowedAIPlatforms:
+                allowedPlatforms
+        };
+
+
+        // -------------------------------------------------
+        // UPDATE PLAN DISPLAY
+        // -------------------------------------------------
+
+        updatePlanDisplay();
+
+
+        console.log(
+            "Loaded subscription:",
+            subscriptionState
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Unable to load subscription status:",
+            error
+        );
+
+
+        // -------------------------------------------------
+        // SAFE FALLBACK
+        // -------------------------------------------------
+
+        subscriptionState = {
+
+            plan: "free",
+
+            planName: "Free",
+
+            features: {},
+
+            allowedAIPlatforms: [
+                "chatgpt",
+                "gemini"
+            ]
+        };
+
+
+        updatePlanDisplay();
+    }
+}
+
+
+// =========================================================
+// UPDATE PLAN DISPLAY
+// =========================================================
+
+function updatePlanDisplay() {
+
+    const planName =
+        subscriptionState.planName ||
+        "Free";
+
+
+    // -----------------------------------------------------
+    // Generic elements
+    // -----------------------------------------------------
+
+    const planElements =
+        document.querySelectorAll(
+            "[data-subscription-plan], #subscription-plan, .subscription-plan"
+        );
+
+
+    planElements.forEach(
+        element => {
+
+            element.textContent =
+                planName;
+        }
+    );
+
+
+    // -----------------------------------------------------
+    // Dashboard profile plan line
+    // -----------------------------------------------------
+
+    const planLine =
+        document.getElementById(
+            "subscription-plan-line"
+        );
+
+
+    if (planLine) {
+
+        planLine.innerHTML =
+            `Plan: <strong>${planName}</strong>`;
+    }
+}
+
+
+// =========================================================
+// CHECK IF AI PLATFORM IS AVAILABLE
+// =========================================================
+
+function isAIPlatformAllowed(
+    platform
+) {
+
+    return getAllowedAIPlatforms()
+        .includes(platform);
+}
+
+
+// =========================================================
+// SHOW UPGRADE MESSAGE
+// =========================================================
+
+function showUpgradeMessage(
+    featureName
+) {
+
+    const featureLabels = {
+
+        technical_seo:
+            "Technical SEO",
+
+        eeat_analysis:
+            "E-E-A-T Analysis",
+
+        entity_analysis:
+            "Entity Analysis",
+
+        actionable_recommendations:
+            "Actionable Recommendations",
+
+        pdf_download:
+            "PDF Reports",
+
+        analysis_history:
+            "Analysis History",
+
+        scheduled_reaudit:
+            "Scheduled Re-Audits",
+
+        tracking:
+            "Tracking",
+
+        competitor_comparison:
+            "Competitor Comparison",
+
+        white_label_reports:
+            "White-Label Reports",
+
+        api_access:
+            "API Access"
+    };
+
+
+    const label =
+        featureLabels[featureName] ||
+        "This feature";
+
+
+    const message =
+        `${label} is available on Pro and Agency / Business plans.`;
+
+
+    if (
+        typeof showNotification ===
+        "function"
+    ) {
+
+        showNotification(
+            message,
+            "error"
+        );
+
+    }
+    else {
+
+        alert(message);
+    }
+}
+
 
 // ===========================================
 // DOM Elements
@@ -429,9 +946,6 @@ async function loadProfile() {
    LOGOUT
 ========================================================= */
 
-// =========================================================
-// LOGOUT
-// =========================================================
 
 function logout() {
 
@@ -1468,6 +1982,11 @@ async function analyzeWebsite() {
 // Show Results
 // ======================================================
 
+// ======================================================
+// SHOW RESULTS
+// PLAN-AWARE VERSION
+// ======================================================
+
 function showResults(data) {
 
     // ==================================================
@@ -1478,7 +1997,8 @@ function showResults(data) {
 
 
     // ==================================================
-    // RENDER OVERALL SCORE
+    // 1. OVERALL AI VISIBILITY
+    // AVAILABLE TO ALL PLANS
     // ==================================================
 
     results.appendChild(
@@ -1487,7 +2007,8 @@ function showResults(data) {
 
 
     // ==================================================
-    // RENDER AI SCORES
+    // 2. AI PLATFORM SCORES
+    // PART 3 WILL CONTROL THE 7 PLATFORMS
     // ==================================================
 
     results.appendChild(
@@ -1496,16 +2017,8 @@ function showResults(data) {
 
 
     // ==================================================
-    // RENDER TECHNOLOGY
-    // ==================================================
-
-    results.appendChild(
-        renderTechnology(data)
-    );
-
-
-    // ==================================================
-    // RENDER BASIC INFORMATION
+    // 3. BASIC INFORMATION
+    // AVAILABLE TO ALL PLANS
     // ==================================================
 
     results.appendChild(
@@ -1514,16 +2027,18 @@ function showResults(data) {
 
 
     // ==================================================
-    // RENDER TECHNICAL SEO
+    // 4. TECHNOLOGY
+    // AVAILABLE TO ALL PLANS
     // ==================================================
 
     results.appendChild(
-        renderTechnicalSEO(data)
+        renderTechnology(data)
     );
 
 
     // ==================================================
-    // RENDER AUDIT
+    // 5. AUDIT
+    // AVAILABLE TO ALL PLANS
     // ==================================================
 
     results.appendChild(
@@ -1532,7 +2047,8 @@ function showResults(data) {
 
 
     // ==================================================
-    // RENDER OPEN GRAPH
+    // 6. OPEN GRAPH
+    // AVAILABLE TO ALL PLANS
     // ==================================================
 
     results.appendChild(
@@ -1541,7 +2057,8 @@ function showResults(data) {
 
 
     // ==================================================
-    // RENDER TWITTER CARDS
+    // 7. TWITTER CARDS
+    // AVAILABLE TO ALL PLANS
     // ==================================================
 
     results.appendChild(
@@ -1550,7 +2067,8 @@ function showResults(data) {
 
 
     // ==================================================
-    // RENDER LLMS.TXT
+    // 8. LLMS.TXT
+    // AVAILABLE TO ALL PLANS
     // ==================================================
 
     results.appendChild(
@@ -1559,38 +2077,120 @@ function showResults(data) {
 
 
     // ==================================================
-    // RENDER E-E-A-T
+    // 9. TECHNICAL SEO
+    // PRO + AGENCY ONLY
     // ==================================================
 
-    results.appendChild(
-        renderEEAT(data)
-    );
+    if (
+        hasFeature("technical_seo")
+    ) {
+
+        results.appendChild(
+            renderTechnicalSEO(data)
+        );
+
+    }
+    else {
+
+        results.appendChild(
+            renderLockedFeatureCard(
+                "Technical SEO",
+                "technical_seo",
+                "Detailed technical SEO analysis is available on Pro and Agency / Business plans."
+            )
+        );
+    }
 
 
     // ==================================================
-    // RENDER ENTITIES
+    // 10. E-E-A-T
+    // PRO + AGENCY ONLY
     // ==================================================
 
-    results.appendChild(
-        renderEntities(data)
-    );
+    if (
+        hasFeature("eeat_analysis")
+    ) {
+
+        results.appendChild(
+            renderEEAT(data)
+        );
+
+    }
+    else {
+
+        results.appendChild(
+            renderLockedFeatureCard(
+                "E-E-A-T Analysis",
+                "eeat_analysis",
+                "Get detailed Experience, Expertise, Authoritativeness and Trust analysis with Pro."
+            )
+        );
+    }
 
 
     // ==================================================
-    // RENDER RECOMMENDATIONS
+    // 11. ENTITY ANALYSIS
+    // PRO + AGENCY ONLY
     // ==================================================
 
-    results.appendChild(
-        renderRecommendations(data)
-    );
+    if (
+        hasFeature("entity_analysis")
+    ) {
+
+        results.appendChild(
+            renderEntities(data)
+        );
+
+    }
+    else {
+
+        results.appendChild(
+            renderLockedFeatureCard(
+                "Entity Analysis",
+                "entity_analysis",
+                "Understand how your brand, people and organization are represented as entities."
+            )
+        );
+    }
 
 
     // ==================================================
-    // DOWNLOAD PDF SECTION
+    // 12. ACTIONABLE RECOMMENDATIONS
+    // PRO + AGENCY ONLY
+    // ==================================================
+
+    if (
+        hasFeature(
+            "actionable_recommendations"
+        )
+    ) {
+
+        results.appendChild(
+            renderRecommendations(data)
+        );
+
+    }
+    else {
+
+        results.appendChild(
+            renderLockedFeatureCard(
+                "Actionable Recommendations",
+                "actionable_recommendations",
+                "Get prioritized recommendations explaining exactly what you should improve."
+            )
+        );
+    }
+
+
+    // ==================================================
+    // 13. PDF DOWNLOAD
+    // PRO + AGENCY ONLY
     // ==================================================
 
     const pdfSection =
-        document.createElement("section");
+        document.createElement(
+            "section"
+        );
 
 
     pdfSection.className =
@@ -1598,29 +2198,170 @@ function showResults(data) {
 
 
     // ==================================================
-    // PDF BUTTON
+    // PDF AVAILABLE
     // ==================================================
 
-    pdfSection.innerHTML = `
-        <button
-            type="button"
-            id="download-pdf-btn"
-            class="pdf-btn"
-            onclick="downloadPDF()"
-        >
-            📄 Download PDF Report
-        </button>
-    `;
+    if (
+        hasFeature("pdf_download")
+    ) {
+
+        pdfSection.innerHTML = `
+
+            <button
+                type="button"
+                id="download-pdf-btn"
+                class="pdf-btn"
+                onclick="downloadPDF()"
+            >
+                📄 Download PDF Report
+            </button>
+
+        `;
+
+    }
 
 
     // ==================================================
-    // ADD PDF BUTTON TO RESULTS
+    // PDF LOCKED
+    // ==================================================
+
+    else {
+
+        pdfSection.innerHTML = `
+
+            <div
+                class="locked-feature"
+                style="
+                    text-align:center;
+                    padding:30px;
+                "
+            >
+
+                <div
+                    style="
+                        font-size:42px;
+                        margin-bottom:10px;
+                    "
+                >
+                    🔒
+                </div>
+
+
+                <h2>
+                    PDF Report
+                </h2>
+
+
+                <p>
+                    Downloadable PDF reports are available
+                    on Pro and Agency / Business plans.
+                </p>
+
+
+                <button
+                    type="button"
+                    class="pdf-btn"
+                    onclick="goToPricing()"
+                >
+                    🚀 Upgrade to Download PDF
+                </button>
+
+            </div>
+
+        `;
+    }
+
+
+    // ==================================================
+    // ADD PDF SECTION
     // ==================================================
 
     results.appendChild(
         pdfSection
     );
+}
 
+
+// ======================================================
+// LOCKED FEATURE CARD
+// ======================================================
+
+function renderLockedFeatureCard(
+    title,
+    featureName,
+    description
+) {
+
+    const card =
+        document.createElement(
+            "section"
+        );
+
+
+    card.className =
+        "card locked-feature-card";
+
+
+    card.innerHTML = `
+
+        <div
+            class="locked-feature"
+            style="
+                text-align:center;
+                padding:35px 25px;
+            "
+        >
+
+            <div
+                style="
+                    font-size:42px;
+                    margin-bottom:10px;
+                "
+            >
+                🔒
+            </div>
+
+
+            <h2>
+                ${escapeHTML(title)}
+            </h2>
+
+
+            <p
+                style="
+                    max-width:650px;
+                    margin:10px auto 20px;
+                    line-height:1.6;
+                "
+            >
+                ${escapeHTML(description)}
+            </p>
+
+
+            <div
+                style="
+                    margin-bottom:18px;
+                    font-weight:600;
+                "
+            >
+                Available on Pro & Agency / Business
+            </div>
+
+
+            <button
+                type="button"
+                class="pdf-btn"
+                onclick="goToPricing()"
+            >
+                🚀 Upgrade to Unlock
+            </button>
+
+        </div>
+
+    `;
+
+
+    return card;
 }
 
 
@@ -1628,7 +2369,109 @@ function showResults(data) {
 // Overall AI Visibility
 // ======================================================
 
+// ======================================================
+// Overall AI Visibility
+// ======================================================
+
 function renderOverallScore(data) {
+
+    const card =
+        document.createElement("section");
+
+    card.className = "card";
+
+
+    // ==================================================
+    // GET OVERALL SCORE
+    // ==================================================
+
+    const overall =
+        data?.overall_ai_visibility || {};
+
+    const score =
+        Number(
+            overall.score ??
+            overall.overall_score ??
+            data?.overall_score ??
+            0
+        );
+
+
+    // ==================================================
+    // CALCULATE GRADE
+    // ==================================================
+
+    let grade = "F";
+
+    if (score >= 90) {
+        grade = "A+";
+    }
+    else if (score >= 80) {
+        grade = "A";
+    }
+    else if (score >= 70) {
+        grade = "B";
+    }
+    else if (score >= 60) {
+        grade = "C";
+    }
+    else if (score >= 50) {
+        grade = "D";
+    }
+
+
+    // ==================================================
+    // DISPLAY
+    // ==================================================
+
+    card.innerHTML = `
+
+        <h2>
+            Overall AI Visibility
+        </h2>
+
+        <div class="overall-card">
+
+            <div class="overall-left">
+
+                <h1>
+                    ${score}
+                </h1>
+
+                <span class="grade">
+                    Grade ${grade}
+                </span>
+
+            </div>
+
+            <div class="overall-right">
+
+                <p>
+                    Your website's overall AI readiness.
+                </p>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    return card;
+}
+
+
+
+// ======================================================
+// AI PLATFORM SCORES
+// ======================================================
+
+// ======================================================
+// AI PLATFORM SCORES
+// PLAN-AWARE VERSION
+// ======================================================
+
+function renderAIScores(data) {
 
     const card =
         document.createElement(
@@ -1640,99 +2483,186 @@ function renderOverallScore(data) {
         "card";
 
 
-    card.innerHTML = `
+    // ==================================================
+    // ALL SUPPORTED AI PLATFORMS
+    // ==================================================
 
-        <h2>
+    const platforms = [
 
-            Overall AI Visibility
+        {
+            key: "chatgpt",
+            label: "ChatGPT"
+        },
 
-        </h2>
+        {
+            key: "gemini",
+            label: "Gemini"
+        },
 
-        <div class="overall-card">
+        {
+            key: "claude",
+            label: "Claude"
+        },
 
-            <div class="overall-left">
+        {
+            key: "perplexity",
+            label: "Perplexity"
+        },
 
-                <h1>
+        {
+            key: "grok",
+            label: "Grok"
+        },
 
-                    ${data
-                        .overall_ai_visibility
-                        .overall_score}
+        {
+            key: "google_ai_mode",
+            label: "Google AI Mode"
+        },
 
-                </h1>
+        {
+            key: "deepseek",
+            label: "DeepSeek"
+        }
 
-                <span class="grade">
-
-                    Grade
-
-                    ${data
-                        .overall_ai_visibility
-                        .grade}
-
-                </span>
-
-            </div>
-
-            <div class="overall-right">
-
-                <p>
-
-                    Your website's overall AI readiness.
-
-                </p>
-
-            </div>
-
-        </div>
-
-    `;
+    ];
 
 
-    return card;
+    // ==================================================
+    // BUILD PLATFORM CARDS
+    // ==================================================
 
-}
-
-
-
-// ======================================================
-// AI PLATFORM SCORES
-// ======================================================
-
-function renderAIScores(data) {
-
-    const card =
-        document.createElement("section");
-
-    card.className = "card";
-
-    // ------------------------------------------
-    // Safely get platform scores
-    // ------------------------------------------
-
-    const chatgpt =
-        data.chatgpt?.score ?? 0;
-
-    const gemini =
-        data.gemini?.score ?? 0;
-
-    const claude =
-        data.claude?.score ?? 0;
-
-    const perplexity =
-        data.perplexity?.score ?? 0;
-
-    const grok =
-        data.grok?.score ?? 0;
-
-    const googleAIMode =
-        data.google_ai_mode?.score ?? 0;
-
-    const deepseek =
-        data.deepseek?.score ?? 0;
+    let platformHTML = "";
 
 
-    // ------------------------------------------
-    // Build AI Platform Cards
-    // ------------------------------------------
+    platforms.forEach(
+        platform => {
+
+            const allowed =
+                isAIPlatformAllowed(
+                    platform.key
+                );
+
+
+            // =================================================
+            // PLATFORM AVAILABLE
+            // =================================================
+
+            if (allowed) {
+
+                const score =
+                    data[
+                        platform.key
+                    ]?.score ?? 0;
+
+
+                platformHTML += `
+
+                    <div
+                        class="ai-score-card"
+                    >
+
+                        <h3>
+                            ${escapeHTML(
+                                platform.label
+                            )}
+                        </h3>
+
+
+                        <div
+                            class="ai-score-value"
+                        >
+                            ${score}
+                        </div>
+
+
+                        <div
+                            class="ai-score-label"
+                        >
+                            AI Visibility Score
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+
+
+            // =================================================
+            // PLATFORM LOCKED
+            // =================================================
+
+            else {
+
+                platformHTML += `
+
+                    <div
+                        class="ai-score-card locked-ai-card"
+                        style="
+                            text-align:center;
+                            position:relative;
+                        "
+                    >
+
+                        <div
+                            style="
+                                font-size:32px;
+                                margin-bottom:8px;
+                            "
+                        >
+                            🔒
+                        </div>
+
+
+                        <h3>
+                            ${escapeHTML(
+                                platform.label
+                            )}
+                        </h3>
+
+
+                        <div
+                            style="
+                                font-weight:600;
+                                margin:10px 0;
+                            "
+                        >
+                            Pro Required
+                        </div>
+
+
+                        <p
+                            style="
+                                font-size:14px;
+                                line-height:1.5;
+                                margin:0 0 15px;
+                            "
+                        >
+                            Unlock this AI platform
+                            with a Pro plan.
+                        </p>
+
+
+                        <button
+                            type="button"
+                            class="pdf-btn"
+                            onclick="goToPricing()"
+                        >
+                            🚀 Upgrade
+                        </button>
+
+                    </div>
+
+                `;
+            }
+
+        }
+    );
+
+
+    // ==================================================
+    // COMPLETE CARD
+    // ==================================================
 
     card.innerHTML = `
 
@@ -1740,155 +2670,23 @@ function renderAIScores(data) {
             AI Platform Scores
         </h2>
 
-        <div class="score-grid">
+
+        <p
+            style="
+                margin-bottom:20px;
+                color:#666;
+            "
+        >
+            See how your website performs
+            across major AI platforms.
+        </p>
 
 
-            <!-- =================================
-                 CHATGPT
-            ================================== -->
+        <div
+            class="score-grid"
+        >
 
-            <div class="score-card">
-
-                <h3>
-                    ChatGPT
-                </h3>
-
-                <h1>
-                    ${chatgpt}
-                </h1>
-
-                <p>
-                    AI Visibility Score
-                </p>
-
-            </div>
-
-
-            <!-- =================================
-                 GEMINI
-            ================================== -->
-
-            <div class="score-card">
-
-                <h3>
-                    Gemini
-                </h3>
-
-                <h1>
-                    ${gemini}
-                </h1>
-
-                <p>
-                    AI Visibility Score
-                </p>
-
-            </div>
-
-
-            <!-- =================================
-                 CLAUDE
-            ================================== -->
-
-            <div class="score-card">
-
-                <h3>
-                    Claude
-                </h3>
-
-                <h1>
-                    ${claude}
-                </h1>
-
-                <p>
-                    AI Visibility Score
-                </p>
-
-            </div>
-
-
-            <!-- =================================
-                 PERPLEXITY
-            ================================== -->
-
-            <div class="score-card">
-
-                <h3>
-                    Perplexity
-                </h3>
-
-                <h1>
-                    ${perplexity}
-                </h1>
-
-                <p>
-                    AI Visibility Score
-                </p>
-
-            </div>
-
-
-            <!-- =================================
-                 GROK
-            ================================== -->
-
-            <div class="score-card">
-
-                <h3>
-                    Grok
-                </h3>
-
-                <h1>
-                    ${grok}
-                </h1>
-
-                <p>
-                    AI Visibility Score
-                </p>
-
-            </div>
-
-
-            <!-- =================================
-                 GOOGLE AI MODE
-            ================================== -->
-
-            <div class="score-card">
-
-                <h3>
-                    Google AI Mode
-                </h3>
-
-                <h1>
-                    ${googleAIMode}
-                </h1>
-
-                <p>
-                    AI Visibility Score
-                </p>
-
-            </div>
-
-
-            <!-- =================================
-                 DEEPSEEK
-            ================================== -->
-
-            <div class="score-card">
-
-                <h3>
-                    DeepSeek
-                </h3>
-
-                <h1>
-                    ${deepseek}
-                </h1>
-
-                <p>
-                    AI Visibility Score
-                </p>
-
-            </div>
-
+            ${platformHTML}
 
         </div>
 
@@ -1896,7 +2694,6 @@ function renderAIScores(data) {
 
 
     return card;
-
 }
 
 
@@ -3513,9 +4310,13 @@ function showNotification(
 // INITIALIZE DASHBOARD
 // ======================================================
 
+// ======================================================
+// INITIALIZE DASHBOARD
+// ======================================================
+
 document.addEventListener(
     "DOMContentLoaded",
-    () => {
+    async () => {
 
         // =================================================
         // 1. CHECK AUTHENTICATION
@@ -3532,19 +4333,25 @@ document.addEventListener(
         if (!authenticated) {
 
             return;
-
         }
 
 
         // =================================================
-        // 2. LOAD PROFILE
+        // 2. LOAD SUBSCRIPTION FIRST
         // =================================================
 
-        loadProfile();
+        await loadSubscriptionStatus();
 
 
         // =================================================
-        // 3. CHECK PDF LIBRARY
+        // 3. LOAD USER PROFILE
+        // =================================================
+
+        await loadProfile();
+
+
+        // =================================================
+        // 4. CHECK PDF LIBRARY
         // =================================================
 
         setTimeout(
@@ -3738,15 +4545,27 @@ async function loadProfile() {
 
                     <div class="user-info">
 
-                        <h3>
-                            ${escapeHTML(name)}
-                        </h3>
+    <h3>
+        ${escapeHTML(name)}
+    </h3>
 
-                        <p>
-                            ${escapeHTML(email)}
-                        </p>
+    <p>
+        ${escapeHTML(email)}
+    </p>
 
-                    </div>
+    <p
+        id="subscription-plan-line"
+        class="subscription-plan-line"
+    >
+        Plan:
+        <strong>
+            ${escapeHTML(
+                subscriptionState.planName || "Free"
+            )}
+        </strong>
+    </p>
+
+</div>
 
                 </div>
 
@@ -3849,6 +4668,21 @@ async function downloadPDF() {
     const button =
         document.getElementById("download-pdf-btn");
 
+// =====================================================
+    // CHECK PDF SUBSCRIPTION
+    // =====================================================
+
+    if (
+        !hasFeature("pdf_download")
+    ) {
+
+        showNotification(
+            "PDF reports are available on Pro and Agency / Business plans. Please upgrade to download this report.",
+            "error"
+        );
+
+        return;
+    }
 
     // =====================================================
     // CHECK REPORT
