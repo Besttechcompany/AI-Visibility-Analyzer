@@ -8,6 +8,11 @@ from database import get_db
 from models import AnalysisHistory, User
 from dependencies import get_current_user
 from services.analyzer import WebsiteAnalyzer
+from plan_config import (
+    normalize_plan,
+    get_allowed_ai_platforms,
+    has_feature,
+)
 
 from io import BytesIO
 from xml.sax.saxutils import escape
@@ -39,6 +44,116 @@ class WebsiteRequest(BaseModel):
     url: str
 
 
+# =========================================================
+# PLAN / RESULT HELPERS
+# =========================================================
+
+AI_PLATFORM_KEYS = [
+    "chatgpt",
+    "gemini",
+    "claude",
+    "perplexity",
+    "grok",
+    "google_ai_mode",
+    "deepseek",
+]
+
+
+def get_user_plan(current_user: User) -> str:
+    """Return the normalized server-side plan for the user."""
+    return normalize_plan(getattr(current_user, "plan", "free"))
+
+
+def apply_plan_result_filter(result: dict, plan: str) -> dict:
+    """Apply server-side plan restrictions to an analysis result."""
+
+    if plan != "free":
+        return result
+
+    filtered = dict(result)
+    allowed_platforms = set(get_allowed_ai_platforms(plan))
+
+    # -----------------------------------------------------
+    # FREE AI PLATFORM ACCESS
+    # -----------------------------------------------------
+
+    for platform in AI_PLATFORM_KEYS:
+        if platform not in allowed_platforms:
+            filtered.pop(platform, None)
+
+    # -----------------------------------------------------
+    # PREMIUM REPORT SECTIONS
+    # -----------------------------------------------------
+    # Free provides basic AI visibility only. These sections
+    # are available on Pro and Agency plans.
+
+    for section_name in [
+        "technical_seo",
+        "eeat",
+        "entities",
+        "recommendations",
+        "audit",
+        "technology",
+        "llms",
+    ]:
+        filtered.pop(section_name, None)
+
+    # -----------------------------------------------------
+    # FREE OVERALL SCORE
+    # -----------------------------------------------------
+    # The analyzer's original overall score may include all seven
+    # platforms. Recalculate it using only Free-plan platforms.
+
+    scores = []
+
+    for platform in allowed_platforms:
+        item = filtered.get(platform)
+
+        if isinstance(item, dict):
+            value = item.get("score")
+
+            try:
+                if value is not None:
+                    scores.append(float(value))
+            except (TypeError, ValueError):
+                pass
+
+    filtered["overall_ai_visibility"] = {
+        "score": round(sum(scores) / len(scores)) if scores else 0
+    }
+
+    # Useful for the frontend to render the correct plan state.
+    filtered["plan"] = plan
+    filtered["available_ai_platforms"] = [
+        platform
+        for platform in AI_PLATFORM_KEYS
+        if platform in allowed_platforms
+    ]
+
+    return filtered
+
+
+def save_analysis_history(
+    db: Session,
+    current_user: User,
+    website_url: str,
+    analysis_data: dict,
+):
+    """Save an analysis record for plans that include history."""
+
+    history = AnalysisHistory(
+        user_id=current_user.id,
+        website_url=website_url,
+        analysis_data=analysis_data,
+    )
+
+    db.add(history)
+    db.commit()
+    db.refresh(history)
+
+    return history
+
+
 @router.post("/analyze")
 def analyze(
     request: WebsiteRequest,
@@ -46,17 +161,24 @@ def analyze(
     db: Session = Depends(get_db),
 ):
     """
-    Run website analysis and save both successful and failed attempts.
+    Run website analysis and save successful and failed attempts
+    only when the user's plan includes analysis history.
 
-    Successful analyses are stored with:
-        status = "completed"
+    Free users:
+        - Receive only the configured 1-2 AI platform scores.
+        - Do not have analysis history saved.
 
-    Failed analyses are stored with:
-        status = "failed"
-
-    The dashboard still receives an error response for failed analyses,
-    while the Logs page can show the failed record.
+    Pro / Agency users:
+        - Receive the complete analyzer result.
+        - Analysis history is saved.
     """
+
+    plan = get_user_plan(current_user)
+    history_enabled = has_feature(plan, "analysis_history")
+
+    print(
+        f"ANALYSIS REQUEST: user={current_user.id}, plan={plan}"
+    )
 
     website_url = (request.url or "").strip()
 
@@ -85,28 +207,32 @@ def analyze(
             "error": str(e.detail),
         }
 
-        try:
-            history = AnalysisHistory(
-                user_id=current_user.id,
-                website_url=website_url,
-                analysis_data=failed_data,
-            )
-            db.add(history)
-            db.commit()
-            db.refresh(history)
+        if history_enabled:
+            try:
+                history = save_analysis_history(
+                    db,
+                    current_user,
+                    website_url,
+                    failed_data,
+                )
 
-            print(
-                "FAILED ANALYSIS SAVED:",
-                f"user={current_user.id}",
-                f"url={website_url}",
-                f"id={history.id}",
-            )
+                print(
+                    "FAILED ANALYSIS SAVED:",
+                    f"user={current_user.id}",
+                    f"url={website_url}",
+                    f"id={history.id}",
+                )
 
-        except Exception as save_error:
-            db.rollback()
+            except Exception as save_error:
+                db.rollback()
+                print(
+                    "FAILED ANALYSIS HISTORY SAVE ERROR:",
+                    repr(save_error),
+                )
+        else:
             print(
-                "FAILED ANALYSIS HISTORY SAVE ERROR:",
-                repr(save_error),
+                "FAILED ANALYSIS NOT SAVED: history unavailable "
+                f"for plan={plan}"
             )
 
         raise
@@ -122,28 +248,32 @@ def analyze(
             "error": str(e),
         }
 
-        try:
-            history = AnalysisHistory(
-                user_id=current_user.id,
-                website_url=website_url,
-                analysis_data=failed_data,
-            )
-            db.add(history)
-            db.commit()
-            db.refresh(history)
+        if history_enabled:
+            try:
+                history = save_analysis_history(
+                    db,
+                    current_user,
+                    website_url,
+                    failed_data,
+                )
 
-            print(
-                "FAILED ANALYSIS SAVED:",
-                f"user={current_user.id}",
-                f"url={website_url}",
-                f"id={history.id}",
-            )
+                print(
+                    "FAILED ANALYSIS SAVED:",
+                    f"user={current_user.id}",
+                    f"url={website_url}",
+                    f"id={history.id}",
+                )
 
-        except Exception as save_error:
-            db.rollback()
+            except Exception as save_error:
+                db.rollback()
+                print(
+                    "FAILED ANALYSIS HISTORY SAVE ERROR:",
+                    repr(save_error),
+                )
+        else:
             print(
-                "FAILED ANALYSIS HISTORY SAVE ERROR:",
-                repr(save_error),
+                "FAILED ANALYSIS NOT SAVED: history unavailable "
+                f"for plan={plan}"
             )
 
         raise HTTPException(
@@ -157,6 +287,7 @@ def analyze(
 
     try:
         encoded_result = jsonable_encoder(result)
+
     except Exception as e:
         db.rollback()
         print("ANALYSIS RESULT ENCODING ERROR:", repr(e))
@@ -189,28 +320,32 @@ def analyze(
         failed_data["status"] = "failed"
         failed_data["error"] = str(detail)
 
-        try:
-            history = AnalysisHistory(
-                user_id=current_user.id,
-                website_url=website_url,
-                analysis_data=failed_data,
-            )
-            db.add(history)
-            db.commit()
-            db.refresh(history)
+        if history_enabled:
+            try:
+                history = save_analysis_history(
+                    db,
+                    current_user,
+                    website_url,
+                    failed_data,
+                )
 
-            print(
-                "FAILED ANALYSIS SAVED:",
-                f"user={current_user.id}",
-                f"url={website_url}",
-                f"id={history.id}",
-            )
+                print(
+                    "FAILED ANALYSIS SAVED:",
+                    f"user={current_user.id}",
+                    f"url={website_url}",
+                    f"id={history.id}",
+                )
 
-        except Exception as save_error:
-            db.rollback()
+            except Exception as save_error:
+                db.rollback()
+                print(
+                    "FAILED ANALYSIS HISTORY SAVE ERROR:",
+                    repr(save_error),
+                )
+        else:
             print(
-                "FAILED ANALYSIS HISTORY SAVE ERROR:",
-                repr(save_error),
+                "FAILED ANALYSIS NOT SAVED: history unavailable "
+                f"for plan={plan}"
             )
 
         raise HTTPException(
@@ -225,32 +360,51 @@ def analyze(
     encoded_result["success"] = True
     encoded_result["status"] = "completed"
 
-    try:
-        history = AnalysisHistory(
-            user_id=current_user.id,
-            website_url=website_url,
-            analysis_data=encoded_result,
-        )
+    # -----------------------------------------------------
+    # APPLY SERVER-SIDE PLAN FILTER
+    # -----------------------------------------------------
 
-        db.add(history)
-        db.commit()
-        db.refresh(history)
+    encoded_result = apply_plan_result_filter(
+        encoded_result,
+        plan,
+    )
 
+    # -----------------------------------------------------
+    # SAVE HISTORY ONLY FOR ELIGIBLE PLANS
+    # -----------------------------------------------------
+
+    if history_enabled:
+        try:
+            history = save_analysis_history(
+                db,
+                current_user,
+                website_url,
+                encoded_result,
+            )
+
+            print(
+                "COMPLETED ANALYSIS SAVED:",
+                f"user={current_user.id}",
+                f"url={website_url}",
+                f"id={history.id}",
+            )
+
+        except Exception as e:
+            db.rollback()
+
+            print(
+                "ANALYSIS HISTORY SAVE ERROR:",
+                repr(e),
+            )
+
+            raise HTTPException(
+                status_code=500,
+                detail="Analysis completed but could not be saved to history.",
+            )
+    else:
         print(
-            "COMPLETED ANALYSIS SAVED:",
-            f"user={current_user.id}",
-            f"url={website_url}",
-            f"id={history.id}",
-        )
-
-    except Exception as e:
-        db.rollback()
-
-        print("ANALYSIS HISTORY SAVE ERROR:", repr(e))
-
-        raise HTTPException(
-            status_code=500,
-            detail="Analysis completed but could not be saved to history.",
+            "COMPLETED ANALYSIS NOT SAVED: history unavailable "
+            f"for plan={plan}"
         )
 
     return encoded_result
@@ -267,7 +421,21 @@ def get_analysis_history(
     Existing records created before the status field was introduced
     are treated as completed unless their stored analysis_data explicitly
     says success=false or status=failed.
+
+    Free users do not have analysis history.
     """
+
+    plan = get_user_plan(current_user)
+
+    if not has_feature(plan, "analysis_history"):
+        return {
+            "success": True,
+            "count": 0,
+            "history": [],
+            "history_available": False,
+            "plan": plan,
+            "message": "Analysis history is available on Pro and Agency plans.",
+        }
 
     try:
         history = (
@@ -313,6 +481,8 @@ def get_analysis_history(
             "success": True,
             "count": len(records),
             "history": records,
+            "history_available": True,
+            "plan": plan,
         }
 
     except Exception as e:
@@ -481,6 +651,14 @@ def download_analysis_pdf(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
+    plan = get_user_plan(current_user)
+
+    if not has_feature(plan, "pdf_download"):
+        raise HTTPException(
+            status_code=403,
+            detail="PDF download is available on Pro and Agency plans.",
+        )
+
     analysis = (
         db.query(AnalysisHistory)
         .filter(

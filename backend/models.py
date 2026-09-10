@@ -45,8 +45,7 @@ class User(Base):
         nullable=True
     )
 
-
-            # -----------------------------------------------------
+    # -----------------------------------------------------
     # FIREBASE AUTHENTICATION
     # -----------------------------------------------------
     # Firebase UID for users authenticated through Firebase.
@@ -80,8 +79,7 @@ class User(Base):
         nullable=False
     )
 
-
-        # -----------------------------------------------------
+    # -----------------------------------------------------
     # MOBILE NUMBER
     # -----------------------------------------------------
     # Optional for all users.
@@ -94,7 +92,7 @@ class User(Base):
     # -----------------------------------------------------
     # PASSWORD
     # -----------------------------------------------------
-    # NULL for Google-only users.
+    # NULL for Firebase/Google-only users.
     # Contains the hashed password for normal users.
     #
     # NEVER store the actual password here.
@@ -107,7 +105,7 @@ class User(Base):
     # -----------------------------------------------------
     # PROFILE PICTURE
     # -----------------------------------------------------
-    # Mainly populated from Google, but optional.
+    # Mainly populated from Google/Firebase, but optional.
 
     picture = Column(
         String,
@@ -122,6 +120,73 @@ class User(Base):
         Boolean,
         default=True,
         nullable=False
+    )
+
+    # =====================================================
+    # SUBSCRIPTION / PLAN
+    # =====================================================
+
+    # -----------------------------------------------------
+    # PLAN
+    # -----------------------------------------------------
+    # Possible values:
+    #
+    # free
+    # pro
+    # agency
+    #
+    # The backend will be authoritative for this value.
+    # Users must NOT be allowed to change this directly
+    # from the frontend.
+
+    plan = Column(
+        String(20),
+        default="free",
+        nullable=False
+    )
+
+    # -----------------------------------------------------
+    # SUBSCRIPTION STATUS
+    # -----------------------------------------------------
+    # Examples:
+    #
+    # active
+    # cancelled
+    # suspended
+    # expired
+    #
+    # For Free users, the default is "active".
+
+    subscription_status = Column(
+        String(30),
+        default="active",
+        nullable=False
+    )
+
+    # -----------------------------------------------------
+    # PAYPAL SUBSCRIPTION ID
+    # -----------------------------------------------------
+    # Stores the PayPal subscription ID for paid users.
+    #
+    # NULL for Free users.
+
+    paypal_subscription_id = Column(
+        String(255),
+        unique=True,
+        nullable=True
+    )
+
+    # -----------------------------------------------------
+    # CURRENT BILLING PERIOD END
+    # -----------------------------------------------------
+    # Stores the date/time when the current paid
+    # subscription period ends.
+    #
+    # NULL for Free users.
+
+    current_period_end = Column(
+        DateTime(timezone=True),
+        nullable=True
     )
 
     # -----------------------------------------------------
@@ -194,4 +259,3 @@ class AnalysisHistory(Base):
         nullable=False,
         index=True
     )
-

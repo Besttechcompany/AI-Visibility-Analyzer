@@ -1,5 +1,9 @@
 import os
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
@@ -8,6 +12,7 @@ from database import engine
 from models import Base
 from routes.auth import router as auth_router
 from routes.analyze import router as analyze_router
+from routes.subscription import router as subscription_router
 
 
 # =========================================================
@@ -71,6 +76,8 @@ app.add_middleware(
 app.include_router(auth_router)
 
 app.include_router(analyze_router)
+
+app.include_router(subscription_router)
 
 
 # =========================================================
