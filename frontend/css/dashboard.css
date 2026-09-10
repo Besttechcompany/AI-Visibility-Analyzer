@@ -3842,3 +3842,222 @@ button {
     }
 }
 
+
+
+
+
+
+
+/* =========================================================
+   AI PLATFORM SCORE GRID - ALIGNMENT FIX
+   ========================================================= */
+
+.score-grid {
+    display: grid !important;
+
+    /* 4 cards per row on desktop */
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+
+    gap: 20px !important;
+
+    width: 100% !important;
+    max-width: 100% !important;
+
+    align-items: stretch !important;
+
+    box-sizing: border-box !important;
+}
+
+
+/* =========================================================
+   AI SCORE CARD
+   ========================================================= */
+
+.score-grid .ai-score-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+
+    min-height: 250px !important;
+
+    box-sizing: border-box !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    text-align: center !important;
+
+    padding: 25px 18px !important;
+
+    overflow: hidden !important;
+}
+
+
+/* =========================================================
+   PLATFORM TITLE
+   ========================================================= */
+
+.score-grid .ai-score-card h3 {
+    width: 100% !important;
+
+    margin: 8px 0 14px !important;
+
+    text-align: center !important;
+
+    line-height: 1.3 !important;
+
+    overflow-wrap: anywhere !important;
+
+    word-break: normal !important;
+}
+
+
+/* =========================================================
+   SCORE NUMBER
+   ========================================================= */
+
+.score-grid .ai-score-value {
+    margin: 8px 0 !important;
+
+    font-size: 42px !important;
+
+    line-height: 1.1 !important;
+
+    font-weight: 700 !important;
+
+    text-align: center !important;
+}
+
+
+/* =========================================================
+   SCORE LABEL
+   ========================================================= */
+
+.score-grid .ai-score-label {
+    width: 100% !important;
+
+    text-align: center !important;
+
+    line-height: 1.4 !important;
+
+    margin-top: 5px !important;
+}
+
+
+/* =========================================================
+   LOCKED AI CARDS
+   ========================================================= */
+
+.score-grid .locked-ai-card {
+    min-height: 250px !important;
+
+    padding: 25px 18px !important;
+
+    box-sizing: border-box !important;
+
+    display: flex !important;
+
+    flex-direction: column !important;
+
+    justify-content: center !important;
+
+    align-items: center !important;
+
+    text-align: center !important;
+}
+
+
+/* =========================================================
+   LOCK ICON
+   ========================================================= */
+
+.score-grid .locked-ai-card > div:first-child {
+    flex-shrink: 0 !important;
+
+    font-size: 32px !important;
+
+    margin-bottom: 8px !important;
+}
+
+
+/* =========================================================
+   LOCKED DESCRIPTION
+   ========================================================= */
+
+.score-grid .locked-ai-card p {
+    width: 100% !important;
+
+    max-width: 220px !important;
+
+    margin: 8px auto 16px !important;
+
+    line-height: 1.5 !important;
+
+    text-align: center !important;
+
+    overflow-wrap: anywhere !important;
+}
+
+
+/* =========================================================
+   UPGRADE BUTTON
+   ========================================================= */
+
+.score-grid .locked-ai-card .pdf-btn {
+    width: 100% !important;
+
+    max-width: 170px !important;
+
+    min-width: 130px !important;
+
+    margin: 0 auto !important;
+
+    box-sizing: border-box !important;
+
+    white-space: nowrap !important;
+
+    text-align: center !important;
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 1000px) {
+
+    .score-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr)) !important;
+
+        gap: 18px !important;
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .score-grid {
+        grid-template-columns:
+            1fr !important;
+
+        gap: 16px !important;
+    }
+
+
+    .score-grid .ai-score-card,
+    .score-grid .locked-ai-card {
+        min-height: 230px !important;
+    }
+
+}
+
+
