@@ -45,18 +45,14 @@ def get_subscription_status(
     db: Session = Depends(get_db),
 ):
     """
-    Return the current authenticated user's subscription
-    and feature information.
+    Return the authenticated user's subscription,
+    plan limits and feature access.
 
-    IMPORTANT:
     The database is authoritative for the user's plan.
-
-    The frontend must never be trusted to decide whether
-    a user is Free, Pro, or Agency.
     """
 
     # =====================================================
-    # 1. AUTHENTICATION SAFETY CHECK
+    # 1. AUTHENTICATION
     # =====================================================
 
     if not current_user:
@@ -64,7 +60,6 @@ def get_subscription_status(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="User authentication required.",
         )
-
 
     # =====================================================
     # 2. NORMALIZE PLAN
@@ -80,7 +75,6 @@ def get_subscription_status(
         raw_plan
     )
 
-
     # =====================================================
     # 3. GET PLAN CONFIGURATION
     # =====================================================
@@ -89,31 +83,49 @@ def get_subscription_status(
         plan
     )
 
-
     # =====================================================
-    # 4. GET ALLOWED AI PLATFORMS
+    # 4. IMPORTANT FIX
+    #
+    # Features are stored inside:
+    #
+    # config["features"]
+    #
+    # NOT directly inside config.
     # =====================================================
 
-    allowed_ai_platforms = get_allowed_ai_platforms(
-        plan
+    features_config = config.get(
+        "features",
+        {}
     )
 
-
     # =====================================================
-    # 5. GET PLAN LIMITS
+    # 5. AI PLATFORM ACCESS
     # =====================================================
 
-    max_ai_platforms = get_max_ai_platforms(
-        plan
+    allowed_ai_platforms = (
+        get_allowed_ai_platforms(
+            plan
+        )
     )
 
-    max_websites = get_max_websites(
-        plan
+    # =====================================================
+    # 6. PLAN LIMITS
+    # =====================================================
+
+    max_ai_platforms = (
+        get_max_ai_platforms(
+            plan
+        )
     )
 
+    max_websites = (
+        get_max_websites(
+            plan
+        )
+    )
 
     # =====================================================
-    # 6. GET SUBSCRIPTION STATUS
+    # 7. SUBSCRIPTION STATUS
     # =====================================================
 
     subscription_status = (
@@ -125,15 +137,13 @@ def get_subscription_status(
         or "active"
     )
 
-
     # =====================================================
-    # 7. RETURN COMPLETE SUBSCRIPTION INFORMATION
+    # 8. RETURN RESPONSE
     # =====================================================
 
     return {
 
         "success": True,
-
 
         # =================================================
         # USER
@@ -148,7 +158,6 @@ def get_subscription_status(
             "name": current_user.name,
 
         },
-
 
         # =================================================
         # SUBSCRIPTION
@@ -190,17 +199,13 @@ def get_subscription_status(
                 "USD",
             ),
 
-            # Explicitly expose platforms here
-            # for the frontend.
-
             "allowed_ai_platforms":
                 allowed_ai_platforms,
 
         },
 
-
         # =================================================
-        # TOP-LEVEL PLAN
+        # TOP LEVEL PLAN
         # =================================================
 
         "plan": plan,
@@ -210,14 +215,12 @@ def get_subscription_status(
             "Free",
         ),
 
-
         # =================================================
-        # TOP-LEVEL AI PLATFORMS
+        # TOP LEVEL AI PLATFORMS
         # =================================================
 
         "allowed_ai_platforms":
             allowed_ai_platforms,
-
 
         # =================================================
         # FEATURES
@@ -229,7 +232,7 @@ def get_subscription_status(
             # AI VISIBILITY
             # -------------------------------------------------
 
-            "ai_score": config.get(
+            "ai_score": features_config.get(
                 "ai_score",
                 True,
             ),
@@ -243,7 +246,6 @@ def get_subscription_status(
             "max_ai_platforms":
                 max_ai_platforms,
 
-
             # -------------------------------------------------
             # WEBSITE LIMITS
             # -------------------------------------------------
@@ -252,89 +254,87 @@ def get_subscription_status(
                 max_websites,
 
             "multiple_websites":
-                config.get(
+                features_config.get(
                     "multiple_websites",
                     False,
                 ),
-
 
             # -------------------------------------------------
             # PRO FEATURES
             # -------------------------------------------------
 
             "technical_seo":
-                config.get(
+                features_config.get(
                     "technical_seo",
                     False,
                 ),
 
             "eeat_analysis":
-                config.get(
+                features_config.get(
                     "eeat_analysis",
                     False,
                 ),
 
             "entity_analysis":
-                config.get(
+                features_config.get(
                     "entity_analysis",
                     False,
                 ),
 
             "actionable_recommendations":
-                config.get(
+                features_config.get(
                     "actionable_recommendations",
                     False,
                 ),
 
             "pdf_download":
-                config.get(
+                features_config.get(
                     "pdf_download",
                     False,
                 ),
 
             "analysis_history":
-                config.get(
+                features_config.get(
                     "analysis_history",
                     False,
                 ),
 
             "multiple_audits":
-                config.get(
+                features_config.get(
                     "multiple_audits",
                     False,
                 ),
-
 
             # -------------------------------------------------
             # AGENCY / BUSINESS FEATURES
             # -------------------------------------------------
 
             "scheduled_reaudit":
-                config.get(
+                features_config.get(
                     "scheduled_reaudit",
                     False,
                 ),
 
             "tracking":
-                config.get(
+                features_config.get(
                     "tracking",
                     False,
                 ),
 
             "competitor_comparison":
-                config.get(
+                features_config.get(
                     "competitor_comparison",
                     False,
                 ),
 
             "white_label_reports":
-                config.get(
+                features_config.get(
                     "white_label_reports",
                     False,
                 ),
 
             "api_access":
-                config.get(
+                features_config.get(
                     "api_access",
                     False,
                 ),
