@@ -60,6 +60,9 @@ PLAN_CONFIG = {
 
         "features": {
 
+            # AI / REPORT FEATURES
+            "ai_score": True,
+
             "technical_seo": False,
 
             "eeat_analysis": False,
@@ -72,6 +75,12 @@ PLAN_CONFIG = {
 
             "analysis_history": False,
 
+            # AUDIT / WEBSITE LIMITS
+            "multiple_websites": False,
+
+            "multiple_audits": False,
+
+            # AGENCY FEATURES
             "scheduled_reaudit": False,
 
             "tracking": False,
@@ -113,6 +122,9 @@ PLAN_CONFIG = {
 
         "features": {
 
+            # AI / REPORT FEATURES
+            "ai_score": True,
+
             "technical_seo": True,
 
             "eeat_analysis": True,
@@ -125,10 +137,12 @@ PLAN_CONFIG = {
 
             "analysis_history": True,
 
-            # -------------------------------------------------
-            # AGENCY-ONLY FEATURES
-            # -------------------------------------------------
+            # PRO PLAN LIMITS
+            "multiple_websites": False,
 
+            "multiple_audits": True,
+
+            # AGENCY-ONLY FEATURES
             "scheduled_reaudit": False,
 
             "tracking": False,
@@ -170,6 +184,9 @@ PLAN_CONFIG = {
 
         "features": {
 
+            # AI / REPORT FEATURES
+            "ai_score": True,
+
             "technical_seo": True,
 
             "eeat_analysis": True,
@@ -182,6 +199,12 @@ PLAN_CONFIG = {
 
             "analysis_history": True,
 
+            # AGENCY WEBSITE / AUDIT FEATURES
+            "multiple_websites": True,
+
+            "multiple_audits": True,
+
+            # AGENCY / BUSINESS FEATURES
             "scheduled_reaudit": True,
 
             "tracking": True,
@@ -432,6 +455,7 @@ def get_available_plans():
         PLAN_CONFIG.keys()
     )
 
+
 # =========================================================
 # GET MAXIMUM AI PLATFORMS
 # =========================================================
@@ -461,6 +485,7 @@ def get_max_websites(plan):
     for the selected plan.
 
     Product rules:
+
         Free   = 1 website
         Pro    = 1 website
         Agency = unlimited
